@@ -60,19 +60,25 @@ contract TreatyTest is Test, DiamondDeployTest {
         uint256 time = block.timestamp + 500;
         vm.warp(time);
 
-        // Deployer transfers gold, food, and troops to Nation 1 and Nation 2
+        // Deployer transfers gold, food, and troops to Nation 1, 2, and 3
         vm.startPrank(deployer);
         admin.dripToken(nation1CapitalAddr, "Gold", 1000000);
         admin.dripToken(nation1CapitalAddr, "Food", 1000000);
-        admin.dripToken(nation1CapitalAddr, "Warrior", 1000);
         admin.dripToken(nation1CapitalAddr, "Horseman", 1000);
+        admin.dripToken(nation1CapitalAddr, "Warrior", 1000);
         admin.dripToken(nation1CapitalAddr, "Slinger", 1000);
 
         admin.dripToken(nation2CapitalAddr, "Gold", 1000000);
         admin.dripToken(nation2CapitalAddr, "Food", 1000000);
-        admin.dripToken(nation2CapitalAddr, "Warrior", 1000);
         admin.dripToken(nation2CapitalAddr, "Horseman", 1000);
+        admin.dripToken(nation2CapitalAddr, "Warrior", 1000);
         admin.dripToken(nation2CapitalAddr, "Slinger", 1000);
+
+        admin.dripToken(nation3CapitalAddr, "Gold", 1000000);
+        admin.dripToken(nation3CapitalAddr, "Food", 1000000);
+        admin.dripToken(nation3CapitalAddr, "Horseman", 1000);
+        admin.dripToken(nation3CapitalAddr, "Warrior", 1000);
+        admin.dripToken(nation3CapitalAddr, "Slinger", 1000);
         vm.stopPrank();
 
         // Nation 1 organizes army
@@ -82,30 +88,25 @@ contract TreatyTest is Test, DiamondDeployTest {
         armyTemplateIDs[1] = horsemanTemplateID;
         armyTemplateIDs[2] = slingerTemplateID;
         uint256[] memory armyTemplateAmounts = new uint256[](3);
-        armyTemplateAmounts[0] = 500;
-        armyTemplateAmounts[1] = 500;
-        armyTemplateAmounts[2] = 500;
+        armyTemplateAmounts[0] = 150;
+        armyTemplateAmounts[1] = 150;
+        armyTemplateAmounts[2] = 150;
         time += 10;
         vm.warp(time);
         uint256 army11ID = game.organizeArmy(nation1CapitalID, armyTemplateIDs, armyTemplateAmounts);
+        address army11Addr = getter.getAddress(army11ID);
 
         // Nation 1 joins alliance after token approval
         CurioWallet(nation1CapitalAddr).executeTx(address(goldToken), abi.encodeWithSignature("approve(address,uint256)", address(alliance), 1000));
         alliance.join();
         assertTrue(getter.getNationTreatySignature(nation1ID, allianceID) > 0);
 
-        // Nation 1 moves army to (62, 29)
+        // Nation 1 moves army from (62, 12) to (62, 29)
         for (uint256 i = 1; i <= 9; i++) {
             time += 1;
             vm.warp(time);
             game.move(army11ID, 62, 11 + 2 * i);
         }
-
-        // Nation 1 attacks Nation 2's capital
-        time += 2;
-        vm.warp(time);
-        uint256 nation2CapitalTileID = getter.getTileAt(getter.getPositionExternal("StartPosition", nation2CapitalID));
-        game.battle(army11ID, nation2CapitalTileID);
         vm.stopPrank();
 
         // Nation 2 fails to join alliance before token approval
@@ -125,6 +126,7 @@ contract TreatyTest is Test, DiamondDeployTest {
         vm.startPrank(player1);
         time += 2;
         vm.warp(time);
+        uint256 nation2CapitalTileID = getter.getTileAt(getter.getPositionExternal("StartPosition", nation2CapitalID));
         vm.expectRevert("CURIO: Treaty disapproved Battle");
         game.battle(army11ID, nation2CapitalTileID);
         vm.stopPrank();
@@ -148,6 +150,84 @@ contract TreatyTest is Test, DiamondDeployTest {
         time += 2;
         vm.warp(time);
         game.battle(army11ID, nation2CapitalTileID);
+        vm.stopPrank();
+
+        // Nation 2 organizes army
+        vm.startPrank(player2);
+        armyTemplateAmounts[0] = 150;
+        armyTemplateAmounts[1] = 150;
+        armyTemplateAmounts[2] = 150;
+        uint256 army21ID = game.organizeArmy(nation2CapitalID, armyTemplateIDs, armyTemplateAmounts);
+        address army21Addr = getter.getAddress(army21ID);
+        vm.stopPrank();
+
+        // Nation 3 joins alliance after token approval
+        vm.startPrank(player3);
+        CurioWallet(nation3CapitalAddr).executeTx(address(goldToken), abi.encodeWithSignature("approve(address,uint256)", address(alliance), 1000));
+        alliance.join();
+        assertTrue(getter.getNationTreatySignature(nation3ID, allianceID) > 0);
+
+        // Nation 3 organizes army
+        armyTemplateAmounts[0] = 90;
+        armyTemplateAmounts[1] = 90;
+        armyTemplateAmounts[2] = 90;
+        uint256 army31ID = game.organizeArmy(nation3CapitalID, armyTemplateIDs, armyTemplateAmounts);
+        address army31Addr = getter.getAddress(army31ID);
+        assertEq(horsemanToken.checkBalanceOf(army31Addr), 90);
+
+        // Nation 3 moves army from (52, 22) to (59, 31)
+        time += 1;
+        vm.warp(time);
+        game.move(army31ID, 53, 23);
+        time += 1;
+        vm.warp(time);
+        game.move(army31ID, 54, 24);
+        time += 1;
+        vm.warp(time);
+        game.move(army31ID, 55, 25);
+        time += 1;
+        vm.warp(time);
+        game.move(army31ID, 56, 26);
+        time += 1;
+        vm.warp(time);
+        game.move(army31ID, 57, 27);
+        time += 1;
+        vm.warp(time);
+        game.move(army31ID, 58, 28);
+        time += 1;
+        vm.warp(time);
+        game.move(army31ID, 59, 29);
+        time += 1;
+        vm.warp(time);
+        game.move(army31ID, 59, 31);
+        vm.stopPrank();
+
+        // Nation 1 accidentally tries to let Alliance besiege Nation 3's army, but luckily fails
+        vm.startPrank(player1);
+        uint256 army11HorsemanBalance = horsemanToken.checkBalanceOf(army11Addr);
+        time += 2;
+        vm.warp(time);
+        vm.expectRevert("Alliance: Cannot besiege army of ally nation");
+        alliance.besiege(army31ID);
+        assertEq(horsemanToken.checkBalanceOf(army11Addr), army11HorsemanBalance);
+        assertEq(horsemanToken.checkBalanceOf(army31Addr), 90);
+
+        // Nation 1 triggers Alliance to besiege Nation 2's army until it is destroyed
+        // Nation 1's army and Nation 3's army should both survive
+        assertEq(horsemanToken.checkBalanceOf(army21Addr), 150);
+        time += 2;
+        vm.warp(time);
+        alliance.besiege(army21ID);
+        assertTrue(horsemanToken.checkBalanceOf(army11Addr) < army11HorsemanBalance);
+        assertTrue(horsemanToken.checkBalanceOf(army21Addr) < 150);
+        assertTrue(horsemanToken.checkBalanceOf(army31Addr) < 90);
+        while (getter.getNation(army21ID) != 0) {
+            time += 2;
+            vm.warp(time);
+            alliance.besiege(army21ID);
+        }
+        assertEq(getter.getNation(army11ID), nation1ID);
+        assertEq(getter.getNation(army31ID), nation3ID);
         vm.stopPrank();
     }
 

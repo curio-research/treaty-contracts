@@ -48,7 +48,7 @@ contract AdminFacet is UseStorage {
     }
 
     function onlyQuery(Position memory _startPosition) external view returns (uint256[] memory) {
-        return GameLib.getMovableEntitiesAtTile(_startPosition);
+        return GameLib.getArmiesAtTile(_startPosition);
     }
 
     // ----------------------------------------------------------------------

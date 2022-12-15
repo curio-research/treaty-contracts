@@ -9,8 +9,6 @@ import {CurioTreaty} from "contracts/CurioTreaty.sol";
 /// FIXME: not polished!!! need to update!!!
 
 contract HangingGarden is CurioTreaty {
-    GameFacet public game;
-
     address[] public owners;
     address[] public homies;
     uint256 public homieFee;
@@ -42,8 +40,6 @@ contract HangingGarden is CurioTreaty {
             isHomie[owner] = true;
             homies.push(owner);
         }
-
-        game = GameFacet(diamond);
 
         name = "HangingGarden";
         description = "A deprecated smart contract wallet for Curio";

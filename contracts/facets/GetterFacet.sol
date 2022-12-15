@@ -100,17 +100,12 @@ contract GetterFacet is UseStorage {
         return GameLib.getArmyAt(_position);
     }
 
-    function getArmyAtTile(Position memory _startPosition) external view returns (uint256) {
-        // FIXME
-        return GameLib.getMovableEntitiesAtTile(_startPosition)[0];
+    function getArmiesAtTile(Position memory _startPosition) external view returns (uint256[] memory) {
+        return GameLib.getArmiesAtTile(_startPosition);
     }
 
     function getMainBurnerAccount(address _primaryAddress) external view returns (address) {
         return gs().accounts[_primaryAddress];
-    }
-
-    function getPositionExternal(string memory _componentName, uint256 _entity) external view returns (Position memory) {
-        return ECSLib.getPosition(_componentName, _entity);
     }
 
     function getCapital(uint256 _nationID) external view returns (uint256) {
@@ -160,12 +155,21 @@ contract GetterFacet is UseStorage {
         return GameLib.euclidean(pos1, pos2);
     }
 
+    function getTileRegionTilePositions(Position memory _startPosition) external view returns (Position[] memory) {
+        return GameLib.getTileRegionTilePositions(_startPosition);
+    }
+
     // ----------------------------------------------------------
     // ECS GETTERS
     // ----------------------------------------------------------
 
-    function getEntityLevel(uint256 _entityID) external view returns (uint256) {
-        return ECSLib.getUint("Level", _entityID);
+    // FIXME: Only called "external" because calling it without causes hardhat-diamond-abi compilation error, specifically function appearing twice
+    function getPositionExternal(string memory _componentName, uint256 _entity) external view returns (Position memory) {
+        return ECSLib.getPosition(_componentName, _entity);
+    }
+
+    function getEntityLevel(uint256 _entity) external view returns (uint256) {
+        return ECSLib.getUint("Level", _entity);
     }
 
     function getComponent(string memory _name) external view returns (Component) {

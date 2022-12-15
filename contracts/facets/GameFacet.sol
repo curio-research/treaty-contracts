@@ -43,7 +43,7 @@ contract GameFacet is UseStorage {
         require(ECSLib.getUint("Nation", tileID) == NULL, "CURIO: Tile unavailable");
 
         // Verify that no other movable entity is on tile
-        require(GameLib.getMovableEntitiesAtTile(tilePosition).length == 0, "CURIO: Other movable entity on tile");
+        require(GameLib.getArmiesAtTile(tilePosition).length == 0, "CURIO: Other movable entity on tile");
 
         // Remove resource at destination if one exists
         uint256 resourceID = GameLib.getResourceAtTile(tilePosition);
@@ -216,7 +216,7 @@ contract GameFacet is UseStorage {
         require(GameLib.isAdjacentToOwnTile(nationID, tilePosition), "CURIO: Can only claim contiguous tiles");
 
         // Verify that no other movable entity is on tile
-        uint256[] memory movableEntitiesOnTile = GameLib.getMovableEntitiesAtTile(tilePosition);
+        uint256[] memory movableEntitiesOnTile = GameLib.getArmiesAtTile(tilePosition);
         require(movableEntitiesOnTile.length == 1 && movableEntitiesOnTile[0] == _armyID, "CURIO: Other movable entity on tile");
 
         // Transfer ownership of tile and initialize new guard
@@ -335,7 +335,7 @@ contract GameFacet is UseStorage {
         require(block.timestamp > ECSLib.getUint("LastRecovered", _tileID), "CURIO: Need to finish recovering first");
 
         // End gather processes on tile
-        uint256[] memory movableEntitiesOnTile = GameLib.getMovableEntitiesAtTile(tilePosition);
+        uint256[] memory movableEntitiesOnTile = GameLib.getArmiesAtTile(tilePosition);
         for (uint256 i = 0; i < movableEntitiesOnTile.length; i++) {
             uint256 gatherID = GameLib.getArmyGather(movableEntitiesOnTile[i]);
             if (gatherID != NULL) GameLib.endGather(movableEntitiesOnTile[i]);

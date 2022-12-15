@@ -506,7 +506,7 @@ library GameLib {
         return ECSLib.query(query);
     }
 
-    function getMovableEntitiesAtTile(Position memory _startPosition) internal view returns (uint256[] memory) {
+    function getArmiesAtTile(Position memory _startPosition) internal view returns (uint256[] memory) {
         QueryCondition[] memory query = new QueryCondition[](2);
         query[0] = ECSLib.queryChunk(QueryType.Has, Component(gs().components["Speed"]), new bytes(0));
         query[1] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["StartPosition"]), abi.encode(_startPosition));
@@ -716,6 +716,37 @@ library GameLib {
         if (y < gs().worldConstants.worldHeight - tileWidth) {
             temp[neighborCount] = (Position({x: x, y: y + tileWidth}));
             neighborCount++;
+        }
+
+        Position[] memory result = new Position[](neighborCount);
+        for (uint256 i = 0; i < neighborCount; i++) {
+            result[i] = temp[i];
+        }
+
+        return result;
+    }
+
+    /// Fetch the 9-tile region around a given tile
+    function getTileRegionTilePositions(Position memory _startPosition) internal view returns (Position[] memory) {
+        require(isProperTilePosition(_startPosition), "CURIO: Intended for tile region");
+
+        Position[] memory temp = new Position[](9);
+        uint256 x;
+        uint256 y;
+        uint256 tileWidth = gs().worldConstants.tileWidth;
+        uint256 neighborCount = 0;
+
+        for (uint256 i; i < 3; i++) {
+            x = _startPosition.x + i * tileWidth - tileWidth;
+            if (x < 0 || x >= gs().worldConstants.worldWidth) continue;
+
+            for (uint256 j; j < 3; j++) {
+                y = _startPosition.y + j * tileWidth - tileWidth;
+                if (y < 0 || y >= gs().worldConstants.worldHeight) continue;
+
+                temp[neighborCount] = Position({x: x, y: y});
+                neighborCount++;
+            }
         }
 
         Position[] memory result = new Position[](neighborCount);

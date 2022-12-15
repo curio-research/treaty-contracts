@@ -51,6 +51,7 @@ export interface AllianceInterface extends utils.Interface {
     "delegatedGameFunctionNames(uint256)": FunctionFragment;
     "description()": FunctionFragment;
     "diamond()": FunctionFragment;
+    "game()": FunctionFragment;
     "getter()": FunctionFragment;
     "goldToken()": FunctionFragment;
     "join()": FunctionFragment;
@@ -86,6 +87,7 @@ export interface AllianceInterface extends utils.Interface {
       | "delegatedGameFunctionNames"
       | "description"
       | "diamond"
+      | "game"
       | "getter"
       | "goldToken"
       | "join"
@@ -191,6 +193,7 @@ export interface AllianceInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "diamond", values?: undefined): string;
+  encodeFunctionData(functionFragment: "game", values?: undefined): string;
   encodeFunctionData(functionFragment: "getter", values?: undefined): string;
   encodeFunctionData(functionFragment: "goldToken", values?: undefined): string;
   encodeFunctionData(functionFragment: "join", values?: undefined): string;
@@ -292,6 +295,7 @@ export interface AllianceInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "diamond", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "game", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "getter", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "goldToken", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "join", data: BytesLike): Result;
@@ -470,6 +474,8 @@ export interface Alliance extends BaseContract {
 
     diamond(overrides?: CallOverrides): Promise<[string]>;
 
+    game(overrides?: CallOverrides): Promise<[string]>;
+
     getter(overrides?: CallOverrides): Promise<[string]>;
 
     goldToken(overrides?: CallOverrides): Promise<[string]>;
@@ -626,6 +632,8 @@ export interface Alliance extends BaseContract {
   description(overrides?: CallOverrides): Promise<string>;
 
   diamond(overrides?: CallOverrides): Promise<string>;
+
+  game(overrides?: CallOverrides): Promise<string>;
 
   getter(overrides?: CallOverrides): Promise<string>;
 
@@ -784,6 +792,8 @@ export interface Alliance extends BaseContract {
 
     diamond(overrides?: CallOverrides): Promise<string>;
 
+    game(overrides?: CallOverrides): Promise<string>;
+
     getter(overrides?: CallOverrides): Promise<string>;
 
     goldToken(overrides?: CallOverrides): Promise<string>;
@@ -939,6 +949,8 @@ export interface Alliance extends BaseContract {
     description(overrides?: CallOverrides): Promise<BigNumber>;
 
     diamond(overrides?: CallOverrides): Promise<BigNumber>;
+
+    game(overrides?: CallOverrides): Promise<BigNumber>;
 
     getter(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1097,6 +1109,8 @@ export interface Alliance extends BaseContract {
     description(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     diamond(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    game(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getter(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 

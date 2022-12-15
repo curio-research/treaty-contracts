@@ -419,7 +419,6 @@ pragma solidity ^0.8.4;
 //         // kievArmyID = getter.getArmyAt(Position({x: 60, y: 40}));
 //         // console.log("kievArmyID:",kievArmyID);
 
-
 //         // Moscow and Kiev move their armies next to one another
 //         time += 5;
 //         vm.warp(time);
@@ -607,8 +606,8 @@ pragma solidity ^0.8.4;
 
 //         vm.startPrank(player2);
 
-//         console.log("genghisYurt City Center:", getter.getPositionExternal("StartPosition", genghisYurtID).x, getter.getPositionExternal("StartPosition", genghisYurtID).y);
-//         console.log("genghis City:", getter.getPositionExternal("StartPosition", genghisID).x, getter.getPositionExternal("StartPosition", genghisID).y);
+//         console.log("genghisYurt City Center:", getter.getPosition("StartPosition", genghisYurtID).x, getter.getPosition("StartPosition", genghisYurtID).y);
+//         console.log("genghis City:", getter.getPosition("StartPosition", genghisID).x, getter.getPosition("StartPosition", genghisID).y);
 
 //         time += 121;
 //         vm.warp(time);

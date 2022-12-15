@@ -192,8 +192,8 @@ export interface CurioInterface extends utils.Interface {
     "getABIHash(uint256)": FunctionFragment;
     "getAddress(uint256)": FunctionFragment;
     "getAddress(string,uint256)": FunctionFragment;
+    "getArmiesAtTile((uint256,uint256))": FunctionFragment;
     "getArmyAt((uint256,uint256))": FunctionFragment;
-    "getArmyAtTile((uint256,uint256))": FunctionFragment;
     "getCapital(uint256)": FunctionFragment;
     "getComponent(string)": FunctionFragment;
     "getComponentById(uint256)": FunctionFragment;
@@ -216,6 +216,7 @@ export interface CurioInterface extends utils.Interface {
     "getResourceAtTile((uint256,uint256))": FunctionFragment;
     "getSignedTreaties(uint256)": FunctionFragment;
     "getTileAt((uint256,uint256))": FunctionFragment;
+    "getTileRegionTilePositions((uint256,uint256))": FunctionFragment;
     "getTokenContract(string)": FunctionFragment;
     "getTreatyByName(string)": FunctionFragment;
     "getTreatySigners(uint256)": FunctionFragment;
@@ -306,8 +307,8 @@ export interface CurioInterface extends utils.Interface {
       | "getABIHash"
       | "getAddress(uint256)"
       | "getAddress(string,uint256)"
+      | "getArmiesAtTile"
       | "getArmyAt"
-      | "getArmyAtTile"
       | "getCapital"
       | "getComponent"
       | "getComponentById"
@@ -330,6 +331,7 @@ export interface CurioInterface extends utils.Interface {
       | "getResourceAtTile"
       | "getSignedTreaties"
       | "getTileAt"
+      | "getTileRegionTilePositions"
       | "getTokenContract"
       | "getTreatyByName"
       | "getTreatySigners"
@@ -632,11 +634,11 @@ export interface CurioInterface extends utils.Interface {
     values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
-    functionFragment: "getArmyAt",
+    functionFragment: "getArmiesAtTile",
     values: [PositionStruct]
   ): string;
   encodeFunctionData(
-    functionFragment: "getArmyAtTile",
+    functionFragment: "getArmyAt",
     values: [PositionStruct]
   ): string;
   encodeFunctionData(
@@ -728,6 +730,10 @@ export interface CurioInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "getTileAt",
+    values: [PositionStruct]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getTileRegionTilePositions",
     values: [PositionStruct]
   ): string;
   encodeFunctionData(
@@ -1028,11 +1034,11 @@ export interface CurioInterface extends utils.Interface {
     functionFragment: "getAddress(string,uint256)",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "getArmyAt", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "getArmyAtTile",
+    functionFragment: "getArmiesAtTile",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "getArmyAt", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "getCapital", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getComponent",
@@ -1109,6 +1115,10 @@ export interface CurioInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "getTileAt", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "getTileRegionTilePositions",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "getTokenContract",
     data: BytesLike
@@ -1657,13 +1667,13 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[string]>;
 
+    getArmiesAtTile(
+      _startPosition: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber[]]>;
+
     getArmyAt(
       _position: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    getArmyAtTile(
-      _startPosition: PositionStruct,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
@@ -1709,7 +1719,7 @@ export interface Curio extends BaseContract {
     ): Promise<[BigNumber]>;
 
     getEntityLevel(
-      _entityID: PromiseOrValue<BigNumberish>,
+      _entity: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
@@ -1774,6 +1784,11 @@ export interface Curio extends BaseContract {
       _position: PositionStruct,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
+
+    getTileRegionTilePositions(
+      _startPosition: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<[PositionStructOutput[]]>;
 
     getTokenContract(
       _tokenName: PromiseOrValue<string>,
@@ -2243,13 +2258,13 @@ export interface Curio extends BaseContract {
     overrides?: CallOverrides
   ): Promise<string>;
 
+  getArmiesAtTile(
+    _startPosition: PositionStruct,
+    overrides?: CallOverrides
+  ): Promise<BigNumber[]>;
+
   getArmyAt(
     _position: PositionStruct,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  getArmyAtTile(
-    _startPosition: PositionStruct,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
@@ -2295,7 +2310,7 @@ export interface Curio extends BaseContract {
   ): Promise<BigNumber>;
 
   getEntityLevel(
-    _entityID: PromiseOrValue<BigNumberish>,
+    _entity: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
@@ -2360,6 +2375,11 @@ export interface Curio extends BaseContract {
     _position: PositionStruct,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
+
+  getTileRegionTilePositions(
+    _startPosition: PositionStruct,
+    overrides?: CallOverrides
+  ): Promise<PositionStructOutput[]>;
 
   getTokenContract(
     _tokenName: PromiseOrValue<string>,
@@ -2823,13 +2843,13 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<string>;
 
+    getArmiesAtTile(
+      _startPosition: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<BigNumber[]>;
+
     getArmyAt(
       _position: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    getArmyAtTile(
-      _startPosition: PositionStruct,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -2875,7 +2895,7 @@ export interface Curio extends BaseContract {
     ): Promise<BigNumber>;
 
     getEntityLevel(
-      _entityID: PromiseOrValue<BigNumberish>,
+      _entity: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -2940,6 +2960,11 @@ export interface Curio extends BaseContract {
       _position: PositionStruct,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    getTileRegionTilePositions(
+      _startPosition: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<PositionStructOutput[]>;
 
     getTokenContract(
       _tokenName: PromiseOrValue<string>,
@@ -3464,13 +3489,13 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    getArmyAt(
-      _position: PositionStruct,
+    getArmiesAtTile(
+      _startPosition: PositionStruct,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    getArmyAtTile(
-      _startPosition: PositionStruct,
+    getArmyAt(
+      _position: PositionStruct,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -3516,7 +3541,7 @@ export interface Curio extends BaseContract {
     ): Promise<BigNumber>;
 
     getEntityLevel(
-      _entityID: PromiseOrValue<BigNumberish>,
+      _entity: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -3579,6 +3604,11 @@ export interface Curio extends BaseContract {
 
     getTileAt(
       _position: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getTileRegionTilePositions(
+      _startPosition: PositionStruct,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -4049,13 +4079,13 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    getArmyAt(
-      _position: PositionStruct,
+    getArmiesAtTile(
+      _startPosition: PositionStruct,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    getArmyAtTile(
-      _startPosition: PositionStruct,
+    getArmyAt(
+      _position: PositionStruct,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -4101,7 +4131,7 @@ export interface Curio extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     getEntityLevel(
-      _entityID: PromiseOrValue<BigNumberish>,
+      _entity: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -4164,6 +4194,11 @@ export interface Curio extends BaseContract {
 
     getTileAt(
       _position: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getTileRegionTilePositions(
+      _startPosition: PositionStruct,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

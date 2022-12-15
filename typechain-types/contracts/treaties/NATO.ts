@@ -52,6 +52,7 @@ export interface NATOInterface extends utils.Interface {
     "denounceTreaty()": FunctionFragment;
     "description()": FunctionFragment;
     "diamond()": FunctionFragment;
+    "game()": FunctionFragment;
     "getter()": FunctionFragment;
     "isMemberStates(address)": FunctionFragment;
     "join()": FunctionFragment;
@@ -90,6 +91,7 @@ export interface NATOInterface extends utils.Interface {
       | "denounceTreaty"
       | "description"
       | "diamond"
+      | "game"
       | "getter"
       | "isMemberStates"
       | "join"
@@ -201,6 +203,7 @@ export interface NATOInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "diamond", values?: undefined): string;
+  encodeFunctionData(functionFragment: "game", values?: undefined): string;
   encodeFunctionData(functionFragment: "getter", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "isMemberStates",
@@ -320,6 +323,7 @@ export interface NATOInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "diamond", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "game", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "getter", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "isMemberStates",
@@ -507,6 +511,8 @@ export interface NATO extends BaseContract {
 
     diamond(overrides?: CallOverrides): Promise<[string]>;
 
+    game(overrides?: CallOverrides): Promise<[string]>;
+
     getter(overrides?: CallOverrides): Promise<[string]>;
 
     isMemberStates(
@@ -677,6 +683,8 @@ export interface NATO extends BaseContract {
 
   diamond(overrides?: CallOverrides): Promise<string>;
 
+  game(overrides?: CallOverrides): Promise<string>;
+
   getter(overrides?: CallOverrides): Promise<string>;
 
   isMemberStates(
@@ -845,6 +853,8 @@ export interface NATO extends BaseContract {
 
     diamond(overrides?: CallOverrides): Promise<string>;
 
+    game(overrides?: CallOverrides): Promise<string>;
+
     getter(overrides?: CallOverrides): Promise<string>;
 
     isMemberStates(
@@ -1011,6 +1021,8 @@ export interface NATO extends BaseContract {
     description(overrides?: CallOverrides): Promise<BigNumber>;
 
     diamond(overrides?: CallOverrides): Promise<BigNumber>;
+
+    game(overrides?: CallOverrides): Promise<BigNumber>;
 
     getter(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1182,6 +1194,8 @@ export interface NATO extends BaseContract {
     description(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     diamond(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    game(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getter(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 

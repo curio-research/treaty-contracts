@@ -1210,16 +1210,16 @@ const _abi = [
           },
         ],
         internalType: "struct Position",
-        name: "_position",
+        name: "_startPosition",
         type: "tuple",
       },
     ],
-    name: "getArmyAt",
+    name: "getArmiesAtTile",
     outputs: [
       {
-        internalType: "uint256",
+        internalType: "uint256[]",
         name: "",
-        type: "uint256",
+        type: "uint256[]",
       },
     ],
     stateMutability: "view",
@@ -1241,11 +1241,11 @@ const _abi = [
           },
         ],
         internalType: "struct Position",
-        name: "_startPosition",
+        name: "_position",
         type: "tuple",
       },
     ],
-    name: "getArmyAtTile",
+    name: "getArmyAt",
     outputs: [
       {
         internalType: "uint256",
@@ -1438,7 +1438,7 @@ const _abi = [
     inputs: [
       {
         internalType: "uint256",
-        name: "_entityID",
+        name: "_entity",
         type: "uint256",
       },
     ],
@@ -1741,6 +1741,49 @@ const _abi = [
         internalType: "uint256",
         name: "",
         type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        components: [
+          {
+            internalType: "uint256",
+            name: "x",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "y",
+            type: "uint256",
+          },
+        ],
+        internalType: "struct Position",
+        name: "_startPosition",
+        type: "tuple",
+      },
+    ],
+    name: "getTileRegionTilePositions",
+    outputs: [
+      {
+        components: [
+          {
+            internalType: "uint256",
+            name: "x",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "y",
+            type: "uint256",
+          },
+        ],
+        internalType: "struct Position[]",
+        name: "",
+        type: "tuple[]",
       },
     ],
     stateMutability: "view",

@@ -2,11 +2,13 @@
 pragma solidity ^0.8.13;
 
 import {ITreaty} from "contracts/interfaces/ITreaty.sol";
+import {GameFacet} from "contracts/facets/GameFacet.sol";
 import {GetterFacet} from "contracts/facets/GetterFacet.sol";
 import {AdminFacet} from "contracts/facets/AdminFacet.sol";
 
 contract CurioTreaty is ITreaty {
     address public diamond;
+    GameFacet public game;
     GetterFacet public getter;
     AdminFacet public admin;
     string public name;
@@ -17,12 +19,18 @@ contract CurioTreaty is ITreaty {
         require(_diamond != address(0), "CurioTreaty: Diamond address required");
 
         diamond = _diamond;
+        game = GameFacet(_diamond);
         getter = GetterFacet(_diamond);
         admin = AdminFacet(_diamond);
     }
 
     modifier onlyGame() {
         require(msg.sender == diamond, "CurioTreaty: Only game can call");
+        _;
+    }
+
+    modifier onlySigner() {
+        require(getter.getNationTreatySignature(getter.getEntityByAddress(msg.sender), getter.getEntityByAddress(address(this))) != 0, "CurioTreaty: Only signer can call");
         _;
     }
 

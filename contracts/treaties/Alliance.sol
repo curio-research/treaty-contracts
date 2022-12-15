@@ -4,6 +4,7 @@ pragma solidity ^0.8.13;
 import {CurioTreaty} from "contracts/CurioTreaty.sol";
 import {GetterFacet} from "contracts/facets/GetterFacet.sol";
 import {CurioERC20} from "contracts/tokens/CurioERC20.sol";
+import {Position} from "contracts/libraries/Types.sol";
 import {console} from "forge-std/console.sol";
 
 contract Alliance is CurioTreaty {
@@ -41,6 +42,37 @@ contract Alliance is CurioTreaty {
         super.leave();
     }
 
+    /**
+     * @dev Battle a target army belonging to a non-ally nation with all nearby ally armies.
+     * @param _targetArmyID target army entity
+     */
+    function besiege(uint256 _targetArmyID) public onlySigner {
+        // Check if target army is in a non-ally nation
+        uint256 targetNationID = getter.getNation(_targetArmyID);
+        uint256 treatyID = getter.getEntityByAddress(address(this));
+        require(getter.getNationTreatySignature(targetNationID, treatyID) == 0, "Alliance: Cannot besiege army of ally nation");
+
+        // Get tiles beloning to the 9-tile region around the target army
+        // Note: Need to be updated if attackRange is increased to above tileWidth
+        Position[] memory nearbyTilePositions = getter.getTileRegionTilePositions(getter.getPositionExternal("StartPosition", _targetArmyID));
+
+        // Attack target army with ally armies in range
+        for (uint256 i; i < nearbyTilePositions.length; i++) {
+            uint256[] memory armyIDs = getter.getArmiesAtTile(nearbyTilePositions[i]);
+
+            for (uint256 j; j < armyIDs.length; j++) {
+                uint256 armyNationID = getter.getNation(armyIDs[j]);
+                if (getter.getNationTreatySignature(armyNationID, treatyID) != 0) {
+                    // Use army to battle target army
+                    game.battle(armyIDs[j], _targetArmyID);
+
+                    // Return early if target army is dead
+                    if (getter.getNation(_targetArmyID) == 0) return;
+                }
+            }
+        }
+    }
+
     function approveBattle(uint256 _nationID, bytes memory _encodedParams) public view override returns (bool) {
         // Disapprove if target nation is an ally
         (, uint256 targetID) = abi.decode(_encodedParams, (uint256, uint256));
@@ -49,13 +81,5 @@ contract Alliance is CurioTreaty {
         if (getter.getNationTreatySignature(targetNationID, treatyID) != 0) return false;
 
         return super.approveBattle(_nationID, _encodedParams);
-    }
-
-    /**
-     * @dev Attack a target army belonging to a non-ally nation with all nearby ally armies.
-     * @param _targetArmyID target army entity
-     */
-    function besiege(uint256 _targetArmyID) public {
-        // TODO: Implement
     }
 }

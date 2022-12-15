@@ -52,6 +52,7 @@ export interface FTXInterface extends utils.Interface {
     "description()": FunctionFragment;
     "diamond()": FunctionFragment;
     "fttToken()": FunctionFragment;
+    "game()": FunctionFragment;
     "getter()": FunctionFragment;
     "goldToken()": FunctionFragment;
     "isBankrupt()": FunctionFragment;
@@ -93,6 +94,7 @@ export interface FTXInterface extends utils.Interface {
       | "description"
       | "diamond"
       | "fttToken"
+      | "game"
       | "getter"
       | "goldToken"
       | "isBankrupt"
@@ -204,6 +206,7 @@ export interface FTXInterface extends utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "diamond", values?: undefined): string;
   encodeFunctionData(functionFragment: "fttToken", values?: undefined): string;
+  encodeFunctionData(functionFragment: "game", values?: undefined): string;
   encodeFunctionData(functionFragment: "getter", values?: undefined): string;
   encodeFunctionData(functionFragment: "goldToken", values?: undefined): string;
   encodeFunctionData(
@@ -323,6 +326,7 @@ export interface FTXInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "diamond", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "fttToken", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "game", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "getter", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "goldToken", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "isBankrupt", data: BytesLike): Result;
@@ -511,6 +515,8 @@ export interface FTX extends BaseContract {
 
     fttToken(overrides?: CallOverrides): Promise<[string]>;
 
+    game(overrides?: CallOverrides): Promise<[string]>;
+
     getter(overrides?: CallOverrides): Promise<[string]>;
 
     goldToken(overrides?: CallOverrides): Promise<[string]>;
@@ -684,6 +690,8 @@ export interface FTX extends BaseContract {
   diamond(overrides?: CallOverrides): Promise<string>;
 
   fttToken(overrides?: CallOverrides): Promise<string>;
+
+  game(overrides?: CallOverrides): Promise<string>;
 
   getter(overrides?: CallOverrides): Promise<string>;
 
@@ -859,6 +867,8 @@ export interface FTX extends BaseContract {
 
     fttToken(overrides?: CallOverrides): Promise<string>;
 
+    game(overrides?: CallOverrides): Promise<string>;
+
     getter(overrides?: CallOverrides): Promise<string>;
 
     goldToken(overrides?: CallOverrides): Promise<string>;
@@ -1029,6 +1039,8 @@ export interface FTX extends BaseContract {
     diamond(overrides?: CallOverrides): Promise<BigNumber>;
 
     fttToken(overrides?: CallOverrides): Promise<BigNumber>;
+
+    game(overrides?: CallOverrides): Promise<BigNumber>;
 
     getter(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1204,6 +1216,8 @@ export interface FTX extends BaseContract {
     diamond(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     fttToken(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    game(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getter(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
