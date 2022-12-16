@@ -206,6 +206,7 @@ library Templates {
     function addTreaty(
         address _address,
         string memory _name,
+        string memory _description,
         string memory _abiHash
     ) public returns (uint256) {
         uint256 treatyID = ECSLib.addEntity();
@@ -213,6 +214,7 @@ library Templates {
         ECSLib.setString("Tag", treatyID, "Treaty");
         ECSLib.setUint("InitTimestamp", treatyID, block.timestamp);
         ECSLib.setString("Name", treatyID, _name);
+        ECSLib.setString("Description", treatyID, _description);
         ECSLib.setString("ABIHash", treatyID, _abiHash);
         ECSLib.setAddress("Address", treatyID, _address);
 

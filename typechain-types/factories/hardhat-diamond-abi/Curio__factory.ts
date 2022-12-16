@@ -134,35 +134,6 @@ const _abi = [
   {
     inputs: [
       {
-        internalType: "address",
-        name: "_address",
-        type: "address",
-      },
-      {
-        internalType: "string",
-        name: "_name",
-        type: "string",
-      },
-      {
-        internalType: "string",
-        name: "_abiHash",
-        type: "string",
-      },
-    ],
-    name: "addTreaty",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "treatyID",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
         internalType: "string",
         name: "_inventoryType",
         type: "string",
@@ -494,6 +465,30 @@ const _abi = [
     ],
     name: "registerTemplateShortcuts",
     outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "_address",
+        type: "address",
+      },
+      {
+        internalType: "string",
+        name: "_abiHash",
+        type: "string",
+      },
+    ],
+    name: "registerTreaty",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "treatyID",
+        type: "uint256",
+      },
+    ],
     stateMutability: "nonpayable",
     type: "function",
   },

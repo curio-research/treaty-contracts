@@ -31,11 +31,32 @@ library GameLib {
     // ----------------------------------------------------------
 
     function registerComponents(address _gameAddr, ComponentSpec[] memory _componentSpecs) public {
-        for (uint256 i = 0; i < _componentSpecs.length; i++) {
-            ComponentSpec memory spec = _componentSpecs[i];
+        require(gs().componentNames.length == 0, "CURIO: Components already registered");
+        require(_componentSpecs.length > 1, "CURIO: Must have at least 2 components");
+
+        ComponentSpec memory spec;
+        address addr;
+        uint256 componentID;
+
+        // Register the first component which must be "Address"
+        spec = _componentSpecs[0];
+        require(spec.valueType == ValueType.ADDRESS && strEq(spec.name, "Address"), "CURIO: First component must be Address");
+        addr = address(new AddressComponent(_gameAddr));
+
+        // Record component in GameState
+        gs().components[spec.name] = addr;
+        gs().componentNames.push(spec.name);
+
+        // Record identifier entity for component
+        componentID = ECSLib.addEntity();
+        ECSLib.setAddress("Address", componentID, addr);
+        uint256 addressComponentID = componentID;
+
+        // Register the rest of the components
+        for (uint256 i = 1; i < _componentSpecs.length; i++) {
+            spec = _componentSpecs[i];
 
             // Create corresponding typed component and register its address
-            address addr;
             if (spec.valueType == ValueType.ADDRESS) {
                 addr = address(new AddressComponent(_gameAddr));
             } else if (spec.valueType == ValueType.BOOL) {
@@ -53,16 +74,21 @@ library GameLib {
             } else {
                 addr = address(new Component(_gameAddr));
             }
+
+            // Record component in GameState
             gs().components[spec.name] = addr;
+            gs().componentNames.push(spec.name);
 
             // Record identifier entity for component
-            uint256 componentID = ECSLib.addEntity();
+            componentID = ECSLib.addEntity();
             ECSLib.setBool("IsComponent", componentID);
-
-            gs().componentNames.push(spec.name);
+            ECSLib.setAddress("Address", componentID, addr);
 
             emit ECSLib.NewComponent(spec.name, componentID);
         }
+
+        // Add "IsComponent" to address component
+        ECSLib.setBool("IsComponent", addressComponentID);
     }
 
     function initializeTile(Position memory _startPosition) public returns (uint256) {
@@ -920,6 +946,7 @@ library GameLib {
     }
 
     function strEq(string memory _s1, string memory _s2) internal pure returns (bool) {
+        if (bytes(_s1).length != bytes(_s2).length) return false;
         return (keccak256(abi.encodePacked((_s1))) == keccak256(abi.encodePacked((_s2))));
     }
 

@@ -32,10 +32,16 @@ contract TreatyTest is Test, DiamondDeployTest {
 
         // Deployer registers TestTreaty treaty and drips gold and food to Player 2
         vm.startPrank(deployer);
-        uint256 testTreatyID = admin.addTreaty(address(testTreaty), testTreaty.name(), "placeholder ABI");
+        uint256 testTreatyID = admin.registerTreaty(address(testTreaty), "placeholder ABI");
         admin.dripToken(nation2CapitalAddr, "Gold", 1000000000);
         admin.dripToken(nation2CapitalAddr, "Food", 1000000000);
         vm.stopPrank();
+
+        // Check treaty ECS data
+        assertEq(abi.decode(getter.getComponent("Tag").getBytesValue(testTreatyID), (string)), "Treaty");
+        assertEq(abi.decode(getter.getComponent("Name").getBytesValue(testTreatyID), (string)), "Test Treaty");
+        assertEq(abi.decode(getter.getComponent("Description").getBytesValue(testTreatyID), (string)), "Treaty for testing");
+        assertEq(abi.decode(getter.getComponent("ABIHash").getBytesValue(testTreatyID), (string)), "placeholder ABI");
 
         // Player 2 joins TestTreaty treaty
         vm.startPrank(player2);
@@ -250,7 +256,7 @@ contract TreatyTest is Test, DiamondDeployTest {
 
         // Deployer registers FTX treaty
         vm.startPrank(deployer);
-        admin.addTreaty(address(ftx), ftx.name(), "placeholder ABI");
+        admin.registerTreaty(address(ftx), "placeholder ABI");
         vm.stopPrank();
 
         // Player 1 deposits to FTX

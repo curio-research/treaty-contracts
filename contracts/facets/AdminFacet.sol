@@ -8,6 +8,7 @@ import {Templates} from "contracts/libraries/Templates.sol";
 import {Set} from "contracts/Set.sol";
 import {GameLib} from "contracts/libraries/GameLib.sol";
 import {CurioERC20} from "contracts/tokens/CurioERC20.sol";
+import {CurioTreaty} from "contracts/CurioTreaty.sol";
 import {console} from "forge-std/console.sol";
 
 /// @title Admin facet
@@ -207,20 +208,18 @@ contract AdminFacet is UseStorage {
     }
 
     /**
-     * @dev Add a new treaty to the game.
+     * @dev Register a new treaty for the game.
      * @param _address deployed treaty address
-     * @param _name treaty name
      * @param _abiHash treaty abi hash
      * @return treatyID registered treaty entity
      * @notice This function is currently used for permissioned deployment of treaties. In the future, treaties will be
      *         deployed permissionlessly by players.
      */
-    function addTreaty(
-        address _address,
-        string memory _name,
-        string memory _abiHash
-    ) external onlyAuthorized returns (uint256 treatyID) {
-        treatyID = Templates.addTreaty(_address, _name, _abiHash);
+    function registerTreaty(address _address, string memory _abiHash) external onlyAuthorized returns (uint256 treatyID) {
+        CurioTreaty treaty = CurioTreaty(_address);
+        string memory _name = treaty.name();
+        string memory _description = treaty.description();
+        treatyID = Templates.addTreaty(_address, _name, _description, _abiHash);
     }
 
     function generateNewAddress() external onlyAuthorized returns (address) {

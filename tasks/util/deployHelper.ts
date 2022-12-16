@@ -90,7 +90,7 @@ export const deployTreaty = async (name: string, admin: Signer, hre: HardhatRunt
   const treaty = await deployProxy<any>(name, admin, hre, [diamond.address]);
   const abiHash = await uploadABIToIPFS(hre, name);
   console.log(chalk.dim(`✦ Treaty ${name} deployed and ABI uploaded to IPFS at hash=${abiHash}`));
-  diamond.connect(admin).addTreaty(treaty.address, name, abiHash, { gasLimit });
+  diamond.connect(admin).registerTreaty(treaty.address, abiHash, { gasLimit });
 };
 
 /**
