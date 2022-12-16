@@ -33,6 +33,9 @@ contract GameFacet is UseStorage {
         uint256 tileID = GameLib.getTileAt(tilePosition);
         GameLib.passableTerrainCheck(tilePosition);
 
+        // Verify that tile can host capital
+        require(ECSLib.getBool("CanHostCapital", tileID), "CURIO: Tile cannot host capital");
+
         // Verify that tile is neutral
         require(ECSLib.getUint("Nation", tileID) == NULL, "CURIO: Tile unavailable");
 
@@ -135,6 +138,9 @@ contract GameFacet is UseStorage {
         if (gs().worldConstants.gameMode == GameMode.BATTLE_ROYALE) {
             require(!GameLib.coincident(_newTilePosition, GameLib.getMapCenterTilePosition()), "CURIO: Capital cannot be on supertile");
         }
+
+        // Verify that target tile can host capital
+        require(ECSLib.getBool("CanHostCapital", GameLib.getTileAt(_newTilePosition)), "CURIO: Tile cannot host capital");
 
         // Capital at chaos cannot move
         GameLib.capitalSackRecoveryCheck(_capitalID);
@@ -442,6 +448,9 @@ contract GameFacet is UseStorage {
         // Army cannot move in enemy territory
         uint256 tileID = GameLib.getTileAt(tilePosition);
         GameLib.neutralOrOwnedTileCheck(tileID, nationID);
+
+        // Verify that target tile is not locked
+        require(!ECSLib.getBool("IsLocked", tileID), "CURIO: Target tile is locked");
 
         // Verify no gather
         require(GameLib.getArmyGather(_armyID) == NULL, "CURIO: Need to end gather first");

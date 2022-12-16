@@ -272,6 +272,31 @@ const _abi = [
   {
     inputs: [
       {
+        components: [
+          {
+            internalType: "uint256",
+            name: "x",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "y",
+            type: "uint256",
+          },
+        ],
+        internalType: "struct Position[]",
+        name: "_tilePositions",
+        type: "tuple[]",
+      },
+    ],
+    name: "disallowHostCapital",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
         internalType: "address",
         name: "_address",
         type: "address",
@@ -331,6 +356,31 @@ const _abi = [
       },
     ],
     name: "giftTileAndResourceAt",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        components: [
+          {
+            internalType: "uint256",
+            name: "x",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "y",
+            type: "uint256",
+          },
+        ],
+        internalType: "struct Position[]",
+        name: "_tilePositions",
+        type: "tuple[]",
+      },
+    ],
+    name: "lockTiles",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -577,6 +627,31 @@ const _abi = [
       },
     ],
     name: "storeEncodedColumnBatches",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        components: [
+          {
+            internalType: "uint256",
+            name: "x",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "y",
+            type: "uint256",
+          },
+        ],
+        internalType: "struct Position[]",
+        name: "_tilePositions",
+        type: "tuple[]",
+      },
+    ],
+    name: "unlockTiles",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",

@@ -147,9 +147,11 @@ export interface CurioInterface extends utils.Interface {
     "bulkInitializeTiles((uint256,uint256)[])": FunctionFragment;
     "delegateGameFunction(uint256,string,bool)": FunctionFragment;
     "delegateGameFunction(uint256,string,uint256,bool)": FunctionFragment;
+    "disallowHostCapital((uint256,uint256)[])": FunctionFragment;
     "dripToken(address,string,uint256)": FunctionFragment;
     "generateNewAddress()": FunctionFragment;
     "giftTileAndResourceAt((uint256,uint256),uint256)": FunctionFragment;
+    "lockTiles((uint256,uint256)[])": FunctionFragment;
     "onlyQuery((uint256,uint256))": FunctionFragment;
     "onlySet(uint256,uint256)": FunctionFragment;
     "reactivateNation(address)": FunctionFragment;
@@ -163,6 +165,7 @@ export interface CurioInterface extends utils.Interface {
     "spawnResource((uint256,uint256),string)": FunctionFragment;
     "stopGame()": FunctionFragment;
     "storeEncodedColumnBatches(uint256[][])": FunctionFragment;
+    "unlockTiles((uint256,uint256)[])": FunctionFragment;
     "updateInventoryAmount(uint256,uint256)": FunctionFragment;
     "diamondCut((address,uint8,bytes4[])[],address,bytes)": FunctionFragment;
     "facetAddress(bytes4)": FunctionFragment;
@@ -263,9 +266,11 @@ export interface CurioInterface extends utils.Interface {
       | "bulkInitializeTiles"
       | "delegateGameFunction(uint256,string,bool)"
       | "delegateGameFunction(uint256,string,uint256,bool)"
+      | "disallowHostCapital"
       | "dripToken"
       | "generateNewAddress"
       | "giftTileAndResourceAt"
+      | "lockTiles"
       | "onlyQuery"
       | "onlySet"
       | "reactivateNation"
@@ -279,6 +284,7 @@ export interface CurioInterface extends utils.Interface {
       | "spawnResource"
       | "stopGame"
       | "storeEncodedColumnBatches"
+      | "unlockTiles"
       | "updateInventoryAmount"
       | "diamondCut"
       | "facetAddress"
@@ -429,6 +435,10 @@ export interface CurioInterface extends utils.Interface {
     ]
   ): string;
   encodeFunctionData(
+    functionFragment: "disallowHostCapital",
+    values: [PositionStruct[]]
+  ): string;
+  encodeFunctionData(
     functionFragment: "dripToken",
     values: [
       PromiseOrValue<string>,
@@ -443,6 +453,10 @@ export interface CurioInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "giftTileAndResourceAt",
     values: [PositionStruct, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "lockTiles",
+    values: [PositionStruct[]]
   ): string;
   encodeFunctionData(
     functionFragment: "onlyQuery",
@@ -496,6 +510,10 @@ export interface CurioInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "storeEncodedColumnBatches",
     values: [PromiseOrValue<BigNumberish>[][]]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "unlockTiles",
+    values: [PositionStruct[]]
   ): string;
   encodeFunctionData(
     functionFragment: "updateInventoryAmount",
@@ -886,6 +904,10 @@ export interface CurioInterface extends utils.Interface {
     functionFragment: "delegateGameFunction(uint256,string,uint256,bool)",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "disallowHostCapital",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "dripToken", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "generateNewAddress",
@@ -895,6 +917,7 @@ export interface CurioInterface extends utils.Interface {
     functionFragment: "giftTileAndResourceAt",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "lockTiles", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "onlyQuery", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "onlySet", data: BytesLike): Result;
   decodeFunctionResult(
@@ -936,6 +959,10 @@ export interface CurioInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "stopGame", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "storeEncodedColumnBatches",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "unlockTiles",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -1413,6 +1440,11 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    disallowHostCapital(
+      _tilePositions: PositionStruct[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     dripToken(
       _address: PromiseOrValue<string>,
       _tokenName: PromiseOrValue<string>,
@@ -1427,6 +1459,11 @@ export interface Curio extends BaseContract {
     giftTileAndResourceAt(
       _startPosition: PositionStruct,
       _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    lockTiles(
+      _tilePositions: PositionStruct[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -1498,6 +1535,11 @@ export interface Curio extends BaseContract {
 
     storeEncodedColumnBatches(
       _colBatches: PromiseOrValue<BigNumberish>[][],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    unlockTiles(
+      _tilePositions: PositionStruct[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -2012,6 +2054,11 @@ export interface Curio extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  disallowHostCapital(
+    _tilePositions: PositionStruct[],
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   dripToken(
     _address: PromiseOrValue<string>,
     _tokenName: PromiseOrValue<string>,
@@ -2026,6 +2073,11 @@ export interface Curio extends BaseContract {
   giftTileAndResourceAt(
     _startPosition: PositionStruct,
     _nationID: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  lockTiles(
+    _tilePositions: PositionStruct[],
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -2097,6 +2149,11 @@ export interface Curio extends BaseContract {
 
   storeEncodedColumnBatches(
     _colBatches: PromiseOrValue<BigNumberish>[][],
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  unlockTiles(
+    _tilePositions: PositionStruct[],
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -2599,6 +2656,11 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    disallowHostCapital(
+      _tilePositions: PositionStruct[],
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     dripToken(
       _address: PromiseOrValue<string>,
       _tokenName: PromiseOrValue<string>,
@@ -2611,6 +2673,11 @@ export interface Curio extends BaseContract {
     giftTileAndResourceAt(
       _startPosition: PositionStruct,
       _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    lockTiles(
+      _tilePositions: PositionStruct[],
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -2680,6 +2747,11 @@ export interface Curio extends BaseContract {
 
     storeEncodedColumnBatches(
       _colBatches: PromiseOrValue<BigNumberish>[][],
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    unlockTiles(
+      _tilePositions: PositionStruct[],
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -3243,6 +3315,11 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    disallowHostCapital(
+      _tilePositions: PositionStruct[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     dripToken(
       _address: PromiseOrValue<string>,
       _tokenName: PromiseOrValue<string>,
@@ -3257,6 +3334,11 @@ export interface Curio extends BaseContract {
     giftTileAndResourceAt(
       _startPosition: PositionStruct,
       _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    lockTiles(
+      _tilePositions: PositionStruct[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -3328,6 +3410,11 @@ export interface Curio extends BaseContract {
 
     storeEncodedColumnBatches(
       _colBatches: PromiseOrValue<BigNumberish>[][],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    unlockTiles(
+      _tilePositions: PositionStruct[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -3833,6 +3920,11 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
+    disallowHostCapital(
+      _tilePositions: PositionStruct[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
     dripToken(
       _address: PromiseOrValue<string>,
       _tokenName: PromiseOrValue<string>,
@@ -3847,6 +3939,11 @@ export interface Curio extends BaseContract {
     giftTileAndResourceAt(
       _startPosition: PositionStruct,
       _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    lockTiles(
+      _tilePositions: PositionStruct[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -3918,6 +4015,11 @@ export interface Curio extends BaseContract {
 
     storeEncodedColumnBatches(
       _colBatches: PromiseOrValue<BigNumberish>[][],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    unlockTiles(
+      _tilePositions: PositionStruct[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

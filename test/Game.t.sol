@@ -617,4 +617,8 @@ contract GameTest is Test, DiamondDeployTest {
         assertEq(horsemanToken.checkBalanceOf(nation1CapitalAddr), 1000);
         vm.stopPrank();
     }
+
+    function testBattleRoyaleMode() public {
+        // TODO: implement
+    }
 }

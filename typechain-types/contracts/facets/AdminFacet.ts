@@ -58,9 +58,11 @@ export interface AdminFacetInterface extends utils.Interface {
     "bulkAddGameParameters(string[],uint256[])": FunctionFragment;
     "bulkInitializeTiles((uint256,uint256)[])": FunctionFragment;
     "delegateGameFunction(uint256,string,bool)": FunctionFragment;
+    "disallowHostCapital((uint256,uint256)[])": FunctionFragment;
     "dripToken(address,string,uint256)": FunctionFragment;
     "generateNewAddress()": FunctionFragment;
     "giftTileAndResourceAt((uint256,uint256),uint256)": FunctionFragment;
+    "lockTiles((uint256,uint256)[])": FunctionFragment;
     "onlyQuery((uint256,uint256))": FunctionFragment;
     "onlySet(uint256,uint256)": FunctionFragment;
     "reactivateNation(address)": FunctionFragment;
@@ -74,6 +76,7 @@ export interface AdminFacetInterface extends utils.Interface {
     "spawnResource((uint256,uint256),string)": FunctionFragment;
     "stopGame()": FunctionFragment;
     "storeEncodedColumnBatches(uint256[][])": FunctionFragment;
+    "unlockTiles((uint256,uint256)[])": FunctionFragment;
     "updateInventoryAmount(uint256,uint256)": FunctionFragment;
   };
 
@@ -92,9 +95,11 @@ export interface AdminFacetInterface extends utils.Interface {
       | "bulkAddGameParameters"
       | "bulkInitializeTiles"
       | "delegateGameFunction"
+      | "disallowHostCapital"
       | "dripToken"
       | "generateNewAddress"
       | "giftTileAndResourceAt"
+      | "lockTiles"
       | "onlyQuery"
       | "onlySet"
       | "reactivateNation"
@@ -108,6 +113,7 @@ export interface AdminFacetInterface extends utils.Interface {
       | "spawnResource"
       | "stopGame"
       | "storeEncodedColumnBatches"
+      | "unlockTiles"
       | "updateInventoryAmount"
   ): FunctionFragment;
 
@@ -168,6 +174,10 @@ export interface AdminFacetInterface extends utils.Interface {
     ]
   ): string;
   encodeFunctionData(
+    functionFragment: "disallowHostCapital",
+    values: [PositionStruct[]]
+  ): string;
+  encodeFunctionData(
     functionFragment: "dripToken",
     values: [
       PromiseOrValue<string>,
@@ -182,6 +192,10 @@ export interface AdminFacetInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "giftTileAndResourceAt",
     values: [PositionStruct, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "lockTiles",
+    values: [PositionStruct[]]
   ): string;
   encodeFunctionData(
     functionFragment: "onlyQuery",
@@ -237,6 +251,10 @@ export interface AdminFacetInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>[][]]
   ): string;
   encodeFunctionData(
+    functionFragment: "unlockTiles",
+    values: [PositionStruct[]]
+  ): string;
+  encodeFunctionData(
     functionFragment: "updateInventoryAmount",
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
   ): string;
@@ -284,6 +302,10 @@ export interface AdminFacetInterface extends utils.Interface {
     functionFragment: "delegateGameFunction",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "disallowHostCapital",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "dripToken", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "generateNewAddress",
@@ -293,6 +315,7 @@ export interface AdminFacetInterface extends utils.Interface {
     functionFragment: "giftTileAndResourceAt",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "lockTiles", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "onlyQuery", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "onlySet", data: BytesLike): Result;
   decodeFunctionResult(
@@ -334,6 +357,10 @@ export interface AdminFacetInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "stopGame", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "storeEncodedColumnBatches",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "unlockTiles",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -443,6 +470,11 @@ export interface AdminFacet extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    disallowHostCapital(
+      _tilePositions: PositionStruct[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     dripToken(
       _address: PromiseOrValue<string>,
       _tokenName: PromiseOrValue<string>,
@@ -457,6 +489,11 @@ export interface AdminFacet extends BaseContract {
     giftTileAndResourceAt(
       _startPosition: PositionStruct,
       _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    lockTiles(
+      _tilePositions: PositionStruct[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -528,6 +565,11 @@ export interface AdminFacet extends BaseContract {
 
     storeEncodedColumnBatches(
       _colBatches: PromiseOrValue<BigNumberish>[][],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    unlockTiles(
+      _tilePositions: PositionStruct[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -610,6 +652,11 @@ export interface AdminFacet extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  disallowHostCapital(
+    _tilePositions: PositionStruct[],
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   dripToken(
     _address: PromiseOrValue<string>,
     _tokenName: PromiseOrValue<string>,
@@ -624,6 +671,11 @@ export interface AdminFacet extends BaseContract {
   giftTileAndResourceAt(
     _startPosition: PositionStruct,
     _nationID: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  lockTiles(
+    _tilePositions: PositionStruct[],
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -695,6 +747,11 @@ export interface AdminFacet extends BaseContract {
 
   storeEncodedColumnBatches(
     _colBatches: PromiseOrValue<BigNumberish>[][],
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  unlockTiles(
+    _tilePositions: PositionStruct[],
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -773,6 +830,11 @@ export interface AdminFacet extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    disallowHostCapital(
+      _tilePositions: PositionStruct[],
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     dripToken(
       _address: PromiseOrValue<string>,
       _tokenName: PromiseOrValue<string>,
@@ -785,6 +847,11 @@ export interface AdminFacet extends BaseContract {
     giftTileAndResourceAt(
       _startPosition: PositionStruct,
       _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    lockTiles(
+      _tilePositions: PositionStruct[],
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -854,6 +921,11 @@ export interface AdminFacet extends BaseContract {
 
     storeEncodedColumnBatches(
       _colBatches: PromiseOrValue<BigNumberish>[][],
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    unlockTiles(
+      _tilePositions: PositionStruct[],
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -939,6 +1011,11 @@ export interface AdminFacet extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    disallowHostCapital(
+      _tilePositions: PositionStruct[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     dripToken(
       _address: PromiseOrValue<string>,
       _tokenName: PromiseOrValue<string>,
@@ -953,6 +1030,11 @@ export interface AdminFacet extends BaseContract {
     giftTileAndResourceAt(
       _startPosition: PositionStruct,
       _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    lockTiles(
+      _tilePositions: PositionStruct[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -1024,6 +1106,11 @@ export interface AdminFacet extends BaseContract {
 
     storeEncodedColumnBatches(
       _colBatches: PromiseOrValue<BigNumberish>[][],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    unlockTiles(
+      _tilePositions: PositionStruct[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -1107,6 +1194,11 @@ export interface AdminFacet extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
+    disallowHostCapital(
+      _tilePositions: PositionStruct[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
     dripToken(
       _address: PromiseOrValue<string>,
       _tokenName: PromiseOrValue<string>,
@@ -1121,6 +1213,11 @@ export interface AdminFacet extends BaseContract {
     giftTileAndResourceAt(
       _startPosition: PositionStruct,
       _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    lockTiles(
+      _tilePositions: PositionStruct[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1192,6 +1289,11 @@ export interface AdminFacet extends BaseContract {
 
     storeEncodedColumnBatches(
       _colBatches: PromiseOrValue<BigNumberish>[][],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    unlockTiles(
+      _tilePositions: PositionStruct[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

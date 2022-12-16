@@ -117,6 +117,9 @@ library GameLib {
         Templates.addInventory(tileID, gs().templates["Guard"]);
         CurioERC20 guardToken = getTokenContract("Guard");
 
+        // Tile can host capital by default
+        ECSLib.setBool("CanHostCapital", tileID);
+
         // Special: battle royale mode center tile initialization
         if (gs().worldConstants.gameMode == GameMode.BATTLE_ROYALE) {
             if (coincident(_startPosition, getMapCenterTilePosition())) {
