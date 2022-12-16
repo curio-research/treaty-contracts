@@ -140,7 +140,6 @@ export interface CurioInterface extends utils.Interface {
     "addInventory(uint256,string)": FunctionFragment;
     "addResourceTemplate(string,address)": FunctionFragment;
     "addSigner(uint256)": FunctionFragment;
-    "addTreaty(address,string,string)": FunctionFragment;
     "addTroopTemplate(string,uint256,uint256,uint256,uint256,address)": FunctionFragment;
     "adminInitializeTile((uint256,uint256))": FunctionFragment;
     "authorizeGame(address)": FunctionFragment;
@@ -157,6 +156,7 @@ export interface CurioInterface extends utils.Interface {
     "registerComponents(address,(string,uint8)[])": FunctionFragment;
     "registerFunctionNames(string[])": FunctionFragment;
     "registerTemplateShortcuts(string[],uint256[])": FunctionFragment;
+    "registerTreaty(address,string)": FunctionFragment;
     "removeEntity(uint256)": FunctionFragment;
     "removeSigner(uint256)": FunctionFragment;
     "setComponentValue(string,uint256,bytes)": FunctionFragment;
@@ -256,7 +256,6 @@ export interface CurioInterface extends utils.Interface {
       | "addInventory"
       | "addResourceTemplate"
       | "addSigner"
-      | "addTreaty"
       | "addTroopTemplate"
       | "adminInitializeTile"
       | "authorizeGame"
@@ -273,6 +272,7 @@ export interface CurioInterface extends utils.Interface {
       | "registerComponents"
       | "registerFunctionNames"
       | "registerTemplateShortcuts"
+      | "registerTreaty"
       | "removeEntity"
       | "removeSigner"
       | "setComponentValue"
@@ -386,14 +386,6 @@ export interface CurioInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
-    functionFragment: "addTreaty",
-    values: [
-      PromiseOrValue<string>,
-      PromiseOrValue<string>,
-      PromiseOrValue<string>
-    ]
-  ): string;
-  encodeFunctionData(
     functionFragment: "addTroopTemplate",
     values: [
       PromiseOrValue<string>,
@@ -476,6 +468,10 @@ export interface CurioInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "registerTemplateShortcuts",
     values: [PromiseOrValue<string>[], PromiseOrValue<BigNumberish>[]]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "registerTreaty",
+    values: [PromiseOrValue<string>, PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "removeEntity",
@@ -863,7 +859,6 @@ export interface CurioInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "addSigner", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "addTreaty", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "addTroopTemplate",
     data: BytesLike
@@ -917,6 +912,10 @@ export interface CurioInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "registerTemplateShortcuts",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "registerTreaty",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -1371,13 +1370,6 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    addTreaty(
-      _address: PromiseOrValue<string>,
-      _name: PromiseOrValue<string>,
-      _abiHash: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
     addTroopTemplate(
       _inventoryType: PromiseOrValue<string>,
       _health: PromiseOrValue<BigNumberish>,
@@ -1471,6 +1463,12 @@ export interface Curio extends BaseContract {
     registerTemplateShortcuts(
       _names: PromiseOrValue<string>[],
       _IDs: PromiseOrValue<BigNumberish>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    registerTreaty(
+      _address: PromiseOrValue<string>,
+      _abiHash: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -1973,13 +1971,6 @@ export interface Curio extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  addTreaty(
-    _address: PromiseOrValue<string>,
-    _name: PromiseOrValue<string>,
-    _abiHash: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
   addTroopTemplate(
     _inventoryType: PromiseOrValue<string>,
     _health: PromiseOrValue<BigNumberish>,
@@ -2073,6 +2064,12 @@ export interface Curio extends BaseContract {
   registerTemplateShortcuts(
     _names: PromiseOrValue<string>[],
     _IDs: PromiseOrValue<BigNumberish>[],
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  registerTreaty(
+    _address: PromiseOrValue<string>,
+    _abiHash: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -2563,13 +2560,6 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    addTreaty(
-      _address: PromiseOrValue<string>,
-      _name: PromiseOrValue<string>,
-      _abiHash: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     addTroopTemplate(
       _inventoryType: PromiseOrValue<string>,
       _health: PromiseOrValue<BigNumberish>,
@@ -2663,6 +2653,12 @@ export interface Curio extends BaseContract {
       _IDs: PromiseOrValue<BigNumberish>[],
       overrides?: CallOverrides
     ): Promise<void>;
+
+    registerTreaty(
+      _address: PromiseOrValue<string>,
+      _abiHash: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     removeEntity(
       _entity: PromiseOrValue<BigNumberish>,
@@ -3210,13 +3206,6 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    addTreaty(
-      _address: PromiseOrValue<string>,
-      _name: PromiseOrValue<string>,
-      _abiHash: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
     addTroopTemplate(
       _inventoryType: PromiseOrValue<string>,
       _health: PromiseOrValue<BigNumberish>,
@@ -3310,6 +3299,12 @@ export interface Curio extends BaseContract {
     registerTemplateShortcuts(
       _names: PromiseOrValue<string>[],
       _IDs: PromiseOrValue<BigNumberish>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    registerTreaty(
+      _address: PromiseOrValue<string>,
+      _abiHash: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -3803,13 +3798,6 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    addTreaty(
-      _address: PromiseOrValue<string>,
-      _name: PromiseOrValue<string>,
-      _abiHash: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
     addTroopTemplate(
       _inventoryType: PromiseOrValue<string>,
       _health: PromiseOrValue<BigNumberish>,
@@ -3903,6 +3891,12 @@ export interface Curio extends BaseContract {
     registerTemplateShortcuts(
       _names: PromiseOrValue<string>[],
       _IDs: PromiseOrValue<BigNumberish>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    registerTreaty(
+      _address: PromiseOrValue<string>,
+      _abiHash: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
