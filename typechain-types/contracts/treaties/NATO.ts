@@ -55,11 +55,11 @@ export interface NATOInterface extends utils.Interface {
     "game()": FunctionFragment;
     "getter()": FunctionFragment;
     "isMemberStates(address)": FunctionFragment;
-    "join()": FunctionFragment;
     "joinTreaty()": FunctionFragment;
-    "leave()": FunctionFragment;
     "memberStates(uint256)": FunctionFragment;
     "name()": FunctionFragment;
+    "treatyJoin()": FunctionFragment;
+    "treatyLeave()": FunctionFragment;
   };
 
   getFunction(
@@ -94,11 +94,11 @@ export interface NATOInterface extends utils.Interface {
       | "game"
       | "getter"
       | "isMemberStates"
-      | "join"
       | "joinTreaty"
-      | "leave"
       | "memberStates"
       | "name"
+      | "treatyJoin"
+      | "treatyLeave"
   ): FunctionFragment;
 
   encodeFunctionData(functionFragment: "admin", values?: undefined): string;
@@ -209,17 +209,23 @@ export interface NATOInterface extends utils.Interface {
     functionFragment: "isMemberStates",
     values: [PromiseOrValue<string>]
   ): string;
-  encodeFunctionData(functionFragment: "join", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "joinTreaty",
     values?: undefined
   ): string;
-  encodeFunctionData(functionFragment: "leave", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "memberStates",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(functionFragment: "name", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "treatyJoin",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "treatyLeave",
+    values?: undefined
+  ): string;
 
   decodeFunctionResult(functionFragment: "admin", data: BytesLike): Result;
   decodeFunctionResult(
@@ -329,14 +335,17 @@ export interface NATOInterface extends utils.Interface {
     functionFragment: "isMemberStates",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "join", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "joinTreaty", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "leave", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "memberStates",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "treatyJoin", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "treatyLeave",
+    data: BytesLike
+  ): Result;
 
   events: {};
 }
@@ -520,15 +529,7 @@ export interface NATO extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
-    join(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
     joinTreaty(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    leave(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -538,6 +539,14 @@ export interface NATO extends BaseContract {
     ): Promise<[string]>;
 
     name(overrides?: CallOverrides): Promise<[string]>;
+
+    treatyJoin(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    treatyLeave(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
   };
 
   admin(overrides?: CallOverrides): Promise<string>;
@@ -692,15 +701,7 @@ export interface NATO extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
-  join(
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
   joinTreaty(
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  leave(
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -710,6 +711,14 @@ export interface NATO extends BaseContract {
   ): Promise<string>;
 
   name(overrides?: CallOverrides): Promise<string>;
+
+  treatyJoin(
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  treatyLeave(
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
 
   callStatic: {
     admin(overrides?: CallOverrides): Promise<string>;
@@ -862,11 +871,7 @@ export interface NATO extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    join(overrides?: CallOverrides): Promise<void>;
-
     joinTreaty(overrides?: CallOverrides): Promise<boolean>;
-
-    leave(overrides?: CallOverrides): Promise<void>;
 
     memberStates(
       arg0: PromiseOrValue<BigNumberish>,
@@ -874,6 +879,10 @@ export interface NATO extends BaseContract {
     ): Promise<string>;
 
     name(overrides?: CallOverrides): Promise<string>;
+
+    treatyJoin(overrides?: CallOverrides): Promise<void>;
+
+    treatyLeave(overrides?: CallOverrides): Promise<void>;
   };
 
   filters: {};
@@ -1031,15 +1040,7 @@ export interface NATO extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    join(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
     joinTreaty(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    leave(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -1049,6 +1050,14 @@ export interface NATO extends BaseContract {
     ): Promise<BigNumber>;
 
     name(overrides?: CallOverrides): Promise<BigNumber>;
+
+    treatyJoin(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    treatyLeave(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -1204,15 +1213,7 @@ export interface NATO extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    join(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
     joinTreaty(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    leave(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1222,5 +1223,13 @@ export interface NATO extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     name(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    treatyJoin(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    treatyLeave(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
   };
 }

@@ -38,7 +38,7 @@ contract CurioTreaty is ITreaty {
     // MEMBERSHIP FUNCTIONS (CALLED BY NATION)
     // ----------------------------------------------------------
 
-    function join() public virtual {
+    function treatyJoin() public virtual {
         // Add signature
         uint256 nationID = getter.getEntityByAddress(msg.sender);
         admin.addSigner(nationID);
@@ -49,7 +49,7 @@ contract CurioTreaty is ITreaty {
         }
     }
 
-    function leave() public virtual {
+    function treatyLeave() public virtual {
         // Remove signature
         uint256 nationID = getter.getEntityByAddress(msg.sender);
         admin.removeSigner(nationID);

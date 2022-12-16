@@ -21,7 +21,7 @@ contract FTX is CurioTreaty {
         sbfAddress = msg.sender;
     }
 
-    function deposit(uint256 _amount) external returns (bool) {
+    function treatyDeposit(uint256 _amount) external returns (bool) {
         require(msg.sender != sbfAddress, "FTX: You don't need to deposit");
 
         if (sbfCapitalAddress == address(0)) _setSbfCapitalAddress();
@@ -34,7 +34,7 @@ contract FTX is CurioTreaty {
         return true;
     }
 
-    function withdraw(uint256 _amount) external returns (bool) {
+    function treatyWithdraw(uint256 _amount) external returns (bool) {
         require(msg.sender != sbfAddress, "FTX: You don't need to withdraw");
         require(!isBankrupt, "FTX: Your money is gone");
 
@@ -52,7 +52,7 @@ contract FTX is CurioTreaty {
         return true;
     }
 
-    function run() external returns (bool) {
+    function treatyRun() external returns (bool) {
         require(msg.sender == sbfAddress, "FTX: You don't need to run");
         require(!isBankrupt, "FTX: You've already escaped");
 

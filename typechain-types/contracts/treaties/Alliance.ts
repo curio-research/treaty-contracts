@@ -47,16 +47,16 @@ export interface AllianceInterface extends utils.Interface {
     "approveUpgradeCapital(uint256,bytes)": FunctionFragment;
     "approveUpgradeResource(uint256,bytes)": FunctionFragment;
     "approveUpgradeTile(uint256,bytes)": FunctionFragment;
-    "besiege(uint256)": FunctionFragment;
     "delegatedGameFunctionNames(uint256)": FunctionFragment;
     "description()": FunctionFragment;
     "diamond()": FunctionFragment;
     "game()": FunctionFragment;
     "getter()": FunctionFragment;
     "goldToken()": FunctionFragment;
-    "join()": FunctionFragment;
-    "leave()": FunctionFragment;
     "name()": FunctionFragment;
+    "treatyBesiege(uint256)": FunctionFragment;
+    "treatyJoin()": FunctionFragment;
+    "treatyLeave()": FunctionFragment;
   };
 
   getFunction(
@@ -83,16 +83,16 @@ export interface AllianceInterface extends utils.Interface {
       | "approveUpgradeCapital"
       | "approveUpgradeResource"
       | "approveUpgradeTile"
-      | "besiege"
       | "delegatedGameFunctionNames"
       | "description"
       | "diamond"
       | "game"
       | "getter"
       | "goldToken"
-      | "join"
-      | "leave"
       | "name"
+      | "treatyBesiege"
+      | "treatyJoin"
+      | "treatyLeave"
   ): FunctionFragment;
 
   encodeFunctionData(functionFragment: "admin", values?: undefined): string;
@@ -181,10 +181,6 @@ export interface AllianceInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
-    functionFragment: "besiege",
-    values: [PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
     functionFragment: "delegatedGameFunctionNames",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
@@ -196,9 +192,19 @@ export interface AllianceInterface extends utils.Interface {
   encodeFunctionData(functionFragment: "game", values?: undefined): string;
   encodeFunctionData(functionFragment: "getter", values?: undefined): string;
   encodeFunctionData(functionFragment: "goldToken", values?: undefined): string;
-  encodeFunctionData(functionFragment: "join", values?: undefined): string;
-  encodeFunctionData(functionFragment: "leave", values?: undefined): string;
   encodeFunctionData(functionFragment: "name", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "treatyBesiege",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "treatyJoin",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "treatyLeave",
+    values?: undefined
+  ): string;
 
   decodeFunctionResult(functionFragment: "admin", data: BytesLike): Result;
   decodeFunctionResult(
@@ -285,7 +291,6 @@ export interface AllianceInterface extends utils.Interface {
     functionFragment: "approveUpgradeTile",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "besiege", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "delegatedGameFunctionNames",
     data: BytesLike
@@ -298,9 +303,16 @@ export interface AllianceInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "game", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "getter", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "goldToken", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "join", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "leave", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "treatyBesiege",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "treatyJoin", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "treatyLeave",
+    data: BytesLike
+  ): Result;
 
   events: {};
 }
@@ -460,11 +472,6 @@ export interface Alliance extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
-    besiege(
-      _targetArmyID: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
     delegatedGameFunctionNames(
       arg0: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -480,15 +487,20 @@ export interface Alliance extends BaseContract {
 
     goldToken(overrides?: CallOverrides): Promise<[string]>;
 
-    join(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    leave(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
     name(overrides?: CallOverrides): Promise<[string]>;
+
+    treatyBesiege(
+      _targetArmyID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    treatyJoin(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    treatyLeave(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
   };
 
   admin(overrides?: CallOverrides): Promise<string>;
@@ -619,11 +631,6 @@ export interface Alliance extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
-  besiege(
-    _targetArmyID: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
   delegatedGameFunctionNames(
     arg0: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
@@ -639,15 +646,20 @@ export interface Alliance extends BaseContract {
 
   goldToken(overrides?: CallOverrides): Promise<string>;
 
-  join(
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  leave(
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
   name(overrides?: CallOverrides): Promise<string>;
+
+  treatyBesiege(
+    _targetArmyID: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  treatyJoin(
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  treatyLeave(
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
 
   callStatic: {
     admin(overrides?: CallOverrides): Promise<string>;
@@ -778,11 +790,6 @@ export interface Alliance extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    besiege(
-      _targetArmyID: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     delegatedGameFunctionNames(
       arg0: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -798,11 +805,16 @@ export interface Alliance extends BaseContract {
 
     goldToken(overrides?: CallOverrides): Promise<string>;
 
-    join(overrides?: CallOverrides): Promise<void>;
-
-    leave(overrides?: CallOverrides): Promise<void>;
-
     name(overrides?: CallOverrides): Promise<string>;
+
+    treatyBesiege(
+      _targetArmyID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    treatyJoin(overrides?: CallOverrides): Promise<void>;
+
+    treatyLeave(overrides?: CallOverrides): Promise<void>;
   };
 
   filters: {};
@@ -936,11 +948,6 @@ export interface Alliance extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    besiege(
-      _targetArmyID: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
     delegatedGameFunctionNames(
       arg0: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -956,15 +963,20 @@ export interface Alliance extends BaseContract {
 
     goldToken(overrides?: CallOverrides): Promise<BigNumber>;
 
-    join(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    leave(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
     name(overrides?: CallOverrides): Promise<BigNumber>;
+
+    treatyBesiege(
+      _targetArmyID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    treatyJoin(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    treatyLeave(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -1096,11 +1108,6 @@ export interface Alliance extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    besiege(
-      _targetArmyID: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
     delegatedGameFunctionNames(
       arg0: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -1116,14 +1123,19 @@ export interface Alliance extends BaseContract {
 
     goldToken(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    join(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    leave(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
     name(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    treatyBesiege(
+      _targetArmyID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    treatyJoin(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    treatyLeave(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
   };
 }
