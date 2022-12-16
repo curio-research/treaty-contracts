@@ -180,7 +180,7 @@ contract DiamondDeployTest is Test {
 
         // Initialize players
         vm.prank(player1);
-        nation1ID = game.initializeNation(nation1Pos, "China");
+        nation1ID = game.initializeNation(nation1Pos, "China"); // FIXME: remove
         nation1CapitalID = getter.getCapital(nation1ID);
         nation1CapitalAddr = getter.getAddress(nation1CapitalID);
         vm.prank(player2);

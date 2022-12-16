@@ -36,6 +36,7 @@ library Templates {
         uint256 capitalID = ECSLib.addEntity();
 
         ECSLib.setString("Tag", capitalID, "Building");
+        ECSLib.setBool("CanHoldTokens", capitalID);
         ECSLib.setPosition("StartPosition", capitalID, _tilePosition);
         ECSLib.setPosition("Position", capitalID, _position);
         ECSLib.setString("BuildingType", capitalID, "Capital");
@@ -92,6 +93,7 @@ library Templates {
         uint256 armyID = ECSLib.addEntity();
 
         ECSLib.setString("Tag", armyID, "Army");
+        ECSLib.setBool("CanHoldTokens", armyID);
         ECSLib.setUint("Speed", armyID, _speed);
         ECSLib.setUint("LastMoved", armyID, block.timestamp);
         ECSLib.setUint("LastAttacked", armyID, block.timestamp);
@@ -212,6 +214,7 @@ library Templates {
         uint256 treatyID = ECSLib.addEntity();
 
         ECSLib.setString("Tag", treatyID, "Treaty");
+        ECSLib.setBool("CanHoldTokens", treatyID);
         ECSLib.setUint("InitTimestamp", treatyID, block.timestamp);
         ECSLib.setString("Name", treatyID, _name);
         ECSLib.setString("Description", treatyID, _description);
