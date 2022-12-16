@@ -107,8 +107,8 @@ contract AdminFacet is UseStorage {
         GameLib.initializeTile(_startPosition);
     }
 
-    function spawnResource(Position memory _startPosition, string memory _inventoryType) external onlyAuthorized {
-        Templates.addResource(gs().templates[_inventoryType], _startPosition);
+    function spawnResource(Position memory _startPosition, string memory _templateName) external onlyAuthorized {
+        Templates.addResource(gs().templates[_templateName], _startPosition);
     }
 
     function dripToken(
@@ -165,8 +165,8 @@ contract AdminFacet is UseStorage {
         }
     }
 
-    function addInventory(uint256 _keeperID, string memory _inventoryType) external onlyAuthorized returns (uint256) {
-        uint256 templateID = gs().templates[_inventoryType];
+    function addInventory(uint256 _keeperID, string memory _templateName) external onlyAuthorized returns (uint256) {
+        uint256 templateID = gs().templates[_templateName];
         return Templates.addInventory(_keeperID, templateID);
     }
 
@@ -175,18 +175,19 @@ contract AdminFacet is UseStorage {
     }
 
     function addTroopTemplate(
-        string memory _inventoryType,
         uint256 _health,
         uint256 _attack,
         uint256 _defense,
         uint256 _load,
         address _tokenContract
     ) external onlyAuthorized returns (uint256) {
-        return Templates.addTroopTemplate(_inventoryType, _health, _attack, _defense, _load, _tokenContract);
+        CurioERC20 token = CurioERC20(_tokenContract);
+        return Templates.addTroopTemplate(token.name(), _health, _attack, _defense, _load, _tokenContract);
     }
 
-    function addResourceTemplate(string memory _inventoryType, address _tokenContract) external onlyAuthorized returns (uint256) {
-        return Templates.addResourceTemplate(_inventoryType, _tokenContract);
+    function addResourceTemplate(address _tokenContract) external onlyAuthorized returns (uint256) {
+        CurioERC20 token = CurioERC20(_tokenContract);
+        return Templates.addResourceTemplate(token.name(), _tokenContract);
     }
 
     function addGameParameter(string memory _identifier, uint256 _value) external onlyAuthorized returns (uint256) {

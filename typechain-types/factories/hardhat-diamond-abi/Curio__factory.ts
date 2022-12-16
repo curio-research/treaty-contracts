@@ -73,7 +73,7 @@ const _abi = [
       },
       {
         internalType: "string",
-        name: "_inventoryType",
+        name: "_templateName",
         type: "string",
       },
     ],
@@ -90,11 +90,6 @@ const _abi = [
   },
   {
     inputs: [
-      {
-        internalType: "string",
-        name: "_inventoryType",
-        type: "string",
-      },
       {
         internalType: "address",
         name: "_tokenContract",
@@ -133,11 +128,6 @@ const _abi = [
   },
   {
     inputs: [
-      {
-        internalType: "string",
-        name: "_inventoryType",
-        type: "string",
-      },
       {
         internalType: "uint256",
         name: "_health",
@@ -562,7 +552,7 @@ const _abi = [
       },
       {
         internalType: "string",
-        name: "_inventoryType",
+        name: "_templateName",
         type: "string",
       },
     ],
@@ -1484,7 +1474,7 @@ const _abi = [
       },
       {
         internalType: "string",
-        name: "_inventoryType",
+        name: "_templateName",
         type: "string",
       },
     ],

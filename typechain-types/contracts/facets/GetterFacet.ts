@@ -508,7 +508,7 @@ export interface GetterFacet extends BaseContract {
 
     getInventory(
       _inventoryAddress: PromiseOrValue<string>,
-      _inventoryType: PromiseOrValue<string>,
+      _templateName: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
@@ -671,7 +671,7 @@ export interface GetterFacet extends BaseContract {
 
   getInventory(
     _inventoryAddress: PromiseOrValue<string>,
-    _inventoryType: PromiseOrValue<string>,
+    _templateName: PromiseOrValue<string>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
@@ -834,7 +834,7 @@ export interface GetterFacet extends BaseContract {
 
     getInventory(
       _inventoryAddress: PromiseOrValue<string>,
-      _inventoryType: PromiseOrValue<string>,
+      _templateName: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1000,7 +1000,7 @@ export interface GetterFacet extends BaseContract {
 
     getInventory(
       _inventoryAddress: PromiseOrValue<string>,
-      _inventoryType: PromiseOrValue<string>,
+      _templateName: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1162,7 +1162,7 @@ export interface GetterFacet extends BaseContract {
 
     getInventory(
       _inventoryAddress: PromiseOrValue<string>,
-      _inventoryType: PromiseOrValue<string>,
+      _templateName: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

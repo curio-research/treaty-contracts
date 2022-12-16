@@ -172,7 +172,7 @@ library GameLib {
         address armyAddress = ECSLib.getAddress("Address", _armyID);
 
         // Gather
-        uint256 gatherAmount = (block.timestamp - ECSLib.getUint("InitTimestamp", gatherID)) * getConstant("Army", ECSLib.getString("InventoryType", templateID), "Rate", "gather", 0);
+        uint256 gatherAmount = (block.timestamp - ECSLib.getUint("InitTimestamp", gatherID)) * getConstant("Army", ECSLib.getString("Name", templateID), "Rate", "gather", 0);
         resourceToken.dripToken(armyAddress, gatherAmount);
 
         ECSLib.removeEntity(gatherID);
@@ -349,7 +349,7 @@ library GameLib {
         uint256[] memory resourceTemplateIDs = ECSLib.getStringComponent("Tag").getEntitiesWithValue(string("ResourceTemplate"));
 
         for (uint256 i = 0; i < resourceTemplateIDs.length; i++) {
-            uint256 rewardAmount = getConstant("Barbarian", ECSLib.getString("InventoryType", resourceTemplateIDs[i]), "Reward", "", barbarianLevel * 4); // FIXME: 4
+            uint256 rewardAmount = getConstant("Barbarian", ECSLib.getString("Name", resourceTemplateIDs[i]), "Reward", "", barbarianLevel * 4); // FIXME: 4
 
             CurioERC20 resourceToken = CurioERC20(ECSLib.getAddress("Address", resourceTemplateIDs[i]));
             resourceToken.dripToken(ECSLib.getAddress("Address", _armyID), rewardAmount);

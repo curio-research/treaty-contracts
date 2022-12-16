@@ -155,7 +155,7 @@ library Templates {
     }
 
     function addTroopTemplate(
-        string memory _inventoryType,
+        string memory _name,
         uint256 _health,
         uint256 _attack,
         uint256 _defense,
@@ -165,7 +165,7 @@ library Templates {
         uint256 templateID = ECSLib.addEntity();
 
         ECSLib.setString("Tag", templateID, "TroopTemplate");
-        ECSLib.setString("InventoryType", templateID, _inventoryType);
+        ECSLib.setString("Name", templateID, _name);
         ECSLib.setUint("Health", templateID, _health);
         ECSLib.setUint("Attack", templateID, _attack);
         ECSLib.setUint("Defense", templateID, _defense);
@@ -175,11 +175,11 @@ library Templates {
         return templateID;
     }
 
-    function addResourceTemplate(string memory _inventoryType, address _tokenContract) public returns (uint256) {
+    function addResourceTemplate(string memory _name, address _tokenContract) public returns (uint256) {
         uint256 templateID = ECSLib.addEntity();
 
         ECSLib.setString("Tag", templateID, "ResourceTemplate");
-        ECSLib.setString("InventoryType", templateID, _inventoryType);
+        ECSLib.setString("Name", templateID, _name);
         ECSLib.setAddress("Address", templateID, _tokenContract);
 
         return templateID;
