@@ -92,7 +92,23 @@ contract AdminFacet is UseStorage {
     }
 
     // ----------------------------------------------------------------------
-    // ADMIN FUNCTIONS
+    // ADMIN FUNCTIONS (LIVEOPS)
+    // ----------------------------------------------------------------------
+
+    function lockTiles(uint256[] memory _tileIDs) external onlyAuthorized {
+        for (uint256 i = 0; i < _tileIDs.length; i++) {
+            ECSLib.setBool("Locked", _tileIDs[i]);
+        }
+    }
+
+    function unlockTiles(uint256[] memory _tileIDs) external onlyAuthorized {
+        for (uint256 i = 0; i < _tileIDs.length; i++) {
+            ECSLib.removeBool("Locked", _tileIDs[i]);
+        }
+    }
+
+    // ----------------------------------------------------------------------
+    // ADMIN FUNCTIONS (GAME SETUP)
     // ----------------------------------------------------------------------
 
     function stopGame() external onlyAuthorized {
@@ -226,10 +242,6 @@ contract AdminFacet is UseStorage {
     function generateNewAddress() external onlyAuthorized returns (address) {
         return GameLib.generateNewAddress();
     }
-
-    // ----------------------------------------------------------------------
-    // ECS HELPERS
-    // ----------------------------------------------------------------------
 
     function registerFunctionNames(string[] memory _functionNames) external onlyAuthorized {
         gs().gameFunctionNames = _functionNames;

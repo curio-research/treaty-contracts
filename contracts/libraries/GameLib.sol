@@ -117,7 +117,7 @@ library GameLib {
         Templates.addInventory(tileID, gs().templates["Guard"]);
         CurioERC20 guardToken = getTokenContract("Guard");
 
-        // TEMP: battle royale mode
+        // Special: battle royale mode center tile initialization
         if (gs().worldConstants.gameMode == GameMode.BATTLE_ROYALE) {
             if (coincident(_startPosition, getMapCenterTilePosition())) {
                 // Set map center tile to SUPERTILE of land, no resources, and the top tile strength to start
