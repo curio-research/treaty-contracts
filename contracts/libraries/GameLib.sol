@@ -58,6 +58,7 @@ library GameLib {
             // Record identifier entity for component
             uint256 componentID = ECSLib.addEntity();
             ECSLib.setBool("IsComponent", componentID);
+            ECSLib.setAddress("Address", componentID, addr);
 
             gs().componentNames.push(spec.name);
 
