@@ -15,15 +15,15 @@ contract Alliance is CurioTreaty {
 
         name = "Alliance";
         description = "A treaty between two or more countries to work together towards a common goal or to defend each other in the case of external aggression";
-        string[] memory temp = new string[](1);
-        temp[0] = "Battle";
-        delegatedGameFunctionNames = temp;
     }
 
     function treatyJoin() public override {
         // Transfer 1000 gold from nation to treaty
         address nationCapitalAddress = getter.getAddress(getter.getCapital(getter.getEntityByAddress(msg.sender)));
         goldToken.transferFrom(nationCapitalAddress, address(this), 1000);
+
+        // Delegate Battle function for all armies
+        treatyDelegateGameFunction("Battle", 0, true);
 
         super.treatyJoin();
     }
@@ -38,6 +38,9 @@ contract Alliance is CurioTreaty {
         // Transfer 1000 gold from treaty back to nation
         address nationCapitalAddress = getter.getAddress(getter.getCapital(nationID));
         goldToken.transfer(nationCapitalAddress, 1000);
+
+        // Undelegate Battle function for all armies
+        treatyDelegateGameFunction("Battle", 0, false);
 
         super.treatyLeave();
     }
