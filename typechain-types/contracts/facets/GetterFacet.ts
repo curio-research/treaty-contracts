@@ -101,6 +101,7 @@ export interface GetterFacetInterface extends utils.Interface {
     "getComponent(string)": FunctionFragment;
     "getComponentById(uint256)": FunctionFragment;
     "getConstant(string,string,string,string,uint256)": FunctionFragment;
+    "getDelegations(string,uint256,uint256)": FunctionFragment;
     "getDistanceByAddresses(address,address)": FunctionFragment;
     "getEntities()": FunctionFragment;
     "getEntitiesAddr()": FunctionFragment;
@@ -138,6 +139,7 @@ export interface GetterFacetInterface extends utils.Interface {
       | "getComponent"
       | "getComponentById"
       | "getConstant"
+      | "getDelegations"
       | "getDistanceByAddresses"
       | "getEntities"
       | "getEntitiesAddr"
@@ -200,6 +202,14 @@ export interface GetterFacetInterface extends utils.Interface {
       PromiseOrValue<string>,
       PromiseOrValue<string>,
       PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>
+    ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getDelegations",
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>
     ]
   ): string;
@@ -319,6 +329,10 @@ export interface GetterFacetInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "getConstant",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getDelegations",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -484,6 +498,13 @@ export interface GetterFacet extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
+    getDelegations(
+      _functionName: PromiseOrValue<string>,
+      _ownerID: PromiseOrValue<BigNumberish>,
+      _callerID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber[]]>;
+
     getDistanceByAddresses(
       _addr1: PromiseOrValue<string>,
       _addr2: PromiseOrValue<string>,
@@ -647,6 +668,13 @@ export interface GetterFacet extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
+  getDelegations(
+    _functionName: PromiseOrValue<string>,
+    _ownerID: PromiseOrValue<BigNumberish>,
+    _callerID: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber[]>;
+
   getDistanceByAddresses(
     _addr1: PromiseOrValue<string>,
     _addr2: PromiseOrValue<string>,
@@ -809,6 +837,13 @@ export interface GetterFacet extends BaseContract {
       _level: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    getDelegations(
+      _functionName: PromiseOrValue<string>,
+      _ownerID: PromiseOrValue<BigNumberish>,
+      _callerID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber[]>;
 
     getDistanceByAddresses(
       _addr1: PromiseOrValue<string>,
@@ -976,6 +1011,13 @@ export interface GetterFacet extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    getDelegations(
+      _functionName: PromiseOrValue<string>,
+      _ownerID: PromiseOrValue<BigNumberish>,
+      _callerID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     getDistanceByAddresses(
       _addr1: PromiseOrValue<string>,
       _addr2: PromiseOrValue<string>,
@@ -1135,6 +1177,13 @@ export interface GetterFacet extends BaseContract {
       _componentName: PromiseOrValue<string>,
       _functionName: PromiseOrValue<string>,
       _level: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getDelegations(
+      _functionName: PromiseOrValue<string>,
+      _ownerID: PromiseOrValue<BigNumberish>,
+      _callerID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

@@ -381,14 +381,39 @@ library GameLib {
         uint256 _nationID,
         string memory _functionName,
         uint256 _delegateID,
+        uint256 _subjectID,
         bool _canCall
     ) internal {
-        // Get current permission
-        uint256 delegationID = getDelegation(_functionName, _nationID, _delegateID);
+        // Get current delegation
+        uint256[] memory delegationIDs = getDelegations(_functionName, _nationID, _delegateID);
 
-        // Update permission
-        if (_canCall && delegationID == 0) {
-            Templates.addDelegation(_functionName, _nationID, _delegateID);
+        // Case I: Subject-agnostic delegation
+        if (_subjectID == 0) {
+            // Remove all delegations
+            for (uint256 i = 0; i < delegationIDs.length; i++) {
+                ECSLib.removeEntity(delegationIDs[i]);
+            }
+            if (_canCall) {
+                // Delegate all
+                Templates.addDelegation(_functionName, _nationID, _delegateID, 0);
+            }
+            return;
+        }
+
+        // Case II: Subject-specific delegation
+        bool delegationExists;
+        uint256 delegationID;
+        for (uint256 i = 0; i < delegationIDs.length; i++) {
+            uint256 subjectID = ECSLib.getUint("Subject", delegationIDs[i]);
+            if (subjectID == 0 || subjectID == _subjectID) {
+                delegationExists = true;
+                if (subjectID == _subjectID) delegationID = delegationIDs[i];
+            }
+        }
+
+        // Update delegation
+        if (_canCall && !delegationExists && delegationID == 0) {
+            Templates.addDelegation(_functionName, _nationID, _delegateID, _subjectID);
         } else if (!_canCall && delegationID != 0) {
             ECSLib.removeEntity(delegationID);
         }
@@ -668,8 +693,7 @@ library GameLib {
         QueryCondition[] memory query = new QueryCondition[](2);
         query[0] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Tag"]), abi.encode("Army"));
         query[1] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Nation"]), abi.encode(_nationID));
-        uint256[] memory res = ECSLib.query(query);
-        return res;
+        return ECSLib.query(query);
     }
 
     function getCapital(uint256 _nationID) internal view returns (uint256) {
@@ -699,19 +723,17 @@ library GameLib {
         return res.length == 1 ? res[0] : 0;
     }
 
-    function getDelegation(
+    function getDelegations(
         string memory _functionName,
         uint256 _ownerID,
         uint256 _callerID
-    ) internal view returns (uint256) {
+    ) internal view returns (uint256[] memory) {
         QueryCondition[] memory query = new QueryCondition[](4);
         query[0] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Tag"]), abi.encode("Delegation"));
         query[1] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["FunctionName"]), abi.encode(_functionName));
         query[2] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Owner"]), abi.encode(_ownerID));
         query[3] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Caller"]), abi.encode(_callerID));
-        uint256[] memory res = ECSLib.query(query);
-        require(res.length <= 1, "CURIO: Delegation assertion failed");
-        return res.length == 1 ? res[0] : 0;
+        return ECSLib.query(query);
     }
 
     function getNationCount() internal view returns (uint256) {
@@ -852,9 +874,16 @@ library GameLib {
     function nationDelegationCheck(
         string memory _functionName,
         uint256 _ownerID,
-        uint256 _callerID
+        uint256 _callerID,
+        uint256 _subjectID
     ) internal view {
-        require(getDelegation(_functionName, _ownerID, _callerID) != 0, string.concat("CURIO: Not permitted to call ", _functionName));
+        uint256[] memory delegationIDs = getDelegations(_functionName, _ownerID, _callerID);
+
+        for (uint256 i = 0; i < delegationIDs.length; i++) {
+            uint256 subjectID = ECSLib.getUint("Subject", delegationIDs[i]);
+            if (subjectID == 0 || subjectID == _subjectID) return;
+        }
+        revert(string.concat("CURIO: Not delegated to call ", _functionName));
     }
 
     function treatyApprovalCheck(

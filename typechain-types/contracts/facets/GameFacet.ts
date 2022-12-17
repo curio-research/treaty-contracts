@@ -37,7 +37,7 @@ export interface GameFacetInterface extends utils.Interface {
   functions: {
     "battle(uint256,uint256)": FunctionFragment;
     "claimTile(uint256,uint256)": FunctionFragment;
-    "delegateGameFunction(uint256,string,uint256,bool)": FunctionFragment;
+    "delegateGameFunction(uint256,string,uint256,uint256,bool)": FunctionFragment;
     "disbandArmy(uint256)": FunctionFragment;
     "disownTile(uint256)": FunctionFragment;
     "endGather(uint256)": FunctionFragment;
@@ -96,6 +96,7 @@ export interface GameFacetInterface extends utils.Interface {
     values: [
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<boolean>
     ]
@@ -297,6 +298,7 @@ export interface GameFacet extends BaseContract {
       _nationID: PromiseOrValue<BigNumberish>,
       _functionName: PromiseOrValue<string>,
       _delegateID: PromiseOrValue<BigNumberish>,
+      _subjectID: PromiseOrValue<BigNumberish>,
       _canCall: PromiseOrValue<boolean>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
@@ -416,6 +418,7 @@ export interface GameFacet extends BaseContract {
     _nationID: PromiseOrValue<BigNumberish>,
     _functionName: PromiseOrValue<string>,
     _delegateID: PromiseOrValue<BigNumberish>,
+    _subjectID: PromiseOrValue<BigNumberish>,
     _canCall: PromiseOrValue<boolean>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
@@ -535,6 +538,7 @@ export interface GameFacet extends BaseContract {
       _nationID: PromiseOrValue<BigNumberish>,
       _functionName: PromiseOrValue<string>,
       _delegateID: PromiseOrValue<BigNumberish>,
+      _subjectID: PromiseOrValue<BigNumberish>,
       _canCall: PromiseOrValue<boolean>,
       overrides?: CallOverrides
     ): Promise<void>;
@@ -657,6 +661,7 @@ export interface GameFacet extends BaseContract {
       _nationID: PromiseOrValue<BigNumberish>,
       _functionName: PromiseOrValue<string>,
       _delegateID: PromiseOrValue<BigNumberish>,
+      _subjectID: PromiseOrValue<BigNumberish>,
       _canCall: PromiseOrValue<boolean>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
@@ -777,6 +782,7 @@ export interface GameFacet extends BaseContract {
       _nationID: PromiseOrValue<BigNumberish>,
       _functionName: PromiseOrValue<string>,
       _delegateID: PromiseOrValue<BigNumberish>,
+      _subjectID: PromiseOrValue<BigNumberish>,
       _canCall: PromiseOrValue<boolean>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;

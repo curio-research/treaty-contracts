@@ -45,7 +45,7 @@ contract CurioTreaty is ITreaty {
 
         // Delegate functions
         for (uint256 i = 0; i < delegatedGameFunctionNames.length; i++) {
-            admin.delegateGameFunction(nationID, delegatedGameFunctionNames[i], true);
+            admin.delegateGameFunction(nationID, delegatedGameFunctionNames[i], 0, true);
         }
     }
 
@@ -56,7 +56,7 @@ contract CurioTreaty is ITreaty {
 
         // Abrogate functions
         for (uint256 i = 0; i < delegatedGameFunctionNames.length; i++) {
-            admin.delegateGameFunction(nationID, delegatedGameFunctionNames[i], false);
+            admin.delegateGameFunction(nationID, delegatedGameFunctionNames[i], 0, false);
         }
     }
 

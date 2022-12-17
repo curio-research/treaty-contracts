@@ -145,8 +145,8 @@ export interface CurioInterface extends utils.Interface {
     "authorizeGame(address)": FunctionFragment;
     "bulkAddGameParameters(string[],uint256[])": FunctionFragment;
     "bulkInitializeTiles((uint256,uint256)[])": FunctionFragment;
-    "delegateGameFunction(uint256,string,bool)": FunctionFragment;
     "delegateGameFunction(uint256,string,uint256,bool)": FunctionFragment;
+    "delegateGameFunction(uint256,string,uint256,uint256,bool)": FunctionFragment;
     "disallowHostCapital((uint256,uint256)[])": FunctionFragment;
     "dripToken(address,string,uint256)": FunctionFragment;
     "generateNewAddress()": FunctionFragment;
@@ -202,6 +202,7 @@ export interface CurioInterface extends utils.Interface {
     "getComponent(string)": FunctionFragment;
     "getComponentById(uint256)": FunctionFragment;
     "getConstant(string,string,string,string,uint256)": FunctionFragment;
+    "getDelegations(string,uint256,uint256)": FunctionFragment;
     "getDistanceByAddresses(address,address)": FunctionFragment;
     "getEntities()": FunctionFragment;
     "getEntitiesAddr()": FunctionFragment;
@@ -264,8 +265,8 @@ export interface CurioInterface extends utils.Interface {
       | "authorizeGame"
       | "bulkAddGameParameters"
       | "bulkInitializeTiles"
-      | "delegateGameFunction(uint256,string,bool)"
       | "delegateGameFunction(uint256,string,uint256,bool)"
+      | "delegateGameFunction(uint256,string,uint256,uint256,bool)"
       | "disallowHostCapital"
       | "dripToken"
       | "generateNewAddress"
@@ -321,6 +322,7 @@ export interface CurioInterface extends utils.Interface {
       | "getComponent"
       | "getComponentById"
       | "getConstant"
+      | "getDelegations"
       | "getDistanceByAddresses"
       | "getEntities"
       | "getEntitiesAddr"
@@ -418,18 +420,20 @@ export interface CurioInterface extends utils.Interface {
     values: [PositionStruct[]]
   ): string;
   encodeFunctionData(
-    functionFragment: "delegateGameFunction(uint256,string,bool)",
-    values: [
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<string>,
-      PromiseOrValue<boolean>
-    ]
-  ): string;
-  encodeFunctionData(
     functionFragment: "delegateGameFunction(uint256,string,uint256,bool)",
     values: [
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<boolean>
+    ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "delegateGameFunction(uint256,string,uint256,uint256,bool)",
+    values: [
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<boolean>
     ]
@@ -675,6 +679,14 @@ export interface CurioInterface extends utils.Interface {
     ]
   ): string;
   encodeFunctionData(
+    functionFragment: "getDelegations",
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>
+    ]
+  ): string;
+  encodeFunctionData(
     functionFragment: "getDistanceByAddresses",
     values: [PromiseOrValue<string>, PromiseOrValue<string>]
   ): string;
@@ -897,11 +909,11 @@ export interface CurioInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "delegateGameFunction(uint256,string,bool)",
+    functionFragment: "delegateGameFunction(uint256,string,uint256,bool)",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "delegateGameFunction(uint256,string,uint256,bool)",
+    functionFragment: "delegateGameFunction(uint256,string,uint256,uint256,bool)",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -1077,6 +1089,10 @@ export interface CurioInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "getConstant",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getDelegations",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -1425,17 +1441,19 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    "delegateGameFunction(uint256,string,bool)"(
+    "delegateGameFunction(uint256,string,uint256,bool)"(
       _nationID: PromiseOrValue<BigNumberish>,
       _functionName: PromiseOrValue<string>,
+      _subjectID: PromiseOrValue<BigNumberish>,
       _canCall: PromiseOrValue<boolean>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    "delegateGameFunction(uint256,string,uint256,bool)"(
+    "delegateGameFunction(uint256,string,uint256,uint256,bool)"(
       _nationID: PromiseOrValue<BigNumberish>,
       _functionName: PromiseOrValue<string>,
       _delegateID: PromiseOrValue<BigNumberish>,
+      _subjectID: PromiseOrValue<BigNumberish>,
       _canCall: PromiseOrValue<boolean>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
@@ -1743,6 +1761,13 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
+    getDelegations(
+      _functionName: PromiseOrValue<string>,
+      _ownerID: PromiseOrValue<BigNumberish>,
+      _callerID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber[]]>;
+
     getDistanceByAddresses(
       _addr1: PromiseOrValue<string>,
       _addr2: PromiseOrValue<string>,
@@ -2039,17 +2064,19 @@ export interface Curio extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  "delegateGameFunction(uint256,string,bool)"(
+  "delegateGameFunction(uint256,string,uint256,bool)"(
     _nationID: PromiseOrValue<BigNumberish>,
     _functionName: PromiseOrValue<string>,
+    _subjectID: PromiseOrValue<BigNumberish>,
     _canCall: PromiseOrValue<boolean>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  "delegateGameFunction(uint256,string,uint256,bool)"(
+  "delegateGameFunction(uint256,string,uint256,uint256,bool)"(
     _nationID: PromiseOrValue<BigNumberish>,
     _functionName: PromiseOrValue<string>,
     _delegateID: PromiseOrValue<BigNumberish>,
+    _subjectID: PromiseOrValue<BigNumberish>,
     _canCall: PromiseOrValue<boolean>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
@@ -2349,6 +2376,13 @@ export interface Curio extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
+  getDelegations(
+    _functionName: PromiseOrValue<string>,
+    _ownerID: PromiseOrValue<BigNumberish>,
+    _callerID: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber[]>;
+
   getDistanceByAddresses(
     _addr1: PromiseOrValue<string>,
     _addr2: PromiseOrValue<string>,
@@ -2641,17 +2675,19 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    "delegateGameFunction(uint256,string,bool)"(
+    "delegateGameFunction(uint256,string,uint256,bool)"(
       _nationID: PromiseOrValue<BigNumberish>,
       _functionName: PromiseOrValue<string>,
+      _subjectID: PromiseOrValue<BigNumberish>,
       _canCall: PromiseOrValue<boolean>,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    "delegateGameFunction(uint256,string,uint256,bool)"(
+    "delegateGameFunction(uint256,string,uint256,uint256,bool)"(
       _nationID: PromiseOrValue<BigNumberish>,
       _functionName: PromiseOrValue<string>,
       _delegateID: PromiseOrValue<BigNumberish>,
+      _subjectID: PromiseOrValue<BigNumberish>,
       _canCall: PromiseOrValue<boolean>,
       overrides?: CallOverrides
     ): Promise<void>;
@@ -2948,6 +2984,13 @@ export interface Curio extends BaseContract {
       _level: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    getDelegations(
+      _functionName: PromiseOrValue<string>,
+      _ownerID: PromiseOrValue<BigNumberish>,
+      _callerID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber[]>;
 
     getDistanceByAddresses(
       _addr1: PromiseOrValue<string>,
@@ -3300,17 +3343,19 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    "delegateGameFunction(uint256,string,bool)"(
+    "delegateGameFunction(uint256,string,uint256,bool)"(
       _nationID: PromiseOrValue<BigNumberish>,
       _functionName: PromiseOrValue<string>,
+      _subjectID: PromiseOrValue<BigNumberish>,
       _canCall: PromiseOrValue<boolean>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    "delegateGameFunction(uint256,string,uint256,bool)"(
+    "delegateGameFunction(uint256,string,uint256,uint256,bool)"(
       _nationID: PromiseOrValue<BigNumberish>,
       _functionName: PromiseOrValue<string>,
       _delegateID: PromiseOrValue<BigNumberish>,
+      _subjectID: PromiseOrValue<BigNumberish>,
       _canCall: PromiseOrValue<boolean>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
@@ -3610,6 +3655,13 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    getDelegations(
+      _functionName: PromiseOrValue<string>,
+      _ownerID: PromiseOrValue<BigNumberish>,
+      _callerID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     getDistanceByAddresses(
       _addr1: PromiseOrValue<string>,
       _addr2: PromiseOrValue<string>,
@@ -3905,17 +3957,19 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    "delegateGameFunction(uint256,string,bool)"(
+    "delegateGameFunction(uint256,string,uint256,bool)"(
       _nationID: PromiseOrValue<BigNumberish>,
       _functionName: PromiseOrValue<string>,
+      _subjectID: PromiseOrValue<BigNumberish>,
       _canCall: PromiseOrValue<boolean>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    "delegateGameFunction(uint256,string,uint256,bool)"(
+    "delegateGameFunction(uint256,string,uint256,uint256,bool)"(
       _nationID: PromiseOrValue<BigNumberish>,
       _functionName: PromiseOrValue<string>,
       _delegateID: PromiseOrValue<BigNumberish>,
+      _subjectID: PromiseOrValue<BigNumberish>,
       _canCall: PromiseOrValue<boolean>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
@@ -4212,6 +4266,13 @@ export interface Curio extends BaseContract {
       _componentName: PromiseOrValue<string>,
       _functionName: PromiseOrValue<string>,
       _level: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getDelegations(
+      _functionName: PromiseOrValue<string>,
+      _ownerID: PromiseOrValue<BigNumberish>,
+      _callerID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

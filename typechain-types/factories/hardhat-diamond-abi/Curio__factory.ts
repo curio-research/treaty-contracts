@@ -259,6 +259,11 @@ const _abi = [
         type: "string",
       },
       {
+        internalType: "uint256",
+        name: "_subjectID",
+        type: "uint256",
+      },
+      {
         internalType: "bool",
         name: "_canCall",
         type: "bool",
@@ -905,6 +910,11 @@ const _abi = [
         type: "uint256",
       },
       {
+        internalType: "uint256",
+        name: "_subjectID",
+        type: "uint256",
+      },
+      {
         internalType: "bool",
         name: "_canCall",
         type: "bool",
@@ -1434,6 +1444,35 @@ const _abi = [
         internalType: "uint256",
         name: "",
         type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "string",
+        name: "_functionName",
+        type: "string",
+      },
+      {
+        internalType: "uint256",
+        name: "_ownerID",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "_callerID",
+        type: "uint256",
+      },
+    ],
+    name: "getDelegations",
+    outputs: [
+      {
+        internalType: "uint256[]",
+        name: "",
+        type: "uint256[]",
       },
     ],
     stateMutability: "view",

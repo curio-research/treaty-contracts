@@ -57,7 +57,7 @@ export interface AdminFacetInterface extends utils.Interface {
     "authorizeGame(address)": FunctionFragment;
     "bulkAddGameParameters(string[],uint256[])": FunctionFragment;
     "bulkInitializeTiles((uint256,uint256)[])": FunctionFragment;
-    "delegateGameFunction(uint256,string,bool)": FunctionFragment;
+    "delegateGameFunction(uint256,string,uint256,bool)": FunctionFragment;
     "disallowHostCapital((uint256,uint256)[])": FunctionFragment;
     "dripToken(address,string,uint256)": FunctionFragment;
     "generateNewAddress()": FunctionFragment;
@@ -170,6 +170,7 @@ export interface AdminFacetInterface extends utils.Interface {
     values: [
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
       PromiseOrValue<boolean>
     ]
   ): string;
@@ -466,6 +467,7 @@ export interface AdminFacet extends BaseContract {
     delegateGameFunction(
       _nationID: PromiseOrValue<BigNumberish>,
       _functionName: PromiseOrValue<string>,
+      _subjectID: PromiseOrValue<BigNumberish>,
       _canCall: PromiseOrValue<boolean>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
@@ -648,6 +650,7 @@ export interface AdminFacet extends BaseContract {
   delegateGameFunction(
     _nationID: PromiseOrValue<BigNumberish>,
     _functionName: PromiseOrValue<string>,
+    _subjectID: PromiseOrValue<BigNumberish>,
     _canCall: PromiseOrValue<boolean>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
@@ -826,6 +829,7 @@ export interface AdminFacet extends BaseContract {
     delegateGameFunction(
       _nationID: PromiseOrValue<BigNumberish>,
       _functionName: PromiseOrValue<string>,
+      _subjectID: PromiseOrValue<BigNumberish>,
       _canCall: PromiseOrValue<boolean>,
       overrides?: CallOverrides
     ): Promise<void>;
@@ -1007,6 +1011,7 @@ export interface AdminFacet extends BaseContract {
     delegateGameFunction(
       _nationID: PromiseOrValue<BigNumberish>,
       _functionName: PromiseOrValue<string>,
+      _subjectID: PromiseOrValue<BigNumberish>,
       _canCall: PromiseOrValue<boolean>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
@@ -1190,6 +1195,7 @@ export interface AdminFacet extends BaseContract {
     delegateGameFunction(
       _nationID: PromiseOrValue<BigNumberish>,
       _functionName: PromiseOrValue<string>,
+      _subjectID: PromiseOrValue<BigNumberish>,
       _canCall: PromiseOrValue<boolean>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;

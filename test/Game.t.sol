@@ -582,14 +582,14 @@ contract GameTest is Test, DiamondDeployTest {
 
         // Nation 2 fails to produce troops on behalf of Nation 1
         vm.startPrank(player2);
-        vm.expectRevert("CURIO: Not permitted to call StartTroopProduction");
+        vm.expectRevert("CURIO: Not delegated to call StartTroopProduction");
         game.startTroopProduction(nation1CapitalID, horsemanTemplateID, 1000);
         assertEq(horsemanToken.checkBalanceOf(nation1CapitalAddr), 0);
         vm.stopPrank();
 
         // Nation 1 delegates troop production to Nation 2
         vm.startPrank(player1);
-        game.delegateGameFunction(nation1ID, "StartTroopProduction", nation2ID, true);
+        game.delegateGameFunction(nation1ID, "StartTroopProduction", nation2ID, 0, true);
         vm.stopPrank();
 
         // Nation 2 produces troops on behalf of Nation 1
@@ -607,12 +607,12 @@ contract GameTest is Test, DiamondDeployTest {
 
         // Nation 1 revokes delegation
         vm.startPrank(player1);
-        game.delegateGameFunction(nation1ID, "StartTroopProduction", nation2ID, false);
+        game.delegateGameFunction(nation1ID, "StartTroopProduction", nation2ID, 0, false);
         vm.stopPrank();
 
         // Nation 2 fails to produce troops on behalf of Nation 1
         vm.startPrank(player2);
-        vm.expectRevert("CURIO: Not permitted to call StartTroopProduction");
+        vm.expectRevert("CURIO: Not delegated to call StartTroopProduction");
         game.startTroopProduction(nation1CapitalID, horsemanTemplateID, 1000);
         assertEq(horsemanToken.checkBalanceOf(nation1CapitalAddr), 1000);
         vm.stopPrank();

@@ -227,7 +227,8 @@ library Templates {
     function addDelegation(
         string memory _functionName,
         uint256 _ownerID,
-        uint256 _callerID
+        uint256 _callerID,
+        uint256 _subjectID
     ) public returns (uint256) {
         uint256 delegationID = ECSLib.addEntity();
 
@@ -235,6 +236,7 @@ library Templates {
         ECSLib.setString("FunctionName", delegationID, _functionName);
         ECSLib.setUint("Owner", delegationID, _ownerID);
         ECSLib.setUint("Caller", delegationID, _callerID);
+        ECSLib.setUint("Subject", delegationID, _subjectID);
 
         return delegationID;
     }

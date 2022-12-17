@@ -76,9 +76,11 @@ contract AdminFacet is UseStorage {
         ECSLib.removeEntity(signatureID);
     }
 
+    /// @notice Set _subjectID to 0 to delegate to all subjects
     function delegateGameFunction(
         uint256 _nationID,
         string memory _functionName,
+        uint256 _subjectID,
         bool _canCall
     ) external onlyTreaty {
         // Basic checks
@@ -88,7 +90,7 @@ contract AdminFacet is UseStorage {
 
         // Delegate function
         uint256 treatyID = GameLib.getEntityByAddress(msg.sender);
-        GameLib.delegateGameFunction(_nationID, _functionName, treatyID, _canCall);
+        GameLib.delegateGameFunction(_nationID, _functionName, treatyID, _subjectID, _canCall);
     }
 
     // ----------------------------------------------------------------------
