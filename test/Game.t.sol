@@ -506,68 +506,69 @@ contract GameTest is Test, DiamondDeployTest {
         vm.stopPrank();
     }
 
-    function testTransferDistance() public {
-        // Start time
-        uint256 time = block.timestamp + 500;
-        vm.warp(time);
+    // // Temporarily disabled
+    // function testTransferDistance() public {
+    //     // Start time
+    //     uint256 time = block.timestamp + 500;
+    //     vm.warp(time);
 
-        // Check transfer distance
-        assertEq(foodToken.maxTransferDistance(), 20);
+    //     // Check transfer distance
+    //     assertEq(foodToken.maxTransferDistance(), 20);
 
-        // Deployer drips gold, food, and troops to Nation 1 and 2
-        vm.startPrank(deployer);
-        admin.dripToken(nation1CapitalAddr, "Gold", 1000000);
-        admin.dripToken(nation1CapitalAddr, "Food", 1000000);
+    //     // Deployer drips gold, food, and troops to Nation 1 and 2
+    //     vm.startPrank(deployer);
+    //     admin.dripToken(nation1CapitalAddr, "Gold", 1000000);
+    //     admin.dripToken(nation1CapitalAddr, "Food", 1000000);
 
-        admin.dripToken(nation2CapitalAddr, "Gold", 1000000);
-        admin.dripToken(nation2CapitalAddr, "Food", 1000000);
-        admin.dripToken(nation2CapitalAddr, "Warrior", 1000);
-        admin.dripToken(nation2CapitalAddr, "Horseman", 1000);
-        admin.dripToken(nation2CapitalAddr, "Slinger", 1000);
-        vm.stopPrank();
+    //     admin.dripToken(nation2CapitalAddr, "Gold", 1000000);
+    //     admin.dripToken(nation2CapitalAddr, "Food", 1000000);
+    //     admin.dripToken(nation2CapitalAddr, "Warrior", 1000);
+    //     admin.dripToken(nation2CapitalAddr, "Horseman", 1000);
+    //     admin.dripToken(nation2CapitalAddr, "Slinger", 1000);
+    //     vm.stopPrank();
 
-        // Nation 2 organizes army
-        time += 10;
-        vm.warp(time + 10);
-        vm.startPrank(player2);
-        uint256[] memory armyTemplateIDs = new uint256[](3);
-        armyTemplateIDs[0] = warriorTemplateID;
-        armyTemplateIDs[1] = horsemanTemplateID;
-        armyTemplateIDs[2] = slingerTemplateID;
-        uint256[] memory armyTemplateAmounts = new uint256[](3);
-        armyTemplateAmounts[0] = 500;
-        armyTemplateAmounts[1] = 500;
-        armyTemplateAmounts[2] = 500;
-        uint256 army21ID = game.organizeArmy(nation2CapitalID, armyTemplateIDs, armyTemplateAmounts);
-        address army21Addr = getter.getAddress(army21ID);
-        assertEq(foodToken.checkBalanceOf(army21Addr), 0);
-        vm.stopPrank();
+    //     // Nation 2 organizes army
+    //     time += 10;
+    //     vm.warp(time + 10);
+    //     vm.startPrank(player2);
+    //     uint256[] memory armyTemplateIDs = new uint256[](3);
+    //     armyTemplateIDs[0] = warriorTemplateID;
+    //     armyTemplateIDs[1] = horsemanTemplateID;
+    //     armyTemplateIDs[2] = slingerTemplateID;
+    //     uint256[] memory armyTemplateAmounts = new uint256[](3);
+    //     armyTemplateAmounts[0] = 500;
+    //     armyTemplateAmounts[1] = 500;
+    //     armyTemplateAmounts[2] = 500;
+    //     uint256 army21ID = game.organizeArmy(nation2CapitalID, armyTemplateIDs, armyTemplateAmounts);
+    //     address army21Addr = getter.getAddress(army21ID);
+    //     assertEq(foodToken.checkBalanceOf(army21Addr), 0);
+    //     vm.stopPrank();
 
-        // Nation 1's capital transfers some food successfully to Nation 2's army
-        vm.startPrank(player1);
-        CurioWallet capital1Wallet = CurioWallet(nation1CapitalAddr);
-        capital1Wallet.executeTx(address(foodToken), abi.encodeWithSignature("transfer(address,uint256)", army21Addr, 50));
-        assertEq(foodToken.checkBalanceOf(army21Addr), 50);
-        vm.stopPrank();
+    //     // Nation 1's capital transfers some food successfully to Nation 2's army
+    //     vm.startPrank(player1);
+    //     CurioWallet capital1Wallet = CurioWallet(nation1CapitalAddr);
+    //     capital1Wallet.executeTx(address(foodToken), abi.encodeWithSignature("transfer(address,uint256)", army21Addr, 50));
+    //     assertEq(foodToken.checkBalanceOf(army21Addr), 50);
+    //     vm.stopPrank();
 
-        // Nation 2 moves army to (62, 49)
-        time += 10;
-        vm.warp(time + 10);
-        vm.startPrank(player2);
-        for (uint256 i = 1; i <= 9; i++) {
-            time += 1;
-            vm.warp(time);
-            game.move(army21ID, Position({x: 62, y: 31 + 2 * i}));
-        }
-        vm.stopPrank();
+    //     // Nation 2 moves army to (62, 49)
+    //     time += 10;
+    //     vm.warp(time + 10);
+    //     vm.startPrank(player2);
+    //     for (uint256 i = 1; i <= 9; i++) {
+    //         time += 1;
+    //         vm.warp(time);
+    //         game.move(army21ID, Position({x: 62, y: 31 + 2 * i}));
+    //     }
+    //     vm.stopPrank();
 
-        // Nation 1's capital fails to transfer food to Nation 2's army
-        vm.startPrank(player1);
-        vm.expectRevert();
-        capital1Wallet.executeTx(address(foodToken), abi.encodeWithSignature("transfer(address,uint256)", army21Addr, 50));
-        assertEq(foodToken.checkBalanceOf(army21Addr), 50);
-        vm.stopPrank();
-    }
+    //     // Nation 1's capital fails to transfer food to Nation 2's army
+    //     vm.startPrank(player1);
+    //     vm.expectRevert();
+    //     capital1Wallet.executeTx(address(foodToken), abi.encodeWithSignature("transfer(address,uint256)", army21Addr, 50));
+    //     assertEq(foodToken.checkBalanceOf(army21Addr), 50);
+    //     vm.stopPrank();
+    // }
 
     function testDelegation() public {
         // Start time
