@@ -160,12 +160,20 @@ contract TreatyTest is Test, DiamondDeployTest {
         game.upgradeCapital(nation2CapitalID);
         assertEq(abi.decode(getter.getComponent("Level").getBytesValue(nation2CapitalID), (uint256)), 1);
 
+        // Nation 2 upgrades capital via Treaty function
+        time += 30;
+        vm.warp(time);
+        testTreaty.treatyUpgradeCapital(nation2CapitalID);
+        assertEq(abi.decode(getter.getComponent("Level").getBytesValue(nation2CapitalID), (uint256)), 2);
+
         // Nation 2 leaves treaty
         testTreaty.treatyLeave();
 
         // Nation 2 upgrades capital
+        time += 30;
+        vm.warp(time);
         game.upgradeCapital(nation2CapitalID);
-        assertEq(abi.decode(getter.getComponent("Level").getBytesValue(nation2CapitalID), (uint256)), 2);
+        assertEq(abi.decode(getter.getComponent("Level").getBytesValue(nation2CapitalID), (uint256)), 3);
         vm.stopPrank();
     }
 

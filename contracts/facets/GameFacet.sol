@@ -69,7 +69,7 @@ contract GameFacet is UseStorage {
             Templates.addInventory(nationID, resourceTemplateIDs[i]);
         }
 
-        // Set permissions
+        // Delegate functions to nation and diamond
         string[] memory functionNames = gs().gameFunctionNames;
         for (uint256 i; i < functionNames.length; i++) {
             Templates.addDelegation(functionNames[i], nationID, nationID, 0);
@@ -81,8 +81,13 @@ contract GameFacet is UseStorage {
         GameLib.ongoingGameCheck();
         GameLib.validEntityCheck(_capitalID);
         uint256 nationID = ECSLib.getUint("Nation", _capitalID);
-        GameLib.nationDelegationCheck("UpgradeCapital", nationID, GameLib.getEntityByAddress(msg.sender), _capitalID);
-        GameLib.treatyApprovalCheck("UpgradeCapital", nationID, abi.encode(_capitalID));
+
+        // Permission checks
+        if (msg.sender != address(this)) {
+            uint256 callerID = GameLib.getEntityByAddress(msg.sender);
+            GameLib.nationDelegationCheck("UpgradeCapital", nationID, callerID, _capitalID);
+            GameLib.treatyApprovalCheck("UpgradeCapital", nationID, abi.encode(callerID, _capitalID));
+        }
 
         // Check if nation has reached maxCapitalLevel
         uint256 capitalLevel = ECSLib.getUint("Level", _capitalID); // FIXME: capital level should be separated from nation level
@@ -131,8 +136,13 @@ contract GameFacet is UseStorage {
         GameLib.inboundPositionCheck(_newTilePosition);
         GameLib.passableTerrainCheck(_newTilePosition);
         uint256 nationID = ECSLib.getUint("Nation", _capitalID);
-        GameLib.nationDelegationCheck("MoveCapital", nationID, GameLib.getEntityByAddress(msg.sender), _capitalID);
-        GameLib.treatyApprovalCheck("MoveCapital", nationID, abi.encode(_capitalID, _newTilePosition));
+
+        // Permission checks
+        if (msg.sender != address(this)) {
+            uint256 callerID = GameLib.getEntityByAddress(msg.sender);
+            GameLib.nationDelegationCheck("MoveCapital", nationID, callerID, _capitalID);
+            GameLib.treatyApprovalCheck("MoveCapital", nationID, abi.encode(callerID, _capitalID, _newTilePosition));
+        }
 
         // TEMP: battle royale
         if (gs().worldConstants.gameMode == GameMode.BATTLE_ROYALE) {
@@ -191,8 +201,13 @@ contract GameFacet is UseStorage {
         GameLib.validEntityCheck(_armyID);
         GameLib.validEntityCheck(_tileID);
         uint256 nationID = ECSLib.getUint("Nation", _armyID);
-        GameLib.nationDelegationCheck("ClaimTile", nationID, GameLib.getEntityByAddress(msg.sender), _armyID);
-        GameLib.treatyApprovalCheck("ClaimTile", nationID, abi.encode(_armyID, _tileID));
+
+        // Permission checks
+        if (msg.sender != address(this)) {
+            uint256 callerID = GameLib.getEntityByAddress(msg.sender);
+            GameLib.nationDelegationCheck("ClaimTile", nationID, callerID, _armyID);
+            GameLib.treatyApprovalCheck("ClaimTile", nationID, abi.encode(callerID, _armyID, _tileID));
+        }
 
         // Check Tile Count has not exceeded limits
         uint256 capitalID = GameLib.getCapital(nationID);
@@ -230,11 +245,17 @@ contract GameFacet is UseStorage {
     }
 
     function upgradeTile(uint256 _tileID) external {
+        // Basic checks
         GameLib.ongoingGameCheck();
         GameLib.validEntityCheck(_tileID);
         uint256 nationID = ECSLib.getUint("Nation", _tileID);
-        GameLib.nationDelegationCheck("UpgradeTile", nationID, GameLib.getEntityByAddress(msg.sender), _tileID);
-        GameLib.treatyApprovalCheck("UpgradeTile", nationID, abi.encode(_tileID));
+
+        // Permission checks
+        if (msg.sender != address(this)) {
+            uint256 callerID = GameLib.getEntityByAddress(msg.sender);
+            GameLib.nationDelegationCheck("UpgradeTile", nationID, callerID, _tileID);
+            GameLib.treatyApprovalCheck("UpgradeTile", nationID, abi.encode(callerID, _tileID));
+        }
 
         // Check if nation has reached max tile level
         uint256 tileLevel = ECSLib.getUint("Level", _tileID);
@@ -277,19 +298,26 @@ contract GameFacet is UseStorage {
     }
 
     function recoverTile(uint256 _tileID) external {
+        // Basic checks
         GameLib.ongoingGameCheck();
         GameLib.validEntityCheck(_tileID);
         uint256 nationID = ECSLib.getUint("Nation", _tileID);
-        GameLib.nationDelegationCheck("RecoverTile", nationID, GameLib.getEntityByAddress(msg.sender), _tileID);
-        GameLib.treatyApprovalCheck("RecoverTile", nationID, abi.encode(_tileID));
 
-        uint256 tileLevel = ECSLib.getUint("Level", _tileID);
+        // Permission checks
+        if (msg.sender != address(this)) {
+            uint256 callerID = GameLib.getEntityByAddress(msg.sender);
+            GameLib.nationDelegationCheck("RecoverTile", nationID, callerID, _tileID);
+            GameLib.treatyApprovalCheck("RecoverTile", nationID, abi.encode(callerID, _tileID));
+        }
+
+        // Check tile has past cooldown period for upgrade and recovery
         require(block.timestamp >= ECSLib.getUint("LastUpgraded", _tileID), "CURIO: Need to finish upgrading first");
         require(block.timestamp >= ECSLib.getUint("LastRecovered", _tileID), "CURIO: Need to finish recovering first");
 
         // lost tile amount = current level amount - actual amount
         address tileAddress = ECSLib.getAddress("Address", _tileID);
         CurioERC20 guardToken = GameLib.getTokenContract("Guard"); // FIXME: getTokenContract not clear
+        uint256 tileLevel = ECSLib.getUint("Level", _tileID);
         uint256 lostGuardAmount = GameLib.getConstant("Tile", "Guard", "Amount", "", tileLevel) - ECSLib.getUint("Amount", GameLib.getInventory(_tileID, gs().templates["Guard"]));
 
         // Deduct costs from capital
@@ -322,8 +350,13 @@ contract GameFacet is UseStorage {
         GameLib.ongoingGameCheck();
         GameLib.validEntityCheck(_tileID);
         uint256 nationID = ECSLib.getUint("Nation", _tileID);
-        GameLib.nationDelegationCheck("DisownTile", nationID, GameLib.getEntityByAddress(msg.sender), _tileID);
-        GameLib.treatyApprovalCheck("DisownTile", nationID, abi.encode(_tileID));
+
+        // Permission checks
+        if (msg.sender != address(this)) {
+            uint256 callerID = GameLib.getEntityByAddress(msg.sender);
+            GameLib.nationDelegationCheck("DisownTile", nationID, callerID, _tileID);
+            GameLib.treatyApprovalCheck("DisownTile", nationID, abi.encode(callerID, _tileID));
+        }
 
         // Verify that capital is not on tile
         Position memory tilePosition = ECSLib.getPosition("StartPosition", _tileID);
@@ -360,8 +393,13 @@ contract GameFacet is UseStorage {
         GameLib.validEntityCheck(_capitalID);
         GameLib.validEntityCheck(_templateID);
         uint256 nationID = ECSLib.getUint("Nation", _capitalID);
-        GameLib.nationDelegationCheck("StartTroopProduction", nationID, GameLib.getEntityByAddress(msg.sender), _capitalID);
-        GameLib.treatyApprovalCheck("StartTroopProduction", nationID, abi.encode(_capitalID, _templateID, _amount));
+
+        // Permission checks
+        if (msg.sender != address(this)) {
+            uint256 callerID = GameLib.getEntityByAddress(msg.sender);
+            GameLib.nationDelegationCheck("StartTroopProduction", nationID, callerID, _capitalID);
+            GameLib.treatyApprovalCheck("StartTroopProduction", nationID, abi.encode(callerID, _capitalID, _templateID, _amount));
+        }
 
         // Verify no upgrades in process
         require(block.timestamp >= ECSLib.getUint("LastUpgraded", _capitalID), "CURIO: Need to finish upgrading first");
@@ -394,11 +432,17 @@ contract GameFacet is UseStorage {
     }
 
     function endTroopProduction(uint256 _capitalID) external {
+        // Basic checks
         GameLib.ongoingGameCheck();
         GameLib.validEntityCheck(_capitalID);
         uint256 nationID = ECSLib.getUint("Nation", _capitalID);
-        GameLib.nationDelegationCheck("EndTroopProduction", nationID, GameLib.getEntityByAddress(msg.sender), _capitalID);
-        GameLib.treatyApprovalCheck("EndTroopProduction", nationID, abi.encode(_capitalID));
+
+        // Permission checks
+        if (msg.sender != address(this)) {
+            uint256 callerID = GameLib.getEntityByAddress(msg.sender);
+            GameLib.nationDelegationCheck("EndTroopProduction", nationID, callerID, _capitalID);
+            GameLib.treatyApprovalCheck("EndTroopProduction", nationID, abi.encode(callerID, _capitalID));
+        }
 
         // Verify no upgrades in process
         require(block.timestamp > ECSLib.getUint("LastUpgraded", _capitalID), "CURIO: Need to finish upgrading first");
@@ -432,8 +476,13 @@ contract GameFacet is UseStorage {
         GameLib.validEntityCheck(_armyID);
         GameLib.inboundPositionCheck(_targetPosition);
         uint256 nationID = ECSLib.getUint("Nation", _armyID);
-        GameLib.nationDelegationCheck("Move", nationID, GameLib.getEntityByAddress(msg.sender), _armyID);
-        GameLib.treatyApprovalCheck("Move", nationID, abi.encode(_armyID, _targetPosition));
+
+        // Permission checks
+        if (msg.sender != address(this)) {
+            uint256 callerID = GameLib.getEntityByAddress(msg.sender);
+            GameLib.nationDelegationCheck("Move", nationID, callerID, _armyID);
+            GameLib.treatyApprovalCheck("Move", nationID, abi.encode(callerID, _armyID, _targetPosition));
+        }
 
         // Check terrain
         Position memory tilePosition = GameLib.getProperTilePosition(_targetPosition);
@@ -474,8 +523,13 @@ contract GameFacet is UseStorage {
         GameLib.validEntityCheck(_capitalID);
         GameLib.ongoingGameCheck();
         uint256 nationID = ECSLib.getUint("Nation", _capitalID);
-        GameLib.nationDelegationCheck("OrganizeArmy", nationID, GameLib.getEntityByAddress(msg.sender), _capitalID);
-        GameLib.treatyApprovalCheck("OrganizeArmy", nationID, abi.encode(_capitalID, _templateIDs, _amounts));
+
+        // Permission checks
+        if (msg.sender != address(this)) {
+            uint256 callerID = GameLib.getEntityByAddress(msg.sender);
+            GameLib.nationDelegationCheck("OrganizeArmy", nationID, callerID, _capitalID);
+            GameLib.treatyApprovalCheck("OrganizeArmy", nationID, abi.encode(callerID, _capitalID, _templateIDs, _amounts));
+        }
 
         // Verify there is no army currently at the capital
         Position memory tilePosition = ECSLib.getPosition("StartPosition", _capitalID);
@@ -510,11 +564,17 @@ contract GameFacet is UseStorage {
     }
 
     function disbandArmy(uint256 _armyID) external {
+        // Basic checks
         GameLib.ongoingGameCheck();
         GameLib.validEntityCheck(_armyID);
         uint256 nationID = ECSLib.getUint("Nation", _armyID);
-        GameLib.nationDelegationCheck("DisbandArmy", nationID, GameLib.getEntityByAddress(msg.sender), _armyID);
-        GameLib.treatyApprovalCheck("DisbandArmy", nationID, abi.encode(_armyID));
+
+        // Permission checks
+        if (msg.sender != address(this)) {
+            uint256 callerID = GameLib.getEntityByAddress(msg.sender);
+            GameLib.nationDelegationCheck("DisbandArmy", nationID, callerID, _armyID);
+            GameLib.treatyApprovalCheck("DisbandArmy", nationID, abi.encode(callerID, _armyID));
+        }
 
         // Verify tile ownership
         Position memory armyPosition = ECSLib.getPosition("Position", _armyID);
@@ -545,8 +605,13 @@ contract GameFacet is UseStorage {
         GameLib.validEntityCheck(_armyID);
         GameLib.validEntityCheck(_targetID);
         uint256 nationID = ECSLib.getUint("Nation", _armyID);
-        GameLib.nationDelegationCheck("Battle", nationID, GameLib.getEntityByAddress(msg.sender), _armyID);
-        GameLib.treatyApprovalCheck("Battle", nationID, abi.encode(_armyID, _targetID));
+
+        // Permission checks
+        if (msg.sender != address(this)) {
+            uint256 callerID = GameLib.getEntityByAddress(msg.sender);
+            GameLib.nationDelegationCheck("Battle", nationID, callerID, _armyID);
+            GameLib.treatyApprovalCheck("Battle", nationID, abi.encode(callerID, _armyID, _targetID));
+        }
 
         // Verify that army and target can battle
         require(ECSLib.getBool("CanBattle", _armyID), "CURIO: Army cannot battle");
@@ -580,8 +645,13 @@ contract GameFacet is UseStorage {
         GameLib.validEntityCheck(_armyID);
         GameLib.validEntityCheck(_resourceID);
         uint256 nationID = ECSLib.getUint("Nation", _armyID);
-        GameLib.nationDelegationCheck("StartGather", nationID, GameLib.getEntityByAddress(msg.sender), _armyID);
-        GameLib.treatyApprovalCheck("StartGather", nationID, abi.encode(_armyID, _resourceID));
+
+        // Permission checks
+        if (msg.sender != address(this)) {
+            uint256 callerID = GameLib.getEntityByAddress(msg.sender);
+            GameLib.nationDelegationCheck("StartGather", nationID, callerID, _armyID);
+            GameLib.treatyApprovalCheck("StartGather", nationID, abi.encode(callerID, _armyID, _resourceID));
+        }
 
         // Verify that army is sitting on the resource
         Position memory startPosition = GameLib.getProperTilePosition(ECSLib.getPosition("Position", _armyID));
@@ -608,8 +678,13 @@ contract GameFacet is UseStorage {
         GameLib.ongoingGameCheck();
         GameLib.validEntityCheck(_armyID);
         uint256 nationID = ECSLib.getUint("Nation", _armyID);
-        GameLib.nationDelegationCheck("EndGather", nationID, GameLib.getEntityByAddress(msg.sender), _armyID);
-        GameLib.treatyApprovalCheck("EndGather", nationID, abi.encode(_armyID));
+
+        // Permission checks
+        if (msg.sender != address(this)) {
+            uint256 callerID = GameLib.getEntityByAddress(msg.sender);
+            GameLib.nationDelegationCheck("EndGather", nationID, callerID, _armyID);
+            GameLib.treatyApprovalCheck("EndGather", nationID, abi.encode(callerID, _armyID));
+        }
 
         // End gather
         GameLib.endGather(_armyID);
@@ -620,8 +695,13 @@ contract GameFacet is UseStorage {
         GameLib.validEntityCheck(_armyID);
         GameLib.ongoingGameCheck();
         uint256 nationID = ECSLib.getUint("Nation", _armyID);
-        GameLib.nationDelegationCheck("UnloadResources", nationID, GameLib.getEntityByAddress(msg.sender), _armyID);
-        GameLib.treatyApprovalCheck("UnloadResources", nationID, abi.encode(_armyID));
+
+        // Permission checks
+        if (msg.sender != address(this)) {
+            uint256 callerID = GameLib.getEntityByAddress(msg.sender);
+            GameLib.nationDelegationCheck("UnloadResources", nationID, callerID, _armyID);
+            GameLib.treatyApprovalCheck("UnloadResources", nationID, abi.encode(callerID, _armyID));
+        }
 
         // Verify tile ownership
         Position memory startPosition = ECSLib.getPosition("StartPosition", _armyID);
@@ -639,11 +719,17 @@ contract GameFacet is UseStorage {
     }
 
     function harvestResource(uint256 _resourceID) public {
+        // Basic checks
         GameLib.ongoingGameCheck();
         GameLib.validEntityCheck(_resourceID);
         uint256 nationID = ECSLib.getUint("Nation", _resourceID);
-        GameLib.nationDelegationCheck("HarvestResource", nationID, GameLib.getEntityByAddress(msg.sender), _resourceID);
-        GameLib.treatyApprovalCheck("HarvestResource", nationID, abi.encode(_resourceID));
+
+        // Permission checks
+        if (msg.sender != address(this)) {
+            uint256 callerID = GameLib.getEntityByAddress(msg.sender);
+            GameLib.nationDelegationCheck("HarvestResource", nationID, callerID, _resourceID);
+            GameLib.treatyApprovalCheck("HarvestResource", nationID, abi.encode(callerID, _resourceID));
+        }
 
         // Capital at chaos cannot harvest resources
         GameLib.capitalSackRecoveryCheck(GameLib.getCapital(nationID));
@@ -685,11 +771,17 @@ contract GameFacet is UseStorage {
 
     // TODO: harvest gold & food on a capital; consider merge this with the function above
     function harvestResourcesFromCapital(uint256 _capitalID) public {
+        // Basic checks
         GameLib.ongoingGameCheck();
         GameLib.validEntityCheck(_capitalID);
         uint256 nationID = ECSLib.getUint("Nation", _capitalID);
-        GameLib.nationDelegationCheck("HarvestResourcesFromCapital", nationID, GameLib.getEntityByAddress(msg.sender), _capitalID);
-        GameLib.treatyApprovalCheck("HarvestResourcesFromCapital", nationID, abi.encode(_capitalID));
+
+        // Permission checks
+        if (msg.sender != address(this)) {
+            uint256 callerID = GameLib.getEntityByAddress(msg.sender);
+            GameLib.nationDelegationCheck("HarvestResourcesFromCapital", nationID, callerID, _capitalID);
+            GameLib.treatyApprovalCheck("HarvestResourcesFromCapital", nationID, abi.encode(callerID, _capitalID));
+        }
 
         // Verify sack
         GameLib.capitalSackRecoveryCheck(_capitalID);
@@ -728,8 +820,13 @@ contract GameFacet is UseStorage {
         GameLib.validEntityCheck(_resourceID);
         GameLib.ongoingGameCheck();
         uint256 nationID = ECSLib.getUint("Nation", _resourceID);
-        GameLib.nationDelegationCheck("UpgradeResource", nationID, GameLib.getEntityByAddress(msg.sender), _resourceID);
-        GameLib.treatyApprovalCheck("UpgradeResource", nationID, abi.encode(_resourceID));
+
+        // Permission checks
+        if (msg.sender != address(this)) {
+            uint256 callerID = GameLib.getEntityByAddress(msg.sender);
+            GameLib.nationDelegationCheck("UpgradeResource", nationID, callerID, _resourceID);
+            GameLib.treatyApprovalCheck("UpgradeResource", nationID, abi.encode(callerID, _resourceID));
+        }
 
         // Check if nation has reached max tile level
         uint256 capitalID = GameLib.getCapital(nationID);
@@ -781,8 +878,13 @@ contract GameFacet is UseStorage {
         GameLib.validEntityCheck(_nationID);
         GameLib.validEntityCheck(_delegateID);
         GameLib.validFunctionNameCheck(_functionName);
-        GameLib.nationDelegationCheck("DelegateGameFunction", _nationID, GameLib.getEntityByAddress(msg.sender), 0);
-        GameLib.treatyApprovalCheck("DelegateGameFunction", _nationID, abi.encode(_functionName, _delegateID, _canCall));
+
+        // Permission checks
+        if (msg.sender != address(this)) {
+            uint256 callerID = GameLib.getEntityByAddress(msg.sender);
+            GameLib.nationDelegationCheck("DelegateGameFunction", _nationID, callerID, 0);
+            GameLib.treatyApprovalCheck("DelegateGameFunction", _nationID, abi.encode(callerID, _functionName, _delegateID, _subjectID, _canCall));
+        }
 
         // Delegate function
         GameLib.delegateGameFunction(_nationID, _functionName, _delegateID, _subjectID, _canCall);

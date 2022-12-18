@@ -894,7 +894,7 @@ library GameLib {
         address[] memory treatyAddresses = getSignedTreatyAddresses(_nationID);
         for (uint256 i; i < treatyAddresses.length; i++) {
             (bool success, bytes memory data) = treatyAddresses[i].call(abi.encodeWithSignature(string.concat("approve", _functionName, "(uint256,bytes)"), _nationID, _encodedParams));
-            require(success, "CURIO: Treaty approval check failed");
+            require(success, string.concat("CURIO: Treaty approval check failed", string(data)));
             bool approved = abi.decode(data, (bool));
             require(approved, string.concat("CURIO: Treaty disapproved ", _functionName));
         }

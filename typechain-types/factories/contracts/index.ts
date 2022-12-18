@@ -14,4 +14,3 @@ export { CurioTreaty__factory } from "./CurioTreaty__factory";
 export { CurioWallet__factory } from "./CurioWallet__factory";
 export { Diamond__factory } from "./Diamond__factory";
 export { Set__factory } from "./Set__factory";
-export { Treaty__factory } from "./Treaty__factory";

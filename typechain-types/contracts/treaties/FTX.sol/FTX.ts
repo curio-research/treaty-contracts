@@ -28,7 +28,7 @@ export interface FTXInterface extends utils.Interface {
     "admin()": FunctionFragment;
     "approveBattle(uint256,bytes)": FunctionFragment;
     "approveClaimTile(uint256,bytes)": FunctionFragment;
-    "approveDelegatePermission(uint256,bytes)": FunctionFragment;
+    "approveDelegateGameFunction(uint256,bytes)": FunctionFragment;
     "approveDisbandArmy(uint256,bytes)": FunctionFragment;
     "approveDisownTile(uint256,bytes)": FunctionFragment;
     "approveEndGather(uint256,bytes)": FunctionFragment;
@@ -47,7 +47,6 @@ export interface FTXInterface extends utils.Interface {
     "approveUpgradeCapital(uint256,bytes)": FunctionFragment;
     "approveUpgradeResource(uint256,bytes)": FunctionFragment;
     "approveUpgradeTile(uint256,bytes)": FunctionFragment;
-    "delegatedGameFunctionNames(uint256)": FunctionFragment;
     "description()": FunctionFragment;
     "diamond()": FunctionFragment;
     "fttToken()": FunctionFragment;
@@ -58,6 +57,7 @@ export interface FTXInterface extends utils.Interface {
     "name()": FunctionFragment;
     "sbfAddress()": FunctionFragment;
     "sbfCapitalAddress()": FunctionFragment;
+    "treatyDelegateGameFunction(string,uint256,bool)": FunctionFragment;
     "treatyDeposit(uint256)": FunctionFragment;
     "treatyJoin()": FunctionFragment;
     "treatyLeave()": FunctionFragment;
@@ -70,7 +70,7 @@ export interface FTXInterface extends utils.Interface {
       | "admin"
       | "approveBattle"
       | "approveClaimTile"
-      | "approveDelegatePermission"
+      | "approveDelegateGameFunction"
       | "approveDisbandArmy"
       | "approveDisownTile"
       | "approveEndGather"
@@ -89,7 +89,6 @@ export interface FTXInterface extends utils.Interface {
       | "approveUpgradeCapital"
       | "approveUpgradeResource"
       | "approveUpgradeTile"
-      | "delegatedGameFunctionNames"
       | "description"
       | "diamond"
       | "fttToken"
@@ -100,6 +99,7 @@ export interface FTXInterface extends utils.Interface {
       | "name"
       | "sbfAddress"
       | "sbfCapitalAddress"
+      | "treatyDelegateGameFunction"
       | "treatyDeposit"
       | "treatyJoin"
       | "treatyLeave"
@@ -117,7 +117,7 @@ export interface FTXInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
-    functionFragment: "approveDelegatePermission",
+    functionFragment: "approveDelegateGameFunction",
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
@@ -193,10 +193,6 @@ export interface FTXInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
-    functionFragment: "delegatedGameFunctionNames",
-    values: [PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
     functionFragment: "description",
     values?: undefined
   ): string;
@@ -217,6 +213,14 @@ export interface FTXInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "sbfCapitalAddress",
     values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "treatyDelegateGameFunction",
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<boolean>
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "treatyDeposit",
@@ -246,7 +250,7 @@ export interface FTXInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "approveDelegatePermission",
+    functionFragment: "approveDelegateGameFunction",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -322,10 +326,6 @@ export interface FTXInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "delegatedGameFunctionNames",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "description",
     data: BytesLike
   ): Result;
@@ -339,6 +339,10 @@ export interface FTXInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "sbfAddress", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "sbfCapitalAddress",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "treatyDelegateGameFunction",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -400,7 +404,7 @@ export interface FTX extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
-    approveDelegatePermission(
+    approveDelegateGameFunction(
       _nationID: PromiseOrValue<BigNumberish>,
       _encodedParams: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
@@ -514,11 +518,6 @@ export interface FTX extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
-    delegatedGameFunctionNames(
-      arg0: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[string]>;
-
     description(overrides?: CallOverrides): Promise<[string]>;
 
     diamond(overrides?: CallOverrides): Promise<[string]>;
@@ -538,6 +537,13 @@ export interface FTX extends BaseContract {
     sbfAddress(overrides?: CallOverrides): Promise<[string]>;
 
     sbfCapitalAddress(overrides?: CallOverrides): Promise<[string]>;
+
+    treatyDelegateGameFunction(
+      _functionName: PromiseOrValue<string>,
+      _subjectID: PromiseOrValue<BigNumberish>,
+      _canCall: PromiseOrValue<boolean>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
 
     treatyDeposit(
       _amount: PromiseOrValue<BigNumberish>,
@@ -576,7 +582,7 @@ export interface FTX extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
-  approveDelegatePermission(
+  approveDelegateGameFunction(
     _nationID: PromiseOrValue<BigNumberish>,
     _encodedParams: PromiseOrValue<BytesLike>,
     overrides?: CallOverrides
@@ -690,11 +696,6 @@ export interface FTX extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
-  delegatedGameFunctionNames(
-    arg0: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<string>;
-
   description(overrides?: CallOverrides): Promise<string>;
 
   diamond(overrides?: CallOverrides): Promise<string>;
@@ -714,6 +715,13 @@ export interface FTX extends BaseContract {
   sbfAddress(overrides?: CallOverrides): Promise<string>;
 
   sbfCapitalAddress(overrides?: CallOverrides): Promise<string>;
+
+  treatyDelegateGameFunction(
+    _functionName: PromiseOrValue<string>,
+    _subjectID: PromiseOrValue<BigNumberish>,
+    _canCall: PromiseOrValue<boolean>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
 
   treatyDeposit(
     _amount: PromiseOrValue<BigNumberish>,
@@ -752,7 +760,7 @@ export interface FTX extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    approveDelegatePermission(
+    approveDelegateGameFunction(
       _nationID: PromiseOrValue<BigNumberish>,
       _encodedParams: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
@@ -866,11 +874,6 @@ export interface FTX extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    delegatedGameFunctionNames(
-      arg0: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<string>;
-
     description(overrides?: CallOverrides): Promise<string>;
 
     diamond(overrides?: CallOverrides): Promise<string>;
@@ -890,6 +893,13 @@ export interface FTX extends BaseContract {
     sbfAddress(overrides?: CallOverrides): Promise<string>;
 
     sbfCapitalAddress(overrides?: CallOverrides): Promise<string>;
+
+    treatyDelegateGameFunction(
+      _functionName: PromiseOrValue<string>,
+      _subjectID: PromiseOrValue<BigNumberish>,
+      _canCall: PromiseOrValue<boolean>,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     treatyDeposit(
       _amount: PromiseOrValue<BigNumberish>,
@@ -925,7 +935,7 @@ export interface FTX extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    approveDelegatePermission(
+    approveDelegateGameFunction(
       _nationID: PromiseOrValue<BigNumberish>,
       _encodedParams: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
@@ -1039,11 +1049,6 @@ export interface FTX extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    delegatedGameFunctionNames(
-      arg0: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     description(overrides?: CallOverrides): Promise<BigNumber>;
 
     diamond(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1063,6 +1068,13 @@ export interface FTX extends BaseContract {
     sbfAddress(overrides?: CallOverrides): Promise<BigNumber>;
 
     sbfCapitalAddress(overrides?: CallOverrides): Promise<BigNumber>;
+
+    treatyDelegateGameFunction(
+      _functionName: PromiseOrValue<string>,
+      _subjectID: PromiseOrValue<BigNumberish>,
+      _canCall: PromiseOrValue<boolean>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
 
     treatyDeposit(
       _amount: PromiseOrValue<BigNumberish>,
@@ -1102,7 +1114,7 @@ export interface FTX extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    approveDelegatePermission(
+    approveDelegateGameFunction(
       _nationID: PromiseOrValue<BigNumberish>,
       _encodedParams: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
@@ -1216,11 +1228,6 @@ export interface FTX extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    delegatedGameFunctionNames(
-      arg0: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     description(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     diamond(overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -1240,6 +1247,13 @@ export interface FTX extends BaseContract {
     sbfAddress(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     sbfCapitalAddress(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    treatyDelegateGameFunction(
+      _functionName: PromiseOrValue<string>,
+      _subjectID: PromiseOrValue<BigNumberish>,
+      _canCall: PromiseOrValue<boolean>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
 
     treatyDeposit(
       _amount: PromiseOrValue<BigNumberish>,

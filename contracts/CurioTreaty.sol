@@ -143,7 +143,7 @@ contract CurioTreaty is ITreaty {
         return true;
     }
 
-    function approveDelegatePermission(uint256 _nationID, bytes memory _encodedParams) public view virtual onlyGame returns (bool) {
+    function approveDelegateGameFunction(uint256 _nationID, bytes memory _encodedParams) public view virtual onlyGame returns (bool) {
         return true;
     }
 }

@@ -66,8 +66,6 @@ export type { NATO } from "./contracts/treaties/NATO";
 export { NATO__factory } from "./factories/contracts/treaties/NATO__factory";
 export type { TestTreaty } from "./contracts/treaties/TestTreaty";
 export { TestTreaty__factory } from "./factories/contracts/treaties/TestTreaty__factory";
-export type { Treaty } from "./contracts/Treaty";
-export { Treaty__factory } from "./factories/contracts/Treaty__factory";
 export type { AddressComponent } from "./contracts/TypedComponents.sol/AddressComponent";
 export { AddressComponent__factory } from "./factories/contracts/TypedComponents.sol/AddressComponent__factory";
 export type { BoolComponent } from "./contracts/TypedComponents.sol/BoolComponent";
