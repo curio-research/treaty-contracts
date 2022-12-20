@@ -77,7 +77,7 @@ contract AdminFacet is UseStorage {
     }
 
     /// @notice Set _subjectID to 0 to delegate to all subjects
-    function delegateGameFunction(
+    function adminDelegateGameFunction(
         uint256 _nationID,
         string memory _functionName,
         uint256 _subjectID,
