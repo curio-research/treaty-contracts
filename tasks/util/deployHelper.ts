@@ -138,7 +138,7 @@ export const initializeGame = async (hre: HardhatRuntimeEnvironment, worldConsta
     'StartGather',
     'EndGather',
     'UnloadResources',
-    'HarvestResources',
+    'HarvestResource',
     'HarvestResourcesFromCapital',
     'UpgradeResource',
     'Battle',
