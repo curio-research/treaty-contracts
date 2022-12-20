@@ -96,6 +96,14 @@ contract GetterFacet is UseStorage {
         return gs().entities;
     }
 
+    function getDelegations(
+        string memory _functionName,
+        uint256 _ownerID,
+        uint256 _callerID
+    ) external view returns (uint256[] memory) {
+        return GameLib.getDelegations(_functionName, _ownerID, _callerID);
+    }
+
     function getArmyAt(Position memory _position) external view returns (uint256) {
         return GameLib.getArmyAt(_position);
     }
@@ -116,8 +124,8 @@ contract GetterFacet is UseStorage {
         return GameLib.getTileAt(_position);
     }
 
-    function getInventory(address _inventoryAddress, string memory _inventoryType) external view returns (uint256) {
-        uint256 templateID = gs().templates[_inventoryType];
+    function getInventory(address _inventoryAddress, string memory _templateName) external view returns (uint256) {
+        uint256 templateID = gs().templates[_templateName];
         uint256 entityID = GameLib.getEntityByAddress(_inventoryAddress);
         return GameLib.getInventory(entityID, templateID);
     }

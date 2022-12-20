@@ -28,7 +28,7 @@ export interface TestTreatyInterface extends utils.Interface {
     "admin()": FunctionFragment;
     "approveBattle(uint256,bytes)": FunctionFragment;
     "approveClaimTile(uint256,bytes)": FunctionFragment;
-    "approveDelegatePermission(uint256,bytes)": FunctionFragment;
+    "approveDelegateGameFunction(uint256,bytes)": FunctionFragment;
     "approveDisbandArmy(uint256,bytes)": FunctionFragment;
     "approveDisownTile(uint256,bytes)": FunctionFragment;
     "approveEndGather(uint256,bytes)": FunctionFragment;
@@ -47,14 +47,15 @@ export interface TestTreatyInterface extends utils.Interface {
     "approveUpgradeCapital(uint256,bytes)": FunctionFragment;
     "approveUpgradeResource(uint256,bytes)": FunctionFragment;
     "approveUpgradeTile(uint256,bytes)": FunctionFragment;
-    "delegatedGameFunctionNames(uint256)": FunctionFragment;
     "description()": FunctionFragment;
     "diamond()": FunctionFragment;
     "game()": FunctionFragment;
     "getter()": FunctionFragment;
-    "join()": FunctionFragment;
-    "leave()": FunctionFragment;
     "name()": FunctionFragment;
+    "treatyDelegateGameFunction(string,uint256,bool)": FunctionFragment;
+    "treatyJoin()": FunctionFragment;
+    "treatyLeave()": FunctionFragment;
+    "treatyUpgradeCapital(uint256)": FunctionFragment;
   };
 
   getFunction(
@@ -62,7 +63,7 @@ export interface TestTreatyInterface extends utils.Interface {
       | "admin"
       | "approveBattle"
       | "approveClaimTile"
-      | "approveDelegatePermission"
+      | "approveDelegateGameFunction"
       | "approveDisbandArmy"
       | "approveDisownTile"
       | "approveEndGather"
@@ -81,14 +82,15 @@ export interface TestTreatyInterface extends utils.Interface {
       | "approveUpgradeCapital"
       | "approveUpgradeResource"
       | "approveUpgradeTile"
-      | "delegatedGameFunctionNames"
       | "description"
       | "diamond"
       | "game"
       | "getter"
-      | "join"
-      | "leave"
       | "name"
+      | "treatyDelegateGameFunction"
+      | "treatyJoin"
+      | "treatyLeave"
+      | "treatyUpgradeCapital"
   ): FunctionFragment;
 
   encodeFunctionData(functionFragment: "admin", values?: undefined): string;
@@ -101,7 +103,7 @@ export interface TestTreatyInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
-    functionFragment: "approveDelegatePermission",
+    functionFragment: "approveDelegateGameFunction",
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
@@ -177,19 +179,33 @@ export interface TestTreatyInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
-    functionFragment: "delegatedGameFunctionNames",
-    values: [PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
     functionFragment: "description",
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "diamond", values?: undefined): string;
   encodeFunctionData(functionFragment: "game", values?: undefined): string;
   encodeFunctionData(functionFragment: "getter", values?: undefined): string;
-  encodeFunctionData(functionFragment: "join", values?: undefined): string;
-  encodeFunctionData(functionFragment: "leave", values?: undefined): string;
   encodeFunctionData(functionFragment: "name", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "treatyDelegateGameFunction",
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<boolean>
+    ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "treatyJoin",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "treatyLeave",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "treatyUpgradeCapital",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
 
   decodeFunctionResult(functionFragment: "admin", data: BytesLike): Result;
   decodeFunctionResult(
@@ -201,7 +217,7 @@ export interface TestTreatyInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "approveDelegatePermission",
+    functionFragment: "approveDelegateGameFunction",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -277,19 +293,26 @@ export interface TestTreatyInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "delegatedGameFunctionNames",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "description",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "diamond", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "game", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "getter", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "join", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "leave", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "treatyDelegateGameFunction",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "treatyJoin", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "treatyLeave",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "treatyUpgradeCapital",
+    data: BytesLike
+  ): Result;
 
   events: {};
 }
@@ -335,7 +358,7 @@ export interface TestTreaty extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
-    approveDelegatePermission(
+    approveDelegateGameFunction(
       _nationID: PromiseOrValue<BigNumberish>,
       _encodedParams: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
@@ -449,11 +472,6 @@ export interface TestTreaty extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
-    delegatedGameFunctionNames(
-      arg0: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[string]>;
-
     description(overrides?: CallOverrides): Promise<[string]>;
 
     diamond(overrides?: CallOverrides): Promise<[string]>;
@@ -462,15 +480,27 @@ export interface TestTreaty extends BaseContract {
 
     getter(overrides?: CallOverrides): Promise<[string]>;
 
-    join(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    leave(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
     name(overrides?: CallOverrides): Promise<[string]>;
+
+    treatyDelegateGameFunction(
+      _functionName: PromiseOrValue<string>,
+      _subjectID: PromiseOrValue<BigNumberish>,
+      _canCall: PromiseOrValue<boolean>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    treatyJoin(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    treatyLeave(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    treatyUpgradeCapital(
+      _capitalID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
   };
 
   admin(overrides?: CallOverrides): Promise<string>;
@@ -487,7 +517,7 @@ export interface TestTreaty extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
-  approveDelegatePermission(
+  approveDelegateGameFunction(
     _nationID: PromiseOrValue<BigNumberish>,
     _encodedParams: PromiseOrValue<BytesLike>,
     overrides?: CallOverrides
@@ -601,11 +631,6 @@ export interface TestTreaty extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
-  delegatedGameFunctionNames(
-    arg0: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<string>;
-
   description(overrides?: CallOverrides): Promise<string>;
 
   diamond(overrides?: CallOverrides): Promise<string>;
@@ -614,15 +639,27 @@ export interface TestTreaty extends BaseContract {
 
   getter(overrides?: CallOverrides): Promise<string>;
 
-  join(
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  leave(
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
   name(overrides?: CallOverrides): Promise<string>;
+
+  treatyDelegateGameFunction(
+    _functionName: PromiseOrValue<string>,
+    _subjectID: PromiseOrValue<BigNumberish>,
+    _canCall: PromiseOrValue<boolean>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  treatyJoin(
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  treatyLeave(
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  treatyUpgradeCapital(
+    _capitalID: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
 
   callStatic: {
     admin(overrides?: CallOverrides): Promise<string>;
@@ -639,7 +676,7 @@ export interface TestTreaty extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    approveDelegatePermission(
+    approveDelegateGameFunction(
       _nationID: PromiseOrValue<BigNumberish>,
       _encodedParams: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
@@ -753,11 +790,6 @@ export interface TestTreaty extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    delegatedGameFunctionNames(
-      arg0: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<string>;
-
     description(overrides?: CallOverrides): Promise<string>;
 
     diamond(overrides?: CallOverrides): Promise<string>;
@@ -766,11 +798,23 @@ export interface TestTreaty extends BaseContract {
 
     getter(overrides?: CallOverrides): Promise<string>;
 
-    join(overrides?: CallOverrides): Promise<void>;
-
-    leave(overrides?: CallOverrides): Promise<void>;
-
     name(overrides?: CallOverrides): Promise<string>;
+
+    treatyDelegateGameFunction(
+      _functionName: PromiseOrValue<string>,
+      _subjectID: PromiseOrValue<BigNumberish>,
+      _canCall: PromiseOrValue<boolean>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    treatyJoin(overrides?: CallOverrides): Promise<void>;
+
+    treatyLeave(overrides?: CallOverrides): Promise<void>;
+
+    treatyUpgradeCapital(
+      _capitalID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
   };
 
   filters: {};
@@ -790,7 +834,7 @@ export interface TestTreaty extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    approveDelegatePermission(
+    approveDelegateGameFunction(
       _nationID: PromiseOrValue<BigNumberish>,
       _encodedParams: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
@@ -904,11 +948,6 @@ export interface TestTreaty extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    delegatedGameFunctionNames(
-      arg0: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     description(overrides?: CallOverrides): Promise<BigNumber>;
 
     diamond(overrides?: CallOverrides): Promise<BigNumber>;
@@ -917,15 +956,27 @@ export interface TestTreaty extends BaseContract {
 
     getter(overrides?: CallOverrides): Promise<BigNumber>;
 
-    join(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    leave(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
     name(overrides?: CallOverrides): Promise<BigNumber>;
+
+    treatyDelegateGameFunction(
+      _functionName: PromiseOrValue<string>,
+      _subjectID: PromiseOrValue<BigNumberish>,
+      _canCall: PromiseOrValue<boolean>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    treatyJoin(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    treatyLeave(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    treatyUpgradeCapital(
+      _capitalID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -943,7 +994,7 @@ export interface TestTreaty extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    approveDelegatePermission(
+    approveDelegateGameFunction(
       _nationID: PromiseOrValue<BigNumberish>,
       _encodedParams: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
@@ -1057,11 +1108,6 @@ export interface TestTreaty extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    delegatedGameFunctionNames(
-      arg0: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     description(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     diamond(overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -1070,14 +1116,26 @@ export interface TestTreaty extends BaseContract {
 
     getter(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    join(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    leave(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
     name(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    treatyDelegateGameFunction(
+      _functionName: PromiseOrValue<string>,
+      _subjectID: PromiseOrValue<BigNumberish>,
+      _canCall: PromiseOrValue<boolean>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    treatyJoin(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    treatyLeave(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    treatyUpgradeCapital(
+      _capitalID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
   };
 }

@@ -60,8 +60,7 @@ contract CurioERC20 is ERC20 {
         (uint256 recipientInventoryID, uint256 recipientLoad, uint256 recipientBalance) = _getInventoryIDLoadAndBalance(_to);
         require(senderInventoryID != NULL && recipientInventoryID != NULL, "CurioERC20: In-game inventory not found");
         require(senderBalance >= _amount, "CurioERC20: Sender insufficent balance");
-        // require(getter.getDistanceByAddresses(_from, _to) <= getter.getWorldConstants().maxTransferDistance, "CurioERC20: Too far from recipient to transfer");
-        require(getter.getDistanceByAddresses(_from, _to) <= maxTransferDistance, "CurioERC20: Too far from recipient to transfer");
+        // require(getter.getDistanceByAddresses(_from, _to) <= maxTransferDistance, "CurioERC20: Too far from recipient to transfer");
 
         uint256 transferAmount;
         if (recipientBalance + _amount <= recipientLoad) {
@@ -85,7 +84,8 @@ contract CurioERC20 is ERC20 {
         address _to,
         uint256 _amount
     ) public override returns (bool) {
-        if (msg.sender != diamond) {
+        // Transfers from diamond or owner are exempt from allowance
+        if (msg.sender != diamond && getter.getEntityByAddress(msg.sender) != getter.getNation(getter.getEntityByAddress(_from))) {
             uint256 allowed = allowance[_from][msg.sender];
             require(allowed >= _amount, "CurioERC20: Insufficient allowance");
             if (allowed != type(uint256).max) allowance[_from][msg.sender] = allowed - _amount;

@@ -17,6 +17,113 @@ contract TreatyTest is Test, DiamondDeployTest {
     // - [x] Case: FTX
     // - [x] Case: Alliance
 
+    function testDelegation() public {
+        // Start time
+        uint256 time = block.timestamp + 500;
+        vm.warp(time);
+
+        // Deployer transfers gold, food, and troops to Nation 2
+        vm.startPrank(deployer);
+        admin.dripToken(nation2CapitalAddr, "Gold", 100000000);
+        admin.dripToken(nation2CapitalAddr, "Food", 100000000);
+        admin.dripToken(nation2CapitalAddr, "Horseman", 1000);
+        admin.dripToken(nation2CapitalAddr, "Warrior", 1000);
+        admin.dripToken(nation2CapitalAddr, "Slinger", 1000);
+        vm.stopPrank();
+
+        // Nation 2 organizes army
+        vm.startPrank(player2);
+        uint256[] memory armyTemplateIDs = new uint256[](3);
+        armyTemplateIDs[0] = horsemanTemplateID;
+        armyTemplateIDs[1] = warriorTemplateID;
+        armyTemplateIDs[2] = slingerTemplateID;
+        uint256[] memory armyTemplateAmounts = new uint256[](3);
+        armyTemplateAmounts[0] = 100;
+        armyTemplateAmounts[1] = 100;
+        armyTemplateAmounts[2] = 100;
+        uint256 army21ID = game.organizeArmy(nation2CapitalID, armyTemplateIDs, armyTemplateAmounts);
+        time += 1;
+        vm.warp(time);
+        game.move(army21ID, Position({x: 61, y: 31}));
+        vm.stopPrank();
+
+        // Nation 2 organizes another army
+        vm.startPrank(player2);
+        uint256 army22ID = game.organizeArmy(nation2CapitalID, armyTemplateIDs, armyTemplateAmounts);
+        vm.stopPrank();
+
+        // Nation 1 fails to move Nation 2's first army
+        vm.startPrank(player1);
+        vm.expectRevert("CURIO: Not delegated to call Move");
+        game.move(army21ID, Position({x: 60, y: 30}));
+        vm.stopPrank();
+
+        // Nation 2 delegates Move function for both armies to Nation 1
+        vm.startPrank(player2);
+        assertEq(getter.getDelegations("Move", nation2ID, nation1ID).length, 0);
+        game.delegateGameFunction(nation2ID, "Move", nation1ID, 0, true);
+        uint256[] memory delegationIDs = getter.getDelegations("Move", nation2ID, nation1ID);
+        assertEq(delegationIDs.length, 1);
+        assertEq(abi.decode(getter.getComponent("Subject").getBytesValue(delegationIDs[0]), (uint256)), 0);
+        vm.stopPrank();
+
+        // Nation 1 moves Nation 2's first and second armies
+        vm.startPrank(player1);
+        time += 1;
+        vm.warp(time);
+        game.move(army21ID, Position({x: 60, y: 30}));
+        game.move(army22ID, Position({x: 63, y: 33}));
+        vm.stopPrank();
+
+        // Nation 2 abrogates Move function delegation for its first army (no effect)
+        vm.startPrank(player2);
+        game.delegateGameFunction(nation2ID, "Move", nation1ID, army21ID, false);
+        assertEq(getter.getDelegations("Move", nation2ID, nation1ID).length, 1);
+        vm.stopPrank();
+
+        // Nation 1 moves Nation 2's first and second armies
+        vm.startPrank(player1);
+        time += 1;
+        vm.warp(time);
+        game.move(army21ID, Position({x: 59, y: 29}));
+        game.move(army22ID, Position({x: 64, y: 34}));
+        vm.stopPrank();
+
+        // Nation 2 abrogates Move function delegation for its armies and delegates for specifically its second army
+        vm.startPrank(player2);
+        game.delegateGameFunction(nation2ID, "Move", nation1ID, 0, false);
+        game.delegateGameFunction(nation2ID, "Move", nation1ID, army22ID, true);
+        delegationIDs = getter.getDelegations("Move", nation2ID, nation1ID);
+        assertEq(delegationIDs.length, 1);
+        assertEq(abi.decode(getter.getComponent("Subject").getBytesValue(delegationIDs[0]), (uint256)), army22ID);
+        vm.stopPrank();
+
+        // Nation 1 moves Nation 2's second army but fails to move its first army
+        vm.startPrank(player1);
+        time += 1;
+        vm.warp(time);
+        game.move(army22ID, Position({x: 65, y: 35}));
+        vm.expectRevert("CURIO: Not delegated to call Move");
+        game.move(army21ID, Position({x: 58, y: 28}));
+        vm.stopPrank();
+
+        // Nation 2 abrogates Move function delegation for both armies
+        vm.startPrank(player2);
+        game.delegateGameFunction(nation2ID, "Move", nation1ID, 0, false);
+        assertEq(getter.getDelegations("Move", nation2ID, nation1ID).length, 0);
+        vm.stopPrank();
+
+        // Nation 1 fails to move Nation 2's first and second armies
+        vm.startPrank(player1);
+        time += 1;
+        vm.warp(time);
+        vm.expectRevert("CURIO: Not delegated to call Move");
+        game.move(army21ID, Position({x: 58, y: 28}));
+        vm.expectRevert("CURIO: Not delegated to call Move");
+        game.move(army22ID, Position({x: 64, y: 34}));
+        vm.stopPrank();
+    }
+
     function testApproval() public {
         // Start time
         uint256 time = block.timestamp + 500;
@@ -25,12 +132,12 @@ contract TreatyTest is Test, DiamondDeployTest {
         // Check initial condition
         assertEq(abi.decode(getter.getComponent("Level").getBytesValue(nation2CapitalID), (uint256)), 1);
 
-        // Player 1 deploys TestTreaty treaty
+        // Nation 1 deploys TestTreaty treaty
         vm.startPrank(player1);
         TestTreaty testTreaty = new TestTreaty(diamond);
         vm.stopPrank();
 
-        // Deployer registers TestTreaty treaty and drips gold and food to Player 2
+        // Deployer registers TestTreaty treaty and drips gold and food to Nation 2
         vm.startPrank(deployer);
         uint256 testTreatyID = admin.registerTreaty(address(testTreaty), "placeholder ABI");
         admin.dripToken(nation2CapitalAddr, "Gold", 1000000000);
@@ -43,22 +150,30 @@ contract TreatyTest is Test, DiamondDeployTest {
         assertEq(abi.decode(getter.getComponent("Description").getBytesValue(testTreatyID), (string)), "Treaty for testing");
         assertEq(abi.decode(getter.getComponent("ABIHash").getBytesValue(testTreatyID), (string)), "placeholder ABI");
 
-        // Player 2 joins TestTreaty treaty
+        // Nation 2 joins TestTreaty treaty
         vm.startPrank(player2);
-        testTreaty.join();
+        testTreaty.treatyJoin();
         assertTrue(getter.getNationTreatySignature(nation2ID, testTreatyID) > 0);
 
-        // Player 2 fails to upgrade capital
+        // Nation 2 fails to upgrade capital
         vm.expectRevert("CURIO: Treaty disapproved UpgradeCapital");
         game.upgradeCapital(nation2CapitalID);
         assertEq(abi.decode(getter.getComponent("Level").getBytesValue(nation2CapitalID), (uint256)), 1);
 
-        // Player 2 leaves treaty
-        testTreaty.leave();
-
-        // Player 2 upgrades capital
-        game.upgradeCapital(nation2CapitalID);
+        // Nation 2 upgrades capital via Treaty function
+        time += 30;
+        vm.warp(time);
+        testTreaty.treatyUpgradeCapital(nation2CapitalID);
         assertEq(abi.decode(getter.getComponent("Level").getBytesValue(nation2CapitalID), (uint256)), 2);
+
+        // Nation 2 leaves treaty
+        testTreaty.treatyLeave();
+
+        // Nation 2 upgrades capital
+        time += 30;
+        vm.warp(time);
+        game.upgradeCapital(nation2CapitalID);
+        assertEq(abi.decode(getter.getComponent("Level").getBytesValue(nation2CapitalID), (uint256)), 3);
         vm.stopPrank();
     }
 
@@ -105,7 +220,7 @@ contract TreatyTest is Test, DiamondDeployTest {
 
         // Nation 1 joins alliance after token approval
         CurioWallet(nation1CapitalAddr).executeTx(address(goldToken), abi.encodeWithSignature("approve(address,uint256)", address(alliance), 1000));
-        alliance.join();
+        alliance.treatyJoin();
         assertTrue(getter.getNationTreatySignature(nation1ID, allianceID) > 0);
 
         // Nation 1 moves army from (62, 12) to (62, 29)
@@ -118,13 +233,13 @@ contract TreatyTest is Test, DiamondDeployTest {
 
         // Nation 2 fails to join alliance before token approval
         vm.expectRevert();
-        alliance.join();
+        alliance.treatyJoin();
         assertEq(goldToken.checkBalanceOf(nation2CapitalAddr), 1000000);
 
         // Nation 2 joins alliance after token approval
         vm.startPrank(player2);
         CurioWallet(nation2CapitalAddr).executeTx(address(goldToken), abi.encodeWithSignature("approve(address,uint256)", address(alliance), 1000));
-        alliance.join();
+        alliance.treatyJoin();
         assertTrue(getter.getNationTreatySignature(nation2ID, allianceID) > 0);
         assertEq(goldToken.checkBalanceOf(nation2CapitalAddr), 1000000 - 1000);
         vm.stopPrank();
@@ -141,14 +256,14 @@ contract TreatyTest is Test, DiamondDeployTest {
         // Nation 2 fails to leave alliance
         vm.startPrank(player2);
         vm.expectRevert("Alliance: Nation must stay for at least 10 seconds");
-        alliance.leave();
+        alliance.treatyLeave();
         vm.stopPrank();
 
         // Nation 2 manages to leave alliance after 10 seconds
         vm.startPrank(player2);
         time += 10;
         vm.warp(time);
-        alliance.leave();
+        alliance.treatyLeave();
         assertEq(goldToken.checkBalanceOf(nation2CapitalAddr), 1000000);
         vm.stopPrank();
 
@@ -171,7 +286,7 @@ contract TreatyTest is Test, DiamondDeployTest {
         // Nation 3 joins alliance after token approval
         vm.startPrank(player3);
         CurioWallet(nation3CapitalAddr).executeTx(address(goldToken), abi.encodeWithSignature("approve(address,uint256)", address(alliance), 1000));
-        alliance.join();
+        alliance.treatyJoin();
         assertTrue(getter.getNationTreatySignature(nation3ID, allianceID) > 0);
 
         // Nation 3 organizes army
@@ -215,7 +330,7 @@ contract TreatyTest is Test, DiamondDeployTest {
         time += 2;
         vm.warp(time);
         vm.expectRevert("Alliance: Cannot besiege army of ally nation");
-        alliance.besiege(army31ID);
+        alliance.treatyBesiege(army31ID);
         assertEq(horsemanToken.checkBalanceOf(army11Addr), army11HorsemanBalance);
         assertEq(horsemanToken.checkBalanceOf(army31Addr), 90);
 
@@ -224,14 +339,14 @@ contract TreatyTest is Test, DiamondDeployTest {
         assertEq(horsemanToken.checkBalanceOf(army21Addr), 150);
         time += 2;
         vm.warp(time);
-        alliance.besiege(army21ID);
+        alliance.treatyBesiege(army21ID);
         assertTrue(horsemanToken.checkBalanceOf(army11Addr) < army11HorsemanBalance);
         assertTrue(horsemanToken.checkBalanceOf(army21Addr) < 150);
         assertTrue(horsemanToken.checkBalanceOf(army31Addr) < 90);
         while (getter.getNation(army21ID) != 0) {
             time += 2;
             vm.warp(time);
-            alliance.besiege(army21ID);
+            alliance.treatyBesiege(army21ID);
         }
         assertEq(getter.getNation(army11ID), nation1ID);
         assertEq(getter.getNation(army31ID), nation3ID);
@@ -262,20 +377,20 @@ contract TreatyTest is Test, DiamondDeployTest {
         // Player 1 deposits to FTX
         vm.startPrank(player1);
         CurioWallet(nation1CapitalAddr).executeTx(address(goldToken), abi.encodeWithSignature("approve(address,uint256)", address(ftx), 2));
-        ftx.deposit(2);
+        ftx.treatyDeposit(2);
         assertEq(goldToken.checkBalanceOf(nation1CapitalAddr), 6);
         assertEq(ftx.fttToken().checkBalanceOf(nation1CapitalAddr), 2);
         assertEq(goldToken.checkBalanceOf(nation2CapitalAddr), 2);
 
         // Player 1 withdraws successfully
-        ftx.withdraw(1);
+        ftx.treatyWithdraw(1);
         assertEq(goldToken.checkBalanceOf(nation1CapitalAddr), 7);
         assertEq(ftx.fttToken().checkBalanceOf(nation1CapitalAddr), 1);
         assertEq(goldToken.checkBalanceOf(nation2CapitalAddr), 1);
 
         // Player 1 gives FTX all gold
         CurioWallet(nation1CapitalAddr).executeTx(address(goldToken), abi.encodeWithSignature("approve(address,uint256)", address(ftx), 7));
-        ftx.deposit(7);
+        ftx.treatyDeposit(7);
         assertEq(goldToken.checkBalanceOf(nation1CapitalAddr), 0);
         assertEq(ftx.fttToken().checkBalanceOf(nation1CapitalAddr), 8);
         assertEq(goldToken.checkBalanceOf(nation2CapitalAddr), 8);
@@ -289,19 +404,19 @@ contract TreatyTest is Test, DiamondDeployTest {
 
         // Player 1 manages to withdraw only 1 gold from FTX
         vm.prank(player1);
-        ftx.withdraw(8);
+        ftx.treatyWithdraw(8);
         assertEq(goldToken.checkBalanceOf(nation1CapitalAddr), 1);
         assertEq(goldToken.checkBalanceOf(nation2CapitalAddr), 0);
 
         // Player 2 (SBF) declares FTX bankrupt
         vm.prank(player2);
-        ftx.run();
+        ftx.treatyRun();
         assertTrue(ftx.isBankrupt());
 
         // Player 1 fails to withdraw rest of balance from FTX
         vm.prank(player1);
         vm.expectRevert();
-        ftx.withdraw(7);
+        ftx.treatyWithdraw(7);
         assertEq(goldToken.checkBalanceOf(nation1CapitalAddr), 1);
     }
 }

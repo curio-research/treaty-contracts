@@ -180,7 +180,7 @@ contract DiamondDeployTest is Test {
 
         // Initialize players
         vm.prank(player1);
-        nation1ID = game.initializeNation(nation1Pos, "China");
+        nation1ID = game.initializeNation(nation1Pos, "China"); // FIXME: remove
         nation1CapitalID = getter.getCapital(nation1ID);
         nation1CapitalAddr = getter.getAddress(nation1CapitalID);
         vm.prank(player2);
@@ -319,7 +319,7 @@ contract DiamondDeployTest is Test {
 
         // Horseman
         string memory templateName = "Horseman";
-        uint256 templateID = admin.addTroopTemplate(templateName, 120, 60, 120, 95, address(horsemanToken));
+        uint256 templateID = admin.addTroopTemplate(120, 60, 120, 95, address(horsemanToken));
         templateNames[index] = templateName;
         templateIDs[index] = templateID;
         index++;
@@ -327,7 +327,7 @@ contract DiamondDeployTest is Test {
 
         // Warrior
         templateName = "Warrior";
-        templateID = admin.addTroopTemplate(templateName, 120, 60, 120, 95, address(warriorToken));
+        templateID = admin.addTroopTemplate(120, 60, 120, 95, address(warriorToken));
         templateNames[index] = templateName;
         templateIDs[index] = templateID;
         index++;
@@ -335,7 +335,7 @@ contract DiamondDeployTest is Test {
 
         // Slinger
         templateName = "Slinger";
-        templateID = admin.addTroopTemplate(templateName, 120, 60, 120, 95, address(slingerToken));
+        templateID = admin.addTroopTemplate(120, 60, 120, 95, address(slingerToken));
         templateNames[index] = templateName;
         templateIDs[index] = templateID;
         index++;
@@ -343,7 +343,7 @@ contract DiamondDeployTest is Test {
 
         // Guard
         templateName = "Guard";
-        templateID = admin.addTroopTemplate(templateName, 120, 60, 120, 0, address(guardToken));
+        templateID = admin.addTroopTemplate(120, 60, 120, 0, address(guardToken));
         templateNames[index] = templateName;
         templateIDs[index] = templateID;
         index++;
@@ -351,7 +351,7 @@ contract DiamondDeployTest is Test {
 
         // Gold
         templateName = "Gold";
-        templateID = admin.addResourceTemplate(templateName, address(goldToken));
+        templateID = admin.addResourceTemplate(address(goldToken));
         templateNames[index] = templateName;
         templateIDs[index] = templateID;
         index++;
@@ -359,7 +359,7 @@ contract DiamondDeployTest is Test {
 
         // Food
         templateName = "Food";
-        templateID = admin.addResourceTemplate(templateName, address(foodToken));
+        templateID = admin.addResourceTemplate(address(foodToken));
         templateNames[index] = templateName;
         templateIDs[index] = templateID;
         index++;

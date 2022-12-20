@@ -22,4 +22,3 @@ export type { CurioTreaty } from "./CurioTreaty";
 export type { CurioWallet } from "./CurioWallet";
 export type { Diamond } from "./Diamond";
 export type { Set } from "./Set";
-export type { Treaty } from "./Treaty";

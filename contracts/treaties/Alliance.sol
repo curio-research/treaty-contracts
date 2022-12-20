@@ -15,20 +15,20 @@ contract Alliance is CurioTreaty {
 
         name = "Alliance";
         description = "A treaty between two or more countries to work together towards a common goal or to defend each other in the case of external aggression";
-        string[] memory temp = new string[](1);
-        temp[0] = "Battle";
-        delegatedGameFunctionNames = temp;
     }
 
-    function join() public override {
+    function treatyJoin() public override {
         // Transfer 1000 gold from nation to treaty
         address nationCapitalAddress = getter.getAddress(getter.getCapital(getter.getEntityByAddress(msg.sender)));
         goldToken.transferFrom(nationCapitalAddress, address(this), 1000);
 
-        super.join();
+        // Delegate Battle function for all armies
+        treatyDelegateGameFunction("Battle", 0, true);
+
+        super.treatyJoin();
     }
 
-    function leave() public override {
+    function treatyLeave() public override {
         // Check if nation has stayed in alliance for at least 10 seconds
         uint256 nationID = getter.getEntityByAddress(msg.sender);
         uint256 treatyID = getter.getEntityByAddress(address(this));
@@ -39,14 +39,17 @@ contract Alliance is CurioTreaty {
         address nationCapitalAddress = getter.getAddress(getter.getCapital(nationID));
         goldToken.transfer(nationCapitalAddress, 1000);
 
-        super.leave();
+        // Undelegate Battle function for all armies
+        treatyDelegateGameFunction("Battle", 0, false);
+
+        super.treatyLeave();
     }
 
     /**
      * @dev Battle a target army belonging to a non-ally nation with all nearby ally armies.
      * @param _targetArmyID target army entity
      */
-    function besiege(uint256 _targetArmyID) public onlySigner {
+    function treatyBesiege(uint256 _targetArmyID) public onlySigner {
         // Check if target army is in a non-ally nation
         uint256 targetNationID = getter.getNation(_targetArmyID);
         uint256 treatyID = getter.getEntityByAddress(address(this));
@@ -75,7 +78,7 @@ contract Alliance is CurioTreaty {
 
     function approveBattle(uint256 _nationID, bytes memory _encodedParams) public view override returns (bool) {
         // Disapprove if target nation is an ally
-        (, uint256 targetID) = abi.decode(_encodedParams, (uint256, uint256));
+        (, , uint256 targetID) = abi.decode(_encodedParams, (uint256, uint256, uint256));
         uint256 targetNationID = getter.getNation(targetID);
         uint256 treatyID = getter.getEntityByAddress(address(this));
         if (getter.getNationTreatySignature(targetNationID, treatyID) != 0) return false;

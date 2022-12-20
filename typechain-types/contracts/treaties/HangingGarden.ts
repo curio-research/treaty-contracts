@@ -28,7 +28,7 @@ export interface HangingGardenInterface extends utils.Interface {
     "admin()": FunctionFragment;
     "approveBattle(uint256,bytes)": FunctionFragment;
     "approveClaimTile(uint256,bytes)": FunctionFragment;
-    "approveDelegatePermission(uint256,bytes)": FunctionFragment;
+    "approveDelegateGameFunction(uint256,bytes)": FunctionFragment;
     "approveDisbandArmy(uint256,bytes)": FunctionFragment;
     "approveDisownTile(uint256,bytes)": FunctionFragment;
     "approveEndGather(uint256,bytes)": FunctionFragment;
@@ -49,7 +49,6 @@ export interface HangingGardenInterface extends utils.Interface {
     "approveUpgradeResource(uint256,bytes)": FunctionFragment;
     "approveUpgradeTile(uint256,bytes)": FunctionFragment;
     "becomeAHomie(address)": FunctionFragment;
-    "delegatedGameFunctionNames(uint256)": FunctionFragment;
     "description()": FunctionFragment;
     "diamond()": FunctionFragment;
     "executeGameTx(bytes)": FunctionFragment;
@@ -60,10 +59,11 @@ export interface HangingGardenInterface extends utils.Interface {
     "homies(uint256)": FunctionFragment;
     "isHomie(address)": FunctionFragment;
     "isOwner(address)": FunctionFragment;
-    "join()": FunctionFragment;
-    "leave()": FunctionFragment;
     "name()": FunctionFragment;
     "owners(uint256)": FunctionFragment;
+    "treatyDelegateGameFunction(string,uint256,bool)": FunctionFragment;
+    "treatyJoin()": FunctionFragment;
+    "treatyLeave()": FunctionFragment;
   };
 
   getFunction(
@@ -71,7 +71,7 @@ export interface HangingGardenInterface extends utils.Interface {
       | "admin"
       | "approveBattle"
       | "approveClaimTile"
-      | "approveDelegatePermission"
+      | "approveDelegateGameFunction"
       | "approveDisbandArmy"
       | "approveDisownTile"
       | "approveEndGather"
@@ -92,7 +92,6 @@ export interface HangingGardenInterface extends utils.Interface {
       | "approveUpgradeResource"
       | "approveUpgradeTile"
       | "becomeAHomie"
-      | "delegatedGameFunctionNames"
       | "description"
       | "diamond"
       | "executeGameTx"
@@ -103,10 +102,11 @@ export interface HangingGardenInterface extends utils.Interface {
       | "homies"
       | "isHomie"
       | "isOwner"
-      | "join"
-      | "leave"
       | "name"
       | "owners"
+      | "treatyDelegateGameFunction"
+      | "treatyJoin"
+      | "treatyLeave"
   ): FunctionFragment;
 
   encodeFunctionData(functionFragment: "admin", values?: undefined): string;
@@ -119,7 +119,7 @@ export interface HangingGardenInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
-    functionFragment: "approveDelegatePermission",
+    functionFragment: "approveDelegateGameFunction",
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
@@ -201,10 +201,6 @@ export interface HangingGardenInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "becomeAHomie",
     values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "delegatedGameFunctionNames",
-    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "description",
@@ -234,12 +230,26 @@ export interface HangingGardenInterface extends utils.Interface {
     functionFragment: "isOwner",
     values: [PromiseOrValue<string>]
   ): string;
-  encodeFunctionData(functionFragment: "join", values?: undefined): string;
-  encodeFunctionData(functionFragment: "leave", values?: undefined): string;
   encodeFunctionData(functionFragment: "name", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "owners",
     values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "treatyDelegateGameFunction",
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<boolean>
+    ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "treatyJoin",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "treatyLeave",
+    values?: undefined
   ): string;
 
   decodeFunctionResult(functionFragment: "admin", data: BytesLike): Result;
@@ -252,7 +262,7 @@ export interface HangingGardenInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "approveDelegatePermission",
+    functionFragment: "approveDelegateGameFunction",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -336,10 +346,6 @@ export interface HangingGardenInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "delegatedGameFunctionNames",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "description",
     data: BytesLike
   ): Result;
@@ -355,10 +361,17 @@ export interface HangingGardenInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "homies", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "isHomie", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "isOwner", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "join", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "leave", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "owners", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "treatyDelegateGameFunction",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "treatyJoin", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "treatyLeave",
+    data: BytesLike
+  ): Result;
 
   events: {};
 }
@@ -404,7 +417,7 @@ export interface HangingGarden extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
-    approveDelegatePermission(
+    approveDelegateGameFunction(
       _nationID: PromiseOrValue<BigNumberish>,
       _encodedParams: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
@@ -528,11 +541,6 @@ export interface HangingGarden extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    delegatedGameFunctionNames(
-      arg0: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[string]>;
-
     description(overrides?: CallOverrides): Promise<[string]>;
 
     diamond(overrides?: CallOverrides): Promise<[string]>;
@@ -569,20 +577,27 @@ export interface HangingGarden extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
-    join(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    leave(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
     name(overrides?: CallOverrides): Promise<[string]>;
 
     owners(
       arg0: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[string]>;
+
+    treatyDelegateGameFunction(
+      _functionName: PromiseOrValue<string>,
+      _subjectID: PromiseOrValue<BigNumberish>,
+      _canCall: PromiseOrValue<boolean>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    treatyJoin(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    treatyLeave(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
   };
 
   admin(overrides?: CallOverrides): Promise<string>;
@@ -599,7 +614,7 @@ export interface HangingGarden extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
-  approveDelegatePermission(
+  approveDelegateGameFunction(
     _nationID: PromiseOrValue<BigNumberish>,
     _encodedParams: PromiseOrValue<BytesLike>,
     overrides?: CallOverrides
@@ -723,11 +738,6 @@ export interface HangingGarden extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  delegatedGameFunctionNames(
-    arg0: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<string>;
-
   description(overrides?: CallOverrides): Promise<string>;
 
   diamond(overrides?: CallOverrides): Promise<string>;
@@ -764,20 +774,27 @@ export interface HangingGarden extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
-  join(
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  leave(
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
   name(overrides?: CallOverrides): Promise<string>;
 
   owners(
     arg0: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<string>;
+
+  treatyDelegateGameFunction(
+    _functionName: PromiseOrValue<string>,
+    _subjectID: PromiseOrValue<BigNumberish>,
+    _canCall: PromiseOrValue<boolean>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  treatyJoin(
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  treatyLeave(
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
 
   callStatic: {
     admin(overrides?: CallOverrides): Promise<string>;
@@ -794,7 +811,7 @@ export interface HangingGarden extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    approveDelegatePermission(
+    approveDelegateGameFunction(
       _nationID: PromiseOrValue<BigNumberish>,
       _encodedParams: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
@@ -918,11 +935,6 @@ export interface HangingGarden extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    delegatedGameFunctionNames(
-      arg0: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<string>;
-
     description(overrides?: CallOverrides): Promise<string>;
 
     diamond(overrides?: CallOverrides): Promise<string>;
@@ -959,16 +971,23 @@ export interface HangingGarden extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    join(overrides?: CallOverrides): Promise<void>;
-
-    leave(overrides?: CallOverrides): Promise<void>;
-
     name(overrides?: CallOverrides): Promise<string>;
 
     owners(
       arg0: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<string>;
+
+    treatyDelegateGameFunction(
+      _functionName: PromiseOrValue<string>,
+      _subjectID: PromiseOrValue<BigNumberish>,
+      _canCall: PromiseOrValue<boolean>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    treatyJoin(overrides?: CallOverrides): Promise<void>;
+
+    treatyLeave(overrides?: CallOverrides): Promise<void>;
   };
 
   filters: {};
@@ -988,7 +1007,7 @@ export interface HangingGarden extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    approveDelegatePermission(
+    approveDelegateGameFunction(
       _nationID: PromiseOrValue<BigNumberish>,
       _encodedParams: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
@@ -1110,11 +1129,6 @@ export interface HangingGarden extends BaseContract {
     becomeAHomie(
       _armyAddress: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    delegatedGameFunctionNames(
-      arg0: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     description(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1153,19 +1167,26 @@ export interface HangingGarden extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    join(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    leave(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
     name(overrides?: CallOverrides): Promise<BigNumber>;
 
     owners(
       arg0: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    treatyDelegateGameFunction(
+      _functionName: PromiseOrValue<string>,
+      _subjectID: PromiseOrValue<BigNumberish>,
+      _canCall: PromiseOrValue<boolean>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    treatyJoin(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    treatyLeave(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
   };
 
@@ -1184,7 +1205,7 @@ export interface HangingGarden extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    approveDelegatePermission(
+    approveDelegateGameFunction(
       _nationID: PromiseOrValue<BigNumberish>,
       _encodedParams: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
@@ -1308,11 +1329,6 @@ export interface HangingGarden extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    delegatedGameFunctionNames(
-      arg0: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     description(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     diamond(overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -1349,19 +1365,26 @@ export interface HangingGarden extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    join(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    leave(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
     name(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     owners(
       arg0: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    treatyDelegateGameFunction(
+      _functionName: PromiseOrValue<string>,
+      _subjectID: PromiseOrValue<BigNumberish>,
+      _canCall: PromiseOrValue<boolean>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    treatyJoin(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    treatyLeave(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
   };
 }

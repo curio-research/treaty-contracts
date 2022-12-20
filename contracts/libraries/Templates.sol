@@ -36,6 +36,7 @@ library Templates {
         uint256 capitalID = ECSLib.addEntity();
 
         ECSLib.setString("Tag", capitalID, "Building");
+        ECSLib.setBool("CanHoldTokens", capitalID);
         ECSLib.setPosition("StartPosition", capitalID, _tilePosition);
         ECSLib.setPosition("Position", capitalID, _position);
         ECSLib.setString("BuildingType", capitalID, "Capital");
@@ -92,6 +93,7 @@ library Templates {
         uint256 armyID = ECSLib.addEntity();
 
         ECSLib.setString("Tag", armyID, "Army");
+        ECSLib.setBool("CanHoldTokens", armyID);
         ECSLib.setUint("Speed", armyID, _speed);
         ECSLib.setUint("LastMoved", armyID, block.timestamp);
         ECSLib.setUint("LastAttacked", armyID, block.timestamp);
@@ -153,7 +155,7 @@ library Templates {
     }
 
     function addTroopTemplate(
-        string memory _inventoryType,
+        string memory _name,
         uint256 _health,
         uint256 _attack,
         uint256 _defense,
@@ -163,7 +165,7 @@ library Templates {
         uint256 templateID = ECSLib.addEntity();
 
         ECSLib.setString("Tag", templateID, "TroopTemplate");
-        ECSLib.setString("InventoryType", templateID, _inventoryType);
+        ECSLib.setString("Name", templateID, _name);
         ECSLib.setUint("Health", templateID, _health);
         ECSLib.setUint("Attack", templateID, _attack);
         ECSLib.setUint("Defense", templateID, _defense);
@@ -173,11 +175,11 @@ library Templates {
         return templateID;
     }
 
-    function addResourceTemplate(string memory _inventoryType, address _tokenContract) public returns (uint256) {
+    function addResourceTemplate(string memory _name, address _tokenContract) public returns (uint256) {
         uint256 templateID = ECSLib.addEntity();
 
         ECSLib.setString("Tag", templateID, "ResourceTemplate");
-        ECSLib.setString("InventoryType", templateID, _inventoryType);
+        ECSLib.setString("Name", templateID, _name);
         ECSLib.setAddress("Address", templateID, _tokenContract);
 
         return templateID;
@@ -212,6 +214,7 @@ library Templates {
         uint256 treatyID = ECSLib.addEntity();
 
         ECSLib.setString("Tag", treatyID, "Treaty");
+        ECSLib.setBool("CanHoldTokens", treatyID);
         ECSLib.setUint("InitTimestamp", treatyID, block.timestamp);
         ECSLib.setString("Name", treatyID, _name);
         ECSLib.setString("Description", treatyID, _description);
@@ -223,8 +226,9 @@ library Templates {
 
     function addDelegation(
         string memory _functionName,
-        uint256 _ownerID,
-        uint256 _callerID
+        uint256 _ownerID, // original delegator
+        uint256 _callerID,
+        uint256 _subjectID
     ) public returns (uint256) {
         uint256 delegationID = ECSLib.addEntity();
 
@@ -232,6 +236,7 @@ library Templates {
         ECSLib.setString("FunctionName", delegationID, _functionName);
         ECSLib.setUint("Owner", delegationID, _ownerID);
         ECSLib.setUint("Caller", delegationID, _callerID);
+        ECSLib.setUint("Subject", delegationID, _subjectID);
 
         return delegationID;
     }

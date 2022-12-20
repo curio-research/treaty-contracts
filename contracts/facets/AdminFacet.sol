@@ -76,9 +76,11 @@ contract AdminFacet is UseStorage {
         ECSLib.removeEntity(signatureID);
     }
 
-    function delegateGameFunction(
+    /// @notice Set _subjectID to 0 to delegate to all subjects
+    function adminDelegateGameFunction(
         uint256 _nationID,
         string memory _functionName,
+        uint256 _subjectID,
         bool _canCall
     ) external onlyTreaty {
         // Basic checks
@@ -88,27 +90,31 @@ contract AdminFacet is UseStorage {
 
         // Delegate function
         uint256 treatyID = GameLib.getEntityByAddress(msg.sender);
-        GameLib.delegateGameFunction(_nationID, _functionName, treatyID, _canCall);
+        GameLib.delegateGameFunction(_nationID, _functionName, treatyID, _subjectID, _canCall);
     }
 
     // ----------------------------------------------------------------------
-    // ADMIN FUNCTIONS
+    // ADMIN FUNCTIONS (LIVEOPS)
     // ----------------------------------------------------------------------
+
+    function lockTiles(Position[] memory _tilePositions) external onlyAuthorized {
+        for (uint256 i = 0; i < _tilePositions.length; i++) {
+            ECSLib.setBool("IsLocked", GameLib.getTileAt(_tilePositions[i]));
+        }
+    }
+
+    function unlockTiles(Position[] memory _tilePositions) external onlyAuthorized {
+        for (uint256 i = 0; i < _tilePositions.length; i++) {
+            ECSLib.setBool("IsLocked", GameLib.getTileAt(_tilePositions[i]));
+        }
+    }
 
     function stopGame() external onlyAuthorized {
         gs().worldConstants.gameLengthInSeconds = block.timestamp - gs().gameInitTimestamp;
     }
 
-    function removeEntity(uint256 _entity) external onlyAuthorized {
-        ECSLib.removeEntity(_entity);
-    }
-
-    function adminInitializeTile(Position memory _startPosition) external onlyAuthorized {
-        GameLib.initializeTile(_startPosition);
-    }
-
-    function spawnResource(Position memory _startPosition, string memory _inventoryType) external onlyAuthorized {
-        Templates.addResource(gs().templates[_inventoryType], _startPosition);
+    function spawnResource(Position memory _startPosition, string memory _templateName) external onlyAuthorized {
+        Templates.addResource(gs().templates[_templateName], _startPosition);
     }
 
     function dripToken(
@@ -127,10 +133,8 @@ contract AdminFacet is UseStorage {
         ECSLib.setUint("Nation", resourceID, _nationID);
     }
 
-    /// @dev Link a player's main account and burner account
-    function authorizeGame(address _burnerAddress) external onlyAuthorized {
-        gs().mainToBurner[msg.sender] = _burnerAddress;
-        gs().burnerToMain[_burnerAddress] = msg.sender;
+    function removeEntity(uint256 _entity) external onlyAuthorized {
+        ECSLib.removeEntity(_entity);
     }
 
     /**
@@ -143,6 +147,39 @@ contract AdminFacet is UseStorage {
         require(!ECSLib.getBoolComponent("IsActive").has(nationID), "CURIO: Nation is active");
 
         ECSLib.setBool("IsActive", nationID);
+    }
+
+    function updateInventoryAmount(uint256 _inventoryID, uint256 _newAmount) external onlyAuthorized {
+        ECSLib.setUint("Amount", _inventoryID, _newAmount);
+    }
+
+    function setComponentValue(
+        string memory _componentName,
+        uint256 _entity,
+        bytes memory _value
+    ) external {
+        ECSLib.setComponentValue(_componentName, _entity, _value);
+    }
+
+    // ----------------------------------------------------------------------
+    // ADMIN FUNCTIONS (GAME SETUP)
+    // ----------------------------------------------------------------------
+
+    function adminInitializeTile(Position memory _startPosition) external onlyAuthorized {
+        GameLib.initializeTile(_startPosition);
+    }
+
+    function disallowHostCapital(Position[] memory _tilePositions) external onlyAuthorized {
+        for (uint256 i = 0; i < _tilePositions.length; i++) {
+            uint256 tileID = GameLib.getTileAt(_tilePositions[i]);
+            ECSLib.removeBool("CanHostCapital", tileID);
+        }
+    }
+
+    /// @dev Link a player's main account and burner account
+    function authorizeGame(address _burnerAddress) external onlyAuthorized {
+        gs().mainToBurner[msg.sender] = _burnerAddress;
+        gs().burnerToMain[_burnerAddress] = msg.sender;
     }
 
     /**
@@ -165,28 +202,25 @@ contract AdminFacet is UseStorage {
         }
     }
 
-    function addInventory(uint256 _keeperID, string memory _inventoryType) external onlyAuthorized returns (uint256) {
-        uint256 templateID = gs().templates[_inventoryType];
+    function addInventory(uint256 _keeperID, string memory _templateName) external onlyAuthorized returns (uint256) {
+        uint256 templateID = gs().templates[_templateName];
         return Templates.addInventory(_keeperID, templateID);
     }
 
-    function updateInventoryAmount(uint256 _inventoryID, uint256 _newAmount) external onlyAuthorized {
-        ECSLib.setUint("Amount", _inventoryID, _newAmount);
-    }
-
     function addTroopTemplate(
-        string memory _inventoryType,
         uint256 _health,
         uint256 _attack,
         uint256 _defense,
         uint256 _load,
         address _tokenContract
     ) external onlyAuthorized returns (uint256) {
-        return Templates.addTroopTemplate(_inventoryType, _health, _attack, _defense, _load, _tokenContract);
+        CurioERC20 token = CurioERC20(_tokenContract);
+        return Templates.addTroopTemplate(token.name(), _health, _attack, _defense, _load, _tokenContract);
     }
 
-    function addResourceTemplate(string memory _inventoryType, address _tokenContract) external onlyAuthorized returns (uint256) {
-        return Templates.addResourceTemplate(_inventoryType, _tokenContract);
+    function addResourceTemplate(address _tokenContract) external onlyAuthorized returns (uint256) {
+        CurioERC20 token = CurioERC20(_tokenContract);
+        return Templates.addResourceTemplate(token.name(), _tokenContract);
     }
 
     function addGameParameter(string memory _identifier, uint256 _value) external onlyAuthorized returns (uint256) {
@@ -226,10 +260,6 @@ contract AdminFacet is UseStorage {
         return GameLib.generateNewAddress();
     }
 
-    // ----------------------------------------------------------------------
-    // ECS HELPERS
-    // ----------------------------------------------------------------------
-
     function registerFunctionNames(string[] memory _functionNames) external onlyAuthorized {
         gs().gameFunctionNames = _functionNames;
         for (uint256 i; i < _functionNames.length; i++) {
@@ -256,13 +286,5 @@ contract AdminFacet is UseStorage {
 
     function addEntity() external onlyAuthorized returns (uint256) {
         return ECSLib.addEntity();
-    }
-
-    function setComponentValue(
-        string memory _componentName,
-        uint256 _entity,
-        bytes memory _value
-    ) external {
-        ECSLib.setComponentValue(_componentName, _entity, _value);
     }
 }

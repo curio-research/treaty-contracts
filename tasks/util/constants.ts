@@ -62,32 +62,32 @@ export const createTemplates = async (diamond: Curio, tokenAddrs: string[], gasL
   let entity = Number(await diamond.getEntity()) + 1;
 
   // Gold
-  await confirmTx(await diamond.addResourceTemplate(InventoryTypeOptions.Gold, tokenAddrIter.next().value, { gasLimit }), hre);
+  await confirmTx(await diamond.addResourceTemplate(tokenAddrIter.next().value, { gasLimit }), hre);
   templateNames.push(InventoryTypeOptions.Gold);
   templateIDs.push(entity++);
 
   // Food
-  await confirmTx(await diamond.addResourceTemplate(InventoryTypeOptions.Food, tokenAddrIter.next().value, { gasLimit }), hre);
+  await confirmTx(await diamond.addResourceTemplate(tokenAddrIter.next().value, { gasLimit }), hre);
   templateNames.push(InventoryTypeOptions.Food);
   templateIDs.push(entity++);
 
   // Horseman
-  await confirmTx(await diamond.addTroopTemplate(InventoryTypeOptions.Horseman, 120, 60, 120, 95, tokenAddrIter.next().value, { gasLimit }), hre);
+  await confirmTx(await diamond.addTroopTemplate(120, 60, 120, 95, tokenAddrIter.next().value, { gasLimit }), hre);
   templateNames.push(InventoryTypeOptions.Horseman);
   templateIDs.push(entity++);
 
   // Warrior
-  await confirmTx(await diamond.addTroopTemplate(InventoryTypeOptions.Warrior, 120, 60, 120, 95, tokenAddrIter.next().value, { gasLimit }), hre);
+  await confirmTx(await diamond.addTroopTemplate(120, 60, 120, 95, tokenAddrIter.next().value, { gasLimit }), hre);
   templateNames.push(InventoryTypeOptions.Warrior);
   templateIDs.push(entity++);
 
   // Slinger
-  await confirmTx(await diamond.addTroopTemplate(InventoryTypeOptions.Slinger, 120, 60, 120, 95, tokenAddrIter.next().value, { gasLimit }), hre);
+  await confirmTx(await diamond.addTroopTemplate(120, 60, 120, 95, tokenAddrIter.next().value, { gasLimit }), hre);
   templateNames.push(InventoryTypeOptions.Slinger);
   templateIDs.push(entity++);
 
   // Guard
-  await confirmTx(await diamond.addTroopTemplate(InventoryTypeOptions.Guard, 120, 60, 120, 0, tokenAddrIter.next().value, { gasLimit }), hre);
+  await confirmTx(await diamond.addTroopTemplate(120, 60, 120, 0, tokenAddrIter.next().value, { gasLimit }), hre);
   templateNames.push(InventoryTypeOptions.Guard);
   templateIDs.push(entity++);
 

@@ -138,18 +138,19 @@ export interface CurioInterface extends utils.Interface {
     "addGame()": FunctionFragment;
     "addGameParameter(string,uint256)": FunctionFragment;
     "addInventory(uint256,string)": FunctionFragment;
-    "addResourceTemplate(string,address)": FunctionFragment;
+    "addResourceTemplate(address)": FunctionFragment;
     "addSigner(uint256)": FunctionFragment;
-    "addTroopTemplate(string,uint256,uint256,uint256,uint256,address)": FunctionFragment;
+    "addTroopTemplate(uint256,uint256,uint256,uint256,address)": FunctionFragment;
+    "adminDelegateGameFunction(uint256,string,uint256,bool)": FunctionFragment;
     "adminInitializeTile((uint256,uint256))": FunctionFragment;
     "authorizeGame(address)": FunctionFragment;
     "bulkAddGameParameters(string[],uint256[])": FunctionFragment;
     "bulkInitializeTiles((uint256,uint256)[])": FunctionFragment;
-    "delegateGameFunction(uint256,string,bool)": FunctionFragment;
-    "delegateGameFunction(uint256,string,uint256,bool)": FunctionFragment;
+    "disallowHostCapital((uint256,uint256)[])": FunctionFragment;
     "dripToken(address,string,uint256)": FunctionFragment;
     "generateNewAddress()": FunctionFragment;
     "giftTileAndResourceAt((uint256,uint256),uint256)": FunctionFragment;
+    "lockTiles((uint256,uint256)[])": FunctionFragment;
     "onlyQuery((uint256,uint256))": FunctionFragment;
     "onlySet(uint256,uint256)": FunctionFragment;
     "reactivateNation(address)": FunctionFragment;
@@ -163,6 +164,7 @@ export interface CurioInterface extends utils.Interface {
     "spawnResource((uint256,uint256),string)": FunctionFragment;
     "stopGame()": FunctionFragment;
     "storeEncodedColumnBatches(uint256[][])": FunctionFragment;
+    "unlockTiles((uint256,uint256)[])": FunctionFragment;
     "updateInventoryAmount(uint256,uint256)": FunctionFragment;
     "diamondCut((address,uint8,bytes4[])[],address,bytes)": FunctionFragment;
     "facetAddress(bytes4)": FunctionFragment;
@@ -172,6 +174,7 @@ export interface CurioInterface extends utils.Interface {
     "supportsInterface(bytes4)": FunctionFragment;
     "battle(uint256,uint256)": FunctionFragment;
     "claimTile(uint256,uint256)": FunctionFragment;
+    "delegateGameFunction(uint256,string,uint256,uint256,bool)": FunctionFragment;
     "disbandArmy(uint256)": FunctionFragment;
     "disownTile(uint256)": FunctionFragment;
     "endGather(uint256)": FunctionFragment;
@@ -199,6 +202,7 @@ export interface CurioInterface extends utils.Interface {
     "getComponent(string)": FunctionFragment;
     "getComponentById(uint256)": FunctionFragment;
     "getConstant(string,string,string,string,uint256)": FunctionFragment;
+    "getDelegations(string,uint256,uint256)": FunctionFragment;
     "getDistanceByAddresses(address,address)": FunctionFragment;
     "getEntities()": FunctionFragment;
     "getEntitiesAddr()": FunctionFragment;
@@ -257,15 +261,16 @@ export interface CurioInterface extends utils.Interface {
       | "addResourceTemplate"
       | "addSigner"
       | "addTroopTemplate"
+      | "adminDelegateGameFunction"
       | "adminInitializeTile"
       | "authorizeGame"
       | "bulkAddGameParameters"
       | "bulkInitializeTiles"
-      | "delegateGameFunction(uint256,string,bool)"
-      | "delegateGameFunction(uint256,string,uint256,bool)"
+      | "disallowHostCapital"
       | "dripToken"
       | "generateNewAddress"
       | "giftTileAndResourceAt"
+      | "lockTiles"
       | "onlyQuery"
       | "onlySet"
       | "reactivateNation"
@@ -279,6 +284,7 @@ export interface CurioInterface extends utils.Interface {
       | "spawnResource"
       | "stopGame"
       | "storeEncodedColumnBatches"
+      | "unlockTiles"
       | "updateInventoryAmount"
       | "diamondCut"
       | "facetAddress"
@@ -288,6 +294,7 @@ export interface CurioInterface extends utils.Interface {
       | "supportsInterface"
       | "battle"
       | "claimTile"
+      | "delegateGameFunction"
       | "disbandArmy"
       | "disownTile"
       | "endGather"
@@ -315,6 +322,7 @@ export interface CurioInterface extends utils.Interface {
       | "getComponent"
       | "getComponentById"
       | "getConstant"
+      | "getDelegations"
       | "getDistanceByAddresses"
       | "getEntities"
       | "getEntitiesAddr"
@@ -379,7 +387,7 @@ export interface CurioInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "addResourceTemplate",
-    values: [PromiseOrValue<string>, PromiseOrValue<string>]
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "addSigner",
@@ -388,12 +396,20 @@ export interface CurioInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "addTroopTemplate",
     values: [
-      PromiseOrValue<string>,
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<string>
+    ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "adminDelegateGameFunction",
+    values: [
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<boolean>
     ]
   ): string;
   encodeFunctionData(
@@ -413,21 +429,8 @@ export interface CurioInterface extends utils.Interface {
     values: [PositionStruct[]]
   ): string;
   encodeFunctionData(
-    functionFragment: "delegateGameFunction(uint256,string,bool)",
-    values: [
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<string>,
-      PromiseOrValue<boolean>
-    ]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "delegateGameFunction(uint256,string,uint256,bool)",
-    values: [
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<string>,
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<boolean>
-    ]
+    functionFragment: "disallowHostCapital",
+    values: [PositionStruct[]]
   ): string;
   encodeFunctionData(
     functionFragment: "dripToken",
@@ -444,6 +447,10 @@ export interface CurioInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "giftTileAndResourceAt",
     values: [PositionStruct, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "lockTiles",
+    values: [PositionStruct[]]
   ): string;
   encodeFunctionData(
     functionFragment: "onlyQuery",
@@ -499,6 +506,10 @@ export interface CurioInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>[][]]
   ): string;
   encodeFunctionData(
+    functionFragment: "unlockTiles",
+    values: [PositionStruct[]]
+  ): string;
+  encodeFunctionData(
     functionFragment: "updateInventoryAmount",
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
   ): string;
@@ -534,6 +545,16 @@ export interface CurioInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "claimTile",
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "delegateGameFunction",
+    values: [
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<boolean>
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "disbandArmy",
@@ -654,6 +675,14 @@ export interface CurioInterface extends utils.Interface {
       PromiseOrValue<string>,
       PromiseOrValue<string>,
       PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>
+    ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getDelegations",
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>
     ]
   ): string;
@@ -864,6 +893,10 @@ export interface CurioInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "adminDelegateGameFunction",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "adminInitializeTile",
     data: BytesLike
   ): Result;
@@ -880,11 +913,7 @@ export interface CurioInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "delegateGameFunction(uint256,string,bool)",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "delegateGameFunction(uint256,string,uint256,bool)",
+    functionFragment: "disallowHostCapital",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "dripToken", data: BytesLike): Result;
@@ -896,6 +925,7 @@ export interface CurioInterface extends utils.Interface {
     functionFragment: "giftTileAndResourceAt",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "lockTiles", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "onlyQuery", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "onlySet", data: BytesLike): Result;
   decodeFunctionResult(
@@ -940,6 +970,10 @@ export interface CurioInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "unlockTiles",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "updateInventoryAmount",
     data: BytesLike
   ): Result;
@@ -963,6 +997,10 @@ export interface CurioInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "battle", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "claimTile", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "delegateGameFunction",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "disbandArmy",
     data: BytesLike
@@ -1051,6 +1089,10 @@ export interface CurioInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "getConstant",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getDelegations",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -1355,12 +1397,11 @@ export interface Curio extends BaseContract {
 
     addInventory(
       _keeperID: PromiseOrValue<BigNumberish>,
-      _inventoryType: PromiseOrValue<string>,
+      _templateName: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     addResourceTemplate(
-      _inventoryType: PromiseOrValue<string>,
       _tokenContract: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
@@ -1371,12 +1412,19 @@ export interface Curio extends BaseContract {
     ): Promise<ContractTransaction>;
 
     addTroopTemplate(
-      _inventoryType: PromiseOrValue<string>,
       _health: PromiseOrValue<BigNumberish>,
       _attack: PromiseOrValue<BigNumberish>,
       _defense: PromiseOrValue<BigNumberish>,
       _load: PromiseOrValue<BigNumberish>,
       _tokenContract: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    adminDelegateGameFunction(
+      _nationID: PromiseOrValue<BigNumberish>,
+      _functionName: PromiseOrValue<string>,
+      _subjectID: PromiseOrValue<BigNumberish>,
+      _canCall: PromiseOrValue<boolean>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -1401,18 +1449,8 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    "delegateGameFunction(uint256,string,bool)"(
-      _nationID: PromiseOrValue<BigNumberish>,
-      _functionName: PromiseOrValue<string>,
-      _canCall: PromiseOrValue<boolean>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    "delegateGameFunction(uint256,string,uint256,bool)"(
-      _nationID: PromiseOrValue<BigNumberish>,
-      _functionName: PromiseOrValue<string>,
-      _delegateID: PromiseOrValue<BigNumberish>,
-      _canCall: PromiseOrValue<boolean>,
+    disallowHostCapital(
+      _tilePositions: PositionStruct[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -1430,6 +1468,11 @@ export interface Curio extends BaseContract {
     giftTileAndResourceAt(
       _startPosition: PositionStruct,
       _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    lockTiles(
+      _tilePositions: PositionStruct[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -1491,7 +1534,7 @@ export interface Curio extends BaseContract {
 
     spawnResource(
       _startPosition: PositionStruct,
-      _inventoryType: PromiseOrValue<string>,
+      _templateName: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -1501,6 +1544,11 @@ export interface Curio extends BaseContract {
 
     storeEncodedColumnBatches(
       _colBatches: PromiseOrValue<BigNumberish>[][],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    unlockTiles(
+      _tilePositions: PositionStruct[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -1553,6 +1601,15 @@ export interface Curio extends BaseContract {
     claimTile(
       _armyID: PromiseOrValue<BigNumberish>,
       _tileID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    delegateGameFunction(
+      _nationID: PromiseOrValue<BigNumberish>,
+      _functionName: PromiseOrValue<string>,
+      _delegateID: PromiseOrValue<BigNumberish>,
+      _subjectID: PromiseOrValue<BigNumberish>,
+      _canCall: PromiseOrValue<boolean>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -1704,6 +1761,13 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
+    getDelegations(
+      _functionName: PromiseOrValue<string>,
+      _ownerID: PromiseOrValue<BigNumberish>,
+      _callerID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber[]]>;
+
     getDistanceByAddresses(
       _addr1: PromiseOrValue<string>,
       _addr2: PromiseOrValue<string>,
@@ -1728,7 +1792,7 @@ export interface Curio extends BaseContract {
 
     getInventory(
       _inventoryAddress: PromiseOrValue<string>,
-      _inventoryType: PromiseOrValue<string>,
+      _templateName: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
@@ -1956,12 +2020,11 @@ export interface Curio extends BaseContract {
 
   addInventory(
     _keeperID: PromiseOrValue<BigNumberish>,
-    _inventoryType: PromiseOrValue<string>,
+    _templateName: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   addResourceTemplate(
-    _inventoryType: PromiseOrValue<string>,
     _tokenContract: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
@@ -1972,12 +2035,19 @@ export interface Curio extends BaseContract {
   ): Promise<ContractTransaction>;
 
   addTroopTemplate(
-    _inventoryType: PromiseOrValue<string>,
     _health: PromiseOrValue<BigNumberish>,
     _attack: PromiseOrValue<BigNumberish>,
     _defense: PromiseOrValue<BigNumberish>,
     _load: PromiseOrValue<BigNumberish>,
     _tokenContract: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  adminDelegateGameFunction(
+    _nationID: PromiseOrValue<BigNumberish>,
+    _functionName: PromiseOrValue<string>,
+    _subjectID: PromiseOrValue<BigNumberish>,
+    _canCall: PromiseOrValue<boolean>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -2002,18 +2072,8 @@ export interface Curio extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  "delegateGameFunction(uint256,string,bool)"(
-    _nationID: PromiseOrValue<BigNumberish>,
-    _functionName: PromiseOrValue<string>,
-    _canCall: PromiseOrValue<boolean>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  "delegateGameFunction(uint256,string,uint256,bool)"(
-    _nationID: PromiseOrValue<BigNumberish>,
-    _functionName: PromiseOrValue<string>,
-    _delegateID: PromiseOrValue<BigNumberish>,
-    _canCall: PromiseOrValue<boolean>,
+  disallowHostCapital(
+    _tilePositions: PositionStruct[],
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -2031,6 +2091,11 @@ export interface Curio extends BaseContract {
   giftTileAndResourceAt(
     _startPosition: PositionStruct,
     _nationID: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  lockTiles(
+    _tilePositions: PositionStruct[],
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -2092,7 +2157,7 @@ export interface Curio extends BaseContract {
 
   spawnResource(
     _startPosition: PositionStruct,
-    _inventoryType: PromiseOrValue<string>,
+    _templateName: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -2102,6 +2167,11 @@ export interface Curio extends BaseContract {
 
   storeEncodedColumnBatches(
     _colBatches: PromiseOrValue<BigNumberish>[][],
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  unlockTiles(
+    _tilePositions: PositionStruct[],
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -2146,6 +2216,15 @@ export interface Curio extends BaseContract {
   claimTile(
     _armyID: PromiseOrValue<BigNumberish>,
     _tileID: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  delegateGameFunction(
+    _nationID: PromiseOrValue<BigNumberish>,
+    _functionName: PromiseOrValue<string>,
+    _delegateID: PromiseOrValue<BigNumberish>,
+    _subjectID: PromiseOrValue<BigNumberish>,
+    _canCall: PromiseOrValue<boolean>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -2297,6 +2376,13 @@ export interface Curio extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
+  getDelegations(
+    _functionName: PromiseOrValue<string>,
+    _ownerID: PromiseOrValue<BigNumberish>,
+    _callerID: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber[]>;
+
   getDistanceByAddresses(
     _addr1: PromiseOrValue<string>,
     _addr2: PromiseOrValue<string>,
@@ -2321,7 +2407,7 @@ export interface Curio extends BaseContract {
 
   getInventory(
     _inventoryAddress: PromiseOrValue<string>,
-    _inventoryType: PromiseOrValue<string>,
+    _templateName: PromiseOrValue<string>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
@@ -2545,12 +2631,11 @@ export interface Curio extends BaseContract {
 
     addInventory(
       _keeperID: PromiseOrValue<BigNumberish>,
-      _inventoryType: PromiseOrValue<string>,
+      _templateName: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     addResourceTemplate(
-      _inventoryType: PromiseOrValue<string>,
       _tokenContract: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -2561,7 +2646,6 @@ export interface Curio extends BaseContract {
     ): Promise<BigNumber>;
 
     addTroopTemplate(
-      _inventoryType: PromiseOrValue<string>,
       _health: PromiseOrValue<BigNumberish>,
       _attack: PromiseOrValue<BigNumberish>,
       _defense: PromiseOrValue<BigNumberish>,
@@ -2569,6 +2653,14 @@ export interface Curio extends BaseContract {
       _tokenContract: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    adminDelegateGameFunction(
+      _nationID: PromiseOrValue<BigNumberish>,
+      _functionName: PromiseOrValue<string>,
+      _subjectID: PromiseOrValue<BigNumberish>,
+      _canCall: PromiseOrValue<boolean>,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     adminInitializeTile(
       _startPosition: PositionStruct,
@@ -2591,18 +2683,8 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    "delegateGameFunction(uint256,string,bool)"(
-      _nationID: PromiseOrValue<BigNumberish>,
-      _functionName: PromiseOrValue<string>,
-      _canCall: PromiseOrValue<boolean>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    "delegateGameFunction(uint256,string,uint256,bool)"(
-      _nationID: PromiseOrValue<BigNumberish>,
-      _functionName: PromiseOrValue<string>,
-      _delegateID: PromiseOrValue<BigNumberish>,
-      _canCall: PromiseOrValue<boolean>,
+    disallowHostCapital(
+      _tilePositions: PositionStruct[],
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -2618,6 +2700,11 @@ export interface Curio extends BaseContract {
     giftTileAndResourceAt(
       _startPosition: PositionStruct,
       _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    lockTiles(
+      _tilePositions: PositionStruct[],
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -2679,7 +2766,7 @@ export interface Curio extends BaseContract {
 
     spawnResource(
       _startPosition: PositionStruct,
-      _inventoryType: PromiseOrValue<string>,
+      _templateName: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -2687,6 +2774,11 @@ export interface Curio extends BaseContract {
 
     storeEncodedColumnBatches(
       _colBatches: PromiseOrValue<BigNumberish>[][],
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    unlockTiles(
+      _tilePositions: PositionStruct[],
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -2733,6 +2825,15 @@ export interface Curio extends BaseContract {
     claimTile(
       _armyID: PromiseOrValue<BigNumberish>,
       _tileID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    delegateGameFunction(
+      _nationID: PromiseOrValue<BigNumberish>,
+      _functionName: PromiseOrValue<string>,
+      _delegateID: PromiseOrValue<BigNumberish>,
+      _subjectID: PromiseOrValue<BigNumberish>,
+      _canCall: PromiseOrValue<boolean>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -2884,6 +2985,13 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    getDelegations(
+      _functionName: PromiseOrValue<string>,
+      _ownerID: PromiseOrValue<BigNumberish>,
+      _callerID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber[]>;
+
     getDistanceByAddresses(
       _addr1: PromiseOrValue<string>,
       _addr2: PromiseOrValue<string>,
@@ -2908,7 +3016,7 @@ export interface Curio extends BaseContract {
 
     getInventory(
       _inventoryAddress: PromiseOrValue<string>,
-      _inventoryType: PromiseOrValue<string>,
+      _templateName: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -3191,12 +3299,11 @@ export interface Curio extends BaseContract {
 
     addInventory(
       _keeperID: PromiseOrValue<BigNumberish>,
-      _inventoryType: PromiseOrValue<string>,
+      _templateName: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     addResourceTemplate(
-      _inventoryType: PromiseOrValue<string>,
       _tokenContract: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
@@ -3207,12 +3314,19 @@ export interface Curio extends BaseContract {
     ): Promise<BigNumber>;
 
     addTroopTemplate(
-      _inventoryType: PromiseOrValue<string>,
       _health: PromiseOrValue<BigNumberish>,
       _attack: PromiseOrValue<BigNumberish>,
       _defense: PromiseOrValue<BigNumberish>,
       _load: PromiseOrValue<BigNumberish>,
       _tokenContract: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    adminDelegateGameFunction(
+      _nationID: PromiseOrValue<BigNumberish>,
+      _functionName: PromiseOrValue<string>,
+      _subjectID: PromiseOrValue<BigNumberish>,
+      _canCall: PromiseOrValue<boolean>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -3237,18 +3351,8 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    "delegateGameFunction(uint256,string,bool)"(
-      _nationID: PromiseOrValue<BigNumberish>,
-      _functionName: PromiseOrValue<string>,
-      _canCall: PromiseOrValue<boolean>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    "delegateGameFunction(uint256,string,uint256,bool)"(
-      _nationID: PromiseOrValue<BigNumberish>,
-      _functionName: PromiseOrValue<string>,
-      _delegateID: PromiseOrValue<BigNumberish>,
-      _canCall: PromiseOrValue<boolean>,
+    disallowHostCapital(
+      _tilePositions: PositionStruct[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -3266,6 +3370,11 @@ export interface Curio extends BaseContract {
     giftTileAndResourceAt(
       _startPosition: PositionStruct,
       _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    lockTiles(
+      _tilePositions: PositionStruct[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -3327,7 +3436,7 @@ export interface Curio extends BaseContract {
 
     spawnResource(
       _startPosition: PositionStruct,
-      _inventoryType: PromiseOrValue<string>,
+      _templateName: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -3337,6 +3446,11 @@ export interface Curio extends BaseContract {
 
     storeEncodedColumnBatches(
       _colBatches: PromiseOrValue<BigNumberish>[][],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    unlockTiles(
+      _tilePositions: PositionStruct[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -3381,6 +3495,15 @@ export interface Curio extends BaseContract {
     claimTile(
       _armyID: PromiseOrValue<BigNumberish>,
       _tileID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    delegateGameFunction(
+      _nationID: PromiseOrValue<BigNumberish>,
+      _functionName: PromiseOrValue<string>,
+      _delegateID: PromiseOrValue<BigNumberish>,
+      _subjectID: PromiseOrValue<BigNumberish>,
+      _canCall: PromiseOrValue<boolean>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -3532,6 +3655,13 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    getDelegations(
+      _functionName: PromiseOrValue<string>,
+      _ownerID: PromiseOrValue<BigNumberish>,
+      _callerID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     getDistanceByAddresses(
       _addr1: PromiseOrValue<string>,
       _addr2: PromiseOrValue<string>,
@@ -3556,7 +3686,7 @@ export interface Curio extends BaseContract {
 
     getInventory(
       _inventoryAddress: PromiseOrValue<string>,
-      _inventoryType: PromiseOrValue<string>,
+      _templateName: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -3783,12 +3913,11 @@ export interface Curio extends BaseContract {
 
     addInventory(
       _keeperID: PromiseOrValue<BigNumberish>,
-      _inventoryType: PromiseOrValue<string>,
+      _templateName: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     addResourceTemplate(
-      _inventoryType: PromiseOrValue<string>,
       _tokenContract: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
@@ -3799,12 +3928,19 @@ export interface Curio extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     addTroopTemplate(
-      _inventoryType: PromiseOrValue<string>,
       _health: PromiseOrValue<BigNumberish>,
       _attack: PromiseOrValue<BigNumberish>,
       _defense: PromiseOrValue<BigNumberish>,
       _load: PromiseOrValue<BigNumberish>,
       _tokenContract: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    adminDelegateGameFunction(
+      _nationID: PromiseOrValue<BigNumberish>,
+      _functionName: PromiseOrValue<string>,
+      _subjectID: PromiseOrValue<BigNumberish>,
+      _canCall: PromiseOrValue<boolean>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -3829,18 +3965,8 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    "delegateGameFunction(uint256,string,bool)"(
-      _nationID: PromiseOrValue<BigNumberish>,
-      _functionName: PromiseOrValue<string>,
-      _canCall: PromiseOrValue<boolean>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    "delegateGameFunction(uint256,string,uint256,bool)"(
-      _nationID: PromiseOrValue<BigNumberish>,
-      _functionName: PromiseOrValue<string>,
-      _delegateID: PromiseOrValue<BigNumberish>,
-      _canCall: PromiseOrValue<boolean>,
+    disallowHostCapital(
+      _tilePositions: PositionStruct[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -3858,6 +3984,11 @@ export interface Curio extends BaseContract {
     giftTileAndResourceAt(
       _startPosition: PositionStruct,
       _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    lockTiles(
+      _tilePositions: PositionStruct[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -3919,7 +4050,7 @@ export interface Curio extends BaseContract {
 
     spawnResource(
       _startPosition: PositionStruct,
-      _inventoryType: PromiseOrValue<string>,
+      _templateName: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -3929,6 +4060,11 @@ export interface Curio extends BaseContract {
 
     storeEncodedColumnBatches(
       _colBatches: PromiseOrValue<BigNumberish>[][],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    unlockTiles(
+      _tilePositions: PositionStruct[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -3973,6 +4109,15 @@ export interface Curio extends BaseContract {
     claimTile(
       _armyID: PromiseOrValue<BigNumberish>,
       _tileID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    delegateGameFunction(
+      _nationID: PromiseOrValue<BigNumberish>,
+      _functionName: PromiseOrValue<string>,
+      _delegateID: PromiseOrValue<BigNumberish>,
+      _subjectID: PromiseOrValue<BigNumberish>,
+      _canCall: PromiseOrValue<boolean>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -4124,6 +4269,13 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    getDelegations(
+      _functionName: PromiseOrValue<string>,
+      _ownerID: PromiseOrValue<BigNumberish>,
+      _callerID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     getDistanceByAddresses(
       _addr1: PromiseOrValue<string>,
       _addr2: PromiseOrValue<string>,
@@ -4148,7 +4300,7 @@ export interface Curio extends BaseContract {
 
     getInventory(
       _inventoryAddress: PromiseOrValue<string>,
-      _inventoryType: PromiseOrValue<string>,
+      _templateName: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

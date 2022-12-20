@@ -4,7 +4,7 @@ import { FactoryOptions, HardhatRuntimeEnvironment } from 'hardhat/types';
 import * as path from 'path';
 import * as fsPromise from 'fs/promises';
 import * as fs from 'fs';
-import { chainInfo, COMPONENT_SPECS, position, TILE_TYPE } from 'curio-vault';
+import { chainInfo, COMPONENT_SPECS, GameMode, position, TILE_TYPE } from 'curio-vault';
 import { ECSLib } from '../../typechain-types/contracts/libraries/ECSLib';
 import { GameLib } from '../../typechain-types/contracts/libraries/GameLib';
 import { CurioERC20 } from '../../typechain-types/contracts/tokens/CurioERC20';
@@ -121,6 +121,7 @@ export const initializeGame = async (hre: HardhatRuntimeEnvironment, worldConsta
 
   // Register function names
   startTime = performance.now();
+
   const functionNames = [
     'InitializeNation',
     'UpgradeCapital',
@@ -143,6 +144,7 @@ export const initializeGame = async (hre: HardhatRuntimeEnvironment, worldConsta
     'Battle',
     'DelegateGameFunction', // STYLE: DO NOT REMOVE THIS COMMENT
   ];
+
   await confirmTx(await diamond.registerFunctionNames(functionNames, { gasLimit }), hre);
   console.log(`✦ Function name registration took ${Math.floor(performance.now() - startTime)} ms`);
 
@@ -217,6 +219,19 @@ export const initializeGame = async (hre: HardhatRuntimeEnvironment, worldConsta
     await sleep(1000);
   }
   console.log(`✦ Treaty deployment took ${Math.floor(performance.now() - startTime)} ms`);
+
+  // Battle royale setup
+  if (worldConstants.gameMode === GameMode.BATTLE_ROYALE) {
+    startTime = performance.now();
+    const regionWidth = 5 * worldConstants.tileWidth;
+    const centerTilePos = { x: Math.floor(tileMap.length / 2) * worldConstants.tileWidth, y: Math.floor(tileMap[0].length / 2) * worldConstants.tileWidth };
+    const region = { xMin: centerTilePos.x - regionWidth, xMax: centerTilePos.x + regionWidth, yMin: centerTilePos.y - regionWidth, yMax: centerTilePos.y + regionWidth };
+    const regionTiles = allTilePositions.filter((pos) => pos.x >= region.xMin && pos.x <= region.xMax && pos.y >= region.yMin && pos.y <= region.yMax);
+    await confirmTx(await diamond.disallowHostCapital(regionTiles, { gasLimit }), hre);
+    await sleep(50);
+    await confirmTx(await diamond.lockTiles(regionTiles, { gasLimit }), hre);
+    console.log(`✦ Battle royale setup took ${Math.floor(performance.now() - startTime)} ms`);
+  }
 
   return diamond;
 };

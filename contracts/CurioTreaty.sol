@@ -13,7 +13,6 @@ contract CurioTreaty is ITreaty {
     AdminFacet public admin;
     string public name;
     string public description;
-    string[] public delegatedGameFunctionNames;
 
     constructor(address _diamond) {
         require(_diamond != address(0), "CurioTreaty: Diamond address required");
@@ -38,26 +37,26 @@ contract CurioTreaty is ITreaty {
     // MEMBERSHIP FUNCTIONS (CALLED BY NATION)
     // ----------------------------------------------------------
 
-    function join() public virtual {
+    function treatyJoin() public virtual {
         // Add signature
         uint256 nationID = getter.getEntityByAddress(msg.sender);
         admin.addSigner(nationID);
-
-        // Delegate functions
-        for (uint256 i = 0; i < delegatedGameFunctionNames.length; i++) {
-            admin.delegateGameFunction(nationID, delegatedGameFunctionNames[i], true);
-        }
     }
 
-    function leave() public virtual {
+    function treatyLeave() public virtual {
         // Remove signature
         uint256 nationID = getter.getEntityByAddress(msg.sender);
         admin.removeSigner(nationID);
+    }
 
-        // Abrogate functions
-        for (uint256 i = 0; i < delegatedGameFunctionNames.length; i++) {
-            admin.delegateGameFunction(nationID, delegatedGameFunctionNames[i], false);
-        }
+    /// @dev Delegate or undelegate a game function to this treaty. Recommended in constructor.
+    function treatyDelegateGameFunction(
+        string memory _functionName,
+        uint256 _subjectID,
+        bool _canCall
+    ) public virtual {
+        uint256 nationID = getter.getEntityByAddress(msg.sender);
+        admin.adminDelegateGameFunction(nationID, _functionName, _subjectID, _canCall);
     }
 
     // ----------------------------------------------------------
@@ -144,7 +143,7 @@ contract CurioTreaty is ITreaty {
         return true;
     }
 
-    function approveDelegatePermission(uint256 _nationID, bytes memory _encodedParams) public view virtual onlyGame returns (bool) {
+    function approveDelegateGameFunction(uint256 _nationID, bytes memory _encodedParams) public view virtual onlyGame returns (bool) {
         return true;
     }
 }
