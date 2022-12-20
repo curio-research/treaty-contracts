@@ -168,6 +168,34 @@ const _abi = [
   {
     inputs: [
       {
+        internalType: "uint256",
+        name: "_nationID",
+        type: "uint256",
+      },
+      {
+        internalType: "string",
+        name: "_functionName",
+        type: "string",
+      },
+      {
+        internalType: "uint256",
+        name: "_subjectID",
+        type: "uint256",
+      },
+      {
+        internalType: "bool",
+        name: "_canCall",
+        type: "bool",
+      },
+    ],
+    name: "adminDelegateGameFunction",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
         components: [
           {
             internalType: "uint256",
@@ -242,34 +270,6 @@ const _abi = [
       },
     ],
     name: "bulkInitializeTiles",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "_nationID",
-        type: "uint256",
-      },
-      {
-        internalType: "string",
-        name: "_functionName",
-        type: "string",
-      },
-      {
-        internalType: "uint256",
-        name: "_subjectID",
-        type: "uint256",
-      },
-      {
-        internalType: "bool",
-        name: "_canCall",
-        type: "bool",
-      },
-    ],
-    name: "delegateGameFunction",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",

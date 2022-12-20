@@ -121,6 +121,7 @@ export const initializeGame = async (hre: HardhatRuntimeEnvironment, worldConsta
 
   // Register function names
   startTime = performance.now();
+
   const functionNames = [
     'InitializeNation',
     'UpgradeCapital',
@@ -143,6 +144,7 @@ export const initializeGame = async (hre: HardhatRuntimeEnvironment, worldConsta
     'Battle',
     'DelegateGameFunction', // STYLE: DO NOT REMOVE THIS COMMENT
   ];
+
   await confirmTx(await diamond.registerFunctionNames(functionNames, { gasLimit }), hre);
   console.log(`✦ Function name registration took ${Math.floor(performance.now() - startTime)} ms`);
 

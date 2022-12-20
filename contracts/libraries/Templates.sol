@@ -226,7 +226,7 @@ library Templates {
 
     function addDelegation(
         string memory _functionName,
-        uint256 _ownerID,
+        uint256 _ownerID, // original delegator
         uint256 _callerID,
         uint256 _subjectID
     ) public returns (uint256) {
