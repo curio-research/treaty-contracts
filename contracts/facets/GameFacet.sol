@@ -21,6 +21,12 @@ contract GameFacet is UseStorage {
     // NATION/CAPITAL
     // ----------------------------------------------------------
 
+    /// @dev Link a player's main account and burner account
+    function authorizeGame(address _burnerAddress) external {
+        gs().mainToBurner[msg.sender] = _burnerAddress;
+        gs().burnerToMain[_burnerAddress] = msg.sender;
+    }
+
     function initializeNation(Position memory _position, string memory _name) external returns (uint256 nationID) {
         // Basic checks
         GameLib.ongoingGameCheck();
