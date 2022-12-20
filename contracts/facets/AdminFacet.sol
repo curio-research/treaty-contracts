@@ -176,12 +176,6 @@ contract AdminFacet is UseStorage {
         }
     }
 
-    /// @dev Link a player's main account and burner account
-    function authorizeGame(address _burnerAddress) external onlyAuthorized {
-        gs().mainToBurner[msg.sender] = _burnerAddress;
-        gs().burnerToMain[_burnerAddress] = msg.sender;
-    }
-
     /**
      * @dev Store an array of encoded raw map columns containing information of all tiles, for efficient storage.
      * @param _colBatches map columns in batches, encoded with N-ary arithmetic
