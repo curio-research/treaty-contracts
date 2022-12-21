@@ -105,7 +105,7 @@ contract AdminFacet is UseStorage {
 
     function unlockTiles(Position[] memory _tilePositions) external onlyAuthorized {
         for (uint256 i = 0; i < _tilePositions.length; i++) {
-            ECSLib.setBool("IsLocked", GameLib.getTileAt(_tilePositions[i]));
+            ECSLib.removeBool("IsLocked", GameLib.getTileAt(_tilePositions[i]));
         }
     }
 

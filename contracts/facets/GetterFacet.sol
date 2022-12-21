@@ -92,6 +92,11 @@ contract GetterFacet is UseStorage {
         return inventoryID == NULL ? 0 : ECSLib.getUint("Amount", inventoryID);
     }
 
+    function getTotalSupply(string memory _resourceType) external view returns (uint256) {
+        uint256 templateID = gs().templates[_resourceType];
+        return CurioERC20(ECSLib.getAddress("Address", templateID)).totalSupply();
+    }
+
     function getEntitiesAddr() external view returns (address) {
         return gs().entities;
     }

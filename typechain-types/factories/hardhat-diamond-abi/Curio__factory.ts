@@ -221,19 +221,6 @@ const _abi = [
   {
     inputs: [
       {
-        internalType: "address",
-        name: "_burnerAddress",
-        type: "address",
-      },
-    ],
-    name: "authorizeGame",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
         internalType: "string[]",
         name: "_identifiers",
         type: "string[]",
@@ -859,6 +846,19 @@ const _abi = [
   {
     inputs: [
       {
+        internalType: "address",
+        name: "_burnerAddress",
+        type: "address",
+      },
+    ],
+    name: "authorizeGame",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
         internalType: "uint256",
         name: "_armyID",
         type: "uint256",
@@ -1198,6 +1198,34 @@ const _abi = [
         type: "uint256",
       },
     ],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "_capitalID",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "_templateID",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "_recipientID",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "_amount",
+        type: "uint256",
+      },
+    ],
+    name: "transfer",
+    outputs: [],
     stateMutability: "nonpayable",
     type: "function",
   },
@@ -1938,6 +1966,25 @@ const _abi = [
     inputs: [
       {
         internalType: "string",
+        name: "_resourceType",
+        type: "string",
+      },
+    ],
+    name: "getTotalSupply",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "string",
         name: "_treatyName",
         type: "string",
       },
@@ -2006,11 +2053,6 @@ const _abi = [
           {
             internalType: "uint256",
             name: "maxCapitalLevel",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256",
-            name: "maxCapitalCountPerNation",
             type: "uint256",
           },
           {

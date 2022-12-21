@@ -36,6 +36,8 @@ export type { IERC165 } from "./contracts/interfaces/IERC165";
 export { IERC165__factory } from "./factories/contracts/interfaces/IERC165__factory";
 export type { IERC173 } from "./contracts/interfaces/IERC173";
 export { IERC173__factory } from "./factories/contracts/interfaces/IERC173__factory";
+export type { IERC20 } from "./contracts/interfaces/IERC20";
+export { IERC20__factory } from "./factories/contracts/interfaces/IERC20__factory";
 export type { ITreaty } from "./contracts/interfaces/ITreaty";
 export { ITreaty__factory } from "./factories/contracts/interfaces/ITreaty__factory";
 export type { ECSLib } from "./contracts/libraries/ECSLib";

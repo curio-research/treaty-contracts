@@ -180,15 +180,15 @@ contract DiamondDeployTest is Test {
 
         // Initialize players
         vm.prank(player1);
-        nation1ID = game.initializeNation(nation1Pos, "China"); // FIXME: remove
+        nation1ID = game.initializeNation(nation1Pos, "Nation 1");
         nation1CapitalID = getter.getCapital(nation1ID);
         nation1CapitalAddr = getter.getAddress(nation1CapitalID);
         vm.prank(player2);
-        nation2ID = game.initializeNation(nation2Pos, "US");
+        nation2ID = game.initializeNation(nation2Pos, "Nation 2");
         nation2CapitalID = getter.getCapital(nation2ID);
         nation2CapitalAddr = getter.getAddress(nation2CapitalID);
         vm.prank(player3);
-        nation3ID = game.initializeNation(nation3Pos, "Russia");
+        nation3ID = game.initializeNation(nation3Pos, "Nation 3");
         nation3CapitalID = getter.getCapital(nation3ID);
         nation3CapitalAddr = getter.getAddress(nation3CapitalID);
         console.log(">>> Nations initialized");
@@ -392,7 +392,6 @@ contract DiamondDeployTest is Test {
                 gameLengthInSeconds: 3600,
                 gameMode: GameMode.REGULAR,
                 maxArmyCountPerNation: 2,
-                maxCapitalCountPerNation: 3,
                 maxCapitalLevel: 3,
                 maxNationCount: 20,
                 // maxTransferDistance: 100
@@ -434,19 +433,6 @@ contract DiamondDeployTest is Test {
 
         return _map;
     }
-
-    // // generates values that need to be initialized from the cli and pipes it back into solidity! magic
-    // function getInitVal() private returns (WorldConstants memory _constants) {
-    //     string[] memory runJsInputs = new string[](4);
-    //     runJsInputs[0] = "yarn";
-    //     runJsInputs[1] = "--silent";
-    //     runJsInputs[2] = "run";
-    //     runJsInputs[3] = "getInitParams";
-
-    //     bytes memory res = vm.ffi(runJsInputs);
-
-    //     _constants = abi.decode(res, (WorldConstants));
-    // }
 
     function _getSelectors(string memory _facetName) private returns (bytes4[] memory selectors) {
         string[] memory cmd = new string[](5);

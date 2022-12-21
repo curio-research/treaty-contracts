@@ -40,7 +40,6 @@ export type WorldConstantsStruct = {
   gameMode: PromiseOrValue<BigNumberish>;
   maxArmyCountPerNation: PromiseOrValue<BigNumberish>;
   maxCapitalLevel: PromiseOrValue<BigNumberish>;
-  maxCapitalCountPerNation: PromiseOrValue<BigNumberish>;
   maxNationCount: PromiseOrValue<BigNumberish>;
   numInitTerrainTypes: PromiseOrValue<BigNumberish>;
   secondsToTrainAThousandTroops: PromiseOrValue<BigNumberish>;
@@ -61,7 +60,6 @@ export type WorldConstantsStructOutput = [
   BigNumber,
   BigNumber,
   BigNumber,
-  BigNumber,
   BigNumber
 ] & {
   admin: string;
@@ -70,7 +68,6 @@ export type WorldConstantsStructOutput = [
   gameMode: number;
   maxArmyCountPerNation: BigNumber;
   maxCapitalLevel: BigNumber;
-  maxCapitalCountPerNation: BigNumber;
   maxNationCount: BigNumber;
   numInitTerrainTypes: BigNumber;
   secondsToTrainAThousandTroops: BigNumber;
@@ -122,6 +119,7 @@ export interface GetterFacetInterface extends utils.Interface {
     "getTileAt((uint256,uint256))": FunctionFragment;
     "getTileRegionTilePositions((uint256,uint256))": FunctionFragment;
     "getTokenContract(string)": FunctionFragment;
+    "getTotalSupply(string)": FunctionFragment;
     "getTreatyByName(string)": FunctionFragment;
     "getTreatySigners(uint256)": FunctionFragment;
     "getWorldConstants()": FunctionFragment;
@@ -160,6 +158,7 @@ export interface GetterFacetInterface extends utils.Interface {
       | "getTileAt"
       | "getTileRegionTilePositions"
       | "getTokenContract"
+      | "getTotalSupply"
       | "getTreatyByName"
       | "getTreatySigners"
       | "getWorldConstants"
@@ -291,6 +290,10 @@ export interface GetterFacetInterface extends utils.Interface {
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
+    functionFragment: "getTotalSupply",
+    values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "getTreatyByName",
     values: [PromiseOrValue<string>]
   ): string;
@@ -404,6 +407,10 @@ export interface GetterFacetInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "getTokenContract",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getTotalSupply",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -599,6 +606,11 @@ export interface GetterFacet extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[string]>;
 
+    getTotalSupply(
+      _resourceType: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
     getTreatyByName(
       _treatyName: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -769,6 +781,11 @@ export interface GetterFacet extends BaseContract {
     overrides?: CallOverrides
   ): Promise<string>;
 
+  getTotalSupply(
+    _resourceType: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
   getTreatyByName(
     _treatyName: PromiseOrValue<string>,
     overrides?: CallOverrides
@@ -938,6 +955,11 @@ export interface GetterFacet extends BaseContract {
       _tokenName: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<string>;
+
+    getTotalSupply(
+      _resourceType: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     getTreatyByName(
       _treatyName: PromiseOrValue<string>,
@@ -1112,6 +1134,11 @@ export interface GetterFacet extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    getTotalSupply(
+      _resourceType: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     getTreatyByName(
       _treatyName: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -1278,6 +1305,11 @@ export interface GetterFacet extends BaseContract {
 
     getTokenContract(
       _tokenName: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getTotalSupply(
+      _resourceType: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

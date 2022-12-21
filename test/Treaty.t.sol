@@ -219,7 +219,8 @@ contract TreatyTest is Test, DiamondDeployTest {
         address army11Addr = getter.getAddress(army11ID);
 
         // Nation 1 joins alliance after token approval
-        CurioWallet(nation1CapitalAddr).executeTx(address(goldToken), abi.encodeWithSignature("approve(address,uint256)", address(alliance), 1000));
+        // CurioWallet(nation1CapitalAddr).executeTx(address(goldToken), abi.encodeWithSignature("approve(address,uint256)", address(alliance), 1000));
+        goldToken.approve(address(alliance), 1000);
         alliance.treatyJoin();
         assertTrue(getter.getNationTreatySignature(nation1ID, allianceID) > 0);
 
@@ -238,7 +239,8 @@ contract TreatyTest is Test, DiamondDeployTest {
 
         // Nation 2 joins alliance after token approval
         vm.startPrank(player2);
-        CurioWallet(nation2CapitalAddr).executeTx(address(goldToken), abi.encodeWithSignature("approve(address,uint256)", address(alliance), 1000));
+        // CurioWallet(nation2CapitalAddr).executeTx(address(goldToken), abi.encodeWithSignature("approve(address,uint256)", address(alliance), 1000));
+        goldToken.approve(address(alliance), 1000);
         alliance.treatyJoin();
         assertTrue(getter.getNationTreatySignature(nation2ID, allianceID) > 0);
         assertEq(goldToken.checkBalanceOf(nation2CapitalAddr), 1000000 - 1000);
@@ -285,7 +287,8 @@ contract TreatyTest is Test, DiamondDeployTest {
 
         // Nation 3 joins alliance after token approval
         vm.startPrank(player3);
-        CurioWallet(nation3CapitalAddr).executeTx(address(goldToken), abi.encodeWithSignature("approve(address,uint256)", address(alliance), 1000));
+        // CurioWallet(nation3CapitalAddr).executeTx(address(goldToken), abi.encodeWithSignature("approve(address,uint256)", address(alliance), 1000));
+        goldToken.approve(address(alliance), 1000);
         alliance.treatyJoin();
         assertTrue(getter.getNationTreatySignature(nation3ID, allianceID) > 0);
 
@@ -365,7 +368,8 @@ contract TreatyTest is Test, DiamondDeployTest {
         // Player 2 (SBF) starts FTX and grants it access to his wallet
         vm.startPrank(player2);
         FTX ftx = new FTX(diamond);
-        CurioWallet(nation2CapitalAddr).executeTx(address(goldToken), abi.encodeWithSignature("approve(address,uint256)", address(ftx), 10000));
+        // CurioWallet(nation2CapitalAddr).executeTx(address(goldToken), abi.encodeWithSignature("approve(address,uint256)", address(ftx), 10000));
+        goldToken.approve(address(ftx), 10000);
         assertEq(goldToken.balanceOf(nation2CapitalAddr), 0);
         vm.stopPrank();
 
@@ -376,7 +380,8 @@ contract TreatyTest is Test, DiamondDeployTest {
 
         // Player 1 deposits to FTX
         vm.startPrank(player1);
-        CurioWallet(nation1CapitalAddr).executeTx(address(goldToken), abi.encodeWithSignature("approve(address,uint256)", address(ftx), 2));
+        // CurioWallet(nation1CapitalAddr).executeTx(address(goldToken), abi.encodeWithSignature("approve(address,uint256)", address(ftx), 2));
+        goldToken.approve(address(ftx), 2);
         ftx.treatyDeposit(2);
         assertEq(goldToken.checkBalanceOf(nation1CapitalAddr), 6);
         assertEq(ftx.fttToken().checkBalanceOf(nation1CapitalAddr), 2);
@@ -389,7 +394,8 @@ contract TreatyTest is Test, DiamondDeployTest {
         assertEq(goldToken.checkBalanceOf(nation2CapitalAddr), 1);
 
         // Player 1 gives FTX all gold
-        CurioWallet(nation1CapitalAddr).executeTx(address(goldToken), abi.encodeWithSignature("approve(address,uint256)", address(ftx), 7));
+        // CurioWallet(nation1CapitalAddr).executeTx(address(goldToken), abi.encodeWithSignature("approve(address,uint256)", address(ftx), 7));
+        goldToken.approve(address(ftx), 7);
         ftx.treatyDeposit(7);
         assertEq(goldToken.checkBalanceOf(nation1CapitalAddr), 0);
         assertEq(ftx.fttToken().checkBalanceOf(nation1CapitalAddr), 8);
@@ -399,6 +405,7 @@ contract TreatyTest is Test, DiamondDeployTest {
         // Player 2 (SBF) transfers all but 1 gold to Player 3 (Caroline)
         vm.startPrank(player2);
         CurioWallet(nation2CapitalAddr).executeTx(address(goldToken), abi.encodeWithSignature("transfer(address,uint256)", nation3CapitalAddr, 7));
+        // game.transfer(nation2CapitalID, goldTemplateID, nation3CapitalID, 7);
         assertEq(goldToken.checkBalanceOf(nation2CapitalAddr), 1);
         vm.stopPrank();
 

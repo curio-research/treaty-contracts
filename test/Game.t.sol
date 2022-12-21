@@ -56,7 +56,7 @@ contract GameTest is Test, DiamondDeployTest {
         assertEq(nation1CapitalPosition.y, nation1Pos.y);
 
         assertEq(getter.getNation(nation1CapitalID), nation1ID);
-        assertEq(abi.decode(getter.getComponent("Name").getBytesValue(nation1ID), (string)), "China");
+        assertEq(abi.decode(getter.getComponent("Name").getBytesValue(nation1ID), (string)), "Nation 1");
 
         // Verify that tile is initialized correctly
         uint256 nation1CapitalTile = getter.getTileAt(nation1CapitalPosition);

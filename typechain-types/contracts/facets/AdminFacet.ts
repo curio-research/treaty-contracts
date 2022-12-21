@@ -55,7 +55,6 @@ export interface AdminFacetInterface extends utils.Interface {
     "addTroopTemplate(uint256,uint256,uint256,uint256,address)": FunctionFragment;
     "adminDelegateGameFunction(uint256,string,uint256,bool)": FunctionFragment;
     "adminInitializeTile((uint256,uint256))": FunctionFragment;
-    "authorizeGame(address)": FunctionFragment;
     "bulkAddGameParameters(string[],uint256[])": FunctionFragment;
     "bulkInitializeTiles((uint256,uint256)[])": FunctionFragment;
     "disallowHostCapital((uint256,uint256)[])": FunctionFragment;
@@ -92,7 +91,6 @@ export interface AdminFacetInterface extends utils.Interface {
       | "addTroopTemplate"
       | "adminDelegateGameFunction"
       | "adminInitializeTile"
-      | "authorizeGame"
       | "bulkAddGameParameters"
       | "bulkInitializeTiles"
       | "disallowHostCapital"
@@ -161,10 +159,6 @@ export interface AdminFacetInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "adminInitializeTile",
     values: [PositionStruct]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "authorizeGame",
-    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "bulkAddGameParameters",
@@ -289,10 +283,6 @@ export interface AdminFacetInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "adminInitializeTile",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "authorizeGame",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -453,11 +443,6 @@ export interface AdminFacet extends BaseContract {
 
     adminInitializeTile(
       _startPosition: PositionStruct,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    authorizeGame(
-      _burnerAddress: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -639,11 +624,6 @@ export interface AdminFacet extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  authorizeGame(
-    _burnerAddress: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
   bulkAddGameParameters(
     _identifiers: PromiseOrValue<string>[],
     _values: PromiseOrValue<BigNumberish>[],
@@ -815,11 +795,6 @@ export interface AdminFacet extends BaseContract {
 
     adminInitializeTile(
       _startPosition: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    authorizeGame(
-      _burnerAddress: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1000,11 +975,6 @@ export interface AdminFacet extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    authorizeGame(
-      _burnerAddress: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
     bulkAddGameParameters(
       _identifiers: PromiseOrValue<string>[],
       _values: PromiseOrValue<BigNumberish>[],
@@ -1181,11 +1151,6 @@ export interface AdminFacet extends BaseContract {
 
     adminInitializeTile(
       _startPosition: PositionStruct,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    authorizeGame(
-      _burnerAddress: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

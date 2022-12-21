@@ -872,6 +872,34 @@ contract GameFacet is UseStorage {
     // TREATY
     // ----------------------------------------------------------
 
+    // // FIXME: not tested
+    // function transfer(
+    //     uint256 _capitalID,
+    //     uint256 _templateID,
+    //     uint256 _recipientID,
+    //     uint256 _amount
+    // ) external {
+    //     // Basic checks
+    //     GameLib.validEntityCheck(_capitalID);
+    //     GameLib.validEntityCheck(_templateID);
+    //     GameLib.validEntityCheck(_recipientID);
+    //     GameLib.ongoingGameCheck();
+    //     uint256 nationID = ECSLib.getUint("Nation", _capitalID);
+
+    //     // Permission checks
+    //     if (msg.sender != address(this)) {
+    //         uint256 callerID = GameLib.getEntityByAddress(msg.sender);
+    //         GameLib.nationDelegationCheck("Transfer", nationID, callerID, _capitalID);
+    //         GameLib.treatyApprovalCheck("Transfer", nationID, abi.encode(callerID, _capitalID, _recipientID));
+    //     }
+
+    //     // Transfer
+    //     CurioERC20 resourceToken = CurioERC20(ECSLib.getAddress("Address", _templateID));
+    //     address capitalAddress = ECSLib.getAddress("Address", _capitalID);
+    //     address recipientAddress = ECSLib.getAddress("Address", _recipientID);
+    //     resourceToken.transferFrom(capitalAddress, recipientAddress, _amount);
+    // }
+
     function delegateGameFunction(
         uint256 _nationID,
         string memory _functionName,
