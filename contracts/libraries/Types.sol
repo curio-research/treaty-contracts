@@ -92,7 +92,7 @@ struct GameState {
     // Components
     string[] componentNames;
     mapping(string => address) components; // component name -> component address
-    // Templates
+    // Templates (resource, troop, or treaty)
     string[] templateNames;
     mapping(string => uint256) templates; // template name -> template id
     // Tokens

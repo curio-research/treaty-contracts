@@ -267,8 +267,8 @@ export interface CurioERC20 extends BaseContract {
     ): Promise<[BigNumber]>;
 
     approve(
-      _spender: PromiseOrValue<string>,
-      _amount: PromiseOrValue<BigNumberish>,
+      spender: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -357,8 +357,8 @@ export interface CurioERC20 extends BaseContract {
   ): Promise<BigNumber>;
 
   approve(
-    _spender: PromiseOrValue<string>,
-    _amount: PromiseOrValue<BigNumberish>,
+    spender: PromiseOrValue<string>,
+    amount: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -447,8 +447,8 @@ export interface CurioERC20 extends BaseContract {
     ): Promise<BigNumber>;
 
     approve(
-      _spender: PromiseOrValue<string>,
-      _amount: PromiseOrValue<BigNumberish>,
+      spender: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
@@ -562,8 +562,8 @@ export interface CurioERC20 extends BaseContract {
     ): Promise<BigNumber>;
 
     approve(
-      _spender: PromiseOrValue<string>,
-      _amount: PromiseOrValue<BigNumberish>,
+      spender: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -653,8 +653,8 @@ export interface CurioERC20 extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     approve(
-      _spender: PromiseOrValue<string>,
-      _amount: PromiseOrValue<BigNumberish>,
+      spender: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

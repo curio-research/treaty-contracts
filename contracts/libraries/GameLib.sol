@@ -11,6 +11,8 @@ import {Component} from "contracts/Component.sol";
 import {AddressComponent, BoolComponent, IntComponent, PositionComponent, StringComponent, UintComponent, UintArrayComponent} from "contracts/TypedComponents.sol";
 import {CurioERC20} from "contracts/tokens/CurioERC20.sol";
 import {CurioTreaty} from "contracts/CurioTreaty.sol";
+// import {Alliance} from "contracts/treaties/Alliance.sol";
+// import {FTX} from "contracts/treaties/FTX.sol";
 import {console} from "forge-std/console.sol";
 
 /// @title Util library
@@ -417,6 +419,21 @@ library GameLib {
         } else if (!_canCall && delegationID != 0) {
             ECSLib.removeEntity(delegationID);
         }
+    }
+
+    function deployTreaty(string memory _treatyName) internal returns (uint256) {
+        // Deploy treaty
+        address treaty;
+        // if (GameLib.strEq(_treatyName, "Alliance")) {
+        //     treaty = address(new Alliance(address(this)));
+        // } else if (GameLib.strEq(_treatyName, "FTX")) {
+        //     treaty = address(new FTX(address(this)));
+        // } else {
+        //     revert("CURIO: Unsupported treaty name");
+        // }
+
+        // Register treaty
+        return Templates.addTreaty(treaty, gs().templates[_treatyName]);
     }
 
     // ----------------------------------------------------------

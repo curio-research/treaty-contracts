@@ -171,9 +171,9 @@ contract DiamondDeployTest is Test {
 
         // Initialize treaties
         nato = new NATO(diamond);
-        natoID = admin.registerTreaty(address(nato), "sample ABI");
+        natoID = admin.registerTreatyTemplate(address(nato), "sample ABI");
         alliance = new Alliance(diamond);
-        allianceID = admin.registerTreaty(address(alliance), "sample ABI");
+        allianceID = admin.registerTreatyTemplate(address(alliance), "sample ABI");
         console.log(">>> Treaties initialized");
 
         vm.stopPrank();

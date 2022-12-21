@@ -236,18 +236,18 @@ contract AdminFacet is UseStorage {
     }
 
     /**
-     * @dev Register a new treaty for the game.
+     * @dev Register a new treaty template for the game.
      * @param _address deployed treaty address
      * @param _abiHash treaty abi hash
-     * @return treatyID registered treaty entity
+     * @return treatyTemplateID registered treaty template entity
      * @notice This function is currently used for permissioned deployment of treaties. In the future, treaties will be
      *         deployed permissionlessly by players.
      */
-    function registerTreaty(address _address, string memory _abiHash) external onlyAuthorized returns (uint256 treatyID) {
+    function registerTreatyTemplate(address _address, string memory _abiHash) external onlyAuthorized returns (uint256 treatyTemplateID) {
         CurioTreaty treaty = CurioTreaty(_address);
         string memory _name = treaty.name();
         string memory _description = treaty.description();
-        treatyID = Templates.addTreaty(_address, _name, _description, _abiHash);
+        treatyTemplateID = Templates.addTreatyTemplate(_address, _name, _description, _abiHash);
     }
 
     function generateNewAddress() external onlyAuthorized returns (address) {

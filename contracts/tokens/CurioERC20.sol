@@ -74,16 +74,16 @@ contract CurioERC20 is ERC20 {
         emit Transfer(_from, _to, transferAmount);
     }
 
-    function approve(address _spender, uint256 _amount) public override returns (bool) {
-        // Approve capital if msg.sender is nation
-        uint256 capitalID = getter.getCapital(getter.getEntityByAddress(msg.sender));
-        address sender = capitalID != NULL ? getter.getAddress(capitalID) : msg.sender;
+    // function approve(address _spender, uint256 _amount) public override returns (bool) {
+    //     // Approve capital if msg.sender is nation
+    //     uint256 capitalID = getter.getCapital(getter.getEntityByAddress(msg.sender));
+    //     address sender = capitalID != NULL ? getter.getAddress(capitalID) : msg.sender;
 
-        allowance[sender][_spender] = _amount;
+    //     allowance[sender][_spender] = _amount;
 
-        emit Approval(msg.sender, _spender, _amount);
-        return true;
-    }
+    //     emit Approval(msg.sender, _spender, _amount);
+    //     return true;
+    // }
 
     function transfer(address _to, uint256 _amount) public override returns (bool) {
         _transferHelper(msg.sender, _to, _amount);

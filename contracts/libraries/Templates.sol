@@ -205,23 +205,33 @@ library Templates {
         return signatureID;
     }
 
-    function addTreaty(
-        address _address,
-        string memory _name,
-        string memory _description,
-        string memory _abiHash
-    ) public returns (uint256) {
+    function addTreaty(address _address, uint256 _templateID) public returns (uint256) {
         uint256 treatyID = ECSLib.addEntity();
 
         ECSLib.setString("Tag", treatyID, "Treaty");
         ECSLib.setBool("CanHoldTokens", treatyID);
         ECSLib.setUint("InitTimestamp", treatyID, block.timestamp);
-        ECSLib.setString("Name", treatyID, _name);
-        ECSLib.setString("Description", treatyID, _description);
-        ECSLib.setString("ABIHash", treatyID, _abiHash);
+        ECSLib.setUint("Template", treatyID, _templateID);
         ECSLib.setAddress("Address", treatyID, _address);
 
         return treatyID;
+    }
+
+    function addTreatyTemplate(
+        address _address,
+        string memory _name,
+        string memory _description,
+        string memory _abiHash
+    ) public returns (uint256) {
+        uint256 treatyTemplateID = ECSLib.addEntity();
+
+        ECSLib.setString("Tag", treatyTemplateID, "TreatyTemplate");
+        ECSLib.setString("Name", treatyTemplateID, _name);
+        ECSLib.setString("Description", treatyTemplateID, _description);
+        ECSLib.setString("ABIHash", treatyTemplateID, _abiHash);
+        ECSLib.setAddress("Address", treatyTemplateID, _address);
+
+        return treatyTemplateID;
     }
 
     function addDelegation(

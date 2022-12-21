@@ -513,11 +513,11 @@ const _abi = [
         type: "string",
       },
     ],
-    name: "registerTreaty",
+    name: "registerTreatyTemplate",
     outputs: [
       {
         internalType: "uint256",
-        name: "treatyID",
+        name: "treatyTemplateID",
         type: "uint256",
       },
     ],
@@ -929,6 +929,30 @@ const _abi = [
     inputs: [
       {
         internalType: "uint256",
+        name: "_nationID",
+        type: "uint256",
+      },
+      {
+        internalType: "string",
+        name: "_treatyName",
+        type: "string",
+      },
+    ],
+    name: "deployTreaty",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
         name: "_armyID",
         type: "uint256",
       },
@@ -1198,34 +1222,6 @@ const _abi = [
         type: "uint256",
       },
     ],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "_capitalID",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "_templateID",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "_recipientID",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "_amount",
-        type: "uint256",
-      },
-    ],
-    name: "transfer",
-    outputs: [],
     stateMutability: "nonpayable",
     type: "function",
   },
