@@ -225,9 +225,9 @@ library GameLib {
         CurioERC20 guardToken = getTokenContract("Guard");
         require(ECSLib.getUint("Amount", getInventory(_tileID, gs().templates["Guard"])) > 0, "CURIO: defender subjugated, claim tile instead");
 
-        uint256 capitalID = getCapital(ECSLib.getUint("Nation", _tileID));
         // Others cannot attack cities at chaos
-        capitalSackRecoveryCheck(getCapital(capitalID));
+        uint256 capitalID = getCapital(ECSLib.getUint("Nation", _tileID));
+        capitalSackRecoveryCheck(capitalID);
 
         // if it is the super tile, check that it's active
         if (coincident(ECSLib.getPosition("StartPosition", _tileID), getMapCenterTilePosition())) {
@@ -243,7 +243,7 @@ library GameLib {
         // Execute one round of battle
         bool victory = attack(_armyID, _tileID, false, false);
         if (victory) {
-            if (capitalID != 0) {
+            if (coincident(ECSLib.getPosition("StartPosition", capitalID), ECSLib.getPosition("StartPosition", _tileID))) {
                 // Victorious against capital, add back some guards for the loser
                 guardToken.dripToken(tileAddress, getConstant("Tile", "Guard", "Amount", "", ECSLib.getUint("Level", capitalID)));
 
