@@ -85,6 +85,12 @@ contract GetterFacet is UseStorage {
         return GameLib.getNationTreatySignature(_nationID, _treatyID);
     }
 
+    function treatyApprovalCheck(string memory _functionName,
+        uint256 _nationID,
+        bytes memory _encodedParams) internal {
+            return GameLib.treatyApprovalCheck(_functionName, _nationID, _encodedParams);
+        }
+
     function getInventoryBalance(address _keeperAddress, string memory _resourceType) external view returns (uint256) {
         uint256 entityID = GameLib.getEntityByAddress(_keeperAddress);
         uint256 templateID = gs().templates[_resourceType];
