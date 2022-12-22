@@ -210,7 +210,8 @@ library Templates {
         address _address,
         string memory _name,
         string memory _description,
-        string memory _abiHash
+        string memory _abiHash,
+        uint256 _deployerID
     ) public returns (uint256) {
         uint256 treatyID = ECSLib.addEntity();
 
@@ -220,6 +221,7 @@ library Templates {
         ECSLib.setString("Name", treatyID, _name);
         ECSLib.setString("Description", treatyID, _description);
         ECSLib.setString("ABIHash", treatyID, _abiHash);
+        ECSLib.setUint("Owner", treatyID, _deployerID);
         ECSLib.setAddress("Address", treatyID, _address);
 
         return treatyID;

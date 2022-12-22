@@ -157,6 +157,7 @@ contract TreatyTest is Test, DiamondDeployTest {
         assertEq(abi.decode(getter.getComponent("ABIHash").getBytesValue(testTreatyID), (string)), "sample ABI");
         assertTrue(abi.decode(getter.getComponent("CanHoldTokens").getBytesValue(testTreatyID), (bool)));
         assertEq(abi.decode(getter.getComponent("Address").getBytesValue(testTreatyID), (address)), address(testTreaty));
+        assertEq(abi.decode(getter.getComponent("Owner").getBytesValue(testTreatyID), (uint256)), nation1ID);
 
         // Nation 2 joins TestTreaty treaty
         vm.startPrank(player2);
