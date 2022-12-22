@@ -439,9 +439,13 @@ contract TreatyTest is Test, DiamondDeployTest {
         NonAggressivePact NAPact = new NonAggressivePact(diamond);
         vm.stopPrank();
 
-        // Deployer registers FTX treaty
+        // Deployer registers NAPact treaty
         vm.startPrank(deployer);
-        admin.registerTreaty(address(ftx), "placeholder ABI");
+        admin.registerTreaty(address(NAPact), "placeholder ABI");
         vm.stopPrank();
+
+        // Player 2 joins NAPact
+        vm.startPrank(player2);
+        
     }
 }

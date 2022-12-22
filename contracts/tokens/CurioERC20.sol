@@ -75,6 +75,12 @@ contract CurioERC20 is ERC20 {
     }
 
     function transfer(address _to, uint256 _amount) public override returns (bool) {
+        // Permission checks
+        if (msg.sender != address(this)) {
+            uint256 callerID = GameLib.getEntityByAddress(msg.sender);
+            GameLib.treatyApprovalCheck("transfer", nationID, abi.encode(callerID, _to, _amount));
+        }
+
         _transferHelper(msg.sender, _to, _amount);
         return true;
     }
@@ -84,6 +90,12 @@ contract CurioERC20 is ERC20 {
         address _to,
         uint256 _amount
     ) public override returns (bool) {
+        // Permission checks
+        if (msg.sender != address(this)) {
+            uint256 callerID = GameLib.getEntityByAddress(msg.sender);
+            GameLib.treatyApprovalCheck("transferFrom", nationID, abi.encode(callerID, _from, _to, _amount));
+        }
+
         // Transfers from diamond or owner are exempt from allowance
         if (msg.sender != diamond && getter.getEntityByAddress(msg.sender) != getter.getNation(getter.getEntityByAddress(_from))) {
             uint256 allowed = allowance[_from][msg.sender];
@@ -96,6 +108,12 @@ contract CurioERC20 is ERC20 {
     }
 
     function transferAll(address _from, address _to) public onlyGame returns (bool) {
+        // Permission checks
+        if (msg.sender != address(this)) {
+            uint256 callerID = GameLib.getEntityByAddress(msg.sender);
+            GameLib.treatyApprovalCheck("transferAll", nationID, abi.encode(callerID, _from, _to));
+        }
+
         uint256 amount = checkBalanceOf(_from);
 
         if (msg.sender != diamond) {

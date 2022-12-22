@@ -7,10 +7,14 @@ import {CurioERC20} from "contracts/tokens/CurioERC20.sol";
 import {Position} from "contracts/libraries/Types.sol";
 import {console} from "forge-std/console.sol";
 
-contract NonAggressivePact is CurioTreaty {
+contract EconSanction is CurioTreaty {
     address public deployerAddress;
+
     address[] public whitelist;
     mapping(address => bool) public isWhiteListed;
+
+    address[] public sanctionList;
+    mapping(address => bool) public isSanctioned;
 
     modifier onlyOwnerOrPact() {
         require(msg.sender == deployerAddress || msg.sender == address(this), "NAPact: You do not have owner-level permission");
@@ -18,8 +22,8 @@ contract NonAggressivePact is CurioTreaty {
     }
 
     constructor(address _diamond, uint256 _goldFee, uint256 _foodFee) CurioTreaty(_diamond) {
-        name = "Non-Aggressive Pact";
-        description = "Member nations cannot battle armies or tiles of one another";
+        name = "Economic Sanction League";
+        description = "Owner of the League can point to which nation the league is sanctioning";
 
         deployerAddress = msg.sender;
 
@@ -39,6 +43,22 @@ contract NonAggressivePact is CurioTreaty {
 
     function removeFromWhiteList(address _candidate) public onlyOwnerOrPact {
         isWhiteListed[_candidate] = false;
+        for (uint i = 0; i < whitelist.length; i++) {
+            if (whitelist[i] == element) {
+                whitelist.splice(i, 1);
+                return;
+            }
+        }
+    }
+
+    function addToSanctionList(address _candidate) public onlyOwnerOrPact {
+        require(!isSanctioned[_candidate], "NAPact: Candidate already whitelisted");
+        isSanctioned[_candidate] = true;
+        sanctionList.push(_candidate); 
+    }
+
+    function removeFromSacntionList(address _candidate) public onlyOwnerOrPact {
+        isSanctioned[_candidate] = false;
         for (uint i = 0; i < whitelist.length; i++) {
             if (whitelist[i] == element) {
                 whitelist.splice(i, 1);
@@ -81,14 +101,39 @@ contract NonAggressivePact is CurioTreaty {
     // Permission Functions
     // ----------------------------------------------------------
 
-    function approveBattle(uint256 _nationID, bytes memory _encodedParams) public view override returns (bool) {
-        // Disapprove if target nation is part of NAPact
-        (, , uint256 battleTargetID) = abi.decode(_encodedParams, (uint256, uint256, uint256));
-        uint256 targetNationID = getter.getNation(battleTargetID);
+    function approveTransfer(uint256 _nationID, bytes memory _encodedParams) public view override returns (bool) {
+        // Disapprove if target nation is an ally
+        (address transferToNationAddress,) = abi.decode(_encodedParams, (address, uint256));
+        uint256 transferToNationID = getter.getEntityByAddress(transferToNationAddress);
         uint256 treatyID = getter.getEntityByAddress(address(this));
-        if (getter.getNationTreatySignature(targetNationID, treatyID) != 0) return false;
 
-        return super.approveBattle(_nationID, _encodedParams);
+        if (isSanctioned[transferToNationID]) {
+            // target is sanctioned
+            return false;
+        } else return super.approveTransfer(_nationID, _encodedParams);
+    }
 
+    function approveTransferFrom(uint256 _nationID, bytes memory _encodedParams) public view override returns (bool) {
+        // Disapprove if target nation is an ally
+        (,address transferToNationAddress,) = abi.decode(_encodedParams, (address, uint256, uint256));
+        uint256 transferToNationID = getter.getEntityByAddress(transferToNationAddress);
+        uint256 treatyID = getter.getEntityByAddress(address(this));
+
+        if (isSanctioned[transferToNationID]) {
+            // target is sanctioned
+            return false;
+        } else return super.approveTransfer(_nationID, _encodedParams);
+    }
+
+    function approveTransferAll(uint256 _nationID, bytes memory _encodedParams) public view override returns (bool) {
+        // Disapprove if target nation is an ally
+        (address transferToNationAddress,) = abi.decode(_encodedParams, (address, address));
+        uint256 transferToNationID = getter.getEntityByAddress(transferToNationAddress);
+        uint256 treatyID = getter.getEntityByAddress(address(this));
+
+        if (isSanctioned[transferToNationID]) {
+            // target is sanctioned
+            return false;
+        } else return super.approveTransfer(_nationID, _encodedParams);
     }
 }
