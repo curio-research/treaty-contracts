@@ -199,7 +199,9 @@ library GameLib {
 
         // Gather
         uint256 gatherAmount = (block.timestamp - ECSLib.getUint("InitTimestamp", gatherID)) * getConstant("Army", ECSLib.getString("Name", templateID), "Rate", "gather", 0);
-        resourceToken.dripToken(armyAddress, gatherAmount);
+        uint256 gatherLoad = getConstant("Troop", "Resource", "Load", "", 0) * getArmyTroopCount(_armyID) / 1000;
+        uint256 armyInventoryBalance = resourceToken.balanceOf(armyAddress);
+        resourceToken.dripToken(armyAddress, min(gatherAmount, gatherLoad - armyInventoryBalance));
 
         ECSLib.removeEntity(gatherID);
     }
@@ -520,13 +522,6 @@ library GameLib {
         return (inventoryID, load, balance);
     }
 
-    function getConstituents(uint256 _keeperID) internal view returns (uint256[] memory) {
-        QueryCondition[] memory query = new QueryCondition[](2);
-        query[0] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Keeper"]), abi.encode(_keeperID));
-        query[1] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Tag"]), abi.encode("Constituent"));
-        return ECSLib.query(query);
-    }
-
     function getTreatySignatures(uint256 _treatyID) internal view returns (uint256[] memory) {
         QueryCondition[] memory query = new QueryCondition[](2);
         query[0] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Tag"]), abi.encode("Signature"));
@@ -607,9 +602,10 @@ library GameLib {
 
     function getArmyTroopCount(uint256 _armyID) internal view returns (uint256) {
         uint256 count = 0;
-        uint256[] memory constituentIDs = getConstituents(_armyID);
-        for (uint256 i = 0; i < constituentIDs.length; i++) {
-            count += ECSLib.getUint("Amount", constituentIDs[i]);
+        uint256[] memory troopTemplateIDs = ECSLib.getStringComponent("Tag").getEntitiesWithValue(string("TroopTemplate"));
+        for (uint256 i = 0; i < troopTemplateIDs.length; i++) {
+            uint256 inventoryID = getInventory(_armyID, troopTemplateIDs[i]);
+            count += ECSLib.getUint("Amount", inventoryID);
         }
         return count;
     }
