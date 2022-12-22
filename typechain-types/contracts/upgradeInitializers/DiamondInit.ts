@@ -30,7 +30,6 @@ export type WorldConstantsStruct = {
   gameMode: PromiseOrValue<BigNumberish>;
   maxArmyCountPerNation: PromiseOrValue<BigNumberish>;
   maxCapitalLevel: PromiseOrValue<BigNumberish>;
-  maxCapitalCountPerNation: PromiseOrValue<BigNumberish>;
   maxNationCount: PromiseOrValue<BigNumberish>;
   numInitTerrainTypes: PromiseOrValue<BigNumberish>;
   secondsToTrainAThousandTroops: PromiseOrValue<BigNumberish>;
@@ -51,7 +50,6 @@ export type WorldConstantsStructOutput = [
   BigNumber,
   BigNumber,
   BigNumber,
-  BigNumber,
   BigNumber
 ] & {
   admin: string;
@@ -60,7 +58,6 @@ export type WorldConstantsStructOutput = [
   gameMode: number;
   maxArmyCountPerNation: BigNumber;
   maxCapitalLevel: BigNumber;
-  maxCapitalCountPerNation: BigNumber;
   maxNationCount: BigNumber;
   numInitTerrainTypes: BigNumber;
   secondsToTrainAThousandTroops: BigNumber;
@@ -71,7 +68,7 @@ export type WorldConstantsStructOutput = [
 
 export interface DiamondInitInterface extends utils.Interface {
   functions: {
-    "init((address,uint256,uint256,uint8,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))": FunctionFragment;
+    "init((address,uint256,uint256,uint8,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))": FunctionFragment;
   };
 
   getFunction(nameOrSignatureOrTopic: "init"): FunctionFragment;

@@ -23,12 +23,13 @@ import type {
   PromiseOrValue,
 } from "../../common";
 
-export interface HangingGardenInterface extends utils.Interface {
+export interface CurioTreatyInterface extends utils.Interface {
   functions: {
     "admin()": FunctionFragment;
     "approveBattle(uint256,bytes)": FunctionFragment;
     "approveClaimTile(uint256,bytes)": FunctionFragment;
     "approveDelegateGameFunction(uint256,bytes)": FunctionFragment;
+    "approveDeployTreaty(uint256,bytes)": FunctionFragment;
     "approveDisbandArmy(uint256,bytes)": FunctionFragment;
     "approveDisownTile(uint256,bytes)": FunctionFragment;
     "approveEndGather(uint256,bytes)": FunctionFragment;
@@ -38,7 +39,6 @@ export interface HangingGardenInterface extends utils.Interface {
     "approveJoinTreaty(uint256,bytes)": FunctionFragment;
     "approveLeaveTreaty(uint256,bytes)": FunctionFragment;
     "approveMove(uint256,bytes)": FunctionFragment;
-    "approveMove(address)": FunctionFragment;
     "approveMoveCapital(uint256,bytes)": FunctionFragment;
     "approveOrganizeArmy(uint256,bytes)": FunctionFragment;
     "approveRecoverTile(uint256,bytes)": FunctionFragment;
@@ -48,19 +48,11 @@ export interface HangingGardenInterface extends utils.Interface {
     "approveUpgradeCapital(uint256,bytes)": FunctionFragment;
     "approveUpgradeResource(uint256,bytes)": FunctionFragment;
     "approveUpgradeTile(uint256,bytes)": FunctionFragment;
-    "becomeAHomie(address)": FunctionFragment;
     "description()": FunctionFragment;
     "diamond()": FunctionFragment;
-    "executeGameTx(bytes)": FunctionFragment;
-    "executeTx(address,bytes)": FunctionFragment;
     "game()": FunctionFragment;
     "getter()": FunctionFragment;
-    "homieFee()": FunctionFragment;
-    "homies(uint256)": FunctionFragment;
-    "isHomie(address)": FunctionFragment;
-    "isOwner(address)": FunctionFragment;
     "name()": FunctionFragment;
-    "owners(uint256)": FunctionFragment;
     "treatyDelegateGameFunction(string,uint256,bool)": FunctionFragment;
     "treatyJoin()": FunctionFragment;
     "treatyLeave()": FunctionFragment;
@@ -72,6 +64,7 @@ export interface HangingGardenInterface extends utils.Interface {
       | "approveBattle"
       | "approveClaimTile"
       | "approveDelegateGameFunction"
+      | "approveDeployTreaty"
       | "approveDisbandArmy"
       | "approveDisownTile"
       | "approveEndGather"
@@ -80,8 +73,7 @@ export interface HangingGardenInterface extends utils.Interface {
       | "approveHarvestResourcesFromCapital"
       | "approveJoinTreaty"
       | "approveLeaveTreaty"
-      | "approveMove(uint256,bytes)"
-      | "approveMove(address)"
+      | "approveMove"
       | "approveMoveCapital"
       | "approveOrganizeArmy"
       | "approveRecoverTile"
@@ -91,19 +83,11 @@ export interface HangingGardenInterface extends utils.Interface {
       | "approveUpgradeCapital"
       | "approveUpgradeResource"
       | "approveUpgradeTile"
-      | "becomeAHomie"
       | "description"
       | "diamond"
-      | "executeGameTx"
-      | "executeTx"
       | "game"
       | "getter"
-      | "homieFee"
-      | "homies"
-      | "isHomie"
-      | "isOwner"
       | "name"
-      | "owners"
       | "treatyDelegateGameFunction"
       | "treatyJoin"
       | "treatyLeave"
@@ -120,6 +104,10 @@ export interface HangingGardenInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "approveDelegateGameFunction",
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BytesLike>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "approveDeployTreaty",
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
@@ -155,12 +143,8 @@ export interface HangingGardenInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
-    functionFragment: "approveMove(uint256,bytes)",
+    functionFragment: "approveMove",
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BytesLike>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "approveMove(address)",
-    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "approveMoveCapital",
@@ -199,42 +183,13 @@ export interface HangingGardenInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
-    functionFragment: "becomeAHomie",
-    values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
     functionFragment: "description",
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "diamond", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "executeGameTx",
-    values: [PromiseOrValue<BytesLike>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "executeTx",
-    values: [PromiseOrValue<string>, PromiseOrValue<BytesLike>]
-  ): string;
   encodeFunctionData(functionFragment: "game", values?: undefined): string;
   encodeFunctionData(functionFragment: "getter", values?: undefined): string;
-  encodeFunctionData(functionFragment: "homieFee", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "homies",
-    values: [PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "isHomie",
-    values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "isOwner",
-    values: [PromiseOrValue<string>]
-  ): string;
   encodeFunctionData(functionFragment: "name", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "owners",
-    values: [PromiseOrValue<BigNumberish>]
-  ): string;
   encodeFunctionData(
     functionFragment: "treatyDelegateGameFunction",
     values: [
@@ -266,6 +221,10 @@ export interface HangingGardenInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "approveDeployTreaty",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "approveDisbandArmy",
     data: BytesLike
   ): Result;
@@ -298,11 +257,7 @@ export interface HangingGardenInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "approveMove(uint256,bytes)",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "approveMove(address)",
+    functionFragment: "approveMove",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -342,27 +297,13 @@ export interface HangingGardenInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "becomeAHomie",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "description",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "diamond", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "executeGameTx",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "executeTx", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "game", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "getter", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "homieFee", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "homies", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "isHomie", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "isOwner", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "owners", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "treatyDelegateGameFunction",
     data: BytesLike
@@ -376,12 +317,12 @@ export interface HangingGardenInterface extends utils.Interface {
   events: {};
 }
 
-export interface HangingGarden extends BaseContract {
+export interface CurioTreaty extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: HangingGardenInterface;
+  interface: CurioTreatyInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
@@ -418,6 +359,12 @@ export interface HangingGarden extends BaseContract {
     ): Promise<[boolean]>;
 
     approveDelegateGameFunction(
+      _nationID: PromiseOrValue<BigNumberish>,
+      _encodedParams: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
+    approveDeployTreaty(
       _nationID: PromiseOrValue<BigNumberish>,
       _encodedParams: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
@@ -471,14 +418,9 @@ export interface HangingGarden extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
-    "approveMove(uint256,bytes)"(
+    approveMove(
       _nationID: PromiseOrValue<BigNumberish>,
       _encodedParams: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
-
-    "approveMove(address)"(
-      _armyAddress: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
@@ -536,53 +478,15 @@ export interface HangingGarden extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
-    becomeAHomie(
-      _armyAddress: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
     description(overrides?: CallOverrides): Promise<[string]>;
 
     diamond(overrides?: CallOverrides): Promise<[string]>;
-
-    executeGameTx(
-      _data: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    executeTx(
-      _contractAddress: PromiseOrValue<string>,
-      _data: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
 
     game(overrides?: CallOverrides): Promise<[string]>;
 
     getter(overrides?: CallOverrides): Promise<[string]>;
 
-    homieFee(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    homies(
-      arg0: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[string]>;
-
-    isHomie(
-      arg0: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
-
-    isOwner(
-      arg0: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
-
     name(overrides?: CallOverrides): Promise<[string]>;
-
-    owners(
-      arg0: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[string]>;
 
     treatyDelegateGameFunction(
       _functionName: PromiseOrValue<string>,
@@ -615,6 +519,12 @@ export interface HangingGarden extends BaseContract {
   ): Promise<boolean>;
 
   approveDelegateGameFunction(
+    _nationID: PromiseOrValue<BigNumberish>,
+    _encodedParams: PromiseOrValue<BytesLike>,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
+  approveDeployTreaty(
     _nationID: PromiseOrValue<BigNumberish>,
     _encodedParams: PromiseOrValue<BytesLike>,
     overrides?: CallOverrides
@@ -668,14 +578,9 @@ export interface HangingGarden extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
-  "approveMove(uint256,bytes)"(
+  approveMove(
     _nationID: PromiseOrValue<BigNumberish>,
     _encodedParams: PromiseOrValue<BytesLike>,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
-
-  "approveMove(address)"(
-    _armyAddress: PromiseOrValue<string>,
     overrides?: CallOverrides
   ): Promise<boolean>;
 
@@ -733,53 +638,15 @@ export interface HangingGarden extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
-  becomeAHomie(
-    _armyAddress: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
   description(overrides?: CallOverrides): Promise<string>;
 
   diamond(overrides?: CallOverrides): Promise<string>;
-
-  executeGameTx(
-    _data: PromiseOrValue<BytesLike>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  executeTx(
-    _contractAddress: PromiseOrValue<string>,
-    _data: PromiseOrValue<BytesLike>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
 
   game(overrides?: CallOverrides): Promise<string>;
 
   getter(overrides?: CallOverrides): Promise<string>;
 
-  homieFee(overrides?: CallOverrides): Promise<BigNumber>;
-
-  homies(
-    arg0: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<string>;
-
-  isHomie(
-    arg0: PromiseOrValue<string>,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
-
-  isOwner(
-    arg0: PromiseOrValue<string>,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
-
   name(overrides?: CallOverrides): Promise<string>;
-
-  owners(
-    arg0: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<string>;
 
   treatyDelegateGameFunction(
     _functionName: PromiseOrValue<string>,
@@ -817,6 +684,12 @@ export interface HangingGarden extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
+    approveDeployTreaty(
+      _nationID: PromiseOrValue<BigNumberish>,
+      _encodedParams: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
     approveDisbandArmy(
       _nationID: PromiseOrValue<BigNumberish>,
       _encodedParams: PromiseOrValue<BytesLike>,
@@ -865,14 +738,9 @@ export interface HangingGarden extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    "approveMove(uint256,bytes)"(
+    approveMove(
       _nationID: PromiseOrValue<BigNumberish>,
       _encodedParams: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
-
-    "approveMove(address)"(
-      _armyAddress: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
@@ -930,53 +798,15 @@ export interface HangingGarden extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    becomeAHomie(
-      _armyAddress: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     description(overrides?: CallOverrides): Promise<string>;
 
     diamond(overrides?: CallOverrides): Promise<string>;
-
-    executeGameTx(
-      _data: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    executeTx(
-      _contractAddress: PromiseOrValue<string>,
-      _data: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<void>;
 
     game(overrides?: CallOverrides): Promise<string>;
 
     getter(overrides?: CallOverrides): Promise<string>;
 
-    homieFee(overrides?: CallOverrides): Promise<BigNumber>;
-
-    homies(
-      arg0: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<string>;
-
-    isHomie(
-      arg0: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
-
-    isOwner(
-      arg0: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
-
     name(overrides?: CallOverrides): Promise<string>;
-
-    owners(
-      arg0: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<string>;
 
     treatyDelegateGameFunction(
       _functionName: PromiseOrValue<string>,
@@ -1013,6 +843,12 @@ export interface HangingGarden extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    approveDeployTreaty(
+      _nationID: PromiseOrValue<BigNumberish>,
+      _encodedParams: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     approveDisbandArmy(
       _nationID: PromiseOrValue<BigNumberish>,
       _encodedParams: PromiseOrValue<BytesLike>,
@@ -1061,14 +897,9 @@ export interface HangingGarden extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    "approveMove(uint256,bytes)"(
+    approveMove(
       _nationID: PromiseOrValue<BigNumberish>,
       _encodedParams: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    "approveMove(address)"(
-      _armyAddress: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1126,53 +957,15 @@ export interface HangingGarden extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    becomeAHomie(
-      _armyAddress: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
     description(overrides?: CallOverrides): Promise<BigNumber>;
 
     diamond(overrides?: CallOverrides): Promise<BigNumber>;
-
-    executeGameTx(
-      _data: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    executeTx(
-      _contractAddress: PromiseOrValue<string>,
-      _data: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
 
     game(overrides?: CallOverrides): Promise<BigNumber>;
 
     getter(overrides?: CallOverrides): Promise<BigNumber>;
 
-    homieFee(overrides?: CallOverrides): Promise<BigNumber>;
-
-    homies(
-      arg0: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    isHomie(
-      arg0: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    isOwner(
-      arg0: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     name(overrides?: CallOverrides): Promise<BigNumber>;
-
-    owners(
-      arg0: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
 
     treatyDelegateGameFunction(
       _functionName: PromiseOrValue<string>,
@@ -1211,6 +1004,12 @@ export interface HangingGarden extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    approveDeployTreaty(
+      _nationID: PromiseOrValue<BigNumberish>,
+      _encodedParams: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     approveDisbandArmy(
       _nationID: PromiseOrValue<BigNumberish>,
       _encodedParams: PromiseOrValue<BytesLike>,
@@ -1259,14 +1058,9 @@ export interface HangingGarden extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    "approveMove(uint256,bytes)"(
+    approveMove(
       _nationID: PromiseOrValue<BigNumberish>,
       _encodedParams: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    "approveMove(address)"(
-      _armyAddress: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1324,53 +1118,15 @@ export interface HangingGarden extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    becomeAHomie(
-      _armyAddress: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
     description(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     diamond(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    executeGameTx(
-      _data: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    executeTx(
-      _contractAddress: PromiseOrValue<string>,
-      _data: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
 
     game(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getter(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    homieFee(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    homies(
-      arg0: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    isHomie(
-      arg0: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    isOwner(
-      arg0: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     name(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    owners(
-      arg0: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
 
     treatyDelegateGameFunction(
       _functionName: PromiseOrValue<string>,

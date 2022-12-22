@@ -7,7 +7,7 @@ import * as fs from 'fs';
 import { chainInfo, COMPONENT_SPECS, GameMode, position, TILE_TYPE } from 'curio-vault';
 import { ECSLib } from '../../typechain-types/contracts/libraries/ECSLib';
 import { GameLib } from '../../typechain-types/contracts/libraries/GameLib';
-import { CurioERC20 } from '../../typechain-types/contracts/tokens/CurioERC20';
+import { CurioERC20 } from '../../typechain-types/contracts/standards/CurioERC20';
 import { createTemplates } from './constants';
 import { deployDiamond, getDiamond, deployFacets } from './diamondDeploy';
 import { encodeTileMap } from './mapHelper';
@@ -86,11 +86,12 @@ export const uploadABIToIPFS = async (hre: HardhatRuntimeEnvironment, contractNa
 };
 
 // Retrieve at https://gateway.pinata.cloud/ipfs/<hash>
-export const deployTreaty = async (name: string, admin: Signer, hre: HardhatRuntimeEnvironment, diamond: Curio, gasLimit: number) => {
-  const treaty = await deployProxy<any>(name, admin, hre, [diamond.address]);
+export const deployTreatyTemplate = async (name: string, admin: Signer, hre: HardhatRuntimeEnvironment, diamond: Curio, gasLimit: number) => {
+  const args = name === 'FTX' ? [diamond.address, await admin.getAddress()] : [diamond.address];
+  const treaty = await deployProxy<any>(name, admin, hre, args);
   const abiHash = await uploadABIToIPFS(hre, name);
   console.log(chalk.dim(`✦ Treaty ${name} deployed and ABI uploaded to IPFS at hash=${abiHash}`));
-  diamond.connect(admin).registerTreaty(treaty.address, abiHash, { gasLimit });
+  diamond.connect(admin).registerTreatyTemplate(treaty.address, abiHash, { gasLimit });
 };
 
 /**
@@ -142,7 +143,8 @@ export const initializeGame = async (hre: HardhatRuntimeEnvironment, worldConsta
     'HarvestResourcesFromCapital',
     'UpgradeResource',
     'Battle',
-    'DelegateGameFunction', // STYLE: DO NOT REMOVE THIS COMMENT
+    'DelegateGameFunction',
+    'DeployTreaty', // STYLE: DO NOT REMOVE THIS COMMENT
   ];
 
   await confirmTx(await diamond.registerFunctionNames(functionNames, { gasLimit }), hre);
@@ -211,14 +213,14 @@ export const initializeGame = async (hre: HardhatRuntimeEnvironment, worldConsta
   }
   console.log(`✦ Special tile bulk initialization took ${Math.floor(performance.now() - startTime)} ms`);
 
-  // Deploy treaties
+  // Deploy treaty templates
   startTime = performance.now();
-  const treatyNames = ['FTX', 'NATO', 'Alliance'];
-  for (const name of treatyNames) {
-    await deployTreaty(name, admin, hre, diamond, gasLimit);
+  const treatyTemplateNames = ['Alliance', 'FTX', 'NATO'];
+  for (const name of treatyTemplateNames) {
+    await deployTreatyTemplate(name, admin, hre, diamond, gasLimit);
     await sleep(1000);
   }
-  console.log(`✦ Treaty deployment took ${Math.floor(performance.now() - startTime)} ms`);
+  console.log(`✦ Treaty template deployment took ${Math.floor(performance.now() - startTime)} ms`);
 
   // Battle royale setup
   if (worldConstants.gameMode === GameMode.BATTLE_ROYALE) {

@@ -14,9 +14,11 @@ import {GameFacet} from "contracts/facets/GameFacet.sol";
 import {AdminFacet} from "contracts/facets/AdminFacet.sol";
 import {Strings} from "openzeppelin-contracts/contracts/utils/Strings.sol";
 import {ComponentSpec, GameMode, GameParamSpec, Position, WorldConstants} from "contracts/libraries/Types.sol";
-import {NATO} from "contracts/treaties/NATO.sol";
 import {Alliance} from "contracts/treaties/Alliance.sol";
-import {CurioERC20} from "contracts/tokens/CurioERC20.sol";
+import {FTX} from "contracts/treaties/FTX.sol";
+import {NATO} from "contracts/treaties/NATO.sol";
+import {TestTreaty} from "contracts/treaties/TestTreaty.sol";
+import {CurioERC20} from "contracts/standards/CurioERC20.sol";
 import {console} from "forge-std/console.sol";
 import {stdJson} from "forge-std/StdJson.sol";
 
@@ -40,10 +42,14 @@ contract DiamondDeployTest is Test {
     OwnershipFacet public ownership;
 
     // Treaties
-    NATO public nato;
-    Alliance public alliance;
-    uint256 public natoID;
-    uint256 public allianceID;
+    Alliance public allianceTemplate;
+    FTX public ftxTemplate;
+    NATO public natoTemplate;
+    TestTreaty public testTreatyTemplate;
+    uint256 public allianceTemplateID;
+    uint256 public ftxTemplateID;
+    uint256 public natoTemplateID;
+    uint256 public testTreatyTemplateID;
 
     // Players (nations)
     address public deployer = address(0);
@@ -170,25 +176,29 @@ contract DiamondDeployTest is Test {
         }
 
         // Initialize treaties
-        nato = new NATO(diamond);
-        natoID = admin.registerTreaty(address(nato), "sample ABI");
-        alliance = new Alliance(diamond);
-        allianceID = admin.registerTreaty(address(alliance), "sample ABI");
+        allianceTemplate = new Alliance(diamond);
+        allianceTemplateID = admin.registerTreatyTemplate(address(allianceTemplate), "sample ABI");
+        ftxTemplate = new FTX(diamond, address(this));
+        ftxTemplateID = admin.registerTreatyTemplate(address(ftxTemplate), "sample ABI");
+        natoTemplate = new NATO(diamond);
+        natoTemplateID = admin.registerTreatyTemplate(address(natoTemplate), "sample ABI");
+        testTreatyTemplate = new TestTreaty(diamond);
+        testTreatyTemplateID = admin.registerTreatyTemplate(address(testTreatyTemplate), "sample ABI");
         console.log(">>> Treaties initialized");
 
         vm.stopPrank();
 
         // Initialize players
         vm.prank(player1);
-        nation1ID = game.initializeNation(nation1Pos, "China"); // FIXME: remove
+        nation1ID = game.initializeNation(nation1Pos, "Nation 1");
         nation1CapitalID = getter.getCapital(nation1ID);
         nation1CapitalAddr = getter.getAddress(nation1CapitalID);
         vm.prank(player2);
-        nation2ID = game.initializeNation(nation2Pos, "US");
+        nation2ID = game.initializeNation(nation2Pos, "Nation 2");
         nation2CapitalID = getter.getCapital(nation2ID);
         nation2CapitalAddr = getter.getAddress(nation2CapitalID);
         vm.prank(player3);
-        nation3ID = game.initializeNation(nation3Pos, "Russia");
+        nation3ID = game.initializeNation(nation3Pos, "Nation 3");
         nation3CapitalID = getter.getCapital(nation3ID);
         nation3CapitalAddr = getter.getAddress(nation3CapitalID);
         console.log(">>> Nations initialized");
@@ -243,7 +253,7 @@ contract DiamondDeployTest is Test {
     }
 
     function _registerFunctionNames() private {
-        string[] memory gameFunctionNames = new string[](20);
+        string[] memory gameFunctionNames = new string[](21);
         gameFunctionNames[0] = "InitializeNation";
         gameFunctionNames[1] = "UpgradeCapital";
         gameFunctionNames[2] = "MoveCapital";
@@ -264,6 +274,7 @@ contract DiamondDeployTest is Test {
         gameFunctionNames[17] = "UpgradeResource";
         gameFunctionNames[18] = "Battle";
         gameFunctionNames[19] = "DelegateGameFunction";
+        gameFunctionNames[20] = "DeployTreaty";
         admin.registerFunctionNames(gameFunctionNames);
     }
 
@@ -392,7 +403,6 @@ contract DiamondDeployTest is Test {
                 gameLengthInSeconds: 3600,
                 gameMode: GameMode.REGULAR,
                 maxArmyCountPerNation: 2,
-                maxCapitalCountPerNation: 3,
                 maxCapitalLevel: 3,
                 maxNationCount: 20,
                 // maxTransferDistance: 100
@@ -434,19 +444,6 @@ contract DiamondDeployTest is Test {
 
         return _map;
     }
-
-    // // generates values that need to be initialized from the cli and pipes it back into solidity! magic
-    // function getInitVal() private returns (WorldConstants memory _constants) {
-    //     string[] memory runJsInputs = new string[](4);
-    //     runJsInputs[0] = "yarn";
-    //     runJsInputs[1] = "--silent";
-    //     runJsInputs[2] = "run";
-    //     runJsInputs[3] = "getInitParams";
-
-    //     bytes memory res = vm.ffi(runJsInputs);
-
-    //     _constants = abi.decode(res, (WorldConstants));
-    // }
 
     function _getSelectors(string memory _facetName) private returns (bytes4[] memory selectors) {
         string[] memory cmd = new string[](5);

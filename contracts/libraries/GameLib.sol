@@ -9,8 +9,11 @@ import {Templates} from "contracts/libraries/Templates.sol";
 import {Set} from "contracts/Set.sol";
 import {Component} from "contracts/Component.sol";
 import {AddressComponent, BoolComponent, IntComponent, PositionComponent, StringComponent, UintComponent, UintArrayComponent} from "contracts/TypedComponents.sol";
-import {CurioERC20} from "contracts/tokens/CurioERC20.sol";
-import {CurioTreaty} from "contracts/CurioTreaty.sol";
+import {CurioERC20} from "contracts/standards/CurioERC20.sol";
+import {CurioTreaty} from "contracts/standards/CurioTreaty.sol";
+import {Alliance} from "contracts/treaties/Alliance.sol";
+import {FTX} from "contracts/treaties/FTX.sol";
+import {TestTreaty} from "contracts/treaties/TestTreaty.sol";
 import {console} from "forge-std/console.sol";
 
 /// @title Util library
@@ -164,6 +167,27 @@ library GameLib {
         return tileID;
     }
 
+    function removeNation(uint256 _nationID) internal {
+        // Remove nation's capital
+        uint256 capitalID = getCapital(_nationID);
+        ECSLib.removeEntity(capitalID);
+
+        // Remove nation's armies
+        uint256[] memory armyIDs = getNationArmies(_nationID);
+        for (uint256 i = 0; i < armyIDs.length; i++) {
+            ECSLib.removeEntity(armyIDs[i]);
+        }
+
+        // Neutralize nation's tiles
+        uint256[] memory tileIDs = getNationTiles(_nationID);
+        for (uint256 i = 0; i < tileIDs.length; i++) {
+            ECSLib.setUint("Nation", tileIDs[i], 0);
+        }
+
+        // Remove nation
+        ECSLib.removeEntity(_nationID);
+    }
+
     function endGather(uint256 _armyID) internal {
         // Verify that a gather process is present
         uint256 gatherID = getArmyGather(_armyID);
@@ -176,7 +200,9 @@ library GameLib {
 
         // Gather
         uint256 gatherAmount = (block.timestamp - ECSLib.getUint("InitTimestamp", gatherID)) * getConstant("Army", ECSLib.getString("Name", templateID), "Rate", "gather", 0);
-        resourceToken.dripToken(armyAddress, gatherAmount);
+        uint256 gatherLoad = (getConstant("Troop", "Resource", "Load", "", 0) * getArmyTroopCount(_armyID)) / 1000;
+        uint256 armyInventoryBalance = resourceToken.balanceOf(armyAddress);
+        resourceToken.dripToken(armyAddress, min(gatherAmount, gatherLoad - armyInventoryBalance));
 
         ECSLib.removeEntity(gatherID);
     }
@@ -225,9 +251,9 @@ library GameLib {
         CurioERC20 guardToken = getTokenContract("Guard");
         require(ECSLib.getUint("Amount", getInventory(_tileID, gs().templates["Guard"])) > 0, "CURIO: defender subjugated, claim tile instead");
 
-        uint256 capitalID = getCapital(ECSLib.getUint("Nation", _tileID));
         // Others cannot attack cities at chaos
-        capitalSackRecoveryCheck(getCapital(capitalID));
+        uint256 capitalID = getCapital(ECSLib.getUint("Nation", _tileID));
+        capitalSackRecoveryCheck(capitalID);
 
         // if it is the super tile, check that it's active
         if (coincident(ECSLib.getPosition("StartPosition", _tileID), getMapCenterTilePosition())) {
@@ -243,7 +269,7 @@ library GameLib {
         // Execute one round of battle
         bool victory = attack(_armyID, _tileID, false, false);
         if (victory) {
-            if (capitalID != 0) {
+            if (coincident(ECSLib.getPosition("StartPosition", capitalID), ECSLib.getPosition("StartPosition", _tileID))) {
                 // Victorious against capital, add back some guards for the loser
                 guardToken.dripToken(tileAddress, getConstant("Tile", "Guard", "Amount", "", ECSLib.getUint("Level", capitalID)));
 
@@ -387,7 +413,7 @@ library GameLib {
         // Get current delegation
         uint256[] memory delegationIDs = getDelegations(_functionName, _nationID, _delegateID);
 
-        // Case I: Subject-agnostic delegation
+        // Case I: Entity-agnostic delegation
         if (_subjectID == 0) {
             // Remove all delegations
             for (uint256 i = 0; i < delegationIDs.length; i++) {
@@ -400,7 +426,7 @@ library GameLib {
             return;
         }
 
-        // Case II: Subject-specific delegation
+        // Case II: Entity-specific delegation
         bool delegationExists;
         uint256 delegationID;
         for (uint256 i = 0; i < delegationIDs.length; i++) {
@@ -416,7 +442,27 @@ library GameLib {
             Templates.addDelegation(_functionName, _nationID, _delegateID, _subjectID);
         } else if (!_canCall && delegationID != 0) {
             ECSLib.removeEntity(delegationID);
+        } else if (!_canCall && delegationExists) {
+            revert("CURIO: Need to revoke entity-agnostic delegation");
         }
+    }
+
+    // FIXME: encountering "TypeError: Definition of base has to precede definition of derived contract" issue
+    function deployTreaty(uint256 _nationID, string memory _treatyName) internal returns (address treatyAddress) {
+        // Deploy treaty
+        if (GameLib.strEq(_treatyName, "Alliance")) {
+            treatyAddress = address(new Alliance(address(this)));
+        } else if (GameLib.strEq(_treatyName, "FTX")) {
+            treatyAddress = address(new FTX(address(this), ECSLib.getAddress("Address", _nationID)));
+        } else if (GameLib.strEq(_treatyName, "Test Treaty")) {
+            treatyAddress = address(new TestTreaty(address(this)));
+        } else {
+            revert("CURIO: Unsupported treaty name");
+        }
+
+        // Register treaty
+        uint256 treatyTemplateID = gs().templates[_treatyName];
+        Templates.addTreaty(treatyAddress, ECSLib.getString("Name", treatyTemplateID), ECSLib.getString("Description", treatyTemplateID), ECSLib.getString("ABIHash", treatyTemplateID), _nationID);
     }
 
     // ----------------------------------------------------------
@@ -481,11 +527,20 @@ library GameLib {
         return (inventoryID, load, balance);
     }
 
-    function getConstituents(uint256 _keeperID) internal view returns (uint256[] memory) {
-        QueryCondition[] memory query = new QueryCondition[](2);
-        query[0] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Keeper"]), abi.encode(_keeperID));
-        query[1] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Tag"]), abi.encode("Constituent"));
-        return ECSLib.query(query);
+    function getAllowance(
+        uint256 _templateID,
+        uint256 _ownerID,
+        uint256 _spenderID
+    ) internal view returns (uint256) {
+        QueryCondition[] memory query = new QueryCondition[](4);
+        query[0] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Tag"]), abi.encode("Allowance"));
+        query[1] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Template"]), abi.encode(_templateID));
+        query[2] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Owner"]), abi.encode(_ownerID));
+        query[3] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Caller"]), abi.encode(_spenderID));
+
+        uint256[] memory allowanceIDs = ECSLib.query(query);
+        require(allowanceIDs.length <= 1, "CURIO: Found more than one allowance");
+        return allowanceIDs.length == 1 ? allowanceIDs[0] : 0;
     }
 
     function getTreatySignatures(uint256 _treatyID) internal view returns (uint256[] memory) {
@@ -568,9 +623,10 @@ library GameLib {
 
     function getArmyTroopCount(uint256 _armyID) internal view returns (uint256) {
         uint256 count = 0;
-        uint256[] memory constituentIDs = getConstituents(_armyID);
-        for (uint256 i = 0; i < constituentIDs.length; i++) {
-            count += ECSLib.getUint("Amount", constituentIDs[i]);
+        uint256[] memory troopTemplateIDs = ECSLib.getStringComponent("Tag").getEntitiesWithValue(string("TroopTemplate"));
+        for (uint256 i = 0; i < troopTemplateIDs.length; i++) {
+            uint256 inventoryID = getInventory(_armyID, troopTemplateIDs[i]);
+            count += ECSLib.getUint("Amount", inventoryID);
         }
         return count;
     }

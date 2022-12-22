@@ -7,8 +7,8 @@ import {ComponentSpec, Position, ValueType, WorldConstants} from "contracts/libr
 import {Templates} from "contracts/libraries/Templates.sol";
 import {Set} from "contracts/Set.sol";
 import {GameLib} from "contracts/libraries/GameLib.sol";
-import {CurioERC20} from "contracts/tokens/CurioERC20.sol";
-import {CurioTreaty} from "contracts/CurioTreaty.sol";
+import {CurioERC20} from "contracts/standards/CurioERC20.sol";
+import {CurioTreaty} from "contracts/standards/CurioTreaty.sol";
 import {console} from "forge-std/console.sol";
 
 /// @title Admin facet
@@ -105,7 +105,21 @@ contract AdminFacet is UseStorage {
 
     function unlockTiles(Position[] memory _tilePositions) external onlyAuthorized {
         for (uint256 i = 0; i < _tilePositions.length; i++) {
-            ECSLib.setBool("IsLocked", GameLib.getTileAt(_tilePositions[i]));
+            ECSLib.removeBool("IsLocked", GameLib.getTileAt(_tilePositions[i]));
+        }
+    }
+
+    function unlockAllTiles() external onlyAuthorized {
+        ECSLib.removeComponentFromAll("IsLocked");
+    }
+
+    function removeIdleNations(uint256 _maxIdleDuration) external onlyAuthorized {
+        uint256[] memory nationIDs = ECSLib.getStringComponent("Tag").getEntitiesWithValue(string("Nation"));
+        for (uint256 i = 0; i < nationIDs.length; i++) {
+            uint256 lastActed = ECSLib.getUint("LastActed", nationIDs[i]);
+            if (lastActed != NULL && block.timestamp > lastActed + _maxIdleDuration) {
+                GameLib.removeNation(nationIDs[i]);
+            }
         }
     }
 
@@ -217,6 +231,14 @@ contract AdminFacet is UseStorage {
         return Templates.addResourceTemplate(token.name(), _tokenContract);
     }
 
+    function addAllowance(
+        string memory _templateName,
+        uint256 _ownerID,
+        uint256 _spenderID
+    ) external onlyAuthorized returns (uint256) {
+        return Templates.addAllowance(gs().templates[_templateName], _ownerID, _spenderID);
+    }
+
     function addGameParameter(string memory _identifier, uint256 _value) external onlyAuthorized returns (uint256) {
         return Templates.addGameParameter(_identifier, _value);
     }
@@ -236,18 +258,19 @@ contract AdminFacet is UseStorage {
     }
 
     /**
-     * @dev Register a new treaty for the game.
+     * @dev Register a new treaty template for the game.
      * @param _address deployed treaty address
      * @param _abiHash treaty abi hash
-     * @return treatyID registered treaty entity
+     * @return treatyTemplateID registered treaty template entity
      * @notice This function is currently used for permissioned deployment of treaties. In the future, treaties will be
      *         deployed permissionlessly by players.
      */
-    function registerTreaty(address _address, string memory _abiHash) external onlyAuthorized returns (uint256 treatyID) {
+    function registerTreatyTemplate(address _address, string memory _abiHash) external onlyAuthorized returns (uint256 treatyTemplateID) {
         CurioTreaty treaty = CurioTreaty(_address);
         string memory _name = treaty.name();
         string memory _description = treaty.description();
-        treatyID = Templates.addTreaty(_address, _name, _description, _abiHash);
+        treatyTemplateID = Templates.addTreatyTemplate(_address, _name, _description, _abiHash);
+        gs().templates[_name] = treatyTemplateID;
     }
 
     function generateNewAddress() external onlyAuthorized returns (address) {

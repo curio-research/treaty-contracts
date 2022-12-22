@@ -8,7 +8,7 @@ import {ECSLib} from "contracts/libraries/ECSLib.sol";
 import {Position, QueryCondition, WorldConstants} from "contracts/libraries/Types.sol";
 import {Component} from "contracts/Component.sol";
 import {console} from "forge-std/console.sol";
-import {CurioERC20} from "contracts/tokens/CurioERC20.sol";
+import {CurioERC20} from "contracts/standards/CurioERC20.sol";
 
 /// @title Bulk getters
 /// @notice Getters provide bulk functions useful for fetching data from the frontend
@@ -35,13 +35,25 @@ contract GetterFacet is UseStorage {
         return GameLib.getTokenContract(_tokenName);
     }
 
+    function getAllowance(
+        string memory _templateName,
+        uint256 _ownerID,
+        uint256 _spenderID
+    ) external view returns (uint256) {
+        return GameLib.getAllowance(gs().templates[_templateName], _ownerID, _spenderID);
+    }
+
     // ----------------------------------------------------------
     // TREATY-RELATED GETTERS
     // ----------------------------------------------------------
 
     // Can be used for nations, capitals, tiles, resources, and treaties
-    function getAddress(uint256 _entityID) external view returns (address) {
-        return ECSLib.getAddress("Address", _entityID);
+    function getAddress(uint256 _entity) external view returns (address) {
+        return ECSLib.getAddress("Address", _entity);
+    }
+
+    function getAmount(uint256 _entity) external view returns (uint256) {
+        return ECSLib.getUint("Amount", _entity);
     }
 
     // Used for fetching all treaties a player has signed
@@ -90,6 +102,11 @@ contract GetterFacet is UseStorage {
         uint256 templateID = gs().templates[_resourceType];
         uint256 inventoryID = GameLib.getInventory(entityID, templateID);
         return inventoryID == NULL ? 0 : ECSLib.getUint("Amount", inventoryID);
+    }
+
+    function getTotalSupply(string memory _resourceType) external view returns (uint256) {
+        uint256 templateID = gs().templates[_resourceType];
+        return CurioERC20(ECSLib.getAddress("Address", templateID)).totalSupply();
     }
 
     function getEntitiesAddr() external view returns (address) {

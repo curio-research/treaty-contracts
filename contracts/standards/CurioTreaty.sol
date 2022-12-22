@@ -6,7 +6,10 @@ import {GameFacet} from "contracts/facets/GameFacet.sol";
 import {GetterFacet} from "contracts/facets/GetterFacet.sol";
 import {AdminFacet} from "contracts/facets/AdminFacet.sol";
 
-contract CurioTreaty is ITreaty {
+// import {CurioERC20} from "contracts/standards/CurioERC20.sol";
+// import {Position} from "contracts/libraries/Types.sol";
+
+abstract contract CurioTreaty is ITreaty {
     address public diamond;
     GameFacet public game;
     GetterFacet public getter;
@@ -144,6 +147,10 @@ contract CurioTreaty is ITreaty {
     }
 
     function approveDelegateGameFunction(uint256 _nationID, bytes memory _encodedParams) public view virtual onlyGame returns (bool) {
+        return true;
+    }
+
+    function approveDeployTreaty(uint256 _nationID, bytes memory _encodedParams) public view virtual onlyGame returns (bool) {
         return true;
     }
 }

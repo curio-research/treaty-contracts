@@ -7,7 +7,7 @@ import type { Provider } from "@ethersproject/providers";
 import type {
   CurioERC721,
   CurioERC721Interface,
-} from "../../../contracts/tokens/CurioERC721";
+} from "../../../contracts/standards/CurioERC721";
 
 const _abi = [
   {

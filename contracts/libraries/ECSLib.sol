@@ -314,4 +314,15 @@ library ECSLib {
 
         return _result;
     }
+
+    // ----------------------------------------------------------
+    // ECS CONVENIENCE FNS
+    // ----------------------------------------------------------
+
+    function removeComponentFromAll(string memory _componentName) public {
+        uint256[] memory entitiesWithComponent = Component(gs().components[_componentName]).getEntities();
+        for (uint256 i; i < entitiesWithComponent.length; i++) {
+            removeComponentValue(_componentName, entitiesWithComponent[i]);
+        }
+    }
 }
