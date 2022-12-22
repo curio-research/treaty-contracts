@@ -152,7 +152,11 @@ contract TreatyTest is Test, DiamondDeployTest {
 
         // Check treaty ECS data
         assertEq(abi.decode(getter.getComponent("Tag").getBytesValue(testTreatyID), (string)), "Treaty");
-        assertEq(abi.decode(getter.getComponent("Template").getBytesValue(testTreatyID), (uint256)), testTreatyTemplateID);
+        assertEq(abi.decode(getter.getComponent("Name").getBytesValue(testTreatyID), (string)), "Test Treaty");
+        assertEq(abi.decode(getter.getComponent("Description").getBytesValue(testTreatyID), (string)), "Treaty for testing");
+        assertEq(abi.decode(getter.getComponent("ABIHash").getBytesValue(testTreatyID), (string)), "sample ABI");
+        assertTrue(abi.decode(getter.getComponent("CanHoldTokens").getBytesValue(testTreatyID), (bool)));
+        assertEq(abi.decode(getter.getComponent("Address").getBytesValue(testTreatyID), (address)), address(testTreaty));
 
         // Nation 2 joins TestTreaty treaty
         vm.startPrank(player2);

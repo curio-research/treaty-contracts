@@ -459,7 +459,8 @@ library GameLib {
         }
 
         // Register treaty
-        Templates.addTreaty(treatyAddress, gs().templates[_treatyName]);
+        uint256 treatyTemplateID = gs().templates[_treatyName];
+        Templates.addTreaty(treatyAddress, ECSLib.getString("Name", treatyTemplateID), ECSLib.getString("Description", treatyTemplateID), ECSLib.getString("ABIHash", treatyTemplateID));
     }
 
     // ----------------------------------------------------------
