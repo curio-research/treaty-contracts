@@ -8,8 +8,7 @@ task('unlockTiles', 'unlock all tiles')
   .addParam('diamond', 'game address')
   .setAction(async (args: UnlockTileArgs, hre: HardhatRuntimeEnvironment) => {
     try {
-      // Read variables from run flags
-      const isDev = hre.network.name === 'localhost' || hre.network.name === 'hardhat' || hre.network.name === 'altlayer' || hre.network.name === 'tailscale';
+      // Log network
       console.log('Network:', hre.network.name);
 
       // Get diamond
@@ -17,7 +16,9 @@ task('unlockTiles', 'unlock all tiles')
       const game = await getDiamond(hre, diamond);
 
       // Unlock all tiles
+      const startTime = performance.now();
       await confirmTx(await game.unlockAllTiles(), hre);
+      console.log(`Successfully unlocked all tiles after ${performance.now() - startTime} ms`);
     } catch (err: any) {
       console.log(err.message);
     }
