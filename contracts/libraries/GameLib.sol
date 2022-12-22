@@ -317,32 +317,25 @@ library GameLib {
         {
             uint256 loss;
             for (uint256 j = 0; j < troopTemplateIDs.length; j++) {
-                if (ECSLib.getUint("Amount", getInventory(_defenderID, troopTemplateIDs[j])) == 0) continue;
+                uint256 defenderTroopInventoryID = getInventory(_defenderID, troopTemplateIDs[j]);
+                if (ECSLib.getUint("Amount", defenderTroopInventoryID) == 0) continue;
 
-                uint256 defenderTroopAmount;
                 for (uint256 i = 0; i < troopTemplateIDs.length; i++) {
-                    if (ECSLib.getUint("Amount", getInventory(_offenderID, troopTemplateIDs[i])) == 0) continue;
+                    uint256 offenderTroopAmount = ECSLib.getUint("Amount", getInventory(_offenderID, troopTemplateIDs[i]));
+                    if (offenderTroopAmount == 0) continue;
 
                     {
                         uint256 troopTypeBonus = getAttackBonus(troopTemplateIDs[i], troopTemplateIDs[j]);
-                        uint256 offenderTroopAmount = ECSLib.getUint("Amount", getInventory(_offenderID, troopTemplateIDs[i]));
                         loss =
                             (troopTypeBonus * (sqrt(offenderTroopAmount) * ECSLib.getUint("Attack", troopTemplateIDs[i]) * 2)) / //
                             (ECSLib.getUint("Defense", troopTemplateIDs[j]) * ECSLib.getUint("Health", troopTemplateIDs[j]));
                     }
 
-                    address defenderAddress = ECSLib.getAddress("Address", _defenderID);
-                    defenderTroopAmount = ECSLib.getUint("Amount", getInventory(_defenderID, troopTemplateIDs[j]));
-
-                    CurioERC20 defenderTroopToken = CurioERC20(ECSLib.getAddress("Address", troopTemplateIDs[j]));
-                    loss = loss >= defenderTroopAmount ? defenderTroopAmount : loss;
-                    defenderTroopToken.destroyToken(defenderAddress, loss);
+                    loss = min(loss, ECSLib.getUint("Amount", defenderTroopInventoryID));
+                    CurioERC20(ECSLib.getAddress("Address", troopTemplateIDs[j])).destroyToken(ECSLib.getAddress("Address", _defenderID), loss);
                 }
 
-                defenderTroopAmount = ECSLib.getUint("Amount", getInventory(_defenderID, troopTemplateIDs[j]));
-                if (defenderTroopAmount > 0) {
-                    victory = false;
-                }
+                if (ECSLib.getUint("Amount", defenderTroopInventoryID) > 0) victory = false;
             }
         }
 
