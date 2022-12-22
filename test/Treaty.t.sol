@@ -76,8 +76,9 @@ contract TreatyTest is Test, DiamondDeployTest {
         game.move(army22ID, Position({x: 63, y: 33}));
         vm.stopPrank();
 
-        // Nation 2 abrogates Move function delegation for its first army (no effect)
+        // Nation 2 fails to revoke Move function delegation for its first army
         vm.startPrank(player2);
+        vm.expectRevert("CURIO: Need to revoke entity-agnostic delegation");
         game.delegateGameFunction(nation2ID, "Move", nation1ID, army21ID, false);
         assertEq(getter.getDelegations("Move", nation2ID, nation1ID).length, 1);
         vm.stopPrank();

@@ -413,7 +413,7 @@ library GameLib {
         // Get current delegation
         uint256[] memory delegationIDs = getDelegations(_functionName, _nationID, _delegateID);
 
-        // Case I: Subject-agnostic delegation
+        // Case I: Entity-agnostic delegation
         if (_subjectID == 0) {
             // Remove all delegations
             for (uint256 i = 0; i < delegationIDs.length; i++) {
@@ -426,7 +426,7 @@ library GameLib {
             return;
         }
 
-        // Case II: Subject-specific delegation
+        // Case II: Entity-specific delegation
         bool delegationExists;
         uint256 delegationID;
         for (uint256 i = 0; i < delegationIDs.length; i++) {
@@ -442,6 +442,8 @@ library GameLib {
             Templates.addDelegation(_functionName, _nationID, _delegateID, _subjectID);
         } else if (!_canCall && delegationID != 0) {
             ECSLib.removeEntity(delegationID);
+        } else if (!_canCall && delegationExists) {
+            revert("CURIO: Need to revoke entity-agnostic delegation");
         }
     }
 
