@@ -96,6 +96,7 @@ contract CurioERC20 is ERC20 {
         uint256 _amount
     ) public override returns (bool) {
         // Transfers from diamond or owner are exempt from allowance
+        // FIXME: commented out for testing, add back
         // if (msg.sender != diamond && getter.getEntityByAddress(msg.sender) != getter.getNation(getter.getEntityByAddress(_from))) {
         //     uint256 allowed = allowance[_from][msg.sender];
         //     require(allowed >= _amount, "CurioERC20: Insufficient allowance");

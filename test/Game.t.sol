@@ -622,4 +622,61 @@ contract GameTest is Test, DiamondDeployTest {
     function testBattleRoyaleMode() public {
         // TODO: implement
     }
+
+    function testIdlePlayerRemoval() public {
+        // Start time
+        uint256 time = block.timestamp + 500;
+        vm.warp(time);
+
+        // Deployer drips gold and food to Nation 1 and 2
+        vm.startPrank(deployer);
+        admin.dripToken(nation1CapitalAddr, "Gold", 100000000);
+        admin.dripToken(nation1CapitalAddr, "Food", 100000000);
+        admin.dripToken(nation2CapitalAddr, "Gold", 100000000);
+        admin.dripToken(nation2CapitalAddr, "Food", 100000000);
+        vm.stopPrank();
+
+        // Nation 1 upgrades capital
+        time += 100;
+        vm.warp(time);
+        vm.startPrank(player1);
+        game.upgradeCapital(nation1CapitalID);
+        vm.stopPrank();
+
+        // Nation 2 upgrades capital
+        time += 50;
+        vm.warp(time);
+        vm.startPrank(player2);
+        game.upgradeCapital(nation2CapitalID);
+        vm.stopPrank();
+
+        // No idle nations are removed for being idle for 1000 seconds
+        time += 20;
+        vm.warp(time);
+        vm.startPrank(deployer);
+        admin.removeIdleNations(1000);
+        assertEq(getter.getComponent("Tag").getEntitiesWithValue(abi.encode("Nation")).length, 3);
+        vm.stopPrank();
+
+        // Nation 3 is removed for being idle for 500 seconds
+        vm.startPrank(deployer);
+        admin.removeIdleNations(500);
+        assertEq(getter.getComponent("Tag").getEntitiesWithValue(abi.encode("Nation")).length, 2);
+        assertEq(getter.getCapital(nation3ID), 0);
+        vm.stopPrank();
+
+        // Nation 1 is removed for being idle for 50 seconds
+        vm.startPrank(deployer);
+        admin.removeIdleNations(50);
+        assertEq(getter.getComponent("Tag").getEntitiesWithValue(abi.encode("Nation")).length, 1);
+        assertEq(getter.getCapital(nation1ID), 0);
+        vm.stopPrank();
+
+        // Nation 2 is removed for being idle for 10 seconds
+        vm.startPrank(deployer);
+        admin.removeIdleNations(10);
+        assertEq(getter.getComponent("Tag").getEntitiesWithValue(abi.encode("Nation")).length, 0);
+        assertEq(getter.getCapital(nation2ID), 0);
+        vm.stopPrank();
+    }
 }

@@ -70,6 +70,7 @@ export interface AdminFacetInterface extends utils.Interface {
     "registerTemplateShortcuts(string[],uint256[])": FunctionFragment;
     "registerTreatyTemplate(address,string)": FunctionFragment;
     "removeEntity(uint256)": FunctionFragment;
+    "removeIdleNations(uint256)": FunctionFragment;
     "removeSigner(uint256)": FunctionFragment;
     "setComponentValue(string,uint256,bytes)": FunctionFragment;
     "spawnResource((uint256,uint256),string)": FunctionFragment;
@@ -107,6 +108,7 @@ export interface AdminFacetInterface extends utils.Interface {
       | "registerTemplateShortcuts"
       | "registerTreatyTemplate"
       | "removeEntity"
+      | "removeIdleNations"
       | "removeSigner"
       | "setComponentValue"
       | "spawnResource"
@@ -227,6 +229,10 @@ export interface AdminFacetInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
+    functionFragment: "removeIdleNations",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "removeSigner",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
@@ -337,6 +343,10 @@ export interface AdminFacetInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "removeEntity",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "removeIdleNations",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -538,6 +548,11 @@ export interface AdminFacet extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    removeIdleNations(
+      _maxIdleDuration: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     removeSigner(
       _nationID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -720,6 +735,11 @@ export interface AdminFacet extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  removeIdleNations(
+    _maxIdleDuration: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   removeSigner(
     _nationID: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -893,6 +913,11 @@ export interface AdminFacet extends BaseContract {
 
     removeEntity(
       _entity: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    removeIdleNations(
+      _maxIdleDuration: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1077,6 +1102,11 @@ export interface AdminFacet extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    removeIdleNations(
+      _maxIdleDuration: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     removeSigner(
       _nationID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -1257,6 +1287,11 @@ export interface AdminFacet extends BaseContract {
 
     removeEntity(
       _entity: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    removeIdleNations(
+      _maxIdleDuration: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

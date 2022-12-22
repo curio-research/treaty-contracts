@@ -166,6 +166,27 @@ library GameLib {
         return tileID;
     }
 
+    function removeNation(uint256 _nationID) internal {
+        // Remove nation's capital
+        uint256 capitalID = getCapital(_nationID);
+        ECSLib.removeEntity(capitalID);
+
+        // Remove nation's armies
+        uint256[] memory armyIDs = getNationArmies(_nationID);
+        for (uint256 i = 0; i < armyIDs.length; i++) {
+            ECSLib.removeEntity(armyIDs[i]);
+        }
+
+        // Neutralize nation's tiles
+        uint256[] memory tileIDs = getNationTiles(_nationID);
+        for (uint256 i = 0; i < tileIDs.length; i++) {
+            ECSLib.setUint("Nation", tileIDs[i], 0);
+        }
+
+        // Remove nation
+        ECSLib.removeEntity(_nationID);
+    }
+
     function endGather(uint256 _armyID) internal {
         // Verify that a gather process is present
         uint256 gatherID = getArmyGather(_armyID);

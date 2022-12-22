@@ -113,6 +113,16 @@ contract AdminFacet is UseStorage {
         ECSLib.removeComponentFromAll("IsLocked");
     }
 
+    function removeIdleNations(uint256 _maxIdleDuration) external onlyAuthorized {
+        uint256[] memory nationIDs = ECSLib.getStringComponent("Tag").getEntitiesWithValue(string("Nation"));
+        for (uint256 i = 0; i < nationIDs.length; i++) {
+            uint256 lastActed = ECSLib.getUint("LastActed", nationIDs[i]);
+            if (lastActed != NULL && block.timestamp > lastActed + _maxIdleDuration) {
+                GameLib.removeNation(nationIDs[i]);
+            }
+        }
+    }
+
     function stopGame() external onlyAuthorized {
         gs().worldConstants.gameLengthInSeconds = block.timestamp - gs().gameInitTimestamp;
     }
