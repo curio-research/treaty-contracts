@@ -421,6 +421,7 @@ library GameLib {
         }
     }
 
+    // FIXME: encountering "TypeError: Definition of base has to precede definition of derived contract" issue
     function deployTreaty(string memory _treatyName) internal returns (uint256) {
         // Deploy treaty
         address treaty;

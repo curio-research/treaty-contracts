@@ -624,6 +624,13 @@ const _abi = [
     type: "function",
   },
   {
+    inputs: [],
+    name: "unlockAllTiles",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
     inputs: [
       {
         components: [

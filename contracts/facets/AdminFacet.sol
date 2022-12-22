@@ -109,6 +109,10 @@ contract AdminFacet is UseStorage {
         }
     }
 
+    function unlockAllTiles() external onlyAuthorized {
+        ECSLib.removeComponentFromAll("IsLocked");
+    }
+
     function stopGame() external onlyAuthorized {
         gs().worldConstants.gameLengthInSeconds = block.timestamp - gs().gameInitTimestamp;
     }

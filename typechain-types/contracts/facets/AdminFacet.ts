@@ -75,6 +75,7 @@ export interface AdminFacetInterface extends utils.Interface {
     "spawnResource((uint256,uint256),string)": FunctionFragment;
     "stopGame()": FunctionFragment;
     "storeEncodedColumnBatches(uint256[][])": FunctionFragment;
+    "unlockAllTiles()": FunctionFragment;
     "unlockTiles((uint256,uint256)[])": FunctionFragment;
     "updateInventoryAmount(uint256,uint256)": FunctionFragment;
   };
@@ -111,6 +112,7 @@ export interface AdminFacetInterface extends utils.Interface {
       | "spawnResource"
       | "stopGame"
       | "storeEncodedColumnBatches"
+      | "unlockAllTiles"
       | "unlockTiles"
       | "updateInventoryAmount"
   ): FunctionFragment;
@@ -246,6 +248,10 @@ export interface AdminFacetInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>[][]]
   ): string;
   encodeFunctionData(
+    functionFragment: "unlockAllTiles",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "unlockTiles",
     values: [PositionStruct[]]
   ): string;
@@ -348,6 +354,10 @@ export interface AdminFacetInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "stopGame", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "storeEncodedColumnBatches",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "unlockAllTiles",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -555,6 +565,10 @@ export interface AdminFacet extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    unlockAllTiles(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     unlockTiles(
       _tilePositions: PositionStruct[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -733,6 +747,10 @@ export interface AdminFacet extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  unlockAllTiles(
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   unlockTiles(
     _tilePositions: PositionStruct[],
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -902,6 +920,8 @@ export interface AdminFacet extends BaseContract {
       _colBatches: PromiseOrValue<BigNumberish>[][],
       overrides?: CallOverrides
     ): Promise<void>;
+
+    unlockAllTiles(overrides?: CallOverrides): Promise<void>;
 
     unlockTiles(
       _tilePositions: PositionStruct[],
@@ -1084,6 +1104,10 @@ export interface AdminFacet extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    unlockAllTiles(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     unlockTiles(
       _tilePositions: PositionStruct[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -1260,6 +1284,10 @@ export interface AdminFacet extends BaseContract {
 
     storeEncodedColumnBatches(
       _colBatches: PromiseOrValue<BigNumberish>[][],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    unlockAllTiles(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

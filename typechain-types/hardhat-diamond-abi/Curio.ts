@@ -160,6 +160,7 @@ export interface CurioInterface extends utils.Interface {
     "spawnResource((uint256,uint256),string)": FunctionFragment;
     "stopGame()": FunctionFragment;
     "storeEncodedColumnBatches(uint256[][])": FunctionFragment;
+    "unlockAllTiles()": FunctionFragment;
     "unlockTiles((uint256,uint256)[])": FunctionFragment;
     "updateInventoryAmount(uint256,uint256)": FunctionFragment;
     "diamondCut((address,uint8,bytes4[])[],address,bytes)": FunctionFragment;
@@ -282,6 +283,7 @@ export interface CurioInterface extends utils.Interface {
       | "spawnResource"
       | "stopGame"
       | "storeEncodedColumnBatches"
+      | "unlockAllTiles"
       | "unlockTiles"
       | "updateInventoryAmount"
       | "diamondCut"
@@ -501,6 +503,10 @@ export interface CurioInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "storeEncodedColumnBatches",
     values: [PromiseOrValue<BigNumberish>[][]]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "unlockAllTiles",
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "unlockTiles",
@@ -972,6 +978,10 @@ export interface CurioInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "stopGame", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "storeEncodedColumnBatches",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "unlockAllTiles",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -1556,6 +1566,10 @@ export interface Curio extends BaseContract {
 
     storeEncodedColumnBatches(
       _colBatches: PromiseOrValue<BigNumberish>[][],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    unlockAllTiles(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -2193,6 +2207,10 @@ export interface Curio extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  unlockAllTiles(
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   unlockTiles(
     _tilePositions: PositionStruct[],
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -2810,6 +2828,8 @@ export interface Curio extends BaseContract {
       _colBatches: PromiseOrValue<BigNumberish>[][],
       overrides?: CallOverrides
     ): Promise<void>;
+
+    unlockAllTiles(overrides?: CallOverrides): Promise<void>;
 
     unlockTiles(
       _tilePositions: PositionStruct[],
@@ -3494,6 +3514,10 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    unlockAllTiles(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     unlockTiles(
       _tilePositions: PositionStruct[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -4116,6 +4140,10 @@ export interface Curio extends BaseContract {
 
     storeEncodedColumnBatches(
       _colBatches: PromiseOrValue<BigNumberish>[][],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    unlockAllTiles(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

@@ -1,5 +1,4 @@
 import { Curio } from '../../../typechain-types/hardhat-diamond-abi/Curio';
-import { Signer } from 'ethers';
 import { HardhatArguments, HardhatRuntimeEnvironment } from 'hardhat/types';
 
 export interface MapInput {
@@ -29,4 +28,8 @@ export interface DeployArgs extends HardhatArguments {
   port: string | undefined;
   indexer: boolean;
   name: string | undefined;
+}
+
+export interface UnlockTileArgs extends HardhatArguments {
+  diamond: string;
 }
