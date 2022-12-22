@@ -206,6 +206,21 @@ library Templates {
         return signatureID;
     }
 
+    function addAllowance(
+        uint256 _templateID,
+        uint256 _ownerID,
+        uint256 _spenderID
+    ) public returns (uint256) {
+        uint256 allowanceID = ECSLib.addEntity();
+
+        ECSLib.setString("Tag", allowanceID, "Allowance");
+        ECSLib.setUint("Template", allowanceID, _templateID);
+        ECSLib.setUint("Owner", allowanceID, _ownerID);
+        ECSLib.setUint("Caller", allowanceID, _spenderID);
+
+        return allowanceID;
+    }
+
     function addTreaty(
         address _address,
         string memory _name,

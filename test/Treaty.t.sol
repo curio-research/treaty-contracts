@@ -247,14 +247,14 @@ contract TreatyTest is Test, DiamondDeployTest {
         // Nation 2 fails to join alliance before token approval
         vm.expectRevert();
         alliance.treatyJoin();
-        assertEq(goldToken.checkBalanceOf(nation2CapitalAddr), 1000000);
+        assertEq(goldToken.balanceOf(nation2CapitalAddr), 1000000);
 
         // Nation 2 joins alliance after token approval
         vm.startPrank(player2);
         CurioWallet(nation2CapitalAddr).executeTx(address(goldToken), abi.encodeWithSignature("approve(address,uint256)", address(alliance), 1000));
         alliance.treatyJoin();
         assertTrue(getter.getNationTreatySignature(nation2ID, allianceID) > 0);
-        assertEq(goldToken.checkBalanceOf(nation2CapitalAddr), 1000000 - 1000);
+        assertEq(goldToken.balanceOf(nation2CapitalAddr), 1000000 - 1000);
         vm.stopPrank();
 
         // Nation 1 fails to attack Nation 2's capital
@@ -277,7 +277,7 @@ contract TreatyTest is Test, DiamondDeployTest {
         time += 10;
         vm.warp(time);
         alliance.treatyLeave();
-        assertEq(goldToken.checkBalanceOf(nation2CapitalAddr), 1000000);
+        assertEq(goldToken.balanceOf(nation2CapitalAddr), 1000000);
         vm.stopPrank();
 
         // Nation 1 attacks Nation 2's capital
@@ -308,7 +308,7 @@ contract TreatyTest is Test, DiamondDeployTest {
         armyTemplateAmounts[2] = 90;
         uint256 army31ID = game.organizeArmy(nation3CapitalID, armyTemplateIDs, armyTemplateAmounts);
         address army31Addr = getter.getAddress(army31ID);
-        assertEq(horsemanToken.checkBalanceOf(army31Addr), 90);
+        assertEq(horsemanToken.balanceOf(army31Addr), 90);
 
         // Nation 3 moves army from (52, 22) to (59, 31)
         time += 1;
@@ -339,23 +339,23 @@ contract TreatyTest is Test, DiamondDeployTest {
 
         // Nation 1 accidentally tries to let Alliance besiege Nation 3's army, but luckily fails
         vm.startPrank(player1);
-        uint256 army11HorsemanBalance = horsemanToken.checkBalanceOf(army11Addr);
+        uint256 army11HorsemanBalance = horsemanToken.balanceOf(army11Addr);
         time += 2;
         vm.warp(time);
         vm.expectRevert("Alliance: Cannot besiege army of ally nation");
         alliance.treatyBesiege(army31ID);
-        assertEq(horsemanToken.checkBalanceOf(army11Addr), army11HorsemanBalance);
-        assertEq(horsemanToken.checkBalanceOf(army31Addr), 90);
+        assertEq(horsemanToken.balanceOf(army11Addr), army11HorsemanBalance);
+        assertEq(horsemanToken.balanceOf(army31Addr), 90);
 
         // Nation 1 triggers Alliance to besiege Nation 2's army until it is destroyed
         // Nation 1's army and Nation 3's army should both survive
-        assertEq(horsemanToken.checkBalanceOf(army21Addr), 150);
+        assertEq(horsemanToken.balanceOf(army21Addr), 150);
         time += 2;
         vm.warp(time);
         alliance.treatyBesiege(army21ID);
-        assertTrue(horsemanToken.checkBalanceOf(army11Addr) < army11HorsemanBalance);
-        assertTrue(horsemanToken.checkBalanceOf(army21Addr) < 150);
-        assertTrue(horsemanToken.checkBalanceOf(army31Addr) < 90);
+        assertTrue(horsemanToken.balanceOf(army11Addr) < army11HorsemanBalance);
+        assertTrue(horsemanToken.balanceOf(army21Addr) < 150);
+        assertTrue(horsemanToken.balanceOf(army31Addr) < 90);
         while (getter.getNation(army21ID) != 0) {
             time += 2;
             vm.warp(time);
@@ -391,35 +391,35 @@ contract TreatyTest is Test, DiamondDeployTest {
         vm.startPrank(player1);
         CurioWallet(nation1CapitalAddr).executeTx(address(goldToken), abi.encodeWithSignature("approve(address,uint256)", address(ftx), 2));
         ftx.treatyDeposit(2);
-        assertEq(goldToken.checkBalanceOf(nation1CapitalAddr), 6);
-        assertEq(ftx.fttToken().checkBalanceOf(nation1CapitalAddr), 2);
-        assertEq(goldToken.checkBalanceOf(nation2CapitalAddr), 2);
+        assertEq(goldToken.balanceOf(nation1CapitalAddr), 6);
+        assertEq(ftx.fttToken().balanceOf(nation1CapitalAddr), 2);
+        assertEq(goldToken.balanceOf(nation2CapitalAddr), 2);
 
         // Player 1 withdraws successfully
         ftx.treatyWithdraw(1);
-        assertEq(goldToken.checkBalanceOf(nation1CapitalAddr), 7);
-        assertEq(ftx.fttToken().checkBalanceOf(nation1CapitalAddr), 1);
-        assertEq(goldToken.checkBalanceOf(nation2CapitalAddr), 1);
+        assertEq(goldToken.balanceOf(nation1CapitalAddr), 7);
+        assertEq(ftx.fttToken().balanceOf(nation1CapitalAddr), 1);
+        assertEq(goldToken.balanceOf(nation2CapitalAddr), 1);
 
         // Player 1 gives FTX all gold
         CurioWallet(nation1CapitalAddr).executeTx(address(goldToken), abi.encodeWithSignature("approve(address,uint256)", address(ftx), 7));
         ftx.treatyDeposit(7);
-        assertEq(goldToken.checkBalanceOf(nation1CapitalAddr), 0);
-        assertEq(ftx.fttToken().checkBalanceOf(nation1CapitalAddr), 8);
-        assertEq(goldToken.checkBalanceOf(nation2CapitalAddr), 8);
+        assertEq(goldToken.balanceOf(nation1CapitalAddr), 0);
+        assertEq(ftx.fttToken().balanceOf(nation1CapitalAddr), 8);
+        assertEq(goldToken.balanceOf(nation2CapitalAddr), 8);
         vm.stopPrank();
 
         // Player 2 (SBF) transfers all but 1 gold to Player 3 (Caroline)
         vm.startPrank(player2);
         CurioWallet(nation2CapitalAddr).executeTx(address(goldToken), abi.encodeWithSignature("transfer(address,uint256)", nation3CapitalAddr, 7));
-        assertEq(goldToken.checkBalanceOf(nation2CapitalAddr), 1);
+        assertEq(goldToken.balanceOf(nation2CapitalAddr), 1);
         vm.stopPrank();
 
         // Player 1 manages to withdraw only 1 gold from FTX
         vm.prank(player1);
         ftx.treatyWithdraw(8);
-        assertEq(goldToken.checkBalanceOf(nation1CapitalAddr), 1);
-        assertEq(goldToken.checkBalanceOf(nation2CapitalAddr), 0);
+        assertEq(goldToken.balanceOf(nation1CapitalAddr), 1);
+        assertEq(goldToken.balanceOf(nation2CapitalAddr), 0);
 
         // Player 2 (SBF) declares FTX bankrupt
         vm.prank(player2);
@@ -430,6 +430,6 @@ contract TreatyTest is Test, DiamondDeployTest {
         vm.prank(player1);
         vm.expectRevert();
         ftx.treatyWithdraw(7);
-        assertEq(goldToken.checkBalanceOf(nation1CapitalAddr), 1);
+        assertEq(goldToken.balanceOf(nation1CapitalAddr), 1);
     }
 }

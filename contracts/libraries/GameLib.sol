@@ -525,6 +525,22 @@ library GameLib {
         return (inventoryID, load, balance);
     }
 
+    function getAllowance(
+        uint256 _templateID,
+        uint256 _ownerID,
+        uint256 _spenderID
+    ) internal view returns (uint256) {
+        QueryCondition[] memory query = new QueryCondition[](4);
+        query[0] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Tag"]), abi.encode("Allowance"));
+        query[1] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Template"]), abi.encode(_templateID));
+        query[2] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Owner"]), abi.encode(_ownerID));
+        query[3] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Caller"]), abi.encode(_spenderID));
+
+        uint256[] memory allowanceIDs = ECSLib.query(query);
+        require(allowanceIDs.length <= 1, "CURIO: Found more than one allowance");
+        return allowanceIDs.length == 1 ? allowanceIDs[0] : 0;
+    }
+
     function getTreatySignatures(uint256 _treatyID) internal view returns (uint256[] memory) {
         QueryCondition[] memory query = new QueryCondition[](2);
         query[0] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Tag"]), abi.encode("Signature"));

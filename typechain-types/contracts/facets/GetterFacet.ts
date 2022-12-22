@@ -92,6 +92,8 @@ export interface GetterFacetInterface extends utils.Interface {
   functions: {
     "getABIHash(uint256)": FunctionFragment;
     "getAddress(uint256)": FunctionFragment;
+    "getAllowance(string,uint256,uint256)": FunctionFragment;
+    "getAmount(uint256)": FunctionFragment;
     "getArmiesAtTile((uint256,uint256))": FunctionFragment;
     "getArmyAt((uint256,uint256))": FunctionFragment;
     "getCapital(uint256)": FunctionFragment;
@@ -131,6 +133,8 @@ export interface GetterFacetInterface extends utils.Interface {
     nameOrSignatureOrTopic:
       | "getABIHash"
       | "getAddress"
+      | "getAllowance"
+      | "getAmount"
       | "getArmiesAtTile"
       | "getArmyAt"
       | "getCapital"
@@ -172,6 +176,18 @@ export interface GetterFacetInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "getAddress",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getAllowance",
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>
+    ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getAmount",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
@@ -316,6 +332,11 @@ export interface GetterFacetInterface extends utils.Interface {
 
   decodeFunctionResult(functionFragment: "getABIHash", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "getAddress", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "getAllowance",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "getAmount", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getArmiesAtTile",
     data: BytesLike
@@ -467,9 +488,21 @@ export interface GetterFacet extends BaseContract {
     ): Promise<[string]>;
 
     getAddress(
-      _entityID: PromiseOrValue<BigNumberish>,
+      _entity: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[string]>;
+
+    getAllowance(
+      _templateName: PromiseOrValue<string>,
+      _ownerID: PromiseOrValue<BigNumberish>,
+      _spenderID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    getAmount(
+      _entity: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
 
     getArmiesAtTile(
       _startPosition: PositionStruct,
@@ -642,9 +675,21 @@ export interface GetterFacet extends BaseContract {
   ): Promise<string>;
 
   getAddress(
-    _entityID: PromiseOrValue<BigNumberish>,
+    _entity: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<string>;
+
+  getAllowance(
+    _templateName: PromiseOrValue<string>,
+    _ownerID: PromiseOrValue<BigNumberish>,
+    _spenderID: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  getAmount(
+    _entity: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
 
   getArmiesAtTile(
     _startPosition: PositionStruct,
@@ -817,9 +862,21 @@ export interface GetterFacet extends BaseContract {
     ): Promise<string>;
 
     getAddress(
-      _entityID: PromiseOrValue<BigNumberish>,
+      _entity: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<string>;
+
+    getAllowance(
+      _templateName: PromiseOrValue<string>,
+      _ownerID: PromiseOrValue<BigNumberish>,
+      _spenderID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getAmount(
+      _entity: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     getArmiesAtTile(
       _startPosition: PositionStruct,
@@ -995,7 +1052,19 @@ export interface GetterFacet extends BaseContract {
     ): Promise<BigNumber>;
 
     getAddress(
-      _entityID: PromiseOrValue<BigNumberish>,
+      _entity: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getAllowance(
+      _templateName: PromiseOrValue<string>,
+      _ownerID: PromiseOrValue<BigNumberish>,
+      _spenderID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getAmount(
+      _entity: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1169,7 +1238,19 @@ export interface GetterFacet extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     getAddress(
-      _entityID: PromiseOrValue<BigNumberish>,
+      _entity: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getAllowance(
+      _templateName: PromiseOrValue<string>,
+      _ownerID: PromiseOrValue<BigNumberish>,
+      _spenderID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getAmount(
+      _entity: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

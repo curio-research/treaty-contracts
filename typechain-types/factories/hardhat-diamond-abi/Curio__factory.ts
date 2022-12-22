@@ -10,6 +10,35 @@ const _abi = [
   {
     inputs: [
       {
+        internalType: "string",
+        name: "_templateName",
+        type: "string",
+      },
+      {
+        internalType: "uint256",
+        name: "_ownerID",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "_spenderID",
+        type: "uint256",
+      },
+    ],
+    name: "addAllowance",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
         internalType: "address",
         name: "_tokenAddress",
         type: "address",
@@ -1320,7 +1349,7 @@ const _abi = [
     inputs: [
       {
         internalType: "uint256",
-        name: "_entityID",
+        name: "_entity",
         type: "uint256",
       },
     ],
@@ -1330,6 +1359,54 @@ const _abi = [
         internalType: "address",
         name: "",
         type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "string",
+        name: "_templateName",
+        type: "string",
+      },
+      {
+        internalType: "uint256",
+        name: "_ownerID",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "_spenderID",
+        type: "uint256",
+      },
+    ],
+    name: "getAllowance",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "_entity",
+        type: "uint256",
+      },
+    ],
+    name: "getAmount",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
       },
     ],
     stateMutability: "view",

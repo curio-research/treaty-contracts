@@ -17,10 +17,6 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Component__factory>;
     getContractFactory(
-      name: "CurioWallet",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.CurioWallet__factory>;
-    getContractFactory(
       name: "Diamond",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Diamond__factory>;
@@ -113,18 +109,6 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.CurioWallet__factory>;
     getContractFactory(
-      name: "CurioERC20",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.CurioERC20__factory>;
-    getContractFactory(
-      name: "CurioERC721",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.CurioERC721__factory>;
-    getContractFactory(
-      name: "CurioTreaty",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.CurioTreaty__factory>;
-    getContractFactory(
       name: "Alliance",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Alliance__factory>;
@@ -198,11 +182,6 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.Component>;
-    getContractAt(
-      name: "CurioWallet",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.CurioWallet>;
     getContractAt(
       name: "Diamond",
       address: string,
@@ -318,21 +297,6 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.CurioWallet>;
-    getContractAt(
-      name: "CurioERC20",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.CurioERC20>;
-    getContractAt(
-      name: "CurioERC721",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.CurioERC721>;
-    getContractAt(
-      name: "CurioTreaty",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.CurioTreaty>;
     getContractAt(
       name: "Alliance",
       address: string,

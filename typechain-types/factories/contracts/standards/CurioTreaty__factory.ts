@@ -108,6 +108,30 @@ const _abi = [
         type: "bytes",
       },
     ],
+    name: "approveDeployTreaty",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "_nationID",
+        type: "uint256",
+      },
+      {
+        internalType: "bytes",
+        name: "_encodedParams",
+        type: "bytes",
+      },
+    ],
     name: "approveDisbandArmy",
     outputs: [
       {

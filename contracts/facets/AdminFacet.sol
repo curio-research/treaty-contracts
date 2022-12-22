@@ -231,6 +231,14 @@ contract AdminFacet is UseStorage {
         return Templates.addResourceTemplate(token.name(), _tokenContract);
     }
 
+    function addAllowance(
+        string memory _templateName,
+        uint256 _ownerID,
+        uint256 _spenderID
+    ) external onlyAuthorized returns (uint256) {
+        return Templates.addAllowance(gs().templates[_templateName], _ownerID, _spenderID);
+    }
+
     function addGameParameter(string memory _identifier, uint256 _value) external onlyAuthorized returns (uint256) {
         return Templates.addGameParameter(_identifier, _value);
     }

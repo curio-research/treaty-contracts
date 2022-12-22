@@ -35,13 +35,25 @@ contract GetterFacet is UseStorage {
         return GameLib.getTokenContract(_tokenName);
     }
 
+    function getAllowance(
+        string memory _templateName,
+        uint256 _ownerID,
+        uint256 _spenderID
+    ) external view returns (uint256) {
+        return GameLib.getAllowance(gs().templates[_templateName], _ownerID, _spenderID);
+    }
+
     // ----------------------------------------------------------
     // TREATY-RELATED GETTERS
     // ----------------------------------------------------------
 
     // Can be used for nations, capitals, tiles, resources, and treaties
-    function getAddress(uint256 _entityID) external view returns (address) {
-        return ECSLib.getAddress("Address", _entityID);
+    function getAddress(uint256 _entity) external view returns (address) {
+        return ECSLib.getAddress("Address", _entity);
+    }
+
+    function getAmount(uint256 _entity) external view returns (uint256) {
+        return ECSLib.getUint("Amount", _entity);
     }
 
     // Used for fetching all treaties a player has signed

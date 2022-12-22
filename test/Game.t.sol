@@ -64,7 +64,7 @@ contract GameTest is Test, DiamondDeployTest {
 
         // Verify that TileGuard tokens are dripped to tile wallet
         uint256 correctTileGuardAmount = getter.getConstant("Tile", "Guard", "Amount", "", getter.getEntityLevel(nation1CapitalTile));
-        assertEq(guardToken.checkBalanceOf(getter.getAddress(nation1CapitalTile)), correctTileGuardAmount);
+        assertEq(guardToken.balanceOf(getter.getAddress(nation1CapitalTile)), correctTileGuardAmount);
 
         uint256 nation2CapitalTile = getter.getTileAt(nation2CapitalPosition);
         assertEq(getter.getNation(nation2CapitalTile), nation2ID);
@@ -83,9 +83,9 @@ contract GameTest is Test, DiamondDeployTest {
         admin.dripToken(nation1CapitalAddr, "Horseman", 1000);
         admin.dripToken(nation1CapitalAddr, "Slinger", 1000);
 
-        assertEq(warriorToken.checkBalanceOf(nation1CapitalAddr), 1000);
-        assertEq(horsemanToken.checkBalanceOf(nation1CapitalAddr), 1000);
-        assertEq(slingerToken.checkBalanceOf(nation1CapitalAddr), 1000);
+        assertEq(warriorToken.balanceOf(nation1CapitalAddr), 1000);
+        assertEq(horsemanToken.balanceOf(nation1CapitalAddr), 1000);
+        assertEq(slingerToken.balanceOf(nation1CapitalAddr), 1000);
 
         vm.stopPrank();
         // Nation 1 organize army
@@ -106,9 +106,9 @@ contract GameTest is Test, DiamondDeployTest {
 
         uint256 army11ID = game.organizeArmy(nation1CapitalID, chinaArmyTemplateIDs, chinaTemplateAmounts);
         address army11Addr = getter.getAddress(army11ID);
-        assertEq(warriorToken.checkBalanceOf(nation1CapitalAddr) + warriorToken.checkBalanceOf(army11Addr), 1000);
-        assertEq(slingerToken.checkBalanceOf(nation1CapitalAddr) + warriorToken.checkBalanceOf(army11Addr), 1000);
-        assertEq(horsemanToken.checkBalanceOf(nation1CapitalAddr) + warriorToken.checkBalanceOf(army11Addr), 1000);
+        assertEq(warriorToken.balanceOf(nation1CapitalAddr) + warriorToken.balanceOf(army11Addr), 1000);
+        assertEq(slingerToken.balanceOf(nation1CapitalAddr) + warriorToken.balanceOf(army11Addr), 1000);
+        assertEq(horsemanToken.balanceOf(nation1CapitalAddr) + warriorToken.balanceOf(army11Addr), 1000);
 
         vm.warp(time + 10);
         time += 10;
@@ -123,12 +123,12 @@ contract GameTest is Test, DiamondDeployTest {
         vm.warp(time + 10);
         time += 10;
         game.disbandArmy(army11ID);
-        assertEq(warriorToken.checkBalanceOf(army11Addr), 0);
-        assertEq(slingerToken.checkBalanceOf(army11Addr), 0);
-        assertEq(horsemanToken.checkBalanceOf(army11Addr), 0);
-        assertEq(warriorToken.checkBalanceOf(nation1CapitalAddr), 1000);
-        assertEq(slingerToken.checkBalanceOf(nation1CapitalAddr), 1000);
-        assertEq(horsemanToken.checkBalanceOf(nation1CapitalAddr), 1000);
+        assertEq(warriorToken.balanceOf(army11Addr), 0);
+        assertEq(slingerToken.balanceOf(army11Addr), 0);
+        assertEq(horsemanToken.balanceOf(army11Addr), 0);
+        assertEq(warriorToken.balanceOf(nation1CapitalAddr), 1000);
+        assertEq(slingerToken.balanceOf(nation1CapitalAddr), 1000);
+        assertEq(horsemanToken.balanceOf(nation1CapitalAddr), 1000);
     }
 
     function testBattleArmy() public {
@@ -237,15 +237,15 @@ contract GameTest is Test, DiamondDeployTest {
         }
 
         vm.stopPrank();
-        assertEq(warriorToken.checkBalanceOf(army11Addr), 0);
-        assertEq(horsemanToken.checkBalanceOf(army11Addr), 0);
-        assertEq(slingerToken.checkBalanceOf(army11Addr), 0);
-        assertEq(goldToken.checkBalanceOf(army11Addr), 0);
-        assertEq(foodToken.checkBalanceOf(army11Addr), 0);
+        assertEq(warriorToken.balanceOf(army11Addr), 0);
+        assertEq(horsemanToken.balanceOf(army11Addr), 0);
+        assertEq(slingerToken.balanceOf(army11Addr), 0);
+        assertEq(goldToken.balanceOf(army11Addr), 0);
+        assertEq(foodToken.balanceOf(army11Addr), 0);
 
         // Note: resource successfully transferred to army 21
-        assertEq(goldToken.checkBalanceOf(army21Addr), 1000);
-        assertEq(foodToken.checkBalanceOf(army21Addr), 1000);
+        assertEq(goldToken.balanceOf(army21Addr), 1000);
+        assertEq(foodToken.balanceOf(army21Addr), 1000);
     }
 
     function testUpgradeCapitalBattleClaimTile() public {
@@ -297,7 +297,7 @@ contract GameTest is Test, DiamondDeployTest {
             time += 10;
             game.battle(army11ID, targetTileID);
         }
-        assertEq(guardToken.checkBalanceOf(targetTileAddress), 0);
+        assertEq(guardToken.balanceOf(targetTileAddress), 0);
 
         vm.warp(time + 10);
         time += 10;
@@ -396,20 +396,20 @@ contract GameTest is Test, DiamondDeployTest {
         vm.warp(time);
         game.harvestResourcesFromCapital(nation1CapitalID);
 
-        uint256 goldBalance1 = goldToken.checkBalanceOf(nation1CapitalAddr);
-        uint256 foodBalance1 = foodToken.checkBalanceOf(nation1CapitalAddr);
+        uint256 goldBalance1 = goldToken.balanceOf(nation1CapitalAddr);
+        uint256 foodBalance1 = foodToken.balanceOf(nation1CapitalAddr);
         assertTrue(goldBalance1 > 1000000);
         assertTrue(foodBalance1 > 1000000);
 
         uint256 farmID = getter.getResourceAtTile(farmTilePos);
         game.upgradeResource(farmID);
 
-        uint256 foodBalance2 = foodToken.checkBalanceOf(nation1CapitalAddr);
+        uint256 foodBalance2 = foodToken.balanceOf(nation1CapitalAddr);
 
         time += 50;
         vm.warp(time);
         game.harvestResource(farmID);
-        assertTrue(foodToken.checkBalanceOf(nation1CapitalAddr) > foodBalance2);
+        assertTrue(foodToken.balanceOf(nation1CapitalAddr) > foodBalance2);
     }
 
     function testGather() public {
@@ -459,7 +459,7 @@ contract GameTest is Test, DiamondDeployTest {
         vm.warp(time + 50);
         time += 50;
         game.endGather(army11ID);
-        uint256 armyFoodBalance = foodToken.checkBalanceOf(army11Addr);
+        uint256 armyFoodBalance = foodToken.balanceOf(army11Addr);
         assertTrue(armyFoodBalance > 0);
 
         vm.warp(time + 10);
@@ -470,8 +470,8 @@ contract GameTest is Test, DiamondDeployTest {
         time += 10;
         game.move(army11ID, Position({x: 60, y: 12}));
         game.unloadResources(army11ID);
-        assertEq(foodToken.checkBalanceOf(army11Addr), 0);
-        assertEq(foodToken.checkBalanceOf(nation1CapitalAddr), armyFoodBalance);
+        assertEq(foodToken.balanceOf(army11Addr), 0);
+        assertEq(foodToken.balanceOf(nation1CapitalAddr), armyFoodBalance);
     }
 
     function testTroopProduction() public {
@@ -483,7 +483,7 @@ contract GameTest is Test, DiamondDeployTest {
         vm.startPrank(deployer);
         admin.dripToken(nation1CapitalAddr, "Gold", 100000000);
         admin.dripToken(nation1CapitalAddr, "Food", 100000000);
-        assertEq(horsemanToken.checkBalanceOf(nation1CapitalAddr), 0);
+        assertEq(horsemanToken.balanceOf(nation1CapitalAddr), 0);
         vm.stopPrank();
 
         // Nation 1 produces 1000 horsemen
@@ -496,13 +496,13 @@ contract GameTest is Test, DiamondDeployTest {
         vm.warp(time);
         vm.expectRevert("CURIO: Need more time for production");
         game.endTroopProduction(nation1CapitalID);
-        assertEq(horsemanToken.checkBalanceOf(nation1CapitalAddr), 0);
+        assertEq(horsemanToken.balanceOf(nation1CapitalAddr), 0);
 
         // Nation 1 ends troop production
         time += time += worldConstants.secondsToTrainAThousandTroops / 2 + 1;
         vm.warp(time);
         game.endTroopProduction(nation1CapitalID);
-        assertEq(horsemanToken.checkBalanceOf(nation1CapitalAddr), 1000);
+        assertEq(horsemanToken.balanceOf(nation1CapitalAddr), 1000);
         vm.stopPrank();
     }
 
@@ -541,14 +541,14 @@ contract GameTest is Test, DiamondDeployTest {
     //     armyTemplateAmounts[2] = 500;
     //     uint256 army21ID = game.organizeArmy(nation2CapitalID, armyTemplateIDs, armyTemplateAmounts);
     //     address army21Addr = getter.getAddress(army21ID);
-    //     assertEq(foodToken.checkBalanceOf(army21Addr), 0);
+    //     assertEq(foodToken.balanceOf(army21Addr), 0);
     //     vm.stopPrank();
 
     //     // Nation 1's capital transfers some food successfully to Nation 2's army
     //     vm.startPrank(player1);
     //     CurioWallet capital1Wallet = CurioWallet(nation1CapitalAddr);
     //     capital1Wallet.executeTx(address(foodToken), abi.encodeWithSignature("transfer(address,uint256)", army21Addr, 50));
-    //     assertEq(foodToken.checkBalanceOf(army21Addr), 50);
+    //     assertEq(foodToken.balanceOf(army21Addr), 50);
     //     vm.stopPrank();
 
     //     // Nation 2 moves army to (62, 49)
@@ -566,7 +566,7 @@ contract GameTest is Test, DiamondDeployTest {
     //     vm.startPrank(player1);
     //     vm.expectRevert();
     //     capital1Wallet.executeTx(address(foodToken), abi.encodeWithSignature("transfer(address,uint256)", army21Addr, 50));
-    //     assertEq(foodToken.checkBalanceOf(army21Addr), 50);
+    //     assertEq(foodToken.balanceOf(army21Addr), 50);
     //     vm.stopPrank();
     // }
 
@@ -585,7 +585,7 @@ contract GameTest is Test, DiamondDeployTest {
         vm.startPrank(player2);
         vm.expectRevert("CURIO: Not delegated to call StartTroopProduction");
         game.startTroopProduction(nation1CapitalID, horsemanTemplateID, 1000);
-        assertEq(horsemanToken.checkBalanceOf(nation1CapitalAddr), 0);
+        assertEq(horsemanToken.balanceOf(nation1CapitalAddr), 0);
         vm.stopPrank();
 
         // Nation 1 delegates troop production to Nation 2
@@ -603,7 +603,7 @@ contract GameTest is Test, DiamondDeployTest {
         vm.warp(time);
         vm.startPrank(player1);
         game.endTroopProduction(nation1CapitalID);
-        assertEq(horsemanToken.checkBalanceOf(nation1CapitalAddr), 1000);
+        assertEq(horsemanToken.balanceOf(nation1CapitalAddr), 1000);
         vm.stopPrank();
 
         // Nation 1 revokes delegation
@@ -615,7 +615,7 @@ contract GameTest is Test, DiamondDeployTest {
         vm.startPrank(player2);
         vm.expectRevert("CURIO: Not delegated to call StartTroopProduction");
         game.startTroopProduction(nation1CapitalID, horsemanTemplateID, 1000);
-        assertEq(horsemanToken.checkBalanceOf(nation1CapitalAddr), 1000);
+        assertEq(horsemanToken.balanceOf(nation1CapitalAddr), 1000);
         vm.stopPrank();
     }
 

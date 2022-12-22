@@ -34,7 +34,6 @@ export interface FTTERC20Interface extends utils.Interface {
     "approve(address,uint256)": FunctionFragment;
     "balanceOf(address)": FunctionFragment;
     "burn(address,uint256)": FunctionFragment;
-    "checkBalanceOf(address)": FunctionFragment;
     "decimals()": FunctionFragment;
     "ftx()": FunctionFragment;
     "mint(address,uint256)": FunctionFragment;
@@ -54,7 +53,6 @@ export interface FTTERC20Interface extends utils.Interface {
       | "approve"
       | "balanceOf"
       | "burn"
-      | "checkBalanceOf"
       | "decimals"
       | "ftx"
       | "mint"
@@ -86,10 +84,6 @@ export interface FTTERC20Interface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "burn",
     values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "checkBalanceOf",
-    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(functionFragment: "decimals", values?: undefined): string;
   encodeFunctionData(functionFragment: "ftx", values?: undefined): string;
@@ -140,10 +134,6 @@ export interface FTTERC20Interface extends utils.Interface {
   decodeFunctionResult(functionFragment: "approve", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "burn", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "checkBalanceOf",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "decimals", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "ftx", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "mint", data: BytesLike): Result;
@@ -246,11 +236,6 @@ export interface FTTERC20 extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    checkBalanceOf(
-      _addr: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
     decimals(overrides?: CallOverrides): Promise<[number]>;
 
     ftx(overrides?: CallOverrides): Promise<[string]>;
@@ -322,11 +307,6 @@ export interface FTTERC20 extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  checkBalanceOf(
-    _addr: PromiseOrValue<string>,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
   decimals(overrides?: CallOverrides): Promise<number>;
 
   ftx(overrides?: CallOverrides): Promise<string>;
@@ -397,11 +377,6 @@ export interface FTTERC20 extends BaseContract {
       _amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
-
-    checkBalanceOf(
-      _addr: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
 
     decimals(overrides?: CallOverrides): Promise<number>;
 
@@ -499,11 +474,6 @@ export interface FTTERC20 extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    checkBalanceOf(
-      _addr: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     decimals(overrides?: CallOverrides): Promise<BigNumber>;
 
     ftx(overrides?: CallOverrides): Promise<BigNumber>;
@@ -574,11 +544,6 @@ export interface FTTERC20 extends BaseContract {
       _from: PromiseOrValue<string>,
       _amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    checkBalanceOf(
-      _addr: PromiseOrValue<string>,
-      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     decimals(overrides?: CallOverrides): Promise<PopulatedTransaction>;

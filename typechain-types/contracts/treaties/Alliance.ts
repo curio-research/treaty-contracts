@@ -29,6 +29,7 @@ export interface AllianceInterface extends utils.Interface {
     "approveBattle(uint256,bytes)": FunctionFragment;
     "approveClaimTile(uint256,bytes)": FunctionFragment;
     "approveDelegateGameFunction(uint256,bytes)": FunctionFragment;
+    "approveDeployTreaty(uint256,bytes)": FunctionFragment;
     "approveDisbandArmy(uint256,bytes)": FunctionFragment;
     "approveDisownTile(uint256,bytes)": FunctionFragment;
     "approveEndGather(uint256,bytes)": FunctionFragment;
@@ -65,6 +66,7 @@ export interface AllianceInterface extends utils.Interface {
       | "approveBattle"
       | "approveClaimTile"
       | "approveDelegateGameFunction"
+      | "approveDeployTreaty"
       | "approveDisbandArmy"
       | "approveDisownTile"
       | "approveEndGather"
@@ -106,6 +108,10 @@ export interface AllianceInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "approveDelegateGameFunction",
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BytesLike>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "approveDeployTreaty",
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
@@ -221,6 +227,10 @@ export interface AllianceInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "approveDelegateGameFunction",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "approveDeployTreaty",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -363,6 +373,12 @@ export interface Alliance extends BaseContract {
     ): Promise<[boolean]>;
 
     approveDelegateGameFunction(
+      _nationID: PromiseOrValue<BigNumberish>,
+      _encodedParams: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
+    approveDeployTreaty(
       _nationID: PromiseOrValue<BigNumberish>,
       _encodedParams: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
@@ -529,6 +545,12 @@ export interface Alliance extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
+  approveDeployTreaty(
+    _nationID: PromiseOrValue<BigNumberish>,
+    _encodedParams: PromiseOrValue<BytesLike>,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
   approveDisbandArmy(
     _nationID: PromiseOrValue<BigNumberish>,
     _encodedParams: PromiseOrValue<BytesLike>,
@@ -685,6 +707,12 @@ export interface Alliance extends BaseContract {
     ): Promise<boolean>;
 
     approveDelegateGameFunction(
+      _nationID: PromiseOrValue<BigNumberish>,
+      _encodedParams: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    approveDeployTreaty(
       _nationID: PromiseOrValue<BigNumberish>,
       _encodedParams: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
@@ -850,6 +878,12 @@ export interface Alliance extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    approveDeployTreaty(
+      _nationID: PromiseOrValue<BigNumberish>,
+      _encodedParams: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     approveDisbandArmy(
       _nationID: PromiseOrValue<BigNumberish>,
       _encodedParams: PromiseOrValue<BytesLike>,
@@ -1007,6 +1041,12 @@ export interface Alliance extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     approveDelegateGameFunction(
+      _nationID: PromiseOrValue<BigNumberish>,
+      _encodedParams: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    approveDeployTreaty(
       _nationID: PromiseOrValue<BigNumberish>,
       _encodedParams: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
