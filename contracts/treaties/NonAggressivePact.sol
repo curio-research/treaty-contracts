@@ -11,9 +11,7 @@ contract NonAggressivePact is CurioTreaty {
     CurioERC20 public goldToken;
     CurioERC20 public foodToken;
     address deployerAddress;
-    address[] public members;
-    mapping(address => bool) isMember;
-    address[] public whiteListedCandidates;
+    address[] public whitelist;
     mapping(address => bool) isWhiteListed;
 
     uint256 goldFee;
@@ -32,31 +30,21 @@ contract NonAggressivePact is CurioTreaty {
 
         deployerAddress = msg.sender;
 
-        goldFee = _goldFee;
-        foodFee = _foodFee;
-
-        members.push(msg.sender);
-        isMember[msg.sender] = true;
+        // deployer joins the treaty
+        super.treatyJoin();
     }
 
-    function setGoldFee(uint256 _newGoldFee) public onlyOwnerOrPact {
-        goldFee = _newGoldFee;
-    }
-
-    function setFoodFee(uint256 _newFoodFee) public onlyOwnerOrPact {
-        foodFee = _newFoodFee;
-    }
-
-    function whiteListCandidate(address _candidate) public onlyOwnerOrPact {
+    function addToWhiteList(address _candidate) public onlyOwnerOrPact {
+        require(!isWhiteListed[_candidate], "NAPact: Candidate already whitelisted");
         isWhiteListed[_candidate] = true;
-        whiteListedCandidates.push(_candidate);    
+        whitelist.push(_candidate);    
     }
 
-    function removeWhiteListedCandidate(address _candidate) public onlyOwnerOrPact {
+    function removeFromWhiteList(address _candidate) public onlyOwnerOrPact {
         isWhiteListed[_candidate] = false;
-        for (uint i = 0; i < whiteListedCandidates.length; i++) {
-            if (whiteListedCandidates[i] == element) {
-                whiteListedCandidates.splice(i, 1);
+        for (uint i = 0; i < whitelist.length; i++) {
+            if (whitelist[i] == element) {
+                whitelist.splice(i, 1);
                 return;
             }
         }
@@ -64,41 +52,16 @@ contract NonAggressivePact is CurioTreaty {
 
     function removeMember(address _member) public onlyOwnerOrPact {
         // member needs to be whitelisted again before joining
-        removeWhiteListedCandidate(_member);
+        removeFromWhiteList(_member);
 
         // remove membership
-        isMember[_member] = false;
-        for (uint i = 0; i < members.length; i++) {
-            if (members[i] == element) {
-                members.splice(i, 1);
-                return;
-            }
-        }
+        uint256 nationID = getter.getEntityByAddress(_member);
+        admin.removeSigner(nationID);
     }
     
-    function executeTx(address _contractAddress, bytes memory _data) public onlyOwnerOrPact {
-        // FIXME: unsafe low-level call
-        (bool success, bytes memory returndata) = _contractAddress.call(_data);
-        require(success, string(returndata));
-    }
-
     function treatyJoin() public override {
         // treaty owner needs to first whitelist the msg.sender
         require(isWhiteListed[msg.sender], "Candidate is not whitelisted");
-
-        // caller first needs to approve treaty to spend exactly enough to pay the token fee
-        // todo: make it into one-call upon switching to openZeppelin
-        require (goldToken._allowance[msg.sender] >= goldFee, "Candidate needs to first approve enough gold spending");
-        require (foodToken._allowance[msg.sender] >= foodFee, "Candidate needs to first approve enough food spending");
-        (bool success1, ) = goldToken.call(abi.encodeWithSignature("transferFrom(address,address,uint256)", msg.sender, address(this), goldFee));
-        require(success1, "NAPact: Fail to pay gold fee!");
-        (bool success2, ) = foodToken.call(abi.encodeWithSignature("transferFrom(address,address,uint256)", msg.sender, address(this), foodFee));
-        require(success2, "NAPact: Fail to pay food fee!");
-
-        // join treaty
-        isMember[msg.sender] = true;
-        members.push(msg.sender);
-
         super.treatyJoin();
     }
 

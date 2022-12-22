@@ -4,6 +4,7 @@ pragma solidity ^0.8.13;
 import {Test} from "forge-std/Test.sol";
 import {DiamondDeployTest} from "test/DiamondDeploy.t.sol";
 import {FTX} from "contracts/treaties/FTX.sol";
+import {NonAggressivePact} from "contracts/treaties/NonAggressivePact.sol";
 import {TestTreaty} from "contracts/treaties/TestTreaty.sol";
 import {CurioWallet} from "contracts/CurioWallet.sol";
 import {Position} from "contracts/libraries/Types.sol";
@@ -418,5 +419,29 @@ contract TreatyTest is Test, DiamondDeployTest {
         vm.expectRevert();
         ftx.treatyWithdraw(7);
         assertEq(goldToken.checkBalanceOf(nation1CapitalAddr), 1);
+    }
+
+    function testNAPact() public {
+        /**
+        Outline:
+        - player1 deploys treaty
+        - player1 whitelists player2, and then player2 joins
+            - player2 needs to first approve token spending
+        - player2 battles player1 but reverts
+        **/
+
+        // Start time
+        uint256 time = block.timestamp + 500;
+        vm.warp(time);
+
+        // Player 1 starts NAPact and grants it access to his wallet
+        vm.startPrank(player1);
+        NonAggressivePact NAPact = new NonAggressivePact(diamond);
+        vm.stopPrank();
+
+        // Deployer registers FTX treaty
+        vm.startPrank(deployer);
+        admin.registerTreaty(address(ftx), "placeholder ABI");
+        vm.stopPrank();
     }
 }
