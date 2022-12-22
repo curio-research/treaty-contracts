@@ -961,9 +961,9 @@ const _abi = [
     name: "deployTreaty",
     outputs: [
       {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
+        internalType: "address",
+        name: "treatyAddress",
+        type: "address",
       },
     ],
     stateMutability: "nonpayable",

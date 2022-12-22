@@ -7,8 +7,8 @@ import {Component} from "contracts/Component.sol";
 import {AddressComponent, BoolComponent, IntComponent, PositionComponent, StringComponent, UintComponent} from "contracts/TypedComponents.sol";
 import {Position} from "contracts/libraries/Types.sol";
 import {Set} from "contracts/Set.sol";
-import {CurioWallet} from "contracts/CurioWallet.sol";
-import {CurioTreaty} from "contracts/CurioTreaty.sol";
+import {CurioWallet} from "contracts/standards/CurioWallet.sol";
+import {CurioTreaty} from "contracts/standards/CurioTreaty.sol";
 import {console} from "forge-std/console.sol";
 
 contract GameTest is Test, DiamondDeployTest {

@@ -7,8 +7,8 @@ import {ComponentSpec, Position, ValueType, WorldConstants} from "contracts/libr
 import {Templates} from "contracts/libraries/Templates.sol";
 import {Set} from "contracts/Set.sol";
 import {GameLib} from "contracts/libraries/GameLib.sol";
-import {CurioERC20} from "contracts/tokens/CurioERC20.sol";
-import {CurioTreaty} from "contracts/CurioTreaty.sol";
+import {CurioERC20} from "contracts/standards/CurioERC20.sol";
+import {CurioTreaty} from "contracts/standards/CurioTreaty.sol";
 import {console} from "forge-std/console.sol";
 
 /// @title Admin facet
@@ -262,6 +262,7 @@ contract AdminFacet is UseStorage {
         string memory _name = treaty.name();
         string memory _description = treaty.description();
         treatyTemplateID = Templates.addTreatyTemplate(_address, _name, _description, _abiHash);
+        gs().templates[_name] = treatyTemplateID;
     }
 
     function generateNewAddress() external onlyAuthorized returns (address) {

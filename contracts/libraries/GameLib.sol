@@ -9,10 +9,11 @@ import {Templates} from "contracts/libraries/Templates.sol";
 import {Set} from "contracts/Set.sol";
 import {Component} from "contracts/Component.sol";
 import {AddressComponent, BoolComponent, IntComponent, PositionComponent, StringComponent, UintComponent, UintArrayComponent} from "contracts/TypedComponents.sol";
-import {CurioERC20} from "contracts/tokens/CurioERC20.sol";
-import {CurioTreaty} from "contracts/CurioTreaty.sol";
-// import {Alliance} from "contracts/treaties/Alliance.sol";
-// import {FTX} from "contracts/treaties/FTX.sol";
+import {CurioERC20} from "contracts/standards/CurioERC20.sol";
+import {CurioTreaty} from "contracts/standards/CurioTreaty.sol";
+import {Alliance} from "contracts/treaties/Alliance.sol";
+import {FTX} from "contracts/treaties/FTX.sol";
+import {TestTreaty} from "contracts/treaties/TestTreaty.sol";
 import {console} from "forge-std/console.sol";
 
 /// @title Util library
@@ -199,7 +200,7 @@ library GameLib {
 
         // Gather
         uint256 gatherAmount = (block.timestamp - ECSLib.getUint("InitTimestamp", gatherID)) * getConstant("Army", ECSLib.getString("Name", templateID), "Rate", "gather", 0);
-        uint256 gatherLoad = getConstant("Troop", "Resource", "Load", "", 0) * getArmyTroopCount(_armyID) / 1000;
+        uint256 gatherLoad = (getConstant("Troop", "Resource", "Load", "", 0) * getArmyTroopCount(_armyID)) / 1000;
         uint256 armyInventoryBalance = resourceToken.balanceOf(armyAddress);
         resourceToken.dripToken(armyAddress, min(gatherAmount, gatherLoad - armyInventoryBalance));
 
@@ -445,19 +446,20 @@ library GameLib {
     }
 
     // FIXME: encountering "TypeError: Definition of base has to precede definition of derived contract" issue
-    function deployTreaty(string memory _treatyName) internal returns (uint256) {
+    function deployTreaty(uint256 _nationID, string memory _treatyName) internal returns (address treatyAddress) {
         // Deploy treaty
-        address treaty;
-        // if (GameLib.strEq(_treatyName, "Alliance")) {
-        //     treaty = address(new Alliance(address(this)));
-        // } else if (GameLib.strEq(_treatyName, "FTX")) {
-        //     treaty = address(new FTX(address(this)));
-        // } else {
-        //     revert("CURIO: Unsupported treaty name");
-        // }
+        if (GameLib.strEq(_treatyName, "Alliance")) {
+            treatyAddress = address(new Alliance(address(this)));
+        } else if (GameLib.strEq(_treatyName, "FTX")) {
+            treatyAddress = address(new FTX(address(this), ECSLib.getAddress("Address", _nationID)));
+        } else if (GameLib.strEq(_treatyName, "Test Treaty")) {
+            treatyAddress = address(new TestTreaty(address(this)));
+        } else {
+            revert("CURIO: Unsupported treaty name");
+        }
 
         // Register treaty
-        return Templates.addTreaty(treaty, gs().templates[_treatyName]);
+        Templates.addTreaty(treatyAddress, gs().templates[_treatyName]);
     }
 
     // ----------------------------------------------------------

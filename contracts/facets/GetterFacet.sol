@@ -8,7 +8,7 @@ import {ECSLib} from "contracts/libraries/ECSLib.sol";
 import {Position, QueryCondition, WorldConstants} from "contracts/libraries/Types.sol";
 import {Component} from "contracts/Component.sol";
 import {console} from "forge-std/console.sol";
-import {CurioERC20} from "contracts/tokens/CurioERC20.sol";
+import {CurioERC20} from "contracts/standards/CurioERC20.sol";
 
 /// @title Bulk getters
 /// @notice Getters provide bulk functions useful for fetching data from the frontend

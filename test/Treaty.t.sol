@@ -3,9 +3,10 @@ pragma solidity ^0.8.13;
 
 import {Test} from "forge-std/Test.sol";
 import {DiamondDeployTest} from "test/DiamondDeploy.t.sol";
+import {Alliance} from "contracts/treaties/Alliance.sol";
 import {FTX} from "contracts/treaties/FTX.sol";
 import {TestTreaty} from "contracts/treaties/TestTreaty.sol";
-import {CurioWallet} from "contracts/CurioWallet.sol";
+import {CurioWallet} from "contracts/standards/CurioWallet.sol";
 import {Position} from "contracts/libraries/Types.sol";
 import {console} from "forge-std/console.sol";
 
@@ -132,23 +133,26 @@ contract TreatyTest is Test, DiamondDeployTest {
         // Check initial condition
         assertEq(abi.decode(getter.getComponent("Level").getBytesValue(nation2CapitalID), (uint256)), 1);
 
+        // Check treaty template ECS data
+        assertEq(abi.decode(getter.getComponent("Name").getBytesValue(testTreatyTemplateID), (string)), "Test Treaty");
+        assertEq(abi.decode(getter.getComponent("Description").getBytesValue(testTreatyTemplateID), (string)), "Treaty for testing");
+        assertEq(abi.decode(getter.getComponent("ABIHash").getBytesValue(testTreatyTemplateID), (string)), "sample ABI");
+
         // Nation 1 deploys TestTreaty treaty
         vm.startPrank(player1);
-        TestTreaty testTreaty = new TestTreaty(diamond);
+        TestTreaty testTreaty = TestTreaty(game.deployTreaty(nation1ID, testTreatyTemplate.name()));
+        uint256 testTreatyID = getter.getEntityByAddress(address(testTreaty));
         vm.stopPrank();
 
         // Deployer registers TestTreaty treaty and drips gold and food to Nation 2
         vm.startPrank(deployer);
-        uint256 testTreatyID = admin.registerTreatyTemplate(address(testTreaty), "placeholder ABI");
         admin.dripToken(nation2CapitalAddr, "Gold", 1000000000);
         admin.dripToken(nation2CapitalAddr, "Food", 1000000000);
         vm.stopPrank();
 
         // Check treaty ECS data
         assertEq(abi.decode(getter.getComponent("Tag").getBytesValue(testTreatyID), (string)), "Treaty");
-        assertEq(abi.decode(getter.getComponent("Name").getBytesValue(testTreatyID), (string)), "Test Treaty");
-        assertEq(abi.decode(getter.getComponent("Description").getBytesValue(testTreatyID), (string)), "Treaty for testing");
-        assertEq(abi.decode(getter.getComponent("ABIHash").getBytesValue(testTreatyID), (string)), "placeholder ABI");
+        assertEq(abi.decode(getter.getComponent("Template").getBytesValue(testTreatyID), (uint256)), testTreatyTemplateID);
 
         // Nation 2 joins TestTreaty treaty
         vm.startPrank(player2);
@@ -217,6 +221,10 @@ contract TreatyTest is Test, DiamondDeployTest {
         vm.warp(time);
         uint256 army11ID = game.organizeArmy(nation1CapitalID, armyTemplateIDs, armyTemplateAmounts);
         address army11Addr = getter.getAddress(army11ID);
+
+        // Nation 1 deploys Alliance treaty
+        Alliance alliance = Alliance(game.deployTreaty(nation1ID, allianceTemplate.name()));
+        uint256 allianceID = getter.getEntityByAddress(address(alliance));
 
         // Nation 1 joins alliance after token approval
         CurioWallet(nation1CapitalAddr).executeTx(address(goldToken), abi.encodeWithSignature("approve(address,uint256)", address(alliance), 1000));
@@ -364,7 +372,7 @@ contract TreatyTest is Test, DiamondDeployTest {
 
         // Player 2 (SBF) starts FTX and grants it access to his wallet
         vm.startPrank(player2);
-        FTX ftx = new FTX(diamond);
+        FTX ftx = FTX(game.deployTreaty(nation2ID, ftxTemplate.name()));
         CurioWallet(nation2CapitalAddr).executeTx(address(goldToken), abi.encodeWithSignature("approve(address,uint256)", address(ftx), 10000));
         assertEq(goldToken.balanceOf(nation2CapitalAddr), 0);
         vm.stopPrank();

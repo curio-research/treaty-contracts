@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.13;
 
-import {CurioTreaty} from "contracts/CurioTreaty.sol";
+import {CurioTreaty} from "contracts/standards/CurioTreaty.sol";
 
 // FIXME: add back Ownable
 contract NATO is CurioTreaty {

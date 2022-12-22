@@ -4,3 +4,4 @@
 export { CurioERC20__factory } from "./CurioERC20__factory";
 export { CurioERC721__factory } from "./CurioERC721__factory";
 export { CurioTreaty__factory } from "./CurioTreaty__factory";
+export { CurioWallet__factory } from "./CurioWallet__factory";

@@ -7,11 +7,9 @@ import {ECSLib} from "contracts/libraries/ECSLib.sol";
 import {GameMode, Position, WorldConstants} from "contracts/libraries/Types.sol";
 import {Set} from "contracts/Set.sol";
 import {Templates} from "contracts/libraries/Templates.sol";
-import {CurioERC20} from "contracts/tokens/CurioERC20.sol";
-import {CurioWallet} from "contracts/CurioWallet.sol";
-// import {CurioTreaty} from "contracts/CurioTreaty.sol";
-// import {Alliance} from "contracts/treaties/Alliance.sol";
-// import {FTX} from "contracts/treaties/FTX.sol";
+import {CurioERC20} from "contracts/standards/CurioERC20.sol";
+import {CurioWallet} from "contracts/standards/CurioWallet.sol";
+import {CurioTreaty} from "contracts/standards/CurioTreaty.sol";
 import {console} from "forge-std/console.sol";
 
 /// @title Game facet
@@ -960,19 +958,20 @@ contract GameFacet is UseStorage {
     }
 
     // TEMP: hardcoded for this version, where treaty deployment is permissioned
-    function deployTreaty(uint256 _nationID, string memory _treatyName) external returns (uint256) {
+    function deployTreaty(uint256 _nationID, string memory _treatyName) external returns (address treatyAddress) {
         // Basic check
         GameLib.ongoingGameCheck();
         GameLib.validEntityCheck(_nationID);
 
-        // // Permission checks
-        // if (msg.sender != address(this)) {
-        //     uint256 callerID = GameLib.getEntityByAddress(msg.sender);
-        //     GameLib.nationDelegationCheck("DeployTreaty", _nationID, callerID, 0);
-        //     GameLib.treatyApprovalCheck("DeployTreaty", _nationID, abi.encode(callerID, _treatyName));
-        // }
+        // Permission checks
+        if (msg.sender != address(this)) {
+            uint256 callerID = GameLib.getEntityByAddress(msg.sender);
+            GameLib.nationDelegationCheck("DeployTreaty", _nationID, callerID, 0);
+            GameLib.treatyApprovalCheck("DeployTreaty", _nationID, abi.encode(callerID, _treatyName));
+        }
 
-        return GameLib.deployTreaty(_treatyName);
+        // Deploy treaty
+        treatyAddress = GameLib.deployTreaty(_nationID, _treatyName);
 
         // Set last action time
         ECSLib.setUint("LastActed", _nationID, block.timestamp);

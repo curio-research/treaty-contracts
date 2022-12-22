@@ -2,8 +2,8 @@
 pragma solidity ^0.8.13;
 
 import {ERC20} from "lib/solmate/src/tokens/ERC20.sol";
-import {CurioTreaty} from "contracts/CurioTreaty.sol";
-import {CurioERC20} from "contracts/tokens/CurioERC20.sol";
+import {CurioTreaty} from "contracts/standards/CurioTreaty.sol";
+import {CurioERC20} from "contracts/standards/CurioERC20.sol";
 import {console} from "forge-std/console.sol";
 
 contract FTX is CurioTreaty {
@@ -13,12 +13,12 @@ contract FTX is CurioTreaty {
     address public sbfCapitalAddress;
     bool public isBankrupt;
 
-    constructor(address _diamond) CurioTreaty(_diamond) {
+    constructor(address _diamond, address _sbfAddress) CurioTreaty(_diamond) {
         name = "FTX";
         description = "FTX is a cryptocurrency exchange based in the United States. It is totally not a scam.";
         goldToken = getter.getTokenContract("Gold");
         fttToken = new FTTERC20(address(this));
-        sbfAddress = msg.sender;
+        sbfAddress = _sbfAddress;
     }
 
     function treatyDeposit(uint256 _amount) external returns (bool) {

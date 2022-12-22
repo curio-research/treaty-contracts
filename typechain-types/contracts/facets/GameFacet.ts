@@ -594,7 +594,7 @@ export interface GameFacet extends BaseContract {
       _nationID: PromiseOrValue<BigNumberish>,
       _treatyName: PromiseOrValue<string>,
       overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    ): Promise<string>;
 
     disbandArmy(
       _armyID: PromiseOrValue<BigNumberish>,
