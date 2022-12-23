@@ -61,15 +61,15 @@ contract EconSanction is CurioTreaty {
         sanctionList.push(_candidate); 
     }
 
-    function removeFromSacntionList(address _candidate) public onlyOwnerOrPact {
+    function removeFromSanctionList(address _candidate) public onlyOwnerOrPact {
         isSanctioned[_candidate] = false;
         uint256 candidateIndex;
-        for (uint i = 0; i < whitelist.length; i++) {
-            if (whitelist[i] == _candidate) {
+        for (uint i = 0; i < sanctionList.length; i++) {
+            if (sanctionList[i] == _candidate) {
                 candidateIndex = i;
             }
         }
-        sanctionList[candidateIndex] = sanctionList[whitelist.length - 1];
+        sanctionList[candidateIndex] = sanctionList[sanctionList.length - 1];
         sanctionList.pop();
     }
 
