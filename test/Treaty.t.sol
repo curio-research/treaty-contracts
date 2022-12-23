@@ -4,7 +4,7 @@ pragma solidity ^0.8.13;
 import {Test} from "forge-std/Test.sol";
 import {DiamondDeployTest} from "test/DiamondDeploy.t.sol";
 import {FTX} from "contracts/treaties/FTX.sol";
-import {NonAggressivePact} from "contracts/treaties/NonAggressivePact.sol";
+import {NonAggressionPact} from "contracts/treaties/NonAggressionPact.sol";
 import {TestTreaty} from "contracts/treaties/TestTreaty.sol";
 import {CurioWallet} from "contracts/CurioWallet.sol";
 import {Position} from "contracts/libraries/Types.sol";
@@ -434,18 +434,52 @@ contract TreatyTest is Test, DiamondDeployTest {
         uint256 time = block.timestamp + 500;
         vm.warp(time);
 
-        // Player 1 starts NAPact and grants it access to his wallet
+        // Player1 deploys NAPact
         vm.startPrank(player1);
-        NonAggressivePact NAPact = new NonAggressivePact(diamond);
+        NonAggressionPact NAPact = new NonAggressionPact(diamond);
         vm.stopPrank();
 
-        // Deployer registers NAPact treaty
+        // Deployer registers NAPact treaty & gives troops to p2
         vm.startPrank(deployer);
         admin.registerTreaty(address(NAPact), "placeholder ABI");
+        admin.dripToken(nation2CapitalAddr, "Horseman", 1000);
+        admin.dripToken(nation2CapitalAddr, "Warrior", 1000);
+        admin.dripToken(nation2CapitalAddr, "Slinger", 1000);
         vm.stopPrank();
 
-        // Player 2 joins NAPact
+        // Player1 joins NAPact and whitelists player2
+        vm.startPrank(player1);
+        NAPact.treatyJoin();
+        NAPact.addToWhiteList(address(player2));
+        vm.stopPrank();
+
+        // Player2 joins NAPact
         vm.startPrank(player2);
-        
+        NAPact.treatyJoin();
+        uint256[] memory armyTemplateAmounts = new uint256[](3);
+        armyTemplateAmounts[0] = 150;
+        armyTemplateAmounts[1] = 150;
+        armyTemplateAmounts[2] = 150;
+        uint256[] memory armyTemplateIDs = new uint256[](3);
+        armyTemplateIDs[0] = warriorTemplateID;
+        armyTemplateIDs[1] = horsemanTemplateID;
+        armyTemplateIDs[2] = slingerTemplateID;
+        uint256 army21ID = game.organizeArmy(nation2CapitalID, armyTemplateIDs, armyTemplateAmounts);
+        address army21Addr = getter.getAddress(army21ID);
+
+        // Player2 moves army from (62, 32) to (62, 16)
+        for (uint256 i = 34; i > 16; i -= 2) {
+            time += 1;
+            vm.warp(time);
+            game.move(army21ID, Position({x: 62, y: i}));
+        }
+
+        // Player2 battles Player1's army but reverted
+        uint256 nation1CapitalTileID = getter.getTileAt(getter.getPositionExternal("StartPosition", nation1CapitalID));
+        vm.expectRevert("CURIO: Treaty disapproved Battle");
+        game.battle(army21ID, nation1CapitalTileID);
+        vm.stopPrank();
     }
+
+
 }

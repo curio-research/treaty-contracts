@@ -7,7 +7,7 @@ import {CurioERC20} from "contracts/tokens/CurioERC20.sol";
 import {Position} from "contracts/libraries/Types.sol";
 import {console} from "forge-std/console.sol";
 
-contract NonAggressivePact is CurioTreaty {
+contract NonAggressionPact is CurioTreaty {
     address public deployerAddress;
     address[] public whitelist;
     mapping(address => bool) public isWhiteListed;
@@ -17,14 +17,16 @@ contract NonAggressivePact is CurioTreaty {
         _;
     }
 
-    constructor(address _diamond, uint256 _goldFee, uint256 _foodFee) CurioTreaty(_diamond) {
-        name = "Non-Aggressive Pact";
+    constructor(address _diamond) CurioTreaty(_diamond) {
+        name = "Non-Aggression Pact";
         description = "Member nations cannot battle armies or tiles of one another";
 
         deployerAddress = msg.sender;
 
-        // deployer joins the treaty
-        super.treatyJoin();
+        // fixme: a redundant step that deployer has to join the treaty after deployment;
+        // addSigner in treatyJoin can only be called by treaty
+        whitelist.push(msg.sender);
+        isWhiteListed[msg.sender] = true;
     }
 
     // ----------------------------------------------------------
@@ -39,12 +41,14 @@ contract NonAggressivePact is CurioTreaty {
 
     function removeFromWhiteList(address _candidate) public onlyOwnerOrPact {
         isWhiteListed[_candidate] = false;
+        uint256 candidateIndex;
         for (uint i = 0; i < whitelist.length; i++) {
-            if (whitelist[i] == element) {
-                whitelist.splice(i, 1);
-                return;
+            if (whitelist[i] == _candidate) {
+                candidateIndex = i;
             }
         }
+        whitelist[candidateIndex] = whitelist[whitelist.length - 1];
+        whitelist.pop();
     }
 
     function removeMember(address _member) public onlyOwnerOrPact {

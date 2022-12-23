@@ -559,9 +559,7 @@ contract GameFacet is UseStorage {
         for (uint256 i = 0; i < _templateIDs.length; i++) {
             CurioERC20 troopToken = CurioERC20(ECSLib.getAddress("Address", _templateIDs[i]));
             // require(tokenContract.checkBalanceOf(msg.sender) >= _amounts[i], "CURIO: Need to produce more troops");
-
             load += ECSLib.getUint("Load", _templateIDs[i]) * _amounts[i];
-
             troopToken.transferFrom(capitalAddress, armyAddress, _amounts[i]);
         }
 

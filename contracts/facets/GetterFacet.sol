@@ -87,7 +87,7 @@ contract GetterFacet is UseStorage {
 
     function treatyApprovalCheck(string memory _functionName,
         uint256 _nationID,
-        bytes memory _encodedParams) internal {
+        bytes memory _encodedParams) external {
             return GameLib.treatyApprovalCheck(_functionName, _nationID, _encodedParams);
         }
 

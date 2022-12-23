@@ -21,7 +21,7 @@ contract EconSanction is CurioTreaty {
         _;
     }
 
-    constructor(address _diamond, uint256 _goldFee, uint256 _foodFee) CurioTreaty(_diamond) {
+    constructor(address _diamond) CurioTreaty(_diamond) {
         name = "Economic Sanction League";
         description = "Owner of the League can point to which nation the league is sanctioning";
 
@@ -43,12 +43,14 @@ contract EconSanction is CurioTreaty {
 
     function removeFromWhiteList(address _candidate) public onlyOwnerOrPact {
         isWhiteListed[_candidate] = false;
+        uint256 candidateIndex;
         for (uint i = 0; i < whitelist.length; i++) {
-            if (whitelist[i] == element) {
-                whitelist.splice(i, 1);
-                return;
+            if (whitelist[i] == _candidate) {
+                candidateIndex = i;
             }
         }
+        whitelist[candidateIndex] = whitelist[whitelist.length - 1];
+        whitelist.pop();
     }
 
     function addToSanctionList(address _candidate) public onlyOwnerOrPact {
@@ -59,12 +61,14 @@ contract EconSanction is CurioTreaty {
 
     function removeFromSacntionList(address _candidate) public onlyOwnerOrPact {
         isSanctioned[_candidate] = false;
+        uint256 candidateIndex;
         for (uint i = 0; i < whitelist.length; i++) {
-            if (whitelist[i] == element) {
-                whitelist.splice(i, 1);
-                return;
+            if (whitelist[i] == _candidate) {
+                candidateIndex = i;
             }
         }
+        sanctionList[candidateIndex] = sanctionList[whitelist.length - 1];
+        sanctionList.pop();
     }
 
     function removeMember(address _member) public onlyOwnerOrPact {
@@ -104,34 +108,8 @@ contract EconSanction is CurioTreaty {
     function approveTransfer(uint256 _nationID, bytes memory _encodedParams) public view override returns (bool) {
         // Disapprove if target nation is an ally
         (address transferToNationAddress,) = abi.decode(_encodedParams, (address, uint256));
-        uint256 transferToNationID = getter.getEntityByAddress(transferToNationAddress);
-        uint256 treatyID = getter.getEntityByAddress(address(this));
 
-        if (isSanctioned[transferToNationID]) {
-            // target is sanctioned
-            return false;
-        } else return super.approveTransfer(_nationID, _encodedParams);
-    }
-
-    function approveTransferFrom(uint256 _nationID, bytes memory _encodedParams) public view override returns (bool) {
-        // Disapprove if target nation is an ally
-        (,address transferToNationAddress,) = abi.decode(_encodedParams, (address, uint256, uint256));
-        uint256 transferToNationID = getter.getEntityByAddress(transferToNationAddress);
-        uint256 treatyID = getter.getEntityByAddress(address(this));
-
-        if (isSanctioned[transferToNationID]) {
-            // target is sanctioned
-            return false;
-        } else return super.approveTransfer(_nationID, _encodedParams);
-    }
-
-    function approveTransferAll(uint256 _nationID, bytes memory _encodedParams) public view override returns (bool) {
-        // Disapprove if target nation is an ally
-        (address transferToNationAddress,) = abi.decode(_encodedParams, (address, address));
-        uint256 transferToNationID = getter.getEntityByAddress(transferToNationAddress);
-        uint256 treatyID = getter.getEntityByAddress(address(this));
-
-        if (isSanctioned[transferToNationID]) {
+        if (isSanctioned[transferToNationAddress]) {
             // target is sanctioned
             return false;
         } else return super.approveTransfer(_nationID, _encodedParams);
