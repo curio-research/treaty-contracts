@@ -27,8 +27,10 @@ contract EconSanction is CurioTreaty {
 
         deployerAddress = msg.sender;
 
-        // deployer joins the treaty
-        super.treatyJoin();
+        // fixme: a redundant step that deployer has to join the treaty after deployment;
+        // addSigner in treatyJoin can only be called by treaty
+        whitelist.push(msg.sender);
+        isWhiteListed[msg.sender] = true;
     }
 
     // ----------------------------------------------------------
@@ -97,7 +99,17 @@ contract EconSanction is CurioTreaty {
         uint256 nationJoinTime = abi.decode(getter.getComponent("InitTimestamp").getBytesValue(getter.getNationTreatySignature(nationID, treatyID)), (uint256));
         require(block.timestamp - nationJoinTime >= 10, "NAPact: Nation must stay for at least 10 seconds");
 
-        removeFromWhiteList(msg.sender);
+        // msg.sender removed from whitelist
+        isWhiteListed[msg.sender] = false;
+        uint256 candidateIndex;
+        for (uint i = 0; i < whitelist.length; i++) {
+            if (whitelist[i] == msg.sender) {
+                candidateIndex = i;
+            }
+        }
+        whitelist[candidateIndex] = whitelist[whitelist.length - 1];
+        whitelist.pop();
+
         super.treatyLeave();
     }
 
@@ -108,7 +120,6 @@ contract EconSanction is CurioTreaty {
     function approveTransfer(uint256 _nationID, bytes memory _encodedParams) public view override returns (bool) {
         // Disapprove if target nation is an ally
         (address transferToNationAddress,) = abi.decode(_encodedParams, (address, uint256));
-
         if (isSanctioned[transferToNationAddress]) {
             // target is sanctioned
             return false;

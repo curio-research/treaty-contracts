@@ -44,6 +44,10 @@ contract GetterFacet is UseStorage {
         return ECSLib.getAddress("Address", _entityID);
     }
 
+    function getTag(uint256 _entityID) external view returns (string memory) {
+        return ECSLib.getString("Tag", _entityID);
+    }
+
     // Used for fetching all treaties a player has signed
     function getSignedTreaties(uint256 _nationID) external view returns (uint256[] memory) {
         return GameLib.getSignedTreaties(_nationID);

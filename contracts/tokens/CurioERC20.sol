@@ -5,6 +5,7 @@ import {ERC20} from "lib/solmate/src/tokens/ERC20.sol";
 import {GetterFacet} from "contracts/facets/GetterFacet.sol";
 import {AdminFacet} from "contracts/facets/AdminFacet.sol";
 import {GameFacet} from "contracts/facets/GameFacet.sol";
+import {GameLib} from "contracts/libraries/GameLib.sol";
 import {console} from "forge-std/console.sol";
 
 contract CurioERC20 is ERC20 {
@@ -76,12 +77,18 @@ contract CurioERC20 is ERC20 {
 
     function transfer(address _to, uint256 _amount) public override returns (bool) {
         // Permission checks
+        // Note: Here it additionally checks armies under the senderNation and the recipientNation
         if (msg.sender != address(this)) {
             uint256 callerID = getter.getEntityByAddress(msg.sender);
-            getter.treatyApprovalCheck("transfer", callerID, abi.encode(_to, _amount));
+            uint256 recipientID = getter.getEntityByAddress(_to);
+            address recipientNation = GameLib.strEq(getter.getTag(recipientID), "Nation")? _to : getter.getAddress(getter.getNation(recipientID));
+            if (GameLib.strEq(getter.getTag(callerID), "Nation")) {
+                getter.treatyApprovalCheck("Transfer", callerID, abi.encode(recipientNation, _amount));
+            } else {
+                getter.treatyApprovalCheck("Transfer", getter.getNation(callerID), abi.encode(recipientNation, _amount));
+            }
         }
-
-    _transferHelper(msg.sender, _to, _amount);
+        _transferHelper(msg.sender, _to, _amount);
         return true;
     }
 

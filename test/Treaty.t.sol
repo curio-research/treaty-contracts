@@ -5,6 +5,7 @@ import {Test} from "forge-std/Test.sol";
 import {DiamondDeployTest} from "test/DiamondDeploy.t.sol";
 import {FTX} from "contracts/treaties/FTX.sol";
 import {NonAggressionPact} from "contracts/treaties/NonAggressionPact.sol";
+import {EconSanction} from "contracts/treaties/EconSanction.sol";
 import {TestTreaty} from "contracts/treaties/TestTreaty.sol";
 import {CurioWallet} from "contracts/CurioWallet.sol";
 import {Position} from "contracts/libraries/Types.sol";
@@ -467,8 +468,8 @@ contract TreatyTest is Test, DiamondDeployTest {
         uint256 army21ID = game.organizeArmy(nation2CapitalID, armyTemplateIDs, armyTemplateAmounts);
         address army21Addr = getter.getAddress(army21ID);
 
-        // Player2 moves army from (62, 32) to (62, 16)
-        for (uint256 i = 34; i > 16; i -= 2) {
+        // Player2 moves army from (62, 32) to (62, 14)
+        for (uint256 i = 34; i > 14; i -= 2) {
             time += 1;
             vm.warp(time);
             game.move(army21ID, Position({x: 62, y: i}));
@@ -478,8 +479,78 @@ contract TreatyTest is Test, DiamondDeployTest {
         uint256 nation1CapitalTileID = getter.getTileAt(getter.getPositionExternal("StartPosition", nation1CapitalID));
         vm.expectRevert("CURIO: Treaty disapproved Battle");
         game.battle(army21ID, nation1CapitalTileID);
+
+        // Player2 leaves treaty and then able to attack
+        time += 10;
+        vm.warp(time);
+        NAPact.treatyLeave();
+        game.battle(army21ID, nation1CapitalTileID);
+
         vm.stopPrank();
     }
 
+    function testEconSanction() public {
+        /** 
+        Outline:
+        - Player1 deploys sanctionLeague Treaty and whitelists player2
+        - Player1 sanctions himself (for simplicity reason; same as sanctioning p3)
+        - Player2 joins
+        - Player2 transfers gold from its army to player3's capital but reverted
+        **/
+        // Start time
+        uint256 time = block.timestamp + 500;
+        vm.warp(time);
 
+        // Player1 deploys NAPact
+        vm.startPrank(player1);
+        EconSanction econSanction = new EconSanction(diamond);
+        vm.stopPrank();
+
+        // Deployer registers NAPact treaty & gives troops to p2
+        vm.startPrank(deployer);
+        admin.registerTreaty(address(econSanction), "placeholder ABI");
+        admin.dripToken(nation2CapitalAddr, "Horseman", 1000);
+        admin.dripToken(nation2CapitalAddr, "Warrior", 1000);
+        admin.dripToken(nation2CapitalAddr, "Slinger", 1000);
+        vm.stopPrank();
+
+        // Player1 joins econSanction and whitelists player2. Then he sanctions himself
+        vm.startPrank(player1);
+        econSanction.treatyJoin();
+        econSanction.addToWhiteList(address(player2));
+        econSanction.addToSanctionList(address(player1));
+        vm.stopPrank();
+
+        // Player2 joins econSanction
+        vm.startPrank(player2);
+        econSanction.treatyJoin();
+        uint256[] memory armyTemplateAmounts = new uint256[](3);
+        armyTemplateAmounts[0] = 150;
+        armyTemplateAmounts[1] = 150;
+        armyTemplateAmounts[2] = 150;
+        uint256[] memory armyTemplateIDs = new uint256[](3);
+        armyTemplateIDs[0] = warriorTemplateID;
+        armyTemplateIDs[1] = horsemanTemplateID;
+        armyTemplateIDs[2] = slingerTemplateID;
+        uint256 army21ID = game.organizeArmy(nation2CapitalID, armyTemplateIDs, armyTemplateAmounts);
+        address army21Addr = getter.getAddress(army21ID);
+        vm.stopPrank();
+
+        // Deployer drips some gold to army21
+        vm.startPrank(deployer);
+        admin.dripToken(army21Addr, "Gold", 1000);
+        vm.stopPrank();
+
+        // Player2 moves army from (62, 32) to (62, 14)
+        vm.startPrank(player2);
+        for (uint256 i = 34; i > 14; i -= 2) {
+            time += 1;
+            vm.warp(time);
+            game.move(army21ID, Position({x: 62, y: i}));
+        }
+
+        // Player2 Army's transfer to p1 capital reverts
+        vm.expectRevert();
+        CurioWallet(army21Addr).executeTx(address(goldToken), abi.encodeWithSignature("transfer(address,uint256)", nation1CapitalAddr, 10));
+    }
 }

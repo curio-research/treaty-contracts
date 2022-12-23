@@ -77,7 +77,17 @@ contract NonAggressionPact is CurioTreaty {
         uint256 nationJoinTime = abi.decode(getter.getComponent("InitTimestamp").getBytesValue(getter.getNationTreatySignature(nationID, treatyID)), (uint256));
         require(block.timestamp - nationJoinTime >= 10, "NAPact: Nation must stay for at least 10 seconds");
 
-        removeFromWhiteList(msg.sender);
+        // msg.sender removed from whitelist
+        isWhiteListed[msg.sender] = false;
+        uint256 candidateIndex;
+        for (uint i = 0; i < whitelist.length; i++) {
+            if (whitelist[i] == msg.sender) {
+                candidateIndex = i;
+            }
+        }
+        whitelist[candidateIndex] = whitelist[whitelist.length - 1];
+        whitelist.pop();
+
         super.treatyLeave();
     }
 
