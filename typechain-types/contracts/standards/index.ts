@@ -3,3 +3,5 @@
 /* eslint-disable */
 export type { CurioERC20 } from "./CurioERC20";
 export type { CurioERC721 } from "./CurioERC721";
+export type { CurioTreaty } from "./CurioTreaty";
+export type { CurioWallet } from "./CurioWallet";

@@ -75,6 +75,7 @@ library Templates {
         ECSLib.setBool("IsActive", nationID);
         ECSLib.setString("Name", nationID, _name);
         ECSLib.setUint("InitTimestamp", nationID, block.timestamp);
+        ECSLib.setUint("LastActed", nationID, block.timestamp);
         ECSLib.setAddress("Address", nationID, _address);
 
         return nationID;
@@ -205,11 +206,27 @@ library Templates {
         return signatureID;
     }
 
+    function addAllowance(
+        uint256 _templateID,
+        uint256 _ownerID,
+        uint256 _spenderID
+    ) public returns (uint256) {
+        uint256 allowanceID = ECSLib.addEntity();
+
+        ECSLib.setString("Tag", allowanceID, "Allowance");
+        ECSLib.setUint("Template", allowanceID, _templateID);
+        ECSLib.setUint("Owner", allowanceID, _ownerID);
+        ECSLib.setUint("Caller", allowanceID, _spenderID);
+
+        return allowanceID;
+    }
+
     function addTreaty(
         address _address,
         string memory _name,
         string memory _description,
-        string memory _abiHash
+        string memory _abiHash,
+        uint256 _deployerID
     ) public returns (uint256) {
         uint256 treatyID = ECSLib.addEntity();
 
@@ -219,9 +236,27 @@ library Templates {
         ECSLib.setString("Name", treatyID, _name);
         ECSLib.setString("Description", treatyID, _description);
         ECSLib.setString("ABIHash", treatyID, _abiHash);
+        ECSLib.setUint("Owner", treatyID, _deployerID);
         ECSLib.setAddress("Address", treatyID, _address);
 
         return treatyID;
+    }
+
+    function addTreatyTemplate(
+        address _address,
+        string memory _name,
+        string memory _description,
+        string memory _abiHash
+    ) public returns (uint256) {
+        uint256 treatyTemplateID = ECSLib.addEntity();
+
+        ECSLib.setString("Tag", treatyTemplateID, "TreatyTemplate");
+        ECSLib.setString("Name", treatyTemplateID, _name);
+        ECSLib.setString("Description", treatyTemplateID, _description);
+        ECSLib.setString("ABIHash", treatyTemplateID, _abiHash);
+        ECSLib.setAddress("Address", treatyTemplateID, _address);
+
+        return treatyTemplateID;
     }
 
     function addDelegation(

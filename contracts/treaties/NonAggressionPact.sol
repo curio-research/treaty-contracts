@@ -1,9 +1,9 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.13;
 
-import {CurioTreaty} from "contracts/CurioTreaty.sol";
+import {CurioTreaty} from "contracts/standards/CurioTreaty.sol";
 import {GetterFacet} from "contracts/facets/GetterFacet.sol";
-import {CurioERC20} from "contracts/tokens/CurioERC20.sol";
+import {CurioERC20} from "contracts/standards/CurioERC20.sol";
 import {Position} from "contracts/libraries/Types.sol";
 import {console} from "forge-std/console.sol";
 
@@ -36,13 +36,13 @@ contract NonAggressionPact is CurioTreaty {
     function addToWhiteList(address _candidate) public onlyOwnerOrPact {
         require(!isWhiteListed[_candidate], "NAPact: Candidate already whitelisted");
         isWhiteListed[_candidate] = true;
-        whitelist.push(_candidate);    
+        whitelist.push(_candidate);
     }
 
     function removeFromWhiteList(address _candidate) public onlyOwnerOrPact {
         isWhiteListed[_candidate] = false;
         uint256 candidateIndex;
-        for (uint i = 0; i < whitelist.length; i++) {
+        for (uint256 i = 0; i < whitelist.length; i++) {
             if (whitelist[i] == _candidate) {
                 candidateIndex = i;
             }
@@ -55,7 +55,7 @@ contract NonAggressionPact is CurioTreaty {
         // member needs to be whitelisted again before joining
         removeFromWhiteList(_member);
 
-        // remove membership; same as treaty leave 
+        // remove membership; same as treaty leave
         uint256 nationID = getter.getEntityByAddress(_member);
         admin.removeSigner(nationID);
     }
@@ -63,7 +63,7 @@ contract NonAggressionPact is CurioTreaty {
     // ----------------------------------------------------------
     // Standardized Functions Called by the Public
     // ----------------------------------------------------------
-    
+
     function treatyJoin() public override {
         // treaty owner needs to first whitelist the msg.sender
         require(isWhiteListed[msg.sender], "Candidate is not whitelisted");
@@ -80,7 +80,7 @@ contract NonAggressionPact is CurioTreaty {
         // msg.sender removed from whitelist
         isWhiteListed[msg.sender] = false;
         uint256 candidateIndex;
-        for (uint i = 0; i < whitelist.length; i++) {
+        for (uint256 i = 0; i < whitelist.length; i++) {
             if (whitelist[i] == msg.sender) {
                 candidateIndex = i;
             }
@@ -103,6 +103,5 @@ contract NonAggressionPact is CurioTreaty {
         if (getter.getNationTreatySignature(targetNationID, treatyID) != 0) return false;
 
         return super.approveBattle(_nationID, _encodedParams);
-
     }
 }

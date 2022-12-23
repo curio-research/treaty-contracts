@@ -1,9 +1,9 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.13;
 
-import {CurioTreaty} from "contracts/CurioTreaty.sol";
+import {CurioTreaty} from "contracts/standards/CurioTreaty.sol";
 import {GetterFacet} from "contracts/facets/GetterFacet.sol";
-import {CurioERC20} from "contracts/tokens/CurioERC20.sol";
+import {CurioERC20} from "contracts/standards/CurioERC20.sol";
 import {Position} from "contracts/libraries/Types.sol";
 import {console} from "forge-std/console.sol";
 
@@ -58,7 +58,7 @@ contract CollectiveDefenseFund is CurioTreaty {
         uint256 _depositTimeInterval,
         uint256 _goldWithDrawQuota,
         uint256 _foodWithDrawQuota
-        ) CurioTreaty(_diamond) {
+    ) CurioTreaty(_diamond) {
         name = "Economic Sanction League";
         description = "Owner of the League can point to which nation the league is sanctioning";
 
@@ -86,13 +86,13 @@ contract CollectiveDefenseFund is CurioTreaty {
     function addToWhiteList(address _candidate) public onlyOwnerCouncilOrPact {
         require(!isWhiteListed[_candidate], "NAPact: Candidate already whitelisted");
         isWhiteListed[_candidate] = true;
-        whitelist.push(_candidate);    
+        whitelist.push(_candidate);
     }
 
     function removeFromWhiteList(address _candidate) public onlyOwnerCouncilOrPact {
         isWhiteListed[_candidate] = false;
         uint256 candidateIndex;
-        for (uint i = 0; i < whitelist.length; i++) {
+        for (uint256 i = 0; i < whitelist.length; i++) {
             if (whitelist[i] == _candidate) {
                 candidateIndex = i;
             }
@@ -105,13 +105,12 @@ contract CollectiveDefenseFund is CurioTreaty {
         require(!isCouncilMember[_candidate], "NAPact: Candidate already whitelisted");
         isCouncilMember[_candidate] = true;
         council.push(_candidate);
-
     }
 
     function removeFromCouncilList(address _candidate) public onlyOwnerOrPact {
         isCouncilMember[_candidate] = false;
         uint256 candidateIndex;
-        for (uint i = 0; i < council.length; i++) {
+        for (uint256 i = 0; i < council.length; i++) {
             if (council[i] == _candidate) {
                 candidateIndex = i;
             }
@@ -123,12 +122,12 @@ contract CollectiveDefenseFund is CurioTreaty {
     function removeMember(address _member) public onlyOwnerCouncilOrPact {
         // member needs to be whitelisted again before joining
         removeFromWhiteList(_member);
-        // remove membership; same as treaty leave 
+        // remove membership; same as treaty leave
         uint256 nationID = getter.getEntityByAddress(_member);
         admin.removeSigner(nationID);
     }
 
-        function updateFoodFee(uint256 _newFee) external onlyOwnerCouncilOrPact {
+    function updateFoodFee(uint256 _newFee) external onlyOwnerCouncilOrPact {
         foodFee = _newFee;
     }
 
@@ -141,10 +140,10 @@ contract CollectiveDefenseFund is CurioTreaty {
         require(getter.getNationTreatySignature(getter.getEntityByAddress(msg.sender), treatyID) != 0, "CDFund: You're not part of the treaty yet");
 
         address senderCapitalAddress = getter.getAddress(getter.getCapital(getter.getEntityByAddress(msg.sender)));
-        require(goldToken.checkBalanceOf(senderCapitalAddress) >= goldFee, "CDFund: You don't have enough gold balance");
-        require(foodToken.checkBalanceOf(senderCapitalAddress) >= foodFee, "CDFund: You don't have enough food balance");
+        require(goldToken.balanceOf(senderCapitalAddress) >= goldFee, "CDFund: You don't have enough gold balance");
+        require(foodToken.balanceOf(senderCapitalAddress) >= foodFee, "CDFund: You don't have enough food balance");
 
-        require(block.timestamp - memberLastPaymentTimeStamp[senderCapitalAddress] > depositTimeInterval/2, "CDFund: Your last payment was too soon");
+        require(block.timestamp - memberLastPaymentTimeStamp[senderCapitalAddress] > depositTimeInterval / 2, "CDFund: Your last payment was too soon");
 
         goldToken.transferFrom(senderCapitalAddress, address(this), goldFee);
         foodToken.transferFrom(senderCapitalAddress, address(this), foodFee);
@@ -155,8 +154,8 @@ contract CollectiveDefenseFund is CurioTreaty {
     function withdraw(uint256 _goldAmount, uint256 _foodAmount) external onlyOwnerCouncilOrPact {
         require(_goldAmount <= goldWithDrawQuota, "CDFund: Amount exceeds quota");
         require(_foodAmount <= foodWithDrawQuota, "CDFund: Amount exceeds quota");
-        require(goldToken.checkBalanceOf(address(this)) >= _goldAmount, "CDFund: Not enough balance");
-        require(foodToken.checkBalanceOf(address(this)) >= _foodAmount, "CDFund: Not enough balance");
+        require(goldToken.balanceOf(address(this)) >= _goldAmount, "CDFund: Not enough balance");
+        require(foodToken.balanceOf(address(this)) >= _foodAmount, "CDFund: Not enough balance");
 
         address recipientAddress = getter.getAddress(getter.getCapital(getter.getEntityByAddress(msg.sender)));
         require(block.timestamp - lastWithdrawTimeStamp[recipientAddress] > withdrawTimeInterval, "CDF: Your last withdrawal was too soon");
@@ -182,15 +181,15 @@ contract CollectiveDefenseFund is CurioTreaty {
     // ----------------------------------------------------------
     // Standardized Functions Called by the Public
     // ----------------------------------------------------------
-    
+
     function treatyJoin() public override {
         // treaty owner needs to first whitelist the msg.sender
         require(isWhiteListed[msg.sender], "Candidate is not whitelisted");
 
         // Candidate pays membership fees; same logic as payMembershipFee
         address senderCapitalAddress = getter.getAddress(getter.getCapital(getter.getEntityByAddress(msg.sender)));
-        require(goldToken.checkBalanceOf(senderCapitalAddress) >= goldFee, "CDFund: You don't have enough gold balance");
-        require(foodToken.checkBalanceOf(senderCapitalAddress) >= foodFee, "CDFund: You don't have enough food balance");
+        require(goldToken.balanceOf(senderCapitalAddress) >= goldFee, "CDFund: You don't have enough gold balance");
+        require(foodToken.balanceOf(senderCapitalAddress) >= foodFee, "CDFund: You don't have enough food balance");
 
         goldToken.transferFrom(senderCapitalAddress, address(this), goldFee);
         foodToken.transferFrom(senderCapitalAddress, address(this), foodFee);
@@ -210,7 +209,7 @@ contract CollectiveDefenseFund is CurioTreaty {
         // msg.sender removed from whitelist
         isWhiteListed[msg.sender] = false;
         uint256 candidateIndex1;
-        for (uint i = 0; i < whitelist.length; i++) {
+        for (uint256 i = 0; i < whitelist.length; i++) {
             if (whitelist[i] == msg.sender) {
                 candidateIndex1 = i;
             }
@@ -221,13 +220,13 @@ contract CollectiveDefenseFund is CurioTreaty {
         // msg.sender removed from council (if it is a part of it)
         if (isCouncilMember[msg.sender]) {
             uint256 candidateIndex2;
-            for (uint i = 0; i < whitelist.length; i++) {
-            if (council[i] == msg.sender) {
-                candidateIndex2 = i;
+            for (uint256 i = 0; i < whitelist.length; i++) {
+                if (council[i] == msg.sender) {
+                    candidateIndex2 = i;
                 }
             }
-        council[candidateIndex2] = whitelist[whitelist.length - 1];
-        council.pop();
+            council[candidateIndex2] = whitelist[whitelist.length - 1];
+            council.pop();
         }
 
         super.treatyLeave();

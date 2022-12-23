@@ -7,8 +7,9 @@ import {ECSLib} from "contracts/libraries/ECSLib.sol";
 import {GameMode, Position, WorldConstants} from "contracts/libraries/Types.sol";
 import {Set} from "contracts/Set.sol";
 import {Templates} from "contracts/libraries/Templates.sol";
-import {CurioERC20} from "contracts/tokens/CurioERC20.sol";
-import {CurioWallet} from "contracts/CurioWallet.sol";
+import {CurioERC20} from "contracts/standards/CurioERC20.sol";
+import {CurioWallet} from "contracts/standards/CurioWallet.sol";
+import {CurioTreaty} from "contracts/standards/CurioTreaty.sol";
 import {console} from "forge-std/console.sol";
 
 /// @title Game facet
@@ -80,6 +81,9 @@ contract GameFacet is UseStorage {
         for (uint256 i; i < functionNames.length; i++) {
             Templates.addDelegation(functionNames[i], nationID, nationID, 0);
         }
+
+        // Set last action time
+        ECSLib.setUint("LastActed", nationID, block.timestamp);
     }
 
     function upgradeCapital(uint256 _capitalID) external {
@@ -133,6 +137,9 @@ contract GameFacet is UseStorage {
 
         // Set new level
         ECSLib.setUint("Level", _capitalID, capitalLevel + 1);
+
+        // Set last action time
+        ECSLib.setUint("LastActed", nationID, block.timestamp);
     }
 
     function moveCapital(uint256 _capitalID, Position memory _newTilePosition) external {
@@ -195,6 +202,9 @@ contract GameFacet is UseStorage {
             }
             Templates.addResource(gs().templates["Food"], ECSLib.getPosition("StartPosition", _capitalID));
         }
+
+        // Set last action time
+        ECSLib.setUint("LastActed", nationID, block.timestamp);
     }
 
     // ----------------------------------------------------------
@@ -248,6 +258,9 @@ contract GameFacet is UseStorage {
         // Transfer ownership of resource
         uint256 resourceID = GameLib.getResourceAt(tilePosition);
         ECSLib.setUint("Nation", resourceID, nationID);
+
+        // Set last action time
+        ECSLib.setUint("LastActed", nationID, block.timestamp);
     }
 
     function upgradeTile(uint256 _tileID) external {
@@ -301,6 +314,9 @@ contract GameFacet is UseStorage {
         uint256 newGuardAmount = GameLib.getConstant("Tile", "Guard", "Amount", "", tileLevel + 1);
         ECSLib.setUint("Level", _tileID, tileLevel + 1);
         guardToken.dripToken(tileAddress, newGuardAmount - guardAmount);
+
+        // Set last action time
+        ECSLib.setUint("LastActed", nationID, block.timestamp);
     }
 
     function recoverTile(uint256 _tileID) external {
@@ -349,6 +365,9 @@ contract GameFacet is UseStorage {
 
         // Recover the tile
         guardToken.dripToken(tileAddress, lostGuardAmount);
+
+        // Set last action time
+        ECSLib.setUint("LastActed", nationID, block.timestamp);
     }
 
     function disownTile(uint256 _tileID) external {
@@ -383,6 +402,9 @@ contract GameFacet is UseStorage {
 
         // Disown tile
         ECSLib.setUint("Nation", _tileID, NULL);
+
+        // Set last action time
+        ECSLib.setUint("LastActed", nationID, block.timestamp);
     }
 
     // ----------------------------------------------------------
@@ -435,6 +457,9 @@ contract GameFacet is UseStorage {
 
         // Start production
         productionID = Templates.addTroopProduction(_capitalID, _templateID, _amount, (gs().worldConstants.secondsToTrainAThousandTroops * _amount) / 1000); // FIXME: naming
+
+        // Set last action time
+        ECSLib.setUint("LastActed", nationID, block.timestamp);
     }
 
     function endTroopProduction(uint256 _capitalID) external {
@@ -470,6 +495,9 @@ contract GameFacet is UseStorage {
 
         // Delete production
         ECSLib.removeEntity(productionID);
+
+        // Set last action time
+        ECSLib.setUint("LastActed", nationID, block.timestamp);
     }
 
     // ----------------------------------------------------------
@@ -518,6 +546,9 @@ contract GameFacet is UseStorage {
         ECSLib.setPosition("Position", _armyID, _targetPosition);
         ECSLib.setPosition("StartPosition", _armyID, tilePosition);
         ECSLib.setUint("LastMoved", _armyID, block.timestamp);
+
+        // Set last action time
+        ECSLib.setUint("LastActed", nationID, block.timestamp);
     }
 
     function organizeArmy(
@@ -558,13 +589,17 @@ contract GameFacet is UseStorage {
 
         for (uint256 i = 0; i < _templateIDs.length; i++) {
             CurioERC20 troopToken = CurioERC20(ECSLib.getAddress("Address", _templateIDs[i]));
-            // require(tokenContract.checkBalanceOf(msg.sender) >= _amounts[i], "CURIO: Need to produce more troops");
+            // require(tokenContract.balanceOf(msg.sender) >= _amounts[i], "CURIO: Need to produce more troops");
+
             load += ECSLib.getUint("Load", _templateIDs[i]) * _amounts[i];
             troopToken.transferFrom(capitalAddress, armyAddress, _amounts[i]);
         }
 
         // Edit army traits
         ECSLib.setUint("Load", armyID, load);
+
+        // Set last action time
+        ECSLib.setUint("LastActed", nationID, block.timestamp);
     }
 
     function disbandArmy(uint256 _armyID) external {
@@ -596,6 +631,9 @@ contract GameFacet is UseStorage {
         // Return troops to corresponding inventories and disband army
         GameLib.disbandArmy(capitalAddress, armyAddress);
         ECSLib.removeEntity(_armyID);
+
+        // Set last action time
+        ECSLib.setUint("LastActed", nationID, block.timestamp);
     }
 
     /**
@@ -637,6 +675,9 @@ contract GameFacet is UseStorage {
         } else if (GameLib.strEq(ECSLib.getString("Tag", _targetID), "Tile")) {
             GameLib.battleTile(_armyID, _targetID);
         }
+
+        // Set last action time
+        ECSLib.setUint("LastActed", nationID, block.timestamp);
     }
 
     // ----------------------------------------------------------
@@ -675,6 +716,9 @@ contract GameFacet is UseStorage {
         // TODO
 
         Templates.addResourceGather(startPosition, _resourceID, _armyID);
+
+        // Set last action time
+        ECSLib.setUint("LastActed", nationID, block.timestamp);
     }
 
     function endGather(uint256 _armyID) external {
@@ -692,6 +736,9 @@ contract GameFacet is UseStorage {
 
         // End gather
         GameLib.endGather(_armyID);
+
+        // Set last action time
+        ECSLib.setUint("LastActed", nationID, block.timestamp);
     }
 
     function unloadResources(uint256 _armyID) external {
@@ -720,6 +767,9 @@ contract GameFacet is UseStorage {
         // Return carried resources to capital
         address capitalAddress = ECSLib.getAddress("Address", capitalID);
         GameLib.unloadResources(capitalAddress, ECSLib.getAddress("Address", _armyID));
+
+        // Set last action time
+        ECSLib.setUint("LastActed", nationID, block.timestamp);
     }
 
     function harvestResource(uint256 _resourceID) public {
@@ -764,6 +814,9 @@ contract GameFacet is UseStorage {
         address capitalAddress = ECSLib.getAddress("Address", GameLib.getCapital(nationID));
         CurioERC20 resourceToken = CurioERC20(ECSLib.getAddress("Address", templateID));
         resourceToken.dripToken(capitalAddress, harvestAmount);
+
+        // Set last action time
+        ECSLib.setUint("LastActed", nationID, block.timestamp);
     }
 
     // FIXME: need to set LastRecovered of a nation's resources when chaos starts
@@ -817,6 +870,9 @@ contract GameFacet is UseStorage {
 
         // Reset harvest time
         ECSLib.setUint("LastHarvested", _capitalID, block.timestamp);
+
+        // Set last action time
+        ECSLib.setUint("LastActed", nationID, block.timestamp);
     }
 
     function upgradeResource(uint256 _resourceID) public {
@@ -864,6 +920,9 @@ contract GameFacet is UseStorage {
 
         // Set new level
         ECSLib.setUint("Level", _resourceID, resourceLevel + 1);
+
+        // Set last action time
+        ECSLib.setUint("LastActed", nationID, block.timestamp);
     }
 
     // ----------------------------------------------------------
@@ -892,5 +951,28 @@ contract GameFacet is UseStorage {
 
         // Delegate function
         GameLib.delegateGameFunction(_nationID, _functionName, _delegateID, _subjectID, _canCall);
+
+        // Set last action time
+        ECSLib.setUint("LastActed", _nationID, block.timestamp);
+    }
+
+    // TEMP: hardcoded for this version, where treaty deployment is permissioned
+    function deployTreaty(uint256 _nationID, string memory _treatyName) external returns (address treatyAddress) {
+        // Basic check
+        GameLib.ongoingGameCheck();
+        GameLib.validEntityCheck(_nationID);
+
+        // Permission checks
+        if (msg.sender != address(this)) {
+            uint256 callerID = GameLib.getEntityByAddress(msg.sender);
+            GameLib.nationDelegationCheck("DeployTreaty", _nationID, callerID, 0);
+            GameLib.treatyApprovalCheck("DeployTreaty", _nationID, abi.encode(callerID, _treatyName));
+        }
+
+        // Deploy treaty
+        treatyAddress = GameLib.deployTreaty(_nationID, _treatyName);
+
+        // Set last action time
+        ECSLib.setUint("LastActed", _nationID, block.timestamp);
     }
 }

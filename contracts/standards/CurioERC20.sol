@@ -1,14 +1,23 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.13;
 
-import {ERC20} from "lib/solmate/src/tokens/ERC20.sol";
+import {IERC20} from "contracts/interfaces/IERC20.sol";
 import {GetterFacet} from "contracts/facets/GetterFacet.sol";
 import {AdminFacet} from "contracts/facets/AdminFacet.sol";
 import {GameFacet} from "contracts/facets/GameFacet.sol";
 import {GameLib} from "contracts/libraries/GameLib.sol";
 import {console} from "forge-std/console.sol";
 
-contract CurioERC20 is ERC20 {
+contract CurioERC20 is IERC20 {
+    // Token metadata
+    string public name;
+    string public symbol;
+    uint8 public decimals;
+
+    // Token data
+    uint256 public totalSupply;
+
+    // Game data
     address public diamond;
     GetterFacet public getter;
     AdminFacet public admin;
@@ -22,9 +31,15 @@ contract CurioERC20 is ERC20 {
         string memory _symbol,
         uint8 _decimals,
         address _diamond
-    ) ERC20(_name, _symbol, _decimals) {
+    ) {
         require(_diamond != address(0), "CurioERC20: Diamond address required");
 
+        // Set token data
+        name = _name;
+        symbol = _symbol;
+        decimals = _decimals;
+
+        // Set game data
         diamond = _diamond;
         getter = GetterFacet(diamond);
         admin = AdminFacet(diamond);
@@ -47,9 +62,13 @@ contract CurioERC20 is ERC20 {
         return getter.getInventoryIDLoadAndBalance(_entityAddress, name);
     }
 
-    // FIXME: solmate doesn't have balanceOf
-    function checkBalanceOf(address _entityAddress) public view returns (uint256) {
-        return getter.getInventoryBalance(_entityAddress, name);
+    function balanceOf(address _account) public view returns (uint256) {
+        return getter.getInventoryBalance(_account, name);
+    }
+
+    function allowance(address _owner, address _spender) public view returns (uint256) {
+        uint256 allowanceID = getter.getAllowance(name, getter.getEntityByAddress(_owner), getter.getEntityByAddress(_spender));
+        return getter.getAmount(allowanceID);
     }
 
     function _transferHelper(
@@ -75,13 +94,27 @@ contract CurioERC20 is ERC20 {
         emit Transfer(_from, _to, transferAmount);
     }
 
+    function approve(address _spender, uint256 _amount) public override returns (bool) {
+        uint256 ownerID = getter.getEntityByAddress(msg.sender);
+        uint256 spenderID = getter.getEntityByAddress(_spender);
+
+        uint256 allowanceID = getter.getAllowance(name, ownerID, spenderID);
+        if (allowanceID == NULL) allowanceID = admin.addAllowance(name, ownerID, spenderID);
+
+        admin.setComponentValue("Amount", allowanceID, abi.encode(_amount));
+
+        emit Approval(msg.sender, _spender, _amount);
+
+        return true;
+    }
+
     function transfer(address _to, uint256 _amount) public override returns (bool) {
         // Permission checks
         // Note: Here it additionally checks armies under the senderNation and the recipientNation
         if (msg.sender != address(this)) {
             uint256 callerID = getter.getEntityByAddress(msg.sender);
             uint256 recipientID = getter.getEntityByAddress(_to);
-            address recipientNation = GameLib.strEq(getter.getTag(recipientID), "Nation")? _to : getter.getAddress(getter.getNation(recipientID));
+            address recipientNation = GameLib.strEq(getter.getTag(recipientID), "Nation") ? _to : getter.getAddress(getter.getNation(recipientID));
             if (GameLib.strEq(getter.getTag(callerID), "Nation")) {
                 getter.treatyApprovalCheck("Transfer", callerID, abi.encode(recipientNation, _amount));
             } else {
@@ -89,6 +122,7 @@ contract CurioERC20 is ERC20 {
             }
         }
         _transferHelper(msg.sender, _to, _amount);
+
         return true;
     }
 
@@ -97,32 +131,27 @@ contract CurioERC20 is ERC20 {
         address _to,
         uint256 _amount
     ) public override returns (bool) {
-        // fixme: should add back onlyGame modifier?
+        // // FIXME: temporarily disabled for testing
+        // // Transfers from diamond or owner are exempt from allowance
+        // if (msg.sender != diamond && getter.getEntityByAddress(msg.sender) != getter.getNation(getter.getEntityByAddress(_from))) {
+        //     uint256 ownerID = getter.getEntityByAddress(_from);
+        //     uint256 spenderID = getter.getEntityByAddress(msg.sender);
 
-        // Transfers from diamond or owner are exempt from allowance
-        if (msg.sender != diamond && getter.getEntityByAddress(msg.sender) != getter.getNation(getter.getEntityByAddress(_from))) {
-            uint256 allowed = allowance[_from][msg.sender];
-            require(allowed >= _amount, "CurioERC20: Insufficient allowance");
-            if (allowed != type(uint256).max) allowance[_from][msg.sender] = allowed - _amount;
-        }
+        //     uint256 allowanceID = getter.getAllowance(name, ownerID, spenderID);
+        //     uint256 allowed = abi.decode(getter.getComponent("Amount").getBytesValue(allowanceID), (uint256));
+        //     require(allowed >= _amount, "CurioERC20: Insufficient allowance");
+        //     if (allowed != type(uint256).max) admin.setComponentValue("Amount", allowanceID, abi.encode(allowed - _amount));
+        // }
 
         _transferHelper(_from, _to, _amount);
+
         return true;
     }
 
     function transferAll(address _from, address _to) public onlyGame returns (bool) {
-        // fixme: should add back onlyGame modifier?
+        uint256 amount = balanceOf(_from);
 
-        uint256 amount = checkBalanceOf(_from);
-
-        if (msg.sender != diamond) {
-            uint256 allowed = allowance[_from][msg.sender];
-            require(allowed >= amount, "CurioERC20: Insufficient allowance");
-            if (allowed != type(uint256).max) allowance[_from][msg.sender] = allowed - amount;
-        }
-
-        _transferHelper(_from, _to, amount);
-        return true;
+        return transferFrom(_from, _to, amount);
     }
 
     function dripToken(address _address, uint256 _amount) public onlyGame {

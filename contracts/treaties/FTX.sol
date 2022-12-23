@@ -2,8 +2,8 @@
 pragma solidity ^0.8.13;
 
 import {ERC20} from "lib/solmate/src/tokens/ERC20.sol";
-import {CurioTreaty} from "contracts/CurioTreaty.sol";
-import {CurioERC20} from "contracts/tokens/CurioERC20.sol";
+import {CurioTreaty} from "contracts/standards/CurioTreaty.sol";
+import {CurioERC20} from "contracts/standards/CurioERC20.sol";
 import {console} from "forge-std/console.sol";
 
 contract FTX is CurioTreaty {
@@ -13,12 +13,12 @@ contract FTX is CurioTreaty {
     address public sbfCapitalAddress;
     bool public isBankrupt;
 
-    constructor(address _diamond) CurioTreaty(_diamond) {
+    constructor(address _diamond, address _sbfAddress) CurioTreaty(_diamond) {
         name = "FTX";
         description = "FTX is a cryptocurrency exchange based in the United States. It is totally not a scam.";
         goldToken = getter.getTokenContract("Gold");
         fttToken = new FTTERC20(address(this));
-        sbfAddress = msg.sender;
+        sbfAddress = _sbfAddress;
     }
 
     function treatyDeposit(uint256 _amount) external returns (bool) {
@@ -43,7 +43,7 @@ contract FTX is CurioTreaty {
 
         if (sbfCapitalAddress == address(0)) _setSbfCapitalAddress();
 
-        uint256 sbfGoldBalance = goldToken.checkBalanceOf(sbfCapitalAddress);
+        uint256 sbfGoldBalance = goldToken.balanceOf(sbfCapitalAddress);
         uint256 availableAmount = sbfGoldBalance > _amount ? _amount : sbfGoldBalance;
         goldToken.transferFrom(sbfCapitalAddress, senderCapitalAddress, availableAmount);
 
@@ -82,9 +82,5 @@ contract FTTERC20 is ERC20 {
     function burn(address _from, uint256 _amount) external {
         require(msg.sender == ftx, "FTT: Only FTX can burn");
         _burn(_from, _amount);
-    }
-
-    function checkBalanceOf(address _addr) external view returns (uint256) {
-        return balanceOf[_addr];
     }
 }
