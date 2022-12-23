@@ -569,13 +569,11 @@ contract TreatyTest is Test, DiamondDeployTest {
         vm.stopPrank();
 
         // Player1 removes himself from sanctionList, and then player2 can transfer
-        console.log("AA");
         vm.startPrank(player1);
         econSanction.removeFromSanctionList(address(player1));
         vm.stopPrank();
 
         vm.startPrank(player2);
-        console.log("BB");
         CurioWallet(army21Addr).executeTx(address(goldToken), abi.encodeWithSignature("transfer(address,uint256)", nation1CapitalAddr, 10));
         vm.stopPrank();
     }
