@@ -7,8 +7,8 @@ import {Alliance} from "contracts/treaties/Alliance.sol";
 import {FTX} from "contracts/treaties/FTX.sol";
 import {NonAggressionPact} from "contracts/treaties/NonAggressionPact.sol";
 import {EconSanction} from "contracts/treaties/EconSanction.sol";
-import {TestTreaty} from "contracts/treaties/TestTreaty.sol";
 import {CollectiveDefenseFund} from "contracts/treaties/CDFund.sol";
+import {TestTreaty} from "contracts/treaties/TestTreaty.sol";
 import {CurioWallet} from "contracts/standards/CurioWallet.sol";
 import {Position} from "contracts/libraries/Types.sol";
 import {console} from "forge-std/console.sol";
@@ -452,7 +452,7 @@ contract TreatyTest is Test, DiamondDeployTest {
 
         // Player1 deploys NAPact
         vm.startPrank(player1);
-        NonAggressionPact NAPact = new NonAggressionPact(diamond);
+        NonAggressionPact NAPact = NonAggressionPact(game.deployTreaty(nation2ID, NAPactTemplate.name()));
         vm.stopPrank();
 
         // Deployer registers NAPact treaty & gives troops to p2
@@ -465,7 +465,9 @@ contract TreatyTest is Test, DiamondDeployTest {
 
         // Player1 joins NAPact and whitelists player2
         vm.startPrank(player1);
+        console.log("AA");
         NAPact.treatyJoin();
+        console.log("BB");
         NAPact.addToWhiteList(address(player2));
         vm.stopPrank();
 
@@ -517,7 +519,7 @@ contract TreatyTest is Test, DiamondDeployTest {
 
         // Player1 deploys NAPact
         vm.startPrank(player1);
-        EconSanction econSanction = new EconSanction(diamond);
+        EconSanction econSanction = EconSanction(game.deployTreaty(nation2ID, econSanctionTemplate.name()));
         vm.stopPrank();
 
         // Deployer registers NAPact treaty & gives troops to p2
@@ -593,7 +595,7 @@ contract TreatyTest is Test, DiamondDeployTest {
 
         // Player1 deploys NAPact
         vm.startPrank(player1);
-        CollectiveDefenseFund cdFund = new CollectiveDefenseFund(diamond, 100, 100, 86400, 86400, 50, 50);
+        CollectiveDefenseFund cdFund = CollectiveDefenseFund(game.deployTreaty(nation2ID, CDFundTemplate.name()));
         vm.stopPrank();
 
         // Deployer registers NAPact treaty & assigns tokens to p1 and p2

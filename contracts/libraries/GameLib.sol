@@ -14,6 +14,9 @@ import {CurioTreaty} from "contracts/standards/CurioTreaty.sol";
 import {Alliance} from "contracts/treaties/Alliance.sol";
 import {FTX} from "contracts/treaties/FTX.sol";
 import {TestTreaty} from "contracts/treaties/TestTreaty.sol";
+import {NonAggressionPact} from "contracts/treaties/NonAggressionPact.sol";
+import {EconSanction} from "contracts/treaties/EconSanction.sol";
+import {CollectiveDefenseFund} from "contracts/treaties/CDFund.sol";
 import {console} from "forge-std/console.sol";
 
 /// @title Util library
@@ -449,7 +452,14 @@ library GameLib {
             treatyAddress = address(new FTX(address(this), ECSLib.getAddress("Address", _nationID)));
         } else if (GameLib.strEq(_treatyName, "Test Treaty")) {
             treatyAddress = address(new TestTreaty(address(this)));
-        } else {
+        } else if (GameLib.strEq(_treatyName, "Non-Aggression Pact")) {
+            treatyAddress = address(new NonAggressionPact(address(this)));
+        } else if (GameLib.strEq(_treatyName, "Economic Sanction Pact")) {
+            treatyAddress = address(new EconSanction(address(this)));
+        } else if (GameLib.strEq(_treatyName, "Collective Defense Fund")) {
+            treatyAddress = address(new CollectiveDefenseFund(address(this), 100, 100, 86400, 86400, 50, 50));
+        }
+        else {
             revert("CURIO: Unsupported treaty name");
         }
 

@@ -59,7 +59,7 @@ contract CollectiveDefenseFund is CurioTreaty {
         uint256 _goldWithDrawQuota,
         uint256 _foodWithDrawQuota
     ) CurioTreaty(_diamond) {
-        name = "Economic Sanction League";
+        name = "Collective Defense Fund";
         description = "Owner of the League can point to which nation the league is sanctioning";
 
         goldToken = getter.getTokenContract("Gold");
@@ -177,6 +177,33 @@ contract CollectiveDefenseFund is CurioTreaty {
             }
         }
     }
+    
+    // ----------------------------------------------------------
+    // Treaty Parameter Getters
+    // ----------------------------------------------------------
+    function getGoldFee() external view returns (uint256) {
+        return goldFee;
+    }
+
+    function getFoodFee() external view returns (uint256) {
+        return foodFee;
+    }
+
+    function getGoldWithDrawQuota() external view returns (uint256) {
+        return goldWithDrawQuota;
+    }
+
+    function getFoodWithDrawQuota() external view returns (uint256) {
+        return foodWithDrawQuota;
+    }
+
+    function getDepositInterval() external view returns (uint256) {
+        return depositTimeInterval;
+    }
+
+    function getWithDrawInterval() external view returns (uint256) {
+        return withdrawTimeInterval;
+    }
 
     // ----------------------------------------------------------
     // Standardized Functions Called by the Public
@@ -230,33 +257,6 @@ contract CollectiveDefenseFund is CurioTreaty {
         }
 
         super.treatyLeave();
-    }
-
-    // ----------------------------------------------------------
-    // Treaty Parameter Getters
-    // ----------------------------------------------------------
-    function getGoldFee() external view returns (uint256) {
-        return goldFee;
-    }
-
-    function getFoodFee() external view returns (uint256) {
-        return foodFee;
-    }
-
-    function getGoldWithDrawQuota() external view returns (uint256) {
-        return goldWithDrawQuota;
-    }
-
-    function getFoodWithDrawQuota() external view returns (uint256) {
-        return foodWithDrawQuota;
-    }
-
-    function getDepositInterval() external view returns (uint256) {
-        return depositTimeInterval;
-    }
-
-    function getWithDrawInterval() external view returns (uint256) {
-        return withdrawTimeInterval;
     }
 
     // ----------------------------------------------------------

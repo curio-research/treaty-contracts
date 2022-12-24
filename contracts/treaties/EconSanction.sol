@@ -22,7 +22,7 @@ contract EconSanction is CurioTreaty {
     }
 
     constructor(address _diamond) CurioTreaty(_diamond) {
-        name = "Economic Sanction League";
+        name = "Economic Sanction Pact";
         description = "Owner of the League can point to which nation the league is sanctioning";
 
         deployerAddress = msg.sender;

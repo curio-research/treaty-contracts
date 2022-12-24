@@ -18,6 +18,9 @@ import {Alliance} from "contracts/treaties/Alliance.sol";
 import {FTX} from "contracts/treaties/FTX.sol";
 import {NATO} from "contracts/treaties/NATO.sol";
 import {TestTreaty} from "contracts/treaties/TestTreaty.sol";
+import {NonAggressionPact} from "contracts/treaties/NonAggressionPact.sol";
+import {EconSanction} from "contracts/treaties/EconSanction.sol";
+import {CollectiveDefenseFund} from "contracts/treaties/CDFund.sol";
 import {CurioERC20} from "contracts/standards/CurioERC20.sol";
 import {console} from "forge-std/console.sol";
 import {stdJson} from "forge-std/StdJson.sol";
@@ -46,10 +49,18 @@ contract DiamondDeployTest is Test {
     FTX public ftxTemplate;
     NATO public natoTemplate;
     TestTreaty public testTreatyTemplate;
+    CollectiveDefenseFund public CDFundTemplate;
+    EconSanction public econSanctionTemplate;
+    NonAggressionPact public NAPactTemplate;
+
     uint256 public allianceTemplateID;
     uint256 public ftxTemplateID;
     uint256 public natoTemplateID;
     uint256 public testTreatyTemplateID;
+    uint256 public CDFundTemplateID;
+    uint256 public econSanctionTemplateID;
+    uint256 public NAPactTemplateID;
+
 
     // Players (nations)
     address public deployer = address(0);
@@ -184,6 +195,14 @@ contract DiamondDeployTest is Test {
         natoTemplateID = admin.registerTreatyTemplate(address(natoTemplate), "sample ABI");
         testTreatyTemplate = new TestTreaty(diamond);
         testTreatyTemplateID = admin.registerTreatyTemplate(address(testTreatyTemplate), "sample ABI");
+
+        CDFundTemplate = new CollectiveDefenseFund(diamond, 100, 100, 86400, 86400, 50, 50);
+        CDFundTemplateID = admin.registerTreatyTemplate(address(CDFundTemplate), "sample ABI");
+        econSanctionTemplate = new EconSanction(diamond);
+        econSanctionTemplateID = admin.registerTreatyTemplate(address(econSanctionTemplate), "sample ABI");
+        NAPactTemplate = new NonAggressionPact(diamond);
+        NAPactTemplateID = admin.registerTreatyTemplate(address(NAPactTemplate), "sample ABI");
+
         console.log(">>> Treaties initialized");
 
         vm.stopPrank();
