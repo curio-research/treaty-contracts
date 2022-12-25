@@ -37,7 +37,7 @@ export const generateWorldConstants = (adminAddr: string, mapInput: MapInput): a
     // manual configs
     maxArmyCountPerNation: 2,
     maxNationCount: 1000,
-    gameMode: GameMode.REGULAR,
+    gameMode: GameMode.BATTLE_ROYALE,
     gameLengthInSeconds: 2000000000,
     // maxTransferDistance: 100,
     // generated constants
@@ -92,4 +92,14 @@ export const createTemplates = async (diamond: Curio, tokenAddrs: string[], gasL
 
   // Register template names used for shortcuts
   await confirmTx(await diamond.registerTemplateShortcuts(templateNames, templateIDs, { gasLimit }), hre);
+};
+
+// treaty helpers
+// declare metadata to help users understand what each function is used for
+
+export const treatyDescriptions: Record<string, Record<string, string>> = {
+  Alliance: {
+    treatyJoin: 'Pay 1000 gold tokens to join the alliance and be granted protection.',
+    treatyBesiege: 'Battle a target army belonging to a non-ally nation with all nearby ally armies.',
+  },
 };
