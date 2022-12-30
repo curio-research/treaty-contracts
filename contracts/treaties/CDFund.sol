@@ -52,6 +52,7 @@ contract CollectiveDefenseFund is CurioTreaty {
 
     constructor(
         address _diamond,
+        address _deployer,
         uint256 _goldFee,
         uint256 _foodFee,
         uint256 _withdrawTimeInterval,
@@ -71,12 +72,12 @@ contract CollectiveDefenseFund is CurioTreaty {
         depositTimeInterval = _depositTimeInterval;
         withdrawTimeInterval = _withdrawTimeInterval;
 
-        deployerAddress = msg.sender;
+        deployerAddress = _deployer;
 
         // fixme: a redundant step that deployer has to join the treaty after deployment;
         // addSigner in treatyJoin can only be called by treaty
-        whitelist.push(msg.sender);
-        isWhiteListed[msg.sender] = true;
+        whitelist.push(_deployer);
+        isWhiteListed[_deployer] = true;
     }
 
     // ----------------------------------------------------------

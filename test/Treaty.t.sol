@@ -452,12 +452,11 @@ contract TreatyTest is Test, DiamondDeployTest {
 
         // Player1 deploys NAPact
         vm.startPrank(player1);
-        NonAggressionPact NAPact = NonAggressionPact(game.deployTreaty(nation2ID, NAPactTemplate.name()));
+        NonAggressionPact NAPact = NonAggressionPact(game.deployTreaty(nation1ID, NAPactTemplate.name()));
         vm.stopPrank();
 
         // Deployer registers NAPact treaty & gives troops to p2
         vm.startPrank(deployer);
-        admin.registerTreatyTemplate(address(NAPact), "placeholder ABI");
         admin.dripToken(nation2CapitalAddr, "Horseman", 1000);
         admin.dripToken(nation2CapitalAddr, "Warrior", 1000);
         admin.dripToken(nation2CapitalAddr, "Slinger", 1000);
@@ -465,9 +464,7 @@ contract TreatyTest is Test, DiamondDeployTest {
 
         // Player1 joins NAPact and whitelists player2
         vm.startPrank(player1);
-        console.log("AA");
         NAPact.treatyJoin();
-        console.log("BB");
         NAPact.addToWhiteList(address(player2));
         vm.stopPrank();
 
@@ -519,12 +516,11 @@ contract TreatyTest is Test, DiamondDeployTest {
 
         // Player1 deploys NAPact
         vm.startPrank(player1);
-        EconSanction econSanction = EconSanction(game.deployTreaty(nation2ID, econSanctionTemplate.name()));
+        EconSanction econSanction = EconSanction(game.deployTreaty(nation1ID, econSanctionTemplate.name()));
         vm.stopPrank();
 
         // Deployer registers NAPact treaty & gives troops to p2
         vm.startPrank(deployer);
-        admin.registerTreatyTemplate(address(econSanction), "placeholder ABI");
         admin.dripToken(nation2CapitalAddr, "Horseman", 1000);
         admin.dripToken(nation2CapitalAddr, "Warrior", 1000);
         admin.dripToken(nation2CapitalAddr, "Slinger", 1000);
@@ -595,12 +591,12 @@ contract TreatyTest is Test, DiamondDeployTest {
 
         // Player1 deploys NAPact
         vm.startPrank(player1);
-        CollectiveDefenseFund cdFund = CollectiveDefenseFund(game.deployTreaty(nation2ID, CDFundTemplate.name()));
+        CollectiveDefenseFund cdFund = CollectiveDefenseFund(game.deployTreaty(nation1ID, CDFundTemplate.name()));
         vm.stopPrank();
 
         // Deployer registers NAPact treaty & assigns tokens to p1 and p2
         vm.startPrank(deployer);
-        admin.registerTreatyTemplate(address(cdFund), "placeholder ABI");
+        // admin.registerTreatyTemplate(address(cdFund), "placeholder ABI");
         admin.dripToken(nation1CapitalAddr, "Gold", 1000);
         admin.dripToken(nation1CapitalAddr, "Food", 1000);
 

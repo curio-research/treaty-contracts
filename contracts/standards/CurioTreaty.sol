@@ -5,6 +5,8 @@ import {ITreaty} from "contracts/interfaces/ITreaty.sol";
 import {GameFacet} from "contracts/facets/GameFacet.sol";
 import {GetterFacet} from "contracts/facets/GetterFacet.sol";
 import {AdminFacet} from "contracts/facets/AdminFacet.sol";
+import {console} from "forge-std/console.sol";
+
 
 // import {CurioERC20} from "contracts/standards/CurioERC20.sol";
 // import {Position} from "contracts/libraries/Types.sol";

@@ -8,25 +8,25 @@ import {Position} from "contracts/libraries/Types.sol";
 import {console} from "forge-std/console.sol";
 
 contract NonAggressionPact is CurioTreaty {
-    address public deployerAddress;
+    address public deployer;
     address[] public whitelist;
     mapping(address => bool) public isWhiteListed;
 
     modifier onlyOwnerOrPact() {
-        require(msg.sender == deployerAddress || msg.sender == address(this), "NAPact: You do not have owner-level permission");
+        require(msg.sender == deployer || msg.sender == address(this), "NAPact: You do not have owner-level permission");
         _;
     }
 
-    constructor(address _diamond) CurioTreaty(_diamond) {
+    constructor(address _diamond, address _deployer) CurioTreaty(_diamond) {
         name = "Non-Aggression Pact";
         description = "Member nations cannot battle armies or tiles of one another";
 
-        deployerAddress = msg.sender;
+        deployer = _deployer;
 
         // fixme: a redundant step that deployer has to join the treaty after deployment;
         // addSigner in treatyJoin can only be called by treaty
-        whitelist.push(msg.sender);
-        isWhiteListed[msg.sender] = true;
+        whitelist.push(_deployer);
+        isWhiteListed[_deployer] = true;
     }
 
     // ----------------------------------------------------------

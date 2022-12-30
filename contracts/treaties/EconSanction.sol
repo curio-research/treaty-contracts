@@ -21,16 +21,16 @@ contract EconSanction is CurioTreaty {
         _;
     }
 
-    constructor(address _diamond) CurioTreaty(_diamond) {
+    constructor(address _diamond, address _deployer) CurioTreaty(_diamond) {
         name = "Economic Sanction Pact";
         description = "Owner of the League can point to which nation the league is sanctioning";
 
-        deployerAddress = msg.sender;
+        deployerAddress = _deployer;
 
         // fixme: a redundant step that deployer has to join the treaty after deployment;
         // addSigner in treatyJoin can only be called by treaty
-        whitelist.push(msg.sender);
-        isWhiteListed[msg.sender] = true;
+        whitelist.push(_deployer);
+        isWhiteListed[_deployer] = true;
     }
 
     // ----------------------------------------------------------

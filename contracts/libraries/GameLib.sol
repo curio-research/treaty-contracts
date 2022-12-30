@@ -453,11 +453,11 @@ library GameLib {
         } else if (GameLib.strEq(_treatyName, "Test Treaty")) {
             treatyAddress = address(new TestTreaty(address(this)));
         } else if (GameLib.strEq(_treatyName, "Non-Aggression Pact")) {
-            treatyAddress = address(new NonAggressionPact(address(this)));
+            treatyAddress = address(new NonAggressionPact(address(this), ECSLib.getAddress("Address", _nationID)));
         } else if (GameLib.strEq(_treatyName, "Economic Sanction Pact")) {
-            treatyAddress = address(new EconSanction(address(this)));
+            treatyAddress = address(new EconSanction(address(this), ECSLib.getAddress("Address", _nationID)));
         } else if (GameLib.strEq(_treatyName, "Collective Defense Fund")) {
-            treatyAddress = address(new CollectiveDefenseFund(address(this), 100, 100, 86400, 86400, 50, 50));
+            treatyAddress = address(new CollectiveDefenseFund(address(this), ECSLib.getAddress("Address", _nationID), 100, 100, 86400, 86400, 50, 50));
         }
         else {
             revert("CURIO: Unsupported treaty name");
@@ -479,6 +479,12 @@ library GameLib {
 
     function getEntityByAddress(address _entityAddress) internal view returns (uint256) {
         uint256[] memory res = AddressComponent(gs().components["Address"]).getEntitiesWithValue(_entityAddress);
+        if (res.length > 1) {
+            console.log("res length:", res.length);
+            console.log(res[0], res[1]);
+            console.log(ECSLib.getString("Tag", res[0]));
+            console.log(ECSLib.getString("Tag", res[1]));
+        }
         require(res.length <= 1, "CURIO: Found more than one entity");
         return res.length == 1 ? res[0] : 0;
     }

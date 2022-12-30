@@ -196,11 +196,11 @@ contract DiamondDeployTest is Test {
         testTreatyTemplate = new TestTreaty(diamond);
         testTreatyTemplateID = admin.registerTreatyTemplate(address(testTreatyTemplate), "sample ABI");
 
-        CDFundTemplate = new CollectiveDefenseFund(diamond, 100, 100, 86400, 86400, 50, 50);
+        CDFundTemplate = new CollectiveDefenseFund(diamond, diamond, 100, 100, 86400, 86400, 50, 50);
         CDFundTemplateID = admin.registerTreatyTemplate(address(CDFundTemplate), "sample ABI");
-        econSanctionTemplate = new EconSanction(diamond);
+        econSanctionTemplate = new EconSanction(diamond, diamond);
         econSanctionTemplateID = admin.registerTreatyTemplate(address(econSanctionTemplate), "sample ABI");
-        NAPactTemplate = new NonAggressionPact(diamond);
+        NAPactTemplate = new NonAggressionPact(diamond, diamond);
         NAPactTemplateID = admin.registerTreatyTemplate(address(NAPactTemplate), "sample ABI");
 
         console.log(">>> Treaties initialized");
