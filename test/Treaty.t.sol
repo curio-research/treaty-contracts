@@ -8,6 +8,7 @@ import {FTX} from "contracts/treaties/FTX.sol";
 import {NonAggressionPact} from "contracts/treaties/NonAggressionPact.sol";
 import {EconSanction} from "contracts/treaties/EconSanction.sol";
 import {CollectiveDefenseFund} from "contracts/treaties/CDFund.sol";
+import {SimpleOTC} from "contracts/treaties/SimpleOTC.sol";
 import {TestTreaty} from "contracts/treaties/TestTreaty.sol";
 import {CurioWallet} from "contracts/standards/CurioWallet.sol";
 import {Position} from "contracts/libraries/Types.sol";
@@ -660,5 +661,45 @@ contract TreatyTest is Test, DiamondDeployTest {
         vm.startPrank(player2);
         game.battle(army21ID, nation1CapitalTile);
         vm.stopPrank();
+    }
+
+    function testSimpleOTC() public {
+        /**
+        Outline
+        - p1 deploys contracts and puts on an order to sell 100 gold for 200 food
+        - p2 talks to p1 and decides to purchase from p1
+         */
+        uint256 time = block.timestamp + 500;
+        vm.warp(time);
+
+        // Player1 deploys NAPact
+        vm.startPrank(player1);
+        SimpleOTC otcContract = SimpleOTC(game.deployTreaty(nation1ID, otcContractTemplate.name()));
+        vm.stopPrank();
+
+        // Deployer registers NAPact treaty & assigns tokens to p1 and p2
+        vm.startPrank(deployer);
+        admin.dripToken(nation1CapitalAddr, "Gold", 1000);
+        admin.dripToken(nation1CapitalAddr, "Food", 1000);
+
+        admin.dripToken(nation2CapitalAddr, "Gold", 1000);
+        admin.dripToken(nation2CapitalAddr, "Food", 1000);
+        vm.stopPrank();
+
+        vm.startPrank(player1);
+        CurioWallet(nation1CapitalAddr).executeTx(address(goldToken), abi.encodeWithSignature("approve(address,uint256)", address(otcContract), 1000));
+        CurioWallet(nation1CapitalAddr).executeTx(address(foodToken), abi.encodeWithSignature("approve(address,uint256)", address(otcContract), 1000));
+
+        otcContract.createSellOrder("Gold", "Food", 2, 100);
+        assertEq(goldToken.balanceOf(address(otcContract)), 100);
+        assertEq(goldToken.balanceOf(nation1CapitalAddr), 900);
+        vm.stopPrank();
+
+        vm.startPrank(player2);
+        otcContract.buyOrder(player1);
+        assertEq(goldToken.balanceOf(address(otcContract)), 0);
+        assertEq(goldToken.balanceOf(nation2CapitalAddr), 1100);
+        assertEq(foodToken.balanceOf(nation1CapitalAddr), 1200);
+        assertEq(foodToken.balanceOf(nation2CapitalAddr), 800);
     }
 }

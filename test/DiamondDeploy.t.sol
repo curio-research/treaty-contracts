@@ -21,6 +21,7 @@ import {TestTreaty} from "contracts/treaties/TestTreaty.sol";
 import {NonAggressionPact} from "contracts/treaties/NonAggressionPact.sol";
 import {EconSanction} from "contracts/treaties/EconSanction.sol";
 import {CollectiveDefenseFund} from "contracts/treaties/CDFund.sol";
+import {SimpleOTC} from "contracts/treaties/SimpleOTC.sol";
 import {CurioERC20} from "contracts/standards/CurioERC20.sol";
 import {console} from "forge-std/console.sol";
 import {stdJson} from "forge-std/StdJson.sol";
@@ -52,6 +53,7 @@ contract DiamondDeployTest is Test {
     CollectiveDefenseFund public CDFundTemplate;
     EconSanction public econSanctionTemplate;
     NonAggressionPact public NAPactTemplate;
+    SimpleOTC public otcContractTemplate;
 
     uint256 public allianceTemplateID;
     uint256 public ftxTemplateID;
@@ -60,6 +62,7 @@ contract DiamondDeployTest is Test {
     uint256 public CDFundTemplateID;
     uint256 public econSanctionTemplateID;
     uint256 public NAPactTemplateID;
+    uint256 public otcContractTemplateID;
 
 
     // Players (nations)
@@ -202,6 +205,8 @@ contract DiamondDeployTest is Test {
         econSanctionTemplateID = admin.registerTreatyTemplate(address(econSanctionTemplate), "sample ABI");
         NAPactTemplate = new NonAggressionPact(diamond, diamond);
         NAPactTemplateID = admin.registerTreatyTemplate(address(NAPactTemplate), "sample ABI");
+        otcContractTemplate = new SimpleOTC(diamond);
+        otcContractTemplateID = admin.registerTreatyTemplate(address(otcContractTemplate), "sample ABI");
 
         console.log(">>> Treaties initialized");
 
