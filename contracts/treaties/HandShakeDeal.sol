@@ -32,8 +32,7 @@ contract HandShakeDeal is CurioTreaty {
 
     struct Deal{
         uint256 dealID;
-        address proposer;
-        address signer;
+        uint256 proposer;
         ApprovalFunctionType functionOfAgreement;
         bytes encodedParams;
         uint256 timeLock;
@@ -58,30 +57,53 @@ contract HandShakeDeal is CurioTreaty {
     function proposeDeal(
         ApprovalFunctionType _functionType,
         bytes _encodedParams,
-        address _signerAddr,
         uint256 _timeLock
         ) {
+        uint256 proposerID = getter.getEntityByAddress(msg.sender);
         dealIDToDeal[dealCounter] = Deal({
             dealID: dealCounter,
-            proposer: msg.sender,
-            signer: _signerAddr,
+            proposer: proposerID,
             functionOfAgreement: _functionType,
             encodedParams: _encodedParams,
             timeLock: _timeLock
         });
-        nationIDToDealIDs[getter.getEntityByAddress(msg.sender)].push(dealCounter);
+        nationIDToDealIDs[proposerID].push(dealCounter);
         dealCounter ++;
+    }
+
+    function signDeal(uint256 _dealID) public {
+        nationIDToDealIDs[getter.getEntityByAddress(msg.sender)].push(_dealID);
+    }
+
+    function getDealsByNationID(uint256 _nationID) public view returns (uint256[]) {
+        return nationIDToDealIDs[_nationID];
+    }
+
+    function readDealProposer(uint256 _dealID) public view returns (uint256) {
+        return dealIDToDeal[_dealID].proposer;
+    }
+
+    function readDealFunctionOfAgreement(uint256 _dealID) public view returns (ApprovalFunctionType) {
+        return dealIDToDeal[_dealID].functionOfAgreement;
+    }
+
+    function readDealEncodedParams(uint256 _dealID) public view returns (bytes) {
+        return dealIDToDeal[_dealID].encodedParams;
+    }
+
+    function readDealTimeLock(uint256 _dealID) public view returns (uint256) {
+        return dealIDToDeal[_dealID].timeLock;
     }
 
     // ----------------------------------------------------------
     // Permission Functions
     // ----------------------------------------------------------
 
-    function approveBattle(uint256 _nationID, bytes memory _encodedParams) public view override returns (isApproved) {
+    function approveBattle(uint256 _nationID, bytes memory _encodedParams) public view override returns (bool) {
         // Disapprove if target nation is part of collective fund
         (, uint256 armyID, uint256 battleTargetID) = abi.decode(_encodedParams, (uint256, uint256, uint256));
 
-        uint256[] memory signedDealIDs = nationToDealIDs[_nationID];
+        uint256[] memory signedDealIDs = nationIDToDealIDs[_nationID];
         for (uint256 i = 0; i < signedDealIDs.length; i++) {
             Deal deal = dealIDToDeal[signedDealIDs[i]];
             if (deal.functionOfAgreement == ApprovalFunctionType.approveBattle) {
@@ -95,8 +117,18 @@ contract HandShakeDeal is CurioTreaty {
         return super.approveBattle(_nationID, _encodedParams);
     }
 
-    
-
-    
-
+    function approveUpgradeCapital(uint256 _nationID, bytes memory _encodedParams) public view override returns (bool) {
+        (, uint256 capitalID) = abi.decode(_encodedParams, (uint256, uint256));
+        uint256[] memory signedDealIDs = nationIDToDealIDs[_nationID];
+        for (uint256 i = 0; i < signedDealIDs.length; i++) {
+            Deal deal = dealIDToDeal[signedDealIDs[i]];
+            if (deal.functionOfAgreement == ApprovalFunctionType.approveUpgradeCapital) {
+                uint256 agreedCapitalID = abi.decode(deal.encodedParams);
+                if (capitalID == agreedCapitalID) {
+                    return false;
+                }
+            }
+        }
+        return supoer.approveUpgradeCapital(_nationID, _encodedParams);
+    }
 }
