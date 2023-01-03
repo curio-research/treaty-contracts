@@ -10,7 +10,7 @@ import {console} from "forge-std/console.sol";
 contract NonAggressionPact is CurioTreaty {
     address public deployer;
     address[] public whitelist;
-    mapping(address => bool) public isWhiteListed;
+    mapping(address => bool) public isWhitelisted;
 
     modifier onlyOwnerOrPact() {
         require(msg.sender == deployer || msg.sender == address(this), "NAPact: You do not have owner-level permission");
@@ -26,21 +26,21 @@ contract NonAggressionPact is CurioTreaty {
         // fixme: a redundant step that deployer has to join the treaty after deployment;
         // addSigner in treatyJoin can only be called by treaty
         whitelist.push(_deployer);
-        isWhiteListed[_deployer] = true;
+        isWhitelisted[_deployer] = true;
     }
 
     // ----------------------------------------------------------
     // Articles of Treaty
     // ----------------------------------------------------------
 
-    function addToWhiteList(address _candidate) public onlyOwnerOrPact {
-        require(!isWhiteListed[_candidate], "NAPact: Candidate already whitelisted");
-        isWhiteListed[_candidate] = true;
+    function addToWhitelist(address _candidate) public onlyOwnerOrPact {
+        require(!isWhitelisted[_candidate], "NAPact: Candidate already whitelisted");
+        isWhitelisted[_candidate] = true;
         whitelist.push(_candidate);
     }
 
-    function removeFromWhiteList(address _candidate) public onlyOwnerOrPact {
-        isWhiteListed[_candidate] = false;
+    function removeFromWhitelist(address _candidate) public onlyOwnerOrPact {
+        isWhitelisted[_candidate] = false;
         uint256 candidateIndex;
         for (uint256 i = 0; i < whitelist.length; i++) {
             if (whitelist[i] == _candidate) {
@@ -53,7 +53,7 @@ contract NonAggressionPact is CurioTreaty {
 
     function removeMember(address _member) public onlyOwnerOrPact {
         // member needs to be whitelisted again before joining
-        removeFromWhiteList(_member);
+        removeFromWhitelist(_member);
 
         // remove membership; same as treaty leave
         uint256 nationID = getter.getEntityByAddress(_member);
@@ -66,7 +66,7 @@ contract NonAggressionPact is CurioTreaty {
 
     function treatyJoin() public override {
         // treaty owner needs to first whitelist the msg.sender
-        require(isWhiteListed[msg.sender], "Candidate is not whitelisted");
+        require(isWhitelisted[msg.sender], "Candidate is not whitelisted");
         super.treatyJoin();
     }
 
@@ -78,7 +78,7 @@ contract NonAggressionPact is CurioTreaty {
         require(block.timestamp - nationJoinTime >= 10, "NAPact: Nation must stay for at least 10 seconds");
 
         // msg.sender removed from whitelist
-        isWhiteListed[msg.sender] = false;
+        isWhitelisted[msg.sender] = false;
         uint256 candidateIndex;
         for (uint256 i = 0; i < whitelist.length; i++) {
             if (whitelist[i] == msg.sender) {

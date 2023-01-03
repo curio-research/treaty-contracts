@@ -55,7 +55,7 @@ contract Alliance is CurioTreaty {
         uint256 treatyID = getter.getEntityByAddress(address(this));
         require(getter.getNationTreatySignature(targetNationID, treatyID) == 0, "Alliance: Cannot besiege army of ally nation");
 
-        // Get tiles beloning to the 9-tile region around the target army
+        // Get tiles belonging to the 9-tile region around the target army
         // Note: Need to be updated if attackRange is increased to above tileWidth
         Position[] memory nearbyTilePositions = getter.getTileRegionTilePositions(getter.getPositionExternal("StartPosition", _targetArmyID));
 

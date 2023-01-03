@@ -31,19 +31,11 @@ contract SimpleOTC is CurioTreaty {
         string buyTokenName;
         uint256 sellTokenPrice;
         uint256 sellTokenAmount;
-        uint256 startTimeStamp;
+        uint256 startTimestamp;
     }
 
     function getTokenContract(string memory _tokenName) internal returns (CurioERC20) {
-        require (
-                (GameLib.strEq(_tokenName, "Gold") ||
-                GameLib.strEq(_tokenName, "Food") ||
-                GameLib.strEq(_tokenName, "Horseman") ||
-                GameLib.strEq(_tokenName, "Warrior") ||
-                GameLib.strEq(_tokenName, "Slinger") ||
-                GameLib.strEq(_tokenName, "Guard")),
-                "OrderBook: Token Doesn't exist in the game"
-            );
+        require((GameLib.strEq(_tokenName, "Gold") || GameLib.strEq(_tokenName, "Food") || GameLib.strEq(_tokenName, "Horseman") || GameLib.strEq(_tokenName, "Warrior") || GameLib.strEq(_tokenName, "Slinger") || GameLib.strEq(_tokenName, "Guard")), "OrderBook: Token Doesn't exist in the game");
         CurioERC20 token = getter.getTokenContract(_tokenName);
         return token;
     }
@@ -52,30 +44,25 @@ contract SimpleOTC is CurioTreaty {
         string memory _sellTokenName,
         string memory _buyTokenName,
         uint256 _sellTokenPrice,
-        uint256 _sellTokenAmount) public {
-            require(!addrHasSellOrder[msg.sender], "OTC: You have an existing order");
-            CurioERC20 sellToken = getTokenContract(_sellTokenName);
-            address sellerCapitalAddress = getter.getAddress(getter.getCapital(getter.getEntityByAddress(msg.sender)));
-            sellToken.transferFrom(sellerCapitalAddress, address(this), _sellTokenAmount);
+        uint256 _sellTokenAmount
+    ) public {
+        require(!addrHasSellOrder[msg.sender], "OTC: You have an existing order");
+        CurioERC20 sellToken = getTokenContract(_sellTokenName);
+        address sellerCapitalAddress = getter.getAddress(getter.getCapital(getter.getEntityByAddress(msg.sender)));
+        sellToken.transferFrom(sellerCapitalAddress, address(this), _sellTokenAmount);
 
-            addrHasSellOrder[msg.sender] = true;
-            addrToSellOrder[msg.sender] = SellOrder({
-                sellTokenName: _sellTokenName,
-                buyTokenName: _buyTokenName,
-                sellTokenPrice: _sellTokenPrice,
-                sellTokenAmount: _sellTokenAmount,
-                startTimeStamp: block.timestamp
-                });
+        addrHasSellOrder[msg.sender] = true;
+        addrToSellOrder[msg.sender] = SellOrder({sellTokenName: _sellTokenName, buyTokenName: _buyTokenName, sellTokenPrice: _sellTokenPrice, sellTokenAmount: _sellTokenAmount, startTimestamp: block.timestamp});
     }
 
     function cancelSellOrder() public {
         require(addrHasSellOrder[msg.sender], "OTC: You don't have an existing order");
-        require(block.timestamp - addrToSellOrder[msg.sender].startTimeStamp > 120, "OTC: Order was created within the last 2 minutes");
+        require(block.timestamp - addrToSellOrder[msg.sender].startTimestamp > 120, "OTC: Order was created within the last 2 minutes");
 
         SellOrder memory targetOrder = addrToSellOrder[msg.sender];
         CurioERC20 sellToken = getTokenContract(targetOrder.sellTokenName);
         address sellerCapitalAddress = getter.getAddress(getter.getCapital(getter.getEntityByAddress(msg.sender)));
-        
+
         sellToken.transfer(sellerCapitalAddress, targetOrder.sellTokenAmount);
 
         addrHasSellOrder[msg.sender] = false;
@@ -94,5 +81,4 @@ contract SimpleOTC is CurioTreaty {
 
         addrHasSellOrder[_seller] = false;
     }
-
 }

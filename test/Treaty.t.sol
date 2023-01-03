@@ -466,7 +466,7 @@ contract TreatyTest is Test, DiamondDeployTest {
         // Player1 joins NAPact and whitelists player2
         vm.startPrank(player1);
         NAPact.treatyJoin();
-        NAPact.addToWhiteList(address(player2));
+        NAPact.addToWhitelist(address(player2));
         vm.stopPrank();
 
         // Player2 joins NAPact
@@ -530,7 +530,7 @@ contract TreatyTest is Test, DiamondDeployTest {
         // Player1 joins econSanction and whitelists player2. Then he sanctions himself
         vm.startPrank(player1);
         econSanction.treatyJoin();
-        econSanction.addToWhiteList(address(player2));
+        econSanction.addToWhitelist(address(player2));
         econSanction.addToSanctionList(address(player1));
         vm.stopPrank();
 
@@ -614,7 +614,7 @@ contract TreatyTest is Test, DiamondDeployTest {
         CurioWallet(nation1CapitalAddr).executeTx(address(goldToken), abi.encodeWithSignature("approve(address,uint256)", address(cdFund), 1000));
         CurioWallet(nation1CapitalAddr).executeTx(address(foodToken), abi.encodeWithSignature("approve(address,uint256)", address(cdFund), 1000));
         cdFund.treatyJoin();
-        cdFund.addToWhiteList(address(player2));
+        cdFund.addToWhitelist(address(player2));
         vm.stopPrank();
 
         // Player2 joins CDFund and attempts to attack Player1

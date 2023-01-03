@@ -18,7 +18,7 @@ import {NonAggressionPact} from "contracts/treaties/NonAggressionPact.sol";
 import {EconSanction} from "contracts/treaties/EconSanction.sol";
 import {CollectiveDefenseFund} from "contracts/treaties/CDFund.sol";
 import {SimpleOTC} from "contracts/treaties/SimpleOTC.sol";
-import {HandShakeDeal} from "contracts/treaties/HandShakeDeal.sol";
+import {HandshakeDeal} from "contracts/treaties/HandshakeDeal.sol";
 
 import {console} from "forge-std/console.sol";
 
@@ -462,9 +462,9 @@ library GameLib {
         } else if (GameLib.strEq(_treatyName, "Collective Defense Fund")) {
             treatyAddress = address(new CollectiveDefenseFund(address(this), ECSLib.getAddress("Address", _nationID), 100, 100, 86400, 86400, 50, 50));
         } else if (GameLib.strEq(_treatyName, "Simple OTC Trading Agreement")) {
-            treatyAddress = address(new SimpleOTC(address(this))); 
+            treatyAddress = address(new SimpleOTC(address(this)));
         } else if (GameLib.strEq(_treatyName, "Simple Handshake Deal")) {
-            treatyAddress = address(new HandShakeDeal(address(this)));
+            treatyAddress = address(new HandshakeDeal(address(this)));
         } else {
             revert("CURIO: Unsupported treaty name");
         }

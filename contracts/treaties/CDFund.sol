@@ -13,9 +13,9 @@ contract CollectiveDefenseFund is CurioTreaty {
     - function deposit
         - all members upon joining pay a certain amount of gold & food
         - regular members should pay a certain amount of fee everyday
-            - recorded by memberLastPaymentTimeStamp
+            - recorded by lastPaid
     - function cleanUpMembers
-        - loop through memberLastPaymentTimeStamp and kick out corresponding member
+        - loop through lastPaid and kick out corresponding member
     - disable arbitrary kicking out ppl
     
     **/
@@ -28,14 +28,14 @@ contract CollectiveDefenseFund is CurioTreaty {
     uint256 public depositTimeInterval;
 
     // note: can change to allowance
-    uint256 public goldWithDrawQuota;
-    uint256 public foodWithDrawQuota;
+    uint256 public goldWithdrawQuota;
+    uint256 public foodWithdrawQuota;
 
-    mapping(address => uint256) memberLastPaymentTimeStamp;
-    mapping(address => uint256) lastWithdrawTimeStamp;
+    mapping(address => uint256) lastPaid;
+    mapping(address => uint256) lastWithdrawn;
 
     address[] public whitelist;
-    mapping(address => bool) public isWhiteListed;
+    mapping(address => bool) public isWhitelisted;
 
     address[] public council;
     mapping(address => bool) public isCouncilMember;
@@ -57,8 +57,8 @@ contract CollectiveDefenseFund is CurioTreaty {
         uint256 _foodFee,
         uint256 _withdrawTimeInterval,
         uint256 _depositTimeInterval,
-        uint256 _goldWithDrawQuota,
-        uint256 _foodWithDrawQuota
+        uint256 _goldWithdrawQuota,
+        uint256 _foodWithdrawQuota
     ) CurioTreaty(_diamond) {
         name = "Collective Defense Fund";
         description = "Owner of the League can point to which nation the league is sanctioning";
@@ -67,8 +67,8 @@ contract CollectiveDefenseFund is CurioTreaty {
         foodToken = getter.getTokenContract("Food");
         goldFee = _goldFee;
         foodFee = _foodFee;
-        goldWithDrawQuota = _goldWithDrawQuota;
-        foodWithDrawQuota = _foodWithDrawQuota;
+        goldWithdrawQuota = _goldWithdrawQuota;
+        foodWithdrawQuota = _foodWithdrawQuota;
         depositTimeInterval = _depositTimeInterval;
         withdrawTimeInterval = _withdrawTimeInterval;
 
@@ -77,21 +77,21 @@ contract CollectiveDefenseFund is CurioTreaty {
         // fixme: a redundant step that deployer has to join the treaty after deployment;
         // addSigner in treatyJoin can only be called by treaty
         whitelist.push(_deployer);
-        isWhiteListed[_deployer] = true;
+        isWhitelisted[_deployer] = true;
     }
 
     // ----------------------------------------------------------
     // Articles of Treaty
     // ----------------------------------------------------------
 
-    function addToWhiteList(address _candidate) public onlyOwnerCouncilOrPact {
-        require(!isWhiteListed[_candidate], "NAPact: Candidate already whitelisted");
-        isWhiteListed[_candidate] = true;
+    function addToWhitelist(address _candidate) public onlyOwnerCouncilOrPact {
+        require(!isWhitelisted[_candidate], "NAPact: Candidate already whitelisted");
+        isWhitelisted[_candidate] = true;
         whitelist.push(_candidate);
     }
 
-    function removeFromWhiteList(address _candidate) public onlyOwnerCouncilOrPact {
-        isWhiteListed[_candidate] = false;
+    function removeFromWhitelist(address _candidate) public onlyOwnerCouncilOrPact {
+        isWhitelisted[_candidate] = false;
         uint256 candidateIndex;
         for (uint256 i = 0; i < whitelist.length; i++) {
             if (whitelist[i] == _candidate) {
@@ -122,7 +122,7 @@ contract CollectiveDefenseFund is CurioTreaty {
 
     function removeMember(address _member) public onlyOwnerCouncilOrPact {
         // member needs to be whitelisted again before joining
-        removeFromWhiteList(_member);
+        removeFromWhitelist(_member);
         // remove membership; same as treaty leave
         uint256 nationID = getter.getEntityByAddress(_member);
         admin.removeSigner(nationID);
@@ -144,27 +144,27 @@ contract CollectiveDefenseFund is CurioTreaty {
         require(goldToken.balanceOf(senderCapitalAddress) >= goldFee, "CDFund: You don't have enough gold balance");
         require(foodToken.balanceOf(senderCapitalAddress) >= foodFee, "CDFund: You don't have enough food balance");
 
-        require(block.timestamp - memberLastPaymentTimeStamp[senderCapitalAddress] > depositTimeInterval / 2, "CDFund: Your last payment was too soon");
+        require(block.timestamp - lastPaid[senderCapitalAddress] > depositTimeInterval / 2, "CDFund: Your last payment was too soon");
 
         goldToken.transferFrom(senderCapitalAddress, address(this), goldFee);
         foodToken.transferFrom(senderCapitalAddress, address(this), foodFee);
 
-        memberLastPaymentTimeStamp[msg.sender] = block.timestamp;
+        lastPaid[msg.sender] = block.timestamp;
     }
 
     function withdraw(uint256 _goldAmount, uint256 _foodAmount) external onlyOwnerCouncilOrPact {
-        require(_goldAmount <= goldWithDrawQuota, "CDFund: Amount exceeds quota");
-        require(_foodAmount <= foodWithDrawQuota, "CDFund: Amount exceeds quota");
+        require(_goldAmount <= goldWithdrawQuota, "CDFund: Amount exceeds quota");
+        require(_foodAmount <= foodWithdrawQuota, "CDFund: Amount exceeds quota");
         require(goldToken.balanceOf(address(this)) >= _goldAmount, "CDFund: Not enough balance");
         require(foodToken.balanceOf(address(this)) >= _foodAmount, "CDFund: Not enough balance");
 
         address recipientAddress = getter.getAddress(getter.getCapital(getter.getEntityByAddress(msg.sender)));
-        require(block.timestamp - lastWithdrawTimeStamp[recipientAddress] > withdrawTimeInterval, "CDF: Your last withdrawal was too soon");
+        require(block.timestamp - lastWithdrawn[recipientAddress] > withdrawTimeInterval, "CDF: Your last withdrawal was too soon");
 
         goldToken.transfer(recipientAddress, _goldAmount);
         foodToken.transfer(recipientAddress, _foodAmount);
 
-        lastWithdrawTimeStamp[msg.sender] = block.timestamp;
+        lastWithdrawn[msg.sender] = block.timestamp;
     }
 
     function cleanUpMembers() external onlyOwnerCouncilOrPact {
@@ -173,12 +173,12 @@ contract CollectiveDefenseFund is CurioTreaty {
 
         for (uint256 i = 0; i < signers.length; i++) {
             address signerAddress = getter.getAddress(signers[i]);
-            if (block.timestamp - memberLastPaymentTimeStamp[signerAddress] > depositTimeInterval) {
+            if (block.timestamp - lastPaid[signerAddress] > depositTimeInterval) {
                 removeMember(signerAddress);
             }
         }
     }
-    
+
     // ----------------------------------------------------------
     // Treaty Parameter Getters
     // ----------------------------------------------------------
@@ -190,19 +190,19 @@ contract CollectiveDefenseFund is CurioTreaty {
         return foodFee;
     }
 
-    function getGoldWithDrawQuota() external view returns (uint256) {
-        return goldWithDrawQuota;
+    function getGoldWithdrawQuota() external view returns (uint256) {
+        return goldWithdrawQuota;
     }
 
-    function getFoodWithDrawQuota() external view returns (uint256) {
-        return foodWithDrawQuota;
+    function getFoodWithdrawQuota() external view returns (uint256) {
+        return foodWithdrawQuota;
     }
 
     function getDepositInterval() external view returns (uint256) {
         return depositTimeInterval;
     }
 
-    function getWithDrawInterval() external view returns (uint256) {
+    function getWithdrawInterval() external view returns (uint256) {
         return withdrawTimeInterval;
     }
 
@@ -212,7 +212,7 @@ contract CollectiveDefenseFund is CurioTreaty {
 
     function treatyJoin() public override {
         // treaty owner needs to first whitelist the msg.sender
-        require(isWhiteListed[msg.sender], "Candidate is not whitelisted");
+        require(isWhitelisted[msg.sender], "Candidate is not whitelisted");
 
         // Candidate pays membership fees; same logic as payMembershipFee
         address senderCapitalAddress = getter.getAddress(getter.getCapital(getter.getEntityByAddress(msg.sender)));
@@ -222,7 +222,7 @@ contract CollectiveDefenseFund is CurioTreaty {
         goldToken.transferFrom(senderCapitalAddress, address(this), goldFee);
         foodToken.transferFrom(senderCapitalAddress, address(this), foodFee);
 
-        memberLastPaymentTimeStamp[msg.sender] = block.timestamp;
+        lastPaid[msg.sender] = block.timestamp;
 
         super.treatyJoin();
     }
@@ -235,7 +235,7 @@ contract CollectiveDefenseFund is CurioTreaty {
         require(block.timestamp - nationJoinTime >= 10, "NAPact: Nation must stay for at least 10 seconds");
 
         // msg.sender removed from whitelist
-        isWhiteListed[msg.sender] = false;
+        isWhitelisted[msg.sender] = false;
         uint256 candidateIndex1;
         for (uint256 i = 0; i < whitelist.length; i++) {
             if (whitelist[i] == msg.sender) {
