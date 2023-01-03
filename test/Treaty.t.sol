@@ -9,6 +9,7 @@ import {NonAggressionPact} from "contracts/treaties/NonAggressionPact.sol";
 import {EconSanction} from "contracts/treaties/EconSanction.sol";
 import {CollectiveDefenseFund} from "contracts/treaties/CDFund.sol";
 import {SimpleOTC} from "contracts/treaties/SimpleOTC.sol";
+import {HandShakeDeal} from "contracts/treaties/HandShakeDeal.sol";
 import {TestTreaty} from "contracts/treaties/TestTreaty.sol";
 import {CurioWallet} from "contracts/standards/CurioWallet.sol";
 import {Position} from "contracts/libraries/Types.sol";
@@ -701,5 +702,34 @@ contract TreatyTest is Test, DiamondDeployTest {
         assertEq(goldToken.balanceOf(nation2CapitalAddr), 1100);
         assertEq(foodToken.balanceOf(nation1CapitalAddr), 1200);
         assertEq(foodToken.balanceOf(nation2CapitalAddr), 800);
+    }
+
+    function testHandShakeDeal() public {
+        /**
+        Outline:
+        - p1 proposed a deal to prevent upgrading p2's capital
+        - p2 signed the deal
+        - p2 attempts to upgrade its capital but fails
+         */
+
+        uint256 time = block.timestamp + 500;
+        vm.warp(time);
+
+        // Player1 deploys Handshake deal and propose
+        vm.startPrank(player1);
+        HandShakeDeal hsDeal = HandShakeDeal(game.deployTreaty(nation1ID, handShakeDealTemplate.name()));
+        hsDeal.proposeDeal(_functionType, _encodedParams, _timeLock);
+        vm.stopPrank();
+
+        // assigns tokens to p1 and p2
+        vm.startPrank(deployer);
+        admin.dripToken(nation1CapitalAddr, "Gold", 100000);
+        admin.dripToken(nation1CapitalAddr, "Food", 100000);
+
+        admin.dripToken(nation2CapitalAddr, "Gold", 100000);
+        admin.dripToken(nation2CapitalAddr, "Food", 100000);
+        vm.stopPrank();
+
+
     }
 }
