@@ -22,6 +22,11 @@ contract TreatyTest is Test, DiamondDeployTest {
     // - [x] Token approval
     // - [x] Case: FTX
     // - [x] Case: Alliance
+    // - [x] Case: NAP
+    // - [x] Case: EconSanction
+    // - [x] Case: CDFund
+    // - [x] Case: SimpleOTC
+    // - [x] Case: HandshakeDeal
 
     function testDelegation() public {
         // Start time
