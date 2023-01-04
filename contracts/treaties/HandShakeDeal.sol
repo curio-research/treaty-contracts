@@ -16,6 +16,7 @@ contract HandshakeDeal is CurioTreaty {
         approveUpgradeTile,
         approveRecoverTile,
         approveDisownTile,
+        specialTroopTypeBan,
         approveEndTroopProduction,
         approveMove,
         approveStartGather,
@@ -37,6 +38,7 @@ contract HandshakeDeal is CurioTreaty {
     
     uint256 public dealCounter;
     mapping(uint256 => uint256[]) public nationIDToDealIDs;
+    mapping(uint256 => uint256[]) public nationIDToTroopTypeBanIDs;
     mapping(uint256 => Deal) public dealIDToDeal;
 
     constructor(
@@ -55,9 +57,13 @@ contract HandshakeDeal is CurioTreaty {
         return nationIDToDealIDs[_nationID];
     }
 
+    function getNationTroopTypeBanDeals(uint256 _nationID) public view returns (uint256[] memory) {
+        return nationIDToTroopTypeBanIDs[_nationID];
+    }
+
     function getDealInfo(uint256 dealID) public view returns (Deal memory) {
         return dealIDToDeal[dealID];
-    } 
+    }
 
     function proposeDeal(
         ApprovalFunctionType _functionType,
@@ -73,6 +79,23 @@ contract HandshakeDeal is CurioTreaty {
             timeLock: _timeLock
         });
         nationIDToDealIDs[proposerID].push(dealCounter);
+        dealCounter ++;
+    }
+
+    // note: ban trooptype for only the signer in startTroopProduction function
+    function proposeTroopTypeBanDeal(
+        uint256 _troopTypeID,
+        uint256 _timeLock
+        ) public onlySigner {
+        uint256 proposerID = getter.getEntityByAddress(msg.sender);
+        dealIDToDeal[dealCounter] = Deal({
+            dealID: dealCounter,
+            proposer: proposerID,
+            functionOfAgreement: ApprovalFunctionType.specialTroopTypeBan,
+            encodedParams: abi.encode(_troopTypeID),
+            timeLock: _timeLock
+        });
+        nationIDToTroopTypeBanIDs[proposerID].push(dealCounter);
         dealCounter ++;
     }
 
@@ -348,5 +371,22 @@ contract HandshakeDeal is CurioTreaty {
             }
         }
         return super.approveUpgradeResource(_nationID, _encodedParams);
+    }
+
+    function approveStartTroopProduction(_nationID, _encodedParams) public view override returns (bool) {
+        (, , uint256 troopID) = abi.decode(_encodedParams, (uint256, uint256, uint256));
+        uint256[] memory signedDealIDs = nationIDToDealIDs[_nationID];
+        for (uint256 i = 0; i < signedDealIDs.length; i++) {
+            Deal memory deal = dealIDToDeal[signedDealIDs[i]];
+            if (deal.functionOfAgreement == ApprovalFunctionType.specialTroopTypeBan) {
+                uint256 agreedTroopID = abi.decode(deal.encodedParams, uint256);
+                if (agreedTroopID == troopID) {
+                    if (block.timestamp < deal.timeLock) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return super.approveStartTroopProduction(_nationID, _encodedParams);
     }
 }
