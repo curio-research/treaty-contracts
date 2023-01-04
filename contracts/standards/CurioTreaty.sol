@@ -8,14 +8,14 @@ import {AdminFacet} from "contracts/facets/AdminFacet.sol";
 import {console} from "forge-std/console.sol";
 
 
+// import {CurioERC20} from "contracts/standards/CurioERC20.sol";
+// import {Position} from "contracts/libraries/Types.sol";
+
 abstract contract CurioTreaty is ITreaty {
-    // Facets
     address public diamond;
     GameFacet public game;
     GetterFacet public getter;
     AdminFacet public admin;
-
-    // Treaty data
     string public name;
     string public description;
 
@@ -30,13 +30,6 @@ abstract contract CurioTreaty is ITreaty {
 
     modifier onlyGame() {
         require(msg.sender == diamond, "CurioTreaty: Only game can call");
-        _;
-    }
-
-    modifier onlyOwner() {
-        uint256 treatyID = getter.getEntityByAddress(address(this));
-        uint256 ownerID = abi.decode(getter.getComponent("Owner").getBytesValue(treatyID), (uint256));
-        require(ownerID == getter.getEntityByAddress(msg.sender), "CurioTreaty: Only owner can call");
         _;
     }
 

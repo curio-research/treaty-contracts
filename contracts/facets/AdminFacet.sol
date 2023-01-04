@@ -76,26 +76,6 @@ contract AdminFacet is UseStorage {
         ECSLib.removeEntity(signatureID);
     }
 
-    function addToWhitelist(uint256 _nationID) external onlyTreaty {
-        GameLib.ongoingGameCheck();
-        GameLib.validEntityCheck(_nationID);
-
-        uint256 treatyID = GameLib.getEntityByAddress(msg.sender);
-        uint256 whitelisted = GameLib.getWhitelisted(_nationID, treatyID);
-        require(whitelisted == 0, "CURIO: Nation is already whitelisted");
-        Templates.addWhitelisted(treatyID, _nationID);
-    }
-
-    function removeFromWhitelist(uint256 _nationID) external onlyTreaty {
-        GameLib.ongoingGameCheck();
-        GameLib.validEntityCheck(_nationID);
-
-        uint256 treatyID = GameLib.getEntityByAddress(msg.sender);
-        uint256 whitelisted = GameLib.getWhitelisted(_nationID, treatyID);
-        require(whitelisted != NULL, "CURIO: Nation is not whitelisted");
-        ECSLib.removeEntity(whitelisted);
-    }
-
     /// @notice Set _subjectID to 0 to delegate to all subjects
     function adminDelegateGameFunction(
         uint256 _nationID,

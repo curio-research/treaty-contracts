@@ -77,18 +77,6 @@ contract GetterFacet is UseStorage {
         return ECSLib.getString("ABIHash", _treatyID);
     }
 
-    function getTreatySigners(uint256 _treatyID) external view returns (uint256[] memory) {
-        return GameLib.getTreatySigners(_treatyID);
-    }
-
-    function getNationTreatySignature(uint256 _nationID, uint256 _treatyID) external view returns (uint256) {
-        return GameLib.getNationTreatySignature(_nationID, _treatyID);
-    }
-
-    function isWhitelisted(uint256 _nationID, uint256 _treatyID) external view returns (bool) {
-        return GameLib.getWhitelisted(_nationID, _treatyID) != NULL;
-    }
-
     // ----------------------------------------------------------
     // LOGIC GETTERS
     // ----------------------------------------------------------
@@ -104,6 +92,20 @@ contract GetterFacet is UseStorage {
     function getNationArmies(uint256 _nationID) external view returns (uint256[] memory) {
         return GameLib.getArmiesFromNation(_nationID);
     }
+
+    function getTreatySigners(uint256 _treatyID) external view returns (uint256[] memory) {
+        return GameLib.getTreatySigners(_treatyID);
+    }
+
+    function getNationTreatySignature(uint256 _nationID, uint256 _treatyID) external view returns (uint256) {
+        return GameLib.getNationTreatySignature(_nationID, _treatyID);
+    }
+
+    function treatyApprovalCheck(string memory _functionName,
+        uint256 _nationID,
+        bytes memory _encodedParams) external {
+            return GameLib.treatyApprovalCheck(_functionName, _nationID, _encodedParams);
+        }
 
     function getInventoryBalance(address _keeperAddress, string memory _resourceType) external view returns (uint256) {
         uint256 entityID = GameLib.getEntityByAddress(_keeperAddress);

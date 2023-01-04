@@ -259,16 +259,6 @@ library Templates {
         return treatyTemplateID;
     }
 
-    function addWhitelisted(uint256 _treatyID, uint256 _nationID) public returns (uint256) {
-        uint256 whitelistedID = ECSLib.addEntity();
-
-        ECSLib.setString("Tag", whitelistedID, "Whitelisted");
-        ECSLib.setUint("Treaty", whitelistedID, _treatyID);
-        ECSLib.setUint("Nation", whitelistedID, _nationID);
-
-        return whitelistedID;
-    }
-
     function addDelegation(
         string memory _functionName,
         uint256 _ownerID, // original delegator
