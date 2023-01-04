@@ -16,7 +16,6 @@ contract HandshakeDeal is CurioTreaty {
         approveUpgradeTile,
         approveRecoverTile,
         approveDisownTile,
-        approveStartTroopProduction,
         approveEndTroopProduction,
         approveMove,
         approveStartGather,
@@ -195,23 +194,6 @@ contract HandshakeDeal is CurioTreaty {
             }
         }
         return super.approveDisownTile(_nationID, _encodedParams);
-    }
-
-    function approveStartTroopProduction(_nationID, _encodedParams) public view override returns (bool) {
-        (, uint256 capitalID, uint256 templateID, uint256 amount) = abi.decode(_encodedParams, (uint256, uint256, uint256, uint256));
-        uint256[] memory signedDealIDs = nationIDToDealIDs[_nationID];
-        for (uint256 i = 0; i < signedDealIDs.length; i++) {
-            Deal memory deal = dealIDToDeal[signedDealIDs[i]];
-            if (deal.functionOfAgreement == ApprovalFunctionType.approveStartTroopProduction) {
-                (uint256 agreedCapitalID, uint256 agreedTemplateID, uint256 agreedAmount) = abi.decode(deal.encodedParams, (uint256, uint256, uint256));
-                if (capitalID == agreedCapitalID && templateID == agreedTemplateID && amount == agreedAmount) {
-                    if (block.timestamp < deal.timeLock) {
-                        return false;
-                    }
-                }
-            }
-        }
-        return super.approveStartTroopProduction(_nationID, _encodedParams);
     }
 
     function approveEndTroopProduction(_nationID, _encodedParams) public view override returns (bool) {
