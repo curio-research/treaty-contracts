@@ -5,6 +5,7 @@ import {CurioTreaty} from "contracts/standards/CurioTreaty.sol";
 import {GetterFacet} from "contracts/facets/GetterFacet.sol";
 import {CurioERC20} from "contracts/standards/CurioERC20.sol";
 import {Position} from "contracts/libraries/Types.sol";
+import {GameLib} from "contracts/libraries/GameLib.sol";
 import {console} from "forge-std/console.sol";
 
 contract HandshakeDeal is CurioTreaty {
@@ -168,7 +169,7 @@ contract HandshakeDeal is CurioTreaty {
         return super.approveClaimTile(_nationID, _encodedParams);
     }
 
-    function approveUpgradeTile(_nationID, _encodedParams) public view override returns (bool) {
+    function approveUpgradeTile(uint256 _nationID, bytes memory _encodedParams) public view override returns (bool) {
         (, uint256 tileID) = abi.decode(_encodedParams, (uint256, uint256));
         uint256[] memory signedDealIDs = nationIDToDealIDs[_nationID];
         for (uint256 i = 0; i < signedDealIDs.length; i++) {
@@ -185,7 +186,7 @@ contract HandshakeDeal is CurioTreaty {
         return super.approveUpgradeTile(_nationID, _encodedParams);
     }
 
-    function approveRecoverTile(_nationID, _encodedParams) public view override returns (bool) {
+    function approveRecoverTile(uint256 _nationID, bytes memory _encodedParams) public view override returns (bool) {
         (, uint256 tileID) = abi.decode(_encodedParams, (uint256, uint256));
         uint256[] memory signedDealIDs = nationIDToDealIDs[_nationID];
         for (uint256 i = 0; i < signedDealIDs.length; i++) {
@@ -202,7 +203,7 @@ contract HandshakeDeal is CurioTreaty {
         return super.approveRecoverTile(_nationID, _encodedParams);
     }
 
-    function approveDisownTile(_nationID, _encodedParams) public view override returns (bool) {
+    function approveDisownTile(uint256 _nationID, bytes memory _encodedParams) public view override returns (bool) {
         (, uint256 tileID) = abi.decode(_encodedParams, (uint256, uint256));
         uint256[] memory signedDealIDs = nationIDToDealIDs[_nationID];
         for (uint256 i = 0; i < signedDealIDs.length; i++) {
@@ -219,13 +220,13 @@ contract HandshakeDeal is CurioTreaty {
         return super.approveDisownTile(_nationID, _encodedParams);
     }
 
-    function approveEndTroopProduction(_nationID, _encodedParams) public view override returns (bool) {
+    function approveEndTroopProduction(uint256 _nationID, bytes memory _encodedParams) public view override returns (bool) {
         (, uint256 capitalID) = abi.decode(_encodedParams, (uint256, uint256));
         uint256[] memory signedDealIDs = nationIDToDealIDs[_nationID];
         for (uint256 i = 0; i < signedDealIDs.length; i++) {
             Deal memory deal = dealIDToDeal[signedDealIDs[i]];
             if (deal.functionOfAgreement == ApprovalFunctionType.approveEndTroopProduction) {
-                (uint256 agreedCapitalID) = abi.decode(deal.encodedParams, uint256);
+                (uint256 agreedCapitalID) = abi.decode(deal.encodedParams, (uint256));
                 if (capitalID == agreedCapitalID) {
                     if (block.timestamp < deal.timeLock) {
                         return false;
@@ -236,8 +237,8 @@ contract HandshakeDeal is CurioTreaty {
         return super.approveEndTroopProduction(_nationID, _encodedParams);
     }
 
-    function approveMove(_nationID, _encodedParams) public view override returns (bool) {
-        (, uint256 armyID, Position memory targetPosition) = abi.decode(_encodedParams, (uint256, uint256, uint256));
+    function approveMove(uint256 _nationID, bytes memory _encodedParams) public view override returns (bool) {
+        (, uint256 armyID, Position memory targetPosition) = abi.decode(_encodedParams, (uint256, uint256, Position));
         uint256[] memory signedDealIDs = nationIDToDealIDs[_nationID];
         for (uint256 i = 0; i < signedDealIDs.length; i++) {
             Deal memory deal = dealIDToDeal[signedDealIDs[i]];
@@ -271,7 +272,7 @@ contract HandshakeDeal is CurioTreaty {
         return super.approveBattle(_nationID, _encodedParams);
     }
 
-    function approveStartGather(_nationID, _encodedParams) public view override returns (bool) {
+    function approveStartGather(uint256 _nationID, bytes memory _encodedParams) public view override returns (bool) {
         (, uint256 armyID, uint256 resourceID) = abi.decode(_encodedParams, (uint256, uint256, uint256));
         uint256[] memory signedDealIDs = nationIDToDealIDs[_nationID];
         for (uint256 i = 0; i < signedDealIDs.length; i++) {
@@ -288,13 +289,13 @@ contract HandshakeDeal is CurioTreaty {
         return super.approveStartGather(_nationID, _encodedParams);
     }
 
-    function approveEndGather(_nationID, _encodedParams) public view override returns (bool) {
+    function approveEndGather(uint256 _nationID, bytes memory _encodedParams) public view override returns (bool) {
         (, uint256 armyID) = abi.decode(_encodedParams, (uint256, uint256));
         uint256[] memory signedDealIDs = nationIDToDealIDs[_nationID];
         for (uint256 i = 0; i < signedDealIDs.length; i++) {
             Deal memory deal = dealIDToDeal[signedDealIDs[i]];
             if (deal.functionOfAgreement == ApprovalFunctionType.approveEndGather) {
-                (uint256 agreedArmyID) = abi.decode(deal.encodedParams, uint256);
+                (uint256 agreedArmyID) = abi.decode(deal.encodedParams, (uint256));
                 if (agreedArmyID == armyID) {
                     if (block.timestamp < deal.timeLock) {
                         return false;
@@ -305,13 +306,13 @@ contract HandshakeDeal is CurioTreaty {
         return super.approveEndGather(_nationID, _encodedParams);
     }
 
-    function approveUnloadResources(_nationID, _encodedParams) public view override returns (bool) {
+    function approveUnloadResources(uint256 _nationID, bytes memory _encodedParams) public view override returns (bool) {
         (, uint256 armyID) = abi.decode(_encodedParams, (uint256, uint256));
         uint256[] memory signedDealIDs = nationIDToDealIDs[_nationID];
         for (uint256 i = 0; i < signedDealIDs.length; i++) {
             Deal memory deal = dealIDToDeal[signedDealIDs[i]];
             if (deal.functionOfAgreement == ApprovalFunctionType.approveEndGather) {
-                (uint256 agreedArmyID) = abi.decode(deal.encodedParams, uint256);
+                (uint256 agreedArmyID) = abi.decode(deal.encodedParams, (uint256));
                 if (agreedArmyID == armyID) {
                     if (block.timestamp < deal.timeLock) {
                         return false;
@@ -322,13 +323,13 @@ contract HandshakeDeal is CurioTreaty {
         return super.approveUnloadResources(_nationID, _encodedParams);
     }
 
-    function approveHarvestResource(_nationID, _encodedParams) public view override returns (bool) {
+    function approveHarvestResource(uint256 _nationID, bytes memory _encodedParams) public view override returns (bool) {
         (, uint256 resourceID) = abi.decode(_encodedParams, (uint256, uint256));
         uint256[] memory signedDealIDs = nationIDToDealIDs[_nationID];
         for (uint256 i = 0; i < signedDealIDs.length; i++) {
             Deal memory deal = dealIDToDeal[signedDealIDs[i]];
             if (deal.functionOfAgreement == ApprovalFunctionType.approveHarvestResource) {
-                uint256 agreedResourceID = abi.decode(deal.encodedParams, uint256);
+                uint256 agreedResourceID = abi.decode(deal.encodedParams, (uint256));
                 if (agreedResourceID == resourceID) {
                     if (block.timestamp < deal.timeLock) {
                         return false;
@@ -339,13 +340,13 @@ contract HandshakeDeal is CurioTreaty {
         return super.approveHarvestResource(_nationID, _encodedParams);
     }
 
-    function approveHarvestResourcesFromCapital(_nationID, _encodedParams) public view override returns (bool) {
+    function approveHarvestResourcesFromCapital(uint256 _nationID, bytes memory _encodedParams) public view override returns (bool) {
         (, uint256 capitalID) = abi.decode(_encodedParams, (uint256, uint256));
         uint256[] memory signedDealIDs = nationIDToDealIDs[_nationID];
         for (uint256 i = 0; i < signedDealIDs.length; i++) {
             Deal memory deal = dealIDToDeal[signedDealIDs[i]];
             if (deal.functionOfAgreement == ApprovalFunctionType.approveHarvestResourcesFromCapital) {
-                uint256 agreedCapitalID = abi.decode(deal.encodedParams, uint256);
+                uint256 agreedCapitalID = abi.decode(deal.encodedParams, (uint256));
                 if (agreedCapitalID == capitalID) {
                     if (block.timestamp < deal.timeLock) {
                         return false;
@@ -356,13 +357,13 @@ contract HandshakeDeal is CurioTreaty {
         return super.approveHarvestResourcesFromCapital(_nationID, _encodedParams);
     }
 
-    function approveUpgradeResource(_nationID, _encodedParams) public view override returns (bool) {
+    function approveUpgradeResource(uint256 _nationID, bytes memory _encodedParams) public view override returns (bool) {
         (, uint256 resourceID) = abi.decode(_encodedParams, (uint256, uint256));
         uint256[] memory signedDealIDs = nationIDToDealIDs[_nationID];
         for (uint256 i = 0; i < signedDealIDs.length; i++) {
             Deal memory deal = dealIDToDeal[signedDealIDs[i]];
             if (deal.functionOfAgreement == ApprovalFunctionType.approveUpgradeResource) {
-                uint256 agreedResourceID = abi.decode(deal.encodedParams, uint256);
+                uint256 agreedResourceID = abi.decode(deal.encodedParams, (uint256));
                 if (agreedResourceID == resourceID) {
                     if (block.timestamp < deal.timeLock) {
                         return false;
@@ -373,13 +374,13 @@ contract HandshakeDeal is CurioTreaty {
         return super.approveUpgradeResource(_nationID, _encodedParams);
     }
 
-    function approveStartTroopProduction(_nationID, _encodedParams) public view override returns (bool) {
+    function approveStartTroopProduction(uint256 _nationID, bytes memory _encodedParams) public view override returns (bool) {
         (, , uint256 troopID) = abi.decode(_encodedParams, (uint256, uint256, uint256));
         uint256[] memory signedDealIDs = nationIDToDealIDs[_nationID];
         for (uint256 i = 0; i < signedDealIDs.length; i++) {
             Deal memory deal = dealIDToDeal[signedDealIDs[i]];
             if (deal.functionOfAgreement == ApprovalFunctionType.specialTroopTypeBan) {
-                uint256 agreedTroopID = abi.decode(deal.encodedParams, uint256);
+                uint256 agreedTroopID = abi.decode(deal.encodedParams, (uint256));
                 if (agreedTroopID == troopID) {
                     if (block.timestamp < deal.timeLock) {
                         return false;
