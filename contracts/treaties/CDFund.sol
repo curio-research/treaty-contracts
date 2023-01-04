@@ -138,13 +138,13 @@ contract CollectiveDefenseFund is CurioTreaty {
 
     function payMembershipFee() external {
         uint256 treatyID = getter.getEntityByAddress(address(this));
-        require(getter.getNationTreatySignature(getter.getEntityByAddress(msg.sender), treatyID) != 0, "CDFund: You're not part of the treaty yet");
+        require(getter.getNationTreatySignature(getter.getEntityByAddress(msg.sender), treatyID) != 0, "CDFund: Join Treaty first");
 
         address senderCapitalAddress = getter.getAddress(getter.getCapital(getter.getEntityByAddress(msg.sender)));
-        require(goldToken.balanceOf(senderCapitalAddress) >= goldFee, "CDFund: You don't have enough gold balance");
-        require(foodToken.balanceOf(senderCapitalAddress) >= foodFee, "CDFund: You don't have enough food balance");
+        require(goldToken.balanceOf(senderCapitalAddress) >= goldFee, "CDFund: Insufficient gold balance");
+        require(foodToken.balanceOf(senderCapitalAddress) >= foodFee, "CDFund: Insufficient food balance");
 
-        require(block.timestamp - lastPaid[senderCapitalAddress] > depositTimeInterval / 2, "CDFund: Your last payment was too soon");
+        require(block.timestamp - lastPaid[senderCapitalAddress] > depositTimeInterval / 2, "CDFund: Last payment was too soon");
 
         goldToken.transferFrom(senderCapitalAddress, address(this), goldFee);
         foodToken.transferFrom(senderCapitalAddress, address(this), foodFee);
@@ -155,11 +155,11 @@ contract CollectiveDefenseFund is CurioTreaty {
     function withdraw(uint256 _goldAmount, uint256 _foodAmount) external onlyOwnerCouncilOrPact {
         require(_goldAmount <= goldWithdrawQuota, "CDFund: Amount exceeds quota");
         require(_foodAmount <= foodWithdrawQuota, "CDFund: Amount exceeds quota");
-        require(goldToken.balanceOf(address(this)) >= _goldAmount, "CDFund: Not enough balance");
-        require(foodToken.balanceOf(address(this)) >= _foodAmount, "CDFund: Not enough balance");
+        require(goldToken.balanceOf(address(this)) >= _goldAmount, "CDFund: Insufficient balance");
+        require(foodToken.balanceOf(address(this)) >= _foodAmount, "CDFund: Insufficient balance");
 
         address recipientAddress = getter.getAddress(getter.getCapital(getter.getEntityByAddress(msg.sender)));
-        require(block.timestamp - lastWithdrawn[recipientAddress] > withdrawTimeInterval, "CDF: Your last withdrawal was too soon");
+        require(block.timestamp - lastWithdrawn[recipientAddress] > withdrawTimeInterval, "CDF: Last withdrawal was too soon");
 
         goldToken.transfer(recipientAddress, _goldAmount);
         foodToken.transfer(recipientAddress, _foodAmount);
@@ -216,8 +216,8 @@ contract CollectiveDefenseFund is CurioTreaty {
 
         // Candidate pays membership fees; same logic as payMembershipFee
         address senderCapitalAddress = getter.getAddress(getter.getCapital(getter.getEntityByAddress(msg.sender)));
-        require(goldToken.balanceOf(senderCapitalAddress) >= goldFee, "CDFund: You don't have enough gold balance");
-        require(foodToken.balanceOf(senderCapitalAddress) >= foodFee, "CDFund: You don't have enough food balance");
+        require(goldToken.balanceOf(senderCapitalAddress) >= goldFee, "CDFund: Insufficient gold balance");
+        require(foodToken.balanceOf(senderCapitalAddress) >= foodFee, "CDFund: Insufficient food balance");
 
         goldToken.transferFrom(senderCapitalAddress, address(this), goldFee);
         foodToken.transferFrom(senderCapitalAddress, address(this), foodFee);

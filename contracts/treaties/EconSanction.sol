@@ -17,7 +17,7 @@ contract EconSanction is CurioTreaty {
     mapping(address => bool) public isSanctioned;
 
     modifier onlyOwnerOrPact() {
-        require(msg.sender == deployerAddress || msg.sender == address(this), "NAPact: You do not have owner-level permission");
+        require(msg.sender == deployerAddress || msg.sender == address(this), "NAPact: No owner-level permission");
         _;
     }
 
