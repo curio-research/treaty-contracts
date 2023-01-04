@@ -9,7 +9,7 @@ import {NonAggressionPact} from "contracts/treaties/NonAggressionPact.sol";
 import {EconSanction} from "contracts/treaties/EconSanction.sol";
 import {CollectiveDefenseFund} from "contracts/treaties/CDFund.sol";
 import {SimpleOTC} from "contracts/treaties/SimpleOTC.sol";
-import {HandshakeDeal} from "contracts/treaties/HandShakeDeal.sol";
+import {HandshakeDeal} from "contracts/treaties/HandshakeDeal.sol";
 import {TestTreaty} from "contracts/treaties/TestTreaty.sol";
 import {CurioWallet} from "contracts/standards/CurioWallet.sol";
 import {Position} from "contracts/libraries/Types.sol";
@@ -719,11 +719,7 @@ contract TreatyTest is Test, DiamondDeployTest {
         vm.startPrank(player1);
         HandshakeDeal hsDeal = HandshakeDeal(game.deployTreaty(nation1ID, handShakeDealTemplate.name()));
         hsDeal.treatyJoin();
-        hsDeal.proposeDeal(
-            HandshakeDeal.ApprovalFunctionType.approveUpgradeCapital,
-            abi.encode(nation2CapitalID),
-            block.timestamp + 1000
-            );
+        hsDeal.proposeDeal(HandshakeDeal.ApprovalFunctionType.approveUpgradeCapital, abi.encode(nation2CapitalID), block.timestamp + 1000);
         vm.stopPrank();
 
         // assigns tokens to p1 and p2
