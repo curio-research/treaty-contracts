@@ -9,7 +9,7 @@ import {NonAggressionPact} from "contracts/treaties/NonAggressionPact.sol";
 import {EconSanction} from "contracts/treaties/EconSanction.sol";
 import {CollectiveDefenseFund} from "contracts/treaties/CDFund.sol";
 import {SimpleOTC} from "contracts/treaties/SimpleOTC.sol";
-import {HandShakeDeal} from "contracts/treaties/HandShakeDeal.sol";
+import {HandshakeDeal} from "contracts/treaties/HandShakeDeal.sol";
 import {TestTreaty} from "contracts/treaties/TestTreaty.sol";
 import {CurioWallet} from "contracts/standards/CurioWallet.sol";
 import {Position} from "contracts/libraries/Types.sol";
@@ -704,7 +704,7 @@ contract TreatyTest is Test, DiamondDeployTest {
         assertEq(foodToken.balanceOf(nation2CapitalAddr), 800);
     }
 
-    function testHandShakeDeal() public {
+    function testHandshakeDeal() public {
         /**
         Outline:
         - p1 proposed a deal to prevent upgrading p2's capital
@@ -717,19 +717,36 @@ contract TreatyTest is Test, DiamondDeployTest {
 
         // Player1 deploys Handshake deal and propose
         vm.startPrank(player1);
-        HandShakeDeal hsDeal = HandShakeDeal(game.deployTreaty(nation1ID, handShakeDealTemplate.name()));
-        hsDeal.proposeDeal(_functionType, _encodedParams, _timeLock);
+        HandshakeDeal hsDeal = HandshakeDeal(game.deployTreaty(nation1ID, handShakeDealTemplate.name()));
+        hsDeal.treatyJoin();
+        hsDeal.proposeDeal(
+            HandshakeDeal.ApprovalFunctionType.approveUpgradeCapital,
+            abi.encode(nation2CapitalID),
+            block.timestamp + 1000
+            );
         vm.stopPrank();
 
         // assigns tokens to p1 and p2
         vm.startPrank(deployer);
-        admin.dripToken(nation1CapitalAddr, "Gold", 100000);
-        admin.dripToken(nation1CapitalAddr, "Food", 100000);
+        admin.dripToken(nation1CapitalAddr, "Gold", 10000000);
+        admin.dripToken(nation1CapitalAddr, "Food", 10000000);
 
-        admin.dripToken(nation2CapitalAddr, "Gold", 100000);
-        admin.dripToken(nation2CapitalAddr, "Food", 100000);
+        admin.dripToken(nation2CapitalAddr, "Gold", 10000000);
+        admin.dripToken(nation2CapitalAddr, "Food", 10000000);
         vm.stopPrank();
 
+        // Player2 joins treaty and signs the deal
+        vm.startPrank(player2);
+        uint256[] memory p1Deals = hsDeal.getNationDeals(nation1ID);
+        uint256 p1DealID = p1Deals[0];
+        hsDeal.treatyJoin();
+        hsDeal.signDeal(p1DealID);
+        vm.expectRevert("CURIO: Treaty disapproved UpgradeCapital");
+        game.upgradeCapital(nation2CapitalID);
 
+        // todo: make sure that timelocks have passed before a player can exit
+        time += 1001;
+        vm.warp(time);
+        game.upgradeCapital(nation2CapitalID);
     }
 }

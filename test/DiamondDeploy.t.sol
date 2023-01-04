@@ -22,7 +22,7 @@ import {NonAggressionPact} from "contracts/treaties/NonAggressionPact.sol";
 import {EconSanction} from "contracts/treaties/EconSanction.sol";
 import {CollectiveDefenseFund} from "contracts/treaties/CDFund.sol";
 import {SimpleOTC} from "contracts/treaties/SimpleOTC.sol";
-import {HandShakeDeal} from "contracts/treaties/HandShakeDeal.sol";
+import {HandshakeDeal} from "contracts/treaties/HandShakeDeal.sol";
 import {CurioERC20} from "contracts/standards/CurioERC20.sol";
 import {console} from "forge-std/console.sol";
 import {stdJson} from "forge-std/StdJson.sol";
@@ -55,7 +55,7 @@ contract DiamondDeployTest is Test {
     EconSanction public econSanctionTemplate;
     NonAggressionPact public NAPactTemplate;
     SimpleOTC public otcContractTemplate;
-    HandShakeDeal public handShakeDealTemplate;
+    HandshakeDeal public handShakeDealTemplate;
 
     uint256 public allianceTemplateID;
     uint256 public ftxTemplateID;
@@ -210,7 +210,7 @@ contract DiamondDeployTest is Test {
         NAPactTemplateID = admin.registerTreatyTemplate(address(NAPactTemplate), "sample ABI");
         otcContractTemplate = new SimpleOTC(diamond);
         otcContractTemplateID = admin.registerTreatyTemplate(address(otcContractTemplate), "sample ABI");
-        handShakeDealTemplate = new HandShakeDeal(diamond);
+        handShakeDealTemplate = new HandshakeDeal(diamond);
         handShakeDealTemplateID = admin.registerTreatyTemplate(address(handShakeDealTemplate), "sample ABI");
 
         console.log(">>> Treaties initialized");

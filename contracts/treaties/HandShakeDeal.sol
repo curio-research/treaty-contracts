@@ -7,7 +7,7 @@ import {CurioERC20} from "contracts/standards/CurioERC20.sol";
 import {Position} from "contracts/libraries/Types.sol";
 import {console} from "forge-std/console.sol";
 
-contract HandShakeDeal is CurioTreaty {
+contract HandshakeDeal is CurioTreaty {
 
     enum ApprovalFunctionType {
         approveUpgradeCapital,
@@ -38,9 +38,9 @@ contract HandShakeDeal is CurioTreaty {
         uint256 timeLock;
     }
     
-    uint256 dealCounter;
-    mapping(uint256 => uint256[]) nationIDToDealIDs;
-    mapping(uint256 => Deal) dealIDToDeal;
+    uint256 public dealCounter;
+    mapping(uint256 => uint256[]) public nationIDToDealIDs;
+    mapping(uint256 => Deal) public dealIDToDeal;
 
     constructor(
         address _diamond
@@ -54,11 +54,19 @@ contract HandShakeDeal is CurioTreaty {
     // Articles of Treaty
     // ----------------------------------------------------------
 
+    function getNationDeals(uint256 _nationID) public view returns (uint256[] memory) {
+        return nationIDToDealIDs[_nationID];
+    }
+
+    function getDealInfo(uint256 dealID) public view returns (Deal memory) {
+        return dealIDToDeal[dealID];
+    } 
+
     function proposeDeal(
         ApprovalFunctionType _functionType,
         bytes memory _encodedParams,
         uint256 _timeLock
-        ) public {
+        ) public onlySigner {
         uint256 proposerID = getter.getEntityByAddress(msg.sender);
         dealIDToDeal[dealCounter] = Deal({
             dealID: dealCounter,
@@ -71,33 +79,28 @@ contract HandShakeDeal is CurioTreaty {
         dealCounter ++;
     }
 
-    function signDeal(uint256 _dealID) public {
+    function signDeal(uint256 _dealID) public onlySigner {
         nationIDToDealIDs[getter.getEntityByAddress(msg.sender)].push(_dealID);
     }
 
-    function getDealsByNationID(uint256 _nationID) public view returns (uint256[] memory) {
-        return nationIDToDealIDs[_nationID];
-    }
-
-    function readDealProposer(uint256 _dealID) public view returns (uint256) {
-        return dealIDToDeal[_dealID].proposer;
-    }
-
-    function readDealFunctionOfAgreement(uint256 _dealID) public view returns (ApprovalFunctionType) {
-        return dealIDToDeal[_dealID].functionOfAgreement;
-    }
-
-    function readDealEncodedParams(uint256 _dealID) public view returns (bytes memory) {
-        return dealIDToDeal[_dealID].encodedParams;
-    }
-
-    function readDealTimeLock(uint256 _dealID) public view returns (uint256) {
-        return dealIDToDeal[_dealID].timeLock;
+    function timeLockHasPassed(Deal memory _deal) internal view returns (bool) {
+        return block.timestamp > _deal.timeLock;
     }
 
     // ----------------------------------------------------------
     // Permission Functions
     // ----------------------------------------------------------
+
+    // note: a player can exit only after all timelocks passe
+    function treatyLeave() public override {
+        uint256[] memory signedDealIDs = nationIDToDealIDs[getter.getEntityByAddress(msg.sender)];
+        for (uint256 i = 0; i < signedDealIDs.length; i++) {
+            Deal memory deal = dealIDToDeal[signedDealIDs[i]];
+            if (!timeLockHasPassed(deal)) return;
+            }
+        super.treatyLeave();
+    }
+
 
     function approveBattle(uint256 _nationID, bytes memory _encodedParams) public view override returns (bool) {
         // Disapprove if target nation is part of collective fund
@@ -109,7 +112,9 @@ contract HandShakeDeal is CurioTreaty {
             if (deal.functionOfAgreement == ApprovalFunctionType.approveBattle) {
                 (uint256 agreedArmyID, uint256 agreedBattleTargetID) = abi.decode(deal.encodedParams, (uint256, uint256));
                 if (agreedArmyID == armyID && agreedBattleTargetID == battleTargetID) {
-                    return false;
+                    if (!timeLockHasPassed(deal)) {
+                        return false;
+                    }
                 }
             }
         }
@@ -125,16 +130,12 @@ contract HandShakeDeal is CurioTreaty {
             if (deal.functionOfAgreement == ApprovalFunctionType.approveUpgradeCapital) {
                 uint256 agreedCapitalID = abi.decode(deal.encodedParams, (uint256));
                 if (capitalID == agreedCapitalID) {
-                    return false;
+                    if (!timeLockHasPassed(deal)) {
+                        return false;
+                    }
                 }
             }
         }
         return super.approveUpgradeCapital(_nationID, _encodedParams);
     }
-
-    
-
-
-
-    
 }
