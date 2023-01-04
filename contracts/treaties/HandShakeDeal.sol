@@ -83,16 +83,20 @@ contract HandshakeDeal is CurioTreaty {
         nationIDToDealIDs[getter.getEntityByAddress(msg.sender)].push(_dealID);
     }
 
+    function timeLockHasPassed(Deal memory _deal) internal view returns (bool) {
+        return block.timestamp > _deal.timeLock;
+    }
+
     // ----------------------------------------------------------
     // Permission Functions
     // ----------------------------------------------------------
 
-    // note: a player can exit only after all timelocks pass
+    // note: a player can exit only after all timelocks passe
     function treatyLeave() public override {
         uint256[] memory signedDealIDs = nationIDToDealIDs[getter.getEntityByAddress(msg.sender)];
         for (uint256 i = 0; i < signedDealIDs.length; i++) {
             Deal memory deal = dealIDToDeal[signedDealIDs[i]];
-            require(block.timestamp > deal.timeLock, "HSDeal: a player can exit only after all timelocks passe");
+            if (!timeLockHasPassed(deal)) return;
             }
         super.treatyLeave();
     }
@@ -108,7 +112,7 @@ contract HandshakeDeal is CurioTreaty {
             if (deal.functionOfAgreement == ApprovalFunctionType.approveBattle) {
                 (uint256 agreedArmyID, uint256 agreedBattleTargetID) = abi.decode(deal.encodedParams, (uint256, uint256));
                 if (agreedArmyID == armyID && agreedBattleTargetID == battleTargetID) {
-                    if (block.timestamp < deal.timeLock) {
+                    if (!timeLockHasPassed(deal)) {
                         return false;
                     }
                 }
@@ -126,7 +130,7 @@ contract HandshakeDeal is CurioTreaty {
             if (deal.functionOfAgreement == ApprovalFunctionType.approveUpgradeCapital) {
                 uint256 agreedCapitalID = abi.decode(deal.encodedParams, (uint256));
                 if (capitalID == agreedCapitalID) {
-                    if (block.timestamp < deal.timeLock) {
+                    if (!timeLockHasPassed(deal)) {
                         return false;
                     }
                 }
