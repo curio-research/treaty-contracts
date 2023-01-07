@@ -165,7 +165,7 @@ contract CollectiveDefenseFund is CurioTreaty {
     function payMembershipFee() external onlySigner {
         // Check last paid time
         uint256 nationID = getter.getEntityByAddress(msg.sender);
-        require(block.timestamp - lastPaid[nationID] > depositTimeInterval / 2, "CDFund: Last payment was too soon"); // FIXME: why 1/2?
+        require(block.timestamp - lastPaid[nationID] > depositTimeInterval, "CDFund: Last payment was too soon");
 
         _payFeesHelper(nationID);
     }
