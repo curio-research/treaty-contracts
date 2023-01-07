@@ -92,10 +92,6 @@ abstract contract CurioTreaty is ITreaty {
         return block.timestamp >= nationJoinTime + _duration;
     }
 
-    function addToWhitelist(uint256 _nationID) public {
-        admin.addToWhitelist(_nationID);
-    }
-
     function registerTreatyAndOwnerIds() public {
         treatyID = getter.getEntityByAddress(address(this));
         ownerID = abi.decode(getter.getComponent("Owner").getBytesValue(treatyID), (uint256));

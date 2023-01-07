@@ -11,13 +11,14 @@ contract NonAggressionPact is CurioTreaty {
     constructor(address _diamond) CurioTreaty(_diamond) {
         name = "Non-Aggression Pact";
         description = "Member nations cannot battle armies or tiles of one another";
+    }
 
-        // Add treaty owner to whitelist if game is calling (player registration)
-        if (msg.sender == diamond) {
-            uint256 treatyID = getter.getEntityByAddress(address(this));
-            uint256 ownerID = abi.decode(getter.getComponent("Owner").getBytesValue(treatyID), (uint256));
-            admin.addToWhitelist(ownerID);
-        }
+    function addToWhitelist(uint256 _nationID) public onlyOwner {
+        admin.addToWhitelist(_nationID);
+    }
+
+    function removeFromWhitelist(uint256 _nationID) public onlyOwner {
+        admin.removeFromWhitelist(_nationID);
     }
 
     function removeMember(uint256 _nationID) public onlyOwner {

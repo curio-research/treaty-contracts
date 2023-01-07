@@ -24,13 +24,6 @@ contract CollectiveDefenseFund is CurioTreaty {
     mapping(uint256 => uint256) public lastWithdrawn; // nationID => timestamp
     Set public council;
 
-    modifier onlyOwnerOrPact() {
-        uint256 treatyID = getter.getEntityByAddress(address(this));
-        uint256 ownerID = abi.decode(getter.getComponent("Owner").getBytesValue(treatyID), (uint256));
-        require(getter.getEntityByAddress(msg.sender) == ownerID || msg.sender == address(this), "NAPact: Only owner or pact can call");
-        _;
-    }
-
     modifier onlyCouncilOrPact() {
         uint256 callerID = getter.getEntityByAddress(msg.sender);
         require(council.includes(callerID) || msg.sender == address(this), "NAPact: Only council or pact can call");
@@ -58,13 +51,6 @@ contract CollectiveDefenseFund is CurioTreaty {
         depositTimeInterval = _depositTimeInterval;
         withdrawTimeInterval = _withdrawTimeInterval;
 
-        // Add treaty owner to whitelist if game is calling (player registration)
-        if (msg.sender == diamond) {
-            uint256 treatyID = getter.getEntityByAddress(address(this));
-            uint256 ownerID = abi.decode(getter.getComponent("Owner").getBytesValue(treatyID), (uint256));
-            admin.addToWhitelist(ownerID);
-        }
-
         // Create new council and add treaty owner to it by default
         council = new Set();
         council.add(ownerID);
@@ -73,6 +59,14 @@ contract CollectiveDefenseFund is CurioTreaty {
     // ----------------------------------------------------------
     // Owner and council functions
     // ----------------------------------------------------------
+
+    function addToWhitelist(uint256 _nationID) public onlyOwner {
+        admin.addToWhitelist(_nationID);
+    }
+
+    function removeFromWhitelist(uint256 _nationID) public onlyOwner {
+        admin.removeFromWhitelist(_nationID);
+    }
 
     function addToCouncil(uint256 _nationID) public onlyOwner {
         council.add(_nationID);
@@ -91,7 +85,15 @@ contract CollectiveDefenseFund is CurioTreaty {
     }
 
     function removeMember(uint256 _nationID) public onlyCouncilOrPact {
-        require(!council.includes(_nationID), "CDFund: Need to `removeFromCouncil` first");
+        console.log("remvoing member");
+        // Only owner can remove council members
+        uint256 treatyID = getter.getEntityByAddress(address(this));
+        uint256 ownerID = abi.decode(getter.getComponent("Owner").getBytesValue(treatyID), (uint256));
+        if (getter.getEntityByAddress(msg.sender) == ownerID) {
+            council.remove(_nationID);
+        } else {
+            require(!council.includes(_nationID), "CDFund: Need owner to `removeFromCouncil` first");
+        }
 
         admin.removeFromWhitelist(_nationID); // need to be whitelisted again for joining
         admin.removeSigner(_nationID);
@@ -118,6 +120,7 @@ contract CollectiveDefenseFund is CurioTreaty {
     }
 
     function removeAllOverdueMembers() external onlyCouncilOrPact {
+        console.log("removing overdue members");
         uint256 treatyID = getter.getEntityByAddress(address(this));
         uint256[] memory signers = getter.getTreatySigners(treatyID);
 

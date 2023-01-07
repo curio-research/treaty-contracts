@@ -12,21 +12,22 @@ contract Embargo is CurioTreaty {
     Set public sanctionList;
 
     constructor(address _diamond) CurioTreaty(_diamond) {
-        name = "Economic Sanction Pact";
+        name = "Embargo Pact";
         description = "Owner of the League can point to which nation the league is sanctioning";
         sanctionList = new Set();
-
-        // Add treaty owner to whitelist if game is calling (player registration)
-        if (msg.sender == diamond) {
-            uint256 treatyID = getter.getEntityByAddress(address(this));
-            uint256 ownerID = abi.decode(getter.getComponent("Owner").getBytesValue(treatyID), (uint256));
-            admin.addToWhitelist(ownerID);
-        }
     }
 
     // ----------------------------------------------------------
     // Owner functions
     // ----------------------------------------------------------
+
+    function addToWhitelist(uint256 _nationID) public onlyOwner {
+        admin.addToWhitelist(_nationID);
+    }
+
+    function removeFromWhitelist(uint256 _nationID) public onlyOwner {
+        admin.removeFromWhitelist(_nationID);
+    }
 
     function addToSanctionList(uint256 _nationID) public onlyOwner {
         sanctionList.add(_nationID);
@@ -63,8 +64,8 @@ contract Embargo is CurioTreaty {
 
     function approveTransfer(uint256 _nationID, bytes memory _encodedParams) public view override returns (bool) {
         // Disapprove if transfer is to a nation on the sanction list
-        (address to, ) = abi.decode(_encodedParams, (address, uint256));
-        uint256 toNationID = getter.getNation(getter.getEntityByAddress(to));
+        (uint256 toID, ) = abi.decode(_encodedParams, (uint256, uint256));
+        uint256 toNationID = getter.getNation(toID);
         if (sanctionList.includes(toNationID)) return false;
 
         return super.approveTransfer(_nationID, _encodedParams);

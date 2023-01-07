@@ -457,9 +457,10 @@ contract TreatyTest is Test, DiamondDeployTest {
         uint256 time = block.timestamp + 500;
         vm.warp(time);
 
-        // Player1 deploys NAPact
+        // Player1 deploys NAPact and whitelists self
         vm.startPrank(player1);
         NonAggressionPact nonAggressionPact = NonAggressionPact(game.deployTreaty(nation1ID, nonAggressionPactTemplate.name(), ""));
+        nonAggressionPact.addToWhitelist(nation1ID);
         vm.stopPrank();
 
         // Deployer registers NAPact treaty & gives troops to p2
@@ -501,7 +502,7 @@ contract TreatyTest is Test, DiamondDeployTest {
         game.battle(army21ID, nation1CapitalTileID);
 
         // Player2 leaves treaty and then able to attack
-        time += 10;
+        time += 30;
         vm.warp(time);
         nonAggressionPact.treatyLeave();
         game.battle(army21ID, nation1CapitalTileID);
@@ -521,9 +522,10 @@ contract TreatyTest is Test, DiamondDeployTest {
         uint256 time = block.timestamp + 500;
         vm.warp(time);
 
-        // Player1 deploys embargo
+        // Player1 deploys embargo and whitelists self
         vm.startPrank(player1);
-        Embargo embargo = Embargo(game.deployTreaty(nation1ID, econSanctionTemplate.name(), ""));
+        Embargo embargo = Embargo(game.deployTreaty(nation1ID, embargoTemplate.name(), ""));
+        embargo.addToWhitelist(nation1ID);
         vm.stopPrank();
 
         // Deployer registers embargo treaty & gives troops to p2
@@ -584,7 +586,7 @@ contract TreatyTest is Test, DiamondDeployTest {
     }
 
     function testCDFund() public {
-        /** 
+        /*
         Outline:
         - deployer gives both resource and troops to p1 and p2
         - Player1 deploys CDFund Treaty and whitelists player2
@@ -592,13 +594,15 @@ contract TreatyTest is Test, DiamondDeployTest {
         - Player2 attacks player1 but reverted
         - Player2 forgot to pay, and player1 kicks player2 out
         - Player2 attacks player1 and succeeds
-        **/
+        */
         uint256 time = block.timestamp + 500;
         vm.warp(time);
 
-        // Player1 deploys NAPact
+        // Player1 deploys NAPact and whitelists self
         vm.startPrank(player1);
-        CollectiveDefenseFund cdFund = CollectiveDefenseFund(game.deployTreaty(nation1ID, collectiveDefenseFundTemplate.name(), abi.encode(100, 100, 86400, 86400, 50, 50)));
+        address cdFundAddr = game.deployTreaty(nation1ID, collectiveDefenseFundTemplate.name(), abi.encode(100, 100, 86400, 86400, 50, 50));
+        CollectiveDefenseFund cdFund = CollectiveDefenseFund(cdFundAddr);
+        cdFund.addToWhitelist(nation1ID);
         vm.stopPrank();
 
         // Deployer registers NAPact treaty & assigns tokens to p1 and p2
@@ -654,7 +658,10 @@ contract TreatyTest is Test, DiamondDeployTest {
         time += 86400;
         vm.warp(time);
         vm.startPrank(player1);
+        cdFund.addToCouncil(nation1ID);
+        cdFund.payMembershipFee();
         cdFund.removeAllOverdueMembers();
+
         // p1 tries to withdraw money
         uint256 p1PrevGoldBalance = goldToken.balanceOf(nation1CapitalAddr);
         uint256 p1PrevFoodBalance = goldToken.balanceOf(nation1CapitalAddr);

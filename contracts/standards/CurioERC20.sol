@@ -110,17 +110,13 @@ contract CurioERC20 is IERC20 {
 
     function transfer(address _to, uint256 _amount) public override returns (bool) {
         // Permission checks
-        // Note: Here it additionally checks armies under the senderNation and the recipientNation
         if (msg.sender != address(this)) {
-            uint256 callerID = getter.getEntityByAddress(msg.sender);
-            uint256 recipientID = getter.getEntityByAddress(_to);
-            address recipientNation = GameLib.strEq(getter.getTag(recipientID), "Nation") ? _to : getter.getAddress(getter.getNation(recipientID));
-            if (GameLib.strEq(getter.getTag(callerID), "Nation")) {
-                getter.treatyApprovalCheck("Transfer", callerID, abi.encode(recipientNation, _amount));
-            } else {
-                getter.treatyApprovalCheck("Transfer", getter.getNation(callerID), abi.encode(recipientNation, _amount));
-            }
+            uint256 fromID = getter.getEntityByAddress(msg.sender);
+            uint256 fromNationID = getter.getComponent("Nation").getEntitiesWithValue(abi.encode(fromID)).length > 0 ? fromID : getter.getNation(fromID);
+            uint256 toID = getter.getEntityByAddress(_to);
+            getter.treatyApprovalCheck("Transfer", fromNationID, abi.encode(toID, _amount));
         }
+
         _transferHelper(msg.sender, _to, _amount);
 
         return true;

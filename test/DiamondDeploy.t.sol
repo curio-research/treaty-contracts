@@ -50,7 +50,7 @@ contract DiamondDeployTest is Test {
     FTX public ftxTemplate;
     TestTreaty public testTreatyTemplate;
     CollectiveDefenseFund public collectiveDefenseFundTemplate;
-    Embargo public econSanctionTemplate;
+    Embargo public embargoTemplate;
     NonAggressionPact public nonAggressionPactTemplate;
     SimpleOTC public otcContractTemplate;
     HandshakeDeal public handshakeDealTemplate;
@@ -59,7 +59,7 @@ contract DiamondDeployTest is Test {
     uint256 public ftxTemplateID;
     uint256 public testTreatyTemplateID;
     uint256 public collectiveDefenseFundTemplateID;
-    uint256 public econSanctionTemplateID;
+    uint256 public embargoTemplateID;
     uint256 public nonAggressionPactTemplateID;
     uint256 public otcContractTemplateID;
     uint256 public handshakeDealTemplateID;
@@ -197,8 +197,8 @@ contract DiamondDeployTest is Test {
         testTreatyTemplateID = admin.registerTreatyTemplate(address(testTreatyTemplate), "sample ABI");
         collectiveDefenseFundTemplate = new CollectiveDefenseFund(diamond, 100, 100, 86400, 86400, 50, 50);
         collectiveDefenseFundTemplateID = admin.registerTreatyTemplate(address(collectiveDefenseFundTemplate), "sample ABI");
-        econSanctionTemplate = new Embargo(diamond);
-        econSanctionTemplateID = admin.registerTreatyTemplate(address(econSanctionTemplate), "sample ABI");
+        embargoTemplate = new Embargo(diamond);
+        embargoTemplateID = admin.registerTreatyTemplate(address(embargoTemplate), "sample ABI");
         nonAggressionPactTemplate = new NonAggressionPact(diamond);
         nonAggressionPactTemplateID = admin.registerTreatyTemplate(address(nonAggressionPactTemplate), "sample ABI");
         otcContractTemplate = new SimpleOTC(diamond);
