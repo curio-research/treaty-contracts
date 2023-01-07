@@ -23,8 +23,9 @@ import type {
   PromiseOrValue,
 } from "../../common";
 
-export interface CurioTreatyInterface extends utils.Interface {
+export interface EmbargoInterface extends utils.Interface {
   functions: {
+    "addToSanctionList(uint256)": FunctionFragment;
     "addToWhitelist(uint256)": FunctionFragment;
     "admin()": FunctionFragment;
     "approveBattle(uint256,bytes)": FunctionFragment;
@@ -56,6 +57,9 @@ export interface CurioTreatyInterface extends utils.Interface {
     "getter()": FunctionFragment;
     "minimumStayCheck(uint256,uint256)": FunctionFragment;
     "name()": FunctionFragment;
+    "removeFromSanctionList(uint256)": FunctionFragment;
+    "removeMember(uint256)": FunctionFragment;
+    "sanctionList()": FunctionFragment;
     "treatyDelegateGameFunction(string,uint256,bool)": FunctionFragment;
     "treatyJoin()": FunctionFragment;
     "treatyLeave()": FunctionFragment;
@@ -63,6 +67,7 @@ export interface CurioTreatyInterface extends utils.Interface {
 
   getFunction(
     nameOrSignatureOrTopic:
+      | "addToSanctionList"
       | "addToWhitelist"
       | "admin"
       | "approveBattle"
@@ -94,11 +99,18 @@ export interface CurioTreatyInterface extends utils.Interface {
       | "getter"
       | "minimumStayCheck"
       | "name"
+      | "removeFromSanctionList"
+      | "removeMember"
+      | "sanctionList"
       | "treatyDelegateGameFunction"
       | "treatyJoin"
       | "treatyLeave"
   ): FunctionFragment;
 
+  encodeFunctionData(
+    functionFragment: "addToSanctionList",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
   encodeFunctionData(
     functionFragment: "addToWhitelist",
     values: [PromiseOrValue<BigNumberish>]
@@ -209,6 +221,18 @@ export interface CurioTreatyInterface extends utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "name", values?: undefined): string;
   encodeFunctionData(
+    functionFragment: "removeFromSanctionList",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "removeMember",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "sanctionList",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "treatyDelegateGameFunction",
     values: [
       PromiseOrValue<string>,
@@ -225,6 +249,10 @@ export interface CurioTreatyInterface extends utils.Interface {
     values?: undefined
   ): string;
 
+  decodeFunctionResult(
+    functionFragment: "addToSanctionList",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "addToWhitelist",
     data: BytesLike
@@ -335,6 +363,18 @@ export interface CurioTreatyInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
   decodeFunctionResult(
+    functionFragment: "removeFromSanctionList",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "removeMember",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "sanctionList",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "treatyDelegateGameFunction",
     data: BytesLike
   ): Result;
@@ -347,12 +387,12 @@ export interface CurioTreatyInterface extends utils.Interface {
   events: {};
 }
 
-export interface CurioTreaty extends BaseContract {
+export interface Embargo extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: CurioTreatyInterface;
+  interface: EmbargoInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
@@ -374,6 +414,11 @@ export interface CurioTreaty extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    addToSanctionList(
+      _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     addToWhitelist(
       _nationID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -535,6 +580,18 @@ export interface CurioTreaty extends BaseContract {
 
     name(overrides?: CallOverrides): Promise<[string]>;
 
+    removeFromSanctionList(
+      _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    removeMember(
+      _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    sanctionList(overrides?: CallOverrides): Promise<[string]>;
+
     treatyDelegateGameFunction(
       _functionName: PromiseOrValue<string>,
       _subjectID: PromiseOrValue<BigNumberish>,
@@ -550,6 +607,11 @@ export interface CurioTreaty extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
   };
+
+  addToSanctionList(
+    _nationID: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
 
   addToWhitelist(
     _nationID: PromiseOrValue<BigNumberish>,
@@ -712,6 +774,18 @@ export interface CurioTreaty extends BaseContract {
 
   name(overrides?: CallOverrides): Promise<string>;
 
+  removeFromSanctionList(
+    _nationID: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  removeMember(
+    _nationID: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  sanctionList(overrides?: CallOverrides): Promise<string>;
+
   treatyDelegateGameFunction(
     _functionName: PromiseOrValue<string>,
     _subjectID: PromiseOrValue<BigNumberish>,
@@ -728,6 +802,11 @@ export interface CurioTreaty extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
+    addToSanctionList(
+      _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     addToWhitelist(
       _nationID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -889,6 +968,18 @@ export interface CurioTreaty extends BaseContract {
 
     name(overrides?: CallOverrides): Promise<string>;
 
+    removeFromSanctionList(
+      _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    removeMember(
+      _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    sanctionList(overrides?: CallOverrides): Promise<string>;
+
     treatyDelegateGameFunction(
       _functionName: PromiseOrValue<string>,
       _subjectID: PromiseOrValue<BigNumberish>,
@@ -904,6 +995,11 @@ export interface CurioTreaty extends BaseContract {
   filters: {};
 
   estimateGas: {
+    addToSanctionList(
+      _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     addToWhitelist(
       _nationID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -1065,6 +1161,18 @@ export interface CurioTreaty extends BaseContract {
 
     name(overrides?: CallOverrides): Promise<BigNumber>;
 
+    removeFromSanctionList(
+      _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    removeMember(
+      _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    sanctionList(overrides?: CallOverrides): Promise<BigNumber>;
+
     treatyDelegateGameFunction(
       _functionName: PromiseOrValue<string>,
       _subjectID: PromiseOrValue<BigNumberish>,
@@ -1082,6 +1190,11 @@ export interface CurioTreaty extends BaseContract {
   };
 
   populateTransaction: {
+    addToSanctionList(
+      _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
     addToWhitelist(
       _nationID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -1242,6 +1355,18 @@ export interface CurioTreaty extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     name(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    removeFromSanctionList(
+      _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    removeMember(
+      _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    sanctionList(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     treatyDelegateGameFunction(
       _functionName: PromiseOrValue<string>,

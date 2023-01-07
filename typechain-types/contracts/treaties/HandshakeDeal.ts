@@ -23,7 +23,31 @@ import type {
   PromiseOrValue,
 } from "../../common";
 
-export interface CurioTreatyInterface extends utils.Interface {
+export declare namespace HandshakeDeal {
+  export type DealStruct = {
+    dealID: PromiseOrValue<BigNumberish>;
+    proposer: PromiseOrValue<BigNumberish>;
+    functionOfAgreement: PromiseOrValue<BigNumberish>;
+    encodedParams: PromiseOrValue<BytesLike>;
+    timeLock: PromiseOrValue<BigNumberish>;
+  };
+
+  export type DealStructOutput = [
+    BigNumber,
+    BigNumber,
+    number,
+    string,
+    BigNumber
+  ] & {
+    dealID: BigNumber;
+    proposer: BigNumber;
+    functionOfAgreement: number;
+    encodedParams: string;
+    timeLock: BigNumber;
+  };
+}
+
+export interface HandshakeDealInterface extends utils.Interface {
   functions: {
     "addToWhitelist(uint256)": FunctionFragment;
     "admin()": FunctionFragment;
@@ -50,12 +74,22 @@ export interface CurioTreatyInterface extends utils.Interface {
     "approveUpgradeCapital(uint256,bytes)": FunctionFragment;
     "approveUpgradeResource(uint256,bytes)": FunctionFragment;
     "approveUpgradeTile(uint256,bytes)": FunctionFragment;
+    "dealCounter()": FunctionFragment;
+    "dealIDToDeal(uint256)": FunctionFragment;
     "description()": FunctionFragment;
     "diamond()": FunctionFragment;
     "game()": FunctionFragment;
+    "getDealInfo(uint256)": FunctionFragment;
+    "getNationDeals(uint256)": FunctionFragment;
+    "getNationTroopTypeBanDeals(uint256)": FunctionFragment;
     "getter()": FunctionFragment;
     "minimumStayCheck(uint256,uint256)": FunctionFragment;
     "name()": FunctionFragment;
+    "nationIDToDealIDs(uint256,uint256)": FunctionFragment;
+    "nationIDToTroopTypeBanIDs(uint256,uint256)": FunctionFragment;
+    "proposeDeal(uint8,bytes,uint256)": FunctionFragment;
+    "proposeTroopTypeBanDeal(uint256,uint256)": FunctionFragment;
+    "signDeal(uint256)": FunctionFragment;
     "treatyDelegateGameFunction(string,uint256,bool)": FunctionFragment;
     "treatyJoin()": FunctionFragment;
     "treatyLeave()": FunctionFragment;
@@ -88,12 +122,22 @@ export interface CurioTreatyInterface extends utils.Interface {
       | "approveUpgradeCapital"
       | "approveUpgradeResource"
       | "approveUpgradeTile"
+      | "dealCounter"
+      | "dealIDToDeal"
       | "description"
       | "diamond"
       | "game"
+      | "getDealInfo"
+      | "getNationDeals"
+      | "getNationTroopTypeBanDeals"
       | "getter"
       | "minimumStayCheck"
       | "name"
+      | "nationIDToDealIDs"
+      | "nationIDToTroopTypeBanIDs"
+      | "proposeDeal"
+      | "proposeTroopTypeBanDeal"
+      | "signDeal"
       | "treatyDelegateGameFunction"
       | "treatyJoin"
       | "treatyLeave"
@@ -197,17 +241,61 @@ export interface CurioTreatyInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
+    functionFragment: "dealCounter",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "dealIDToDeal",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "description",
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "diamond", values?: undefined): string;
   encodeFunctionData(functionFragment: "game", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "getDealInfo",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getNationDeals",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getNationTroopTypeBanDeals",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
   encodeFunctionData(functionFragment: "getter", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "minimumStayCheck",
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(functionFragment: "name", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "nationIDToDealIDs",
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "nationIDToTroopTypeBanIDs",
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "proposeDeal",
+    values: [
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BytesLike>,
+      PromiseOrValue<BigNumberish>
+    ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "proposeTroopTypeBanDeal",
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "signDeal",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
   encodeFunctionData(
     functionFragment: "treatyDelegateGameFunction",
     values: [
@@ -323,17 +411,54 @@ export interface CurioTreatyInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "dealCounter",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "dealIDToDeal",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "description",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "diamond", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "game", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "getDealInfo",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getNationDeals",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getNationTroopTypeBanDeals",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "getter", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "minimumStayCheck",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "nationIDToDealIDs",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "nationIDToTroopTypeBanIDs",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "proposeDeal",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "proposeTroopTypeBanDeal",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "signDeal", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "treatyDelegateGameFunction",
     data: BytesLike
@@ -347,12 +472,12 @@ export interface CurioTreatyInterface extends utils.Interface {
   events: {};
 }
 
-export interface CurioTreaty extends BaseContract {
+export interface HandshakeDeal extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: CurioTreatyInterface;
+  interface: HandshakeDealInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
@@ -519,11 +644,41 @@ export interface CurioTreaty extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
+    dealCounter(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    dealIDToDeal(
+      arg0: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, BigNumber, number, string, BigNumber] & {
+        dealID: BigNumber;
+        proposer: BigNumber;
+        functionOfAgreement: number;
+        encodedParams: string;
+        timeLock: BigNumber;
+      }
+    >;
+
     description(overrides?: CallOverrides): Promise<[string]>;
 
     diamond(overrides?: CallOverrides): Promise<[string]>;
 
     game(overrides?: CallOverrides): Promise<[string]>;
+
+    getDealInfo(
+      dealID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[HandshakeDeal.DealStructOutput]>;
+
+    getNationDeals(
+      _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber[]]>;
+
+    getNationTroopTypeBanDeals(
+      _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber[]]>;
 
     getter(overrides?: CallOverrides): Promise<[string]>;
 
@@ -534,6 +689,36 @@ export interface CurioTreaty extends BaseContract {
     ): Promise<ContractTransaction>;
 
     name(overrides?: CallOverrides): Promise<[string]>;
+
+    nationIDToDealIDs(
+      arg0: PromiseOrValue<BigNumberish>,
+      arg1: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    nationIDToTroopTypeBanIDs(
+      arg0: PromiseOrValue<BigNumberish>,
+      arg1: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    proposeDeal(
+      _functionType: PromiseOrValue<BigNumberish>,
+      _encodedParams: PromiseOrValue<BytesLike>,
+      _timeLock: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    proposeTroopTypeBanDeal(
+      _troopTypeID: PromiseOrValue<BigNumberish>,
+      _timeLock: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    signDeal(
+      _dealID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
 
     treatyDelegateGameFunction(
       _functionName: PromiseOrValue<string>,
@@ -696,11 +881,41 @@ export interface CurioTreaty extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
+  dealCounter(overrides?: CallOverrides): Promise<BigNumber>;
+
+  dealIDToDeal(
+    arg0: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<
+    [BigNumber, BigNumber, number, string, BigNumber] & {
+      dealID: BigNumber;
+      proposer: BigNumber;
+      functionOfAgreement: number;
+      encodedParams: string;
+      timeLock: BigNumber;
+    }
+  >;
+
   description(overrides?: CallOverrides): Promise<string>;
 
   diamond(overrides?: CallOverrides): Promise<string>;
 
   game(overrides?: CallOverrides): Promise<string>;
+
+  getDealInfo(
+    dealID: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<HandshakeDeal.DealStructOutput>;
+
+  getNationDeals(
+    _nationID: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber[]>;
+
+  getNationTroopTypeBanDeals(
+    _nationID: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber[]>;
 
   getter(overrides?: CallOverrides): Promise<string>;
 
@@ -711,6 +926,36 @@ export interface CurioTreaty extends BaseContract {
   ): Promise<ContractTransaction>;
 
   name(overrides?: CallOverrides): Promise<string>;
+
+  nationIDToDealIDs(
+    arg0: PromiseOrValue<BigNumberish>,
+    arg1: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  nationIDToTroopTypeBanIDs(
+    arg0: PromiseOrValue<BigNumberish>,
+    arg1: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  proposeDeal(
+    _functionType: PromiseOrValue<BigNumberish>,
+    _encodedParams: PromiseOrValue<BytesLike>,
+    _timeLock: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  proposeTroopTypeBanDeal(
+    _troopTypeID: PromiseOrValue<BigNumberish>,
+    _timeLock: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  signDeal(
+    _dealID: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
 
   treatyDelegateGameFunction(
     _functionName: PromiseOrValue<string>,
@@ -873,11 +1118,41 @@ export interface CurioTreaty extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
+    dealCounter(overrides?: CallOverrides): Promise<BigNumber>;
+
+    dealIDToDeal(
+      arg0: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, BigNumber, number, string, BigNumber] & {
+        dealID: BigNumber;
+        proposer: BigNumber;
+        functionOfAgreement: number;
+        encodedParams: string;
+        timeLock: BigNumber;
+      }
+    >;
+
     description(overrides?: CallOverrides): Promise<string>;
 
     diamond(overrides?: CallOverrides): Promise<string>;
 
     game(overrides?: CallOverrides): Promise<string>;
+
+    getDealInfo(
+      dealID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<HandshakeDeal.DealStructOutput>;
+
+    getNationDeals(
+      _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber[]>;
+
+    getNationTroopTypeBanDeals(
+      _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber[]>;
 
     getter(overrides?: CallOverrides): Promise<string>;
 
@@ -888,6 +1163,36 @@ export interface CurioTreaty extends BaseContract {
     ): Promise<boolean>;
 
     name(overrides?: CallOverrides): Promise<string>;
+
+    nationIDToDealIDs(
+      arg0: PromiseOrValue<BigNumberish>,
+      arg1: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    nationIDToTroopTypeBanIDs(
+      arg0: PromiseOrValue<BigNumberish>,
+      arg1: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    proposeDeal(
+      _functionType: PromiseOrValue<BigNumberish>,
+      _encodedParams: PromiseOrValue<BytesLike>,
+      _timeLock: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    proposeTroopTypeBanDeal(
+      _troopTypeID: PromiseOrValue<BigNumberish>,
+      _timeLock: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    signDeal(
+      _dealID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     treatyDelegateGameFunction(
       _functionName: PromiseOrValue<string>,
@@ -1049,11 +1354,33 @@ export interface CurioTreaty extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    dealCounter(overrides?: CallOverrides): Promise<BigNumber>;
+
+    dealIDToDeal(
+      arg0: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     description(overrides?: CallOverrides): Promise<BigNumber>;
 
     diamond(overrides?: CallOverrides): Promise<BigNumber>;
 
     game(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getDealInfo(
+      dealID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getNationDeals(
+      _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getNationTroopTypeBanDeals(
+      _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     getter(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1064,6 +1391,36 @@ export interface CurioTreaty extends BaseContract {
     ): Promise<BigNumber>;
 
     name(overrides?: CallOverrides): Promise<BigNumber>;
+
+    nationIDToDealIDs(
+      arg0: PromiseOrValue<BigNumberish>,
+      arg1: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    nationIDToTroopTypeBanIDs(
+      arg0: PromiseOrValue<BigNumberish>,
+      arg1: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    proposeDeal(
+      _functionType: PromiseOrValue<BigNumberish>,
+      _encodedParams: PromiseOrValue<BytesLike>,
+      _timeLock: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    proposeTroopTypeBanDeal(
+      _troopTypeID: PromiseOrValue<BigNumberish>,
+      _timeLock: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    signDeal(
+      _dealID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
 
     treatyDelegateGameFunction(
       _functionName: PromiseOrValue<string>,
@@ -1227,11 +1584,33 @@ export interface CurioTreaty extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    dealCounter(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    dealIDToDeal(
+      arg0: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     description(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     diamond(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     game(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    getDealInfo(
+      dealID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getNationDeals(
+      _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getNationTroopTypeBanDeals(
+      _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     getter(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
@@ -1242,6 +1621,36 @@ export interface CurioTreaty extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     name(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    nationIDToDealIDs(
+      arg0: PromiseOrValue<BigNumberish>,
+      arg1: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    nationIDToTroopTypeBanIDs(
+      arg0: PromiseOrValue<BigNumberish>,
+      arg1: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    proposeDeal(
+      _functionType: PromiseOrValue<BigNumberish>,
+      _encodedParams: PromiseOrValue<BytesLike>,
+      _timeLock: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    proposeTroopTypeBanDeal(
+      _troopTypeID: PromiseOrValue<BigNumberish>,
+      _timeLock: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    signDeal(
+      _dealID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
 
     treatyDelegateGameFunction(
       _functionName: PromiseOrValue<string>,

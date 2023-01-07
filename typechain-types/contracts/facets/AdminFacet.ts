@@ -53,6 +53,7 @@ export interface AdminFacetInterface extends utils.Interface {
     "addInventory(uint256,string)": FunctionFragment;
     "addResourceTemplate(address)": FunctionFragment;
     "addSigner(uint256)": FunctionFragment;
+    "addToWhitelist(uint256)": FunctionFragment;
     "addTroopTemplate(uint256,uint256,uint256,uint256,address)": FunctionFragment;
     "adminDelegateGameFunction(uint256,string,uint256,bool)": FunctionFragment;
     "adminInitializeTile((uint256,uint256))": FunctionFragment;
@@ -71,6 +72,7 @@ export interface AdminFacetInterface extends utils.Interface {
     "registerTemplateShortcuts(string[],uint256[])": FunctionFragment;
     "registerTreatyTemplate(address,string)": FunctionFragment;
     "removeEntity(uint256)": FunctionFragment;
+    "removeFromWhitelist(uint256)": FunctionFragment;
     "removeIdleNations(uint256)": FunctionFragment;
     "removeSigner(uint256)": FunctionFragment;
     "setComponentValue(string,uint256,bytes)": FunctionFragment;
@@ -92,6 +94,7 @@ export interface AdminFacetInterface extends utils.Interface {
       | "addInventory"
       | "addResourceTemplate"
       | "addSigner"
+      | "addToWhitelist"
       | "addTroopTemplate"
       | "adminDelegateGameFunction"
       | "adminInitializeTile"
@@ -110,6 +113,7 @@ export interface AdminFacetInterface extends utils.Interface {
       | "registerTemplateShortcuts"
       | "registerTreatyTemplate"
       | "removeEntity"
+      | "removeFromWhitelist"
       | "removeIdleNations"
       | "removeSigner"
       | "setComponentValue"
@@ -149,6 +153,10 @@ export interface AdminFacetInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "addSigner",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "addToWhitelist",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
@@ -239,6 +247,10 @@ export interface AdminFacetInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
+    functionFragment: "removeFromWhitelist",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "removeIdleNations",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
@@ -300,6 +312,10 @@ export interface AdminFacetInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "addSigner", data: BytesLike): Result;
   decodeFunctionResult(
+    functionFragment: "addToWhitelist",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "addTroopTemplate",
     data: BytesLike
   ): Result;
@@ -357,6 +373,10 @@ export interface AdminFacetInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "removeEntity",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "removeFromWhitelist",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -465,6 +485,11 @@ export interface AdminFacet extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    addToWhitelist(
+      _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     addTroopTemplate(
       _health: PromiseOrValue<BigNumberish>,
       _attack: PromiseOrValue<BigNumberish>,
@@ -569,6 +594,11 @@ export interface AdminFacet extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    removeFromWhitelist(
+      _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     removeIdleNations(
       _maxIdleDuration: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -655,6 +685,11 @@ export interface AdminFacet extends BaseContract {
   ): Promise<ContractTransaction>;
 
   addSigner(
+    _nationID: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  addToWhitelist(
     _nationID: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
@@ -763,6 +798,11 @@ export interface AdminFacet extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  removeFromWhitelist(
+    _nationID: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   removeIdleNations(
     _maxIdleDuration: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -848,6 +888,11 @@ export interface AdminFacet extends BaseContract {
       _nationID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    addToWhitelist(
+      _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     addTroopTemplate(
       _health: PromiseOrValue<BigNumberish>,
@@ -951,6 +996,11 @@ export interface AdminFacet extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    removeFromWhitelist(
+      _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     removeIdleNations(
       _maxIdleDuration: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -1036,6 +1086,11 @@ export interface AdminFacet extends BaseContract {
     ): Promise<BigNumber>;
 
     addSigner(
+      _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    addToWhitelist(
       _nationID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
@@ -1141,6 +1196,11 @@ export interface AdminFacet extends BaseContract {
 
     removeEntity(
       _entity: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    removeFromWhitelist(
+      _nationID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -1235,6 +1295,11 @@ export interface AdminFacet extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
+    addToWhitelist(
+      _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
     addTroopTemplate(
       _health: PromiseOrValue<BigNumberish>,
       _attack: PromiseOrValue<BigNumberish>,
@@ -1336,6 +1401,11 @@ export interface AdminFacet extends BaseContract {
 
     removeEntity(
       _entity: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    removeFromWhitelist(
+      _nationID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

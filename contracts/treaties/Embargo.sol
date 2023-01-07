@@ -5,12 +5,16 @@ import {CurioTreaty} from "contracts/standards/CurioTreaty.sol";
 import {GetterFacet} from "contracts/facets/GetterFacet.sol";
 import {CurioERC20} from "contracts/standards/CurioERC20.sol";
 import {Position} from "contracts/libraries/Types.sol";
+import {Set} from "contracts/Set.sol";
 import {console} from "forge-std/console.sol";
 
-contract NonAggressionPact is CurioTreaty {
+contract Embargo is CurioTreaty {
+    Set public sanctionList;
+
     constructor(address _diamond) CurioTreaty(_diamond) {
-        name = "Non-Aggression Pact";
-        description = "Member nations cannot battle armies or tiles of one another";
+        name = "Economic Sanction Pact";
+        description = "Owner of the League can point to which nation the league is sanctioning";
+        sanctionList = new Set();
 
         // Add treaty owner to whitelist if game is calling (player registration)
         if (msg.sender == diamond) {
@@ -20,10 +24,26 @@ contract NonAggressionPact is CurioTreaty {
         }
     }
 
+    // ----------------------------------------------------------
+    // Owner functions
+    // ----------------------------------------------------------
+
+    function addToSanctionList(uint256 _nationID) public onlyOwner {
+        sanctionList.add(_nationID);
+    }
+
+    function removeFromSanctionList(uint256 _nationID) public onlyOwner {
+        sanctionList.remove(_nationID);
+    }
+
     function removeMember(uint256 _nationID) public onlyOwner {
         admin.removeFromWhitelist(_nationID); // need to be whitelisted again for joining
         admin.removeSigner(_nationID);
     }
+
+    // ----------------------------------------------------------
+    // Player functions
+    // ----------------------------------------------------------
 
     function treatyJoin() public override onlyWhitelist {
         super.treatyJoin();
@@ -32,10 +52,7 @@ contract NonAggressionPact is CurioTreaty {
     function treatyLeave() public override {
         // Check if nation has stayed in pact for at least 30 seconds
         uint256 nationID = getter.getEntityByAddress(msg.sender);
-        require(minimumStayCheck(nationID, 30), "NAPact: Must stay for at least 30 seconds");
-
-        // Remove nation from whitelist
-        admin.removeFromWhitelist(nationID);
+        require(minimumStayCheck(nationID, 30), "NAPact: Nation must stay for at least 30 seconds");
 
         super.treatyLeave();
     }
@@ -44,13 +61,12 @@ contract NonAggressionPact is CurioTreaty {
     // Permission Functions
     // ----------------------------------------------------------
 
-    function approveBattle(uint256 _nationID, bytes memory _encodedParams) public view override returns (bool) {
-        // Disapprove if target nation is part of pact
-        (, , uint256 battleTargetID) = abi.decode(_encodedParams, (uint256, uint256, uint256));
-        uint256 targetNationID = getter.getNation(battleTargetID);
-        uint256 treatyID = getter.getEntityByAddress(address(this));
-        if (getter.getNationTreatySignature(targetNationID, treatyID) != 0) return false;
+    function approveTransfer(uint256 _nationID, bytes memory _encodedParams) public view override returns (bool) {
+        // Disapprove if transfer is to a nation on the sanction list
+        (address to, ) = abi.decode(_encodedParams, (address, uint256));
+        uint256 toNationID = getter.getNation(getter.getEntityByAddress(to));
+        if (sanctionList.includes(toNationID)) return false;
 
-        return super.approveBattle(_nationID, _encodedParams);
+        return super.approveTransfer(_nationID, _encodedParams);
     }
 }

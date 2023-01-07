@@ -39,7 +39,7 @@ export interface GameFacetInterface extends utils.Interface {
     "battle(uint256,uint256)": FunctionFragment;
     "claimTile(uint256,uint256)": FunctionFragment;
     "delegateGameFunction(uint256,string,uint256,uint256,bool)": FunctionFragment;
-    "deployTreaty(uint256,string)": FunctionFragment;
+    "deployTreaty(uint256,string,bytes)": FunctionFragment;
     "disbandArmy(uint256)": FunctionFragment;
     "disownTile(uint256)": FunctionFragment;
     "endGather(uint256)": FunctionFragment;
@@ -111,7 +111,11 @@ export interface GameFacetInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "deployTreaty",
-    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<string>]
+    values: [
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BytesLike>
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "disbandArmy",
@@ -331,6 +335,7 @@ export interface GameFacet extends BaseContract {
     deployTreaty(
       _nationID: PromiseOrValue<BigNumberish>,
       _treatyName: PromiseOrValue<string>,
+      _treatyParams: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -462,6 +467,7 @@ export interface GameFacet extends BaseContract {
   deployTreaty(
     _nationID: PromiseOrValue<BigNumberish>,
     _treatyName: PromiseOrValue<string>,
+    _treatyParams: PromiseOrValue<BytesLike>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -593,6 +599,7 @@ export interface GameFacet extends BaseContract {
     deployTreaty(
       _nationID: PromiseOrValue<BigNumberish>,
       _treatyName: PromiseOrValue<string>,
+      _treatyParams: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<string>;
 
@@ -727,6 +734,7 @@ export interface GameFacet extends BaseContract {
     deployTreaty(
       _nationID: PromiseOrValue<BigNumberish>,
       _treatyName: PromiseOrValue<string>,
+      _treatyParams: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -859,6 +867,7 @@ export interface GameFacet extends BaseContract {
     deployTreaty(
       _nationID: PromiseOrValue<BigNumberish>,
       _treatyName: PromiseOrValue<string>,
+      _treatyParams: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

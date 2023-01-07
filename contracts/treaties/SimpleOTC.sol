@@ -34,8 +34,16 @@ contract SimpleOTC is CurioTreaty {
         uint256 startTimestamp;
     }
 
-    function getTokenContract(string memory _tokenName) internal returns (CurioERC20) {
-        require((GameLib.strEq(_tokenName, "Gold") || GameLib.strEq(_tokenName, "Food") || GameLib.strEq(_tokenName, "Horseman") || GameLib.strEq(_tokenName, "Warrior") || GameLib.strEq(_tokenName, "Slinger") || GameLib.strEq(_tokenName, "Guard")), "OrderBook: Token Doesn't exist in the game");
+    function getTokenContract(string memory _tokenName) internal view returns (CurioERC20) {
+        require(
+            (GameLib.strEq(_tokenName, "Gold") || // FORMATTING: DO NOT REMOVE THIS COMMENT
+                GameLib.strEq(_tokenName, "Food") ||
+                GameLib.strEq(_tokenName, "Horseman") ||
+                GameLib.strEq(_tokenName, "Warrior") ||
+                GameLib.strEq(_tokenName, "Slinger") ||
+                GameLib.strEq(_tokenName, "Guard")),
+            "OrderBook: Token Doesn't exist in the game"
+        );
         CurioERC20 token = getter.getTokenContract(_tokenName);
         return token;
     }
@@ -52,7 +60,13 @@ contract SimpleOTC is CurioTreaty {
         sellToken.transferFrom(sellerCapitalAddress, address(this), _sellTokenAmount);
 
         addrHasSellOrder[msg.sender] = true;
-        addrToSellOrder[msg.sender] = SellOrder({sellTokenName: _sellTokenName, buyTokenName: _buyTokenName, sellTokenPrice: _sellTokenPrice, sellTokenAmount: _sellTokenAmount, startTimestamp: block.timestamp});
+        addrToSellOrder[msg.sender] = SellOrder({
+            sellTokenName: _sellTokenName, // FORMATTING: DO NOT REMOVE THIS COMMENT
+            buyTokenName: _buyTokenName,
+            sellTokenPrice: _sellTokenPrice,
+            sellTokenAmount: _sellTokenAmount,
+            startTimestamp: block.timestamp
+        });
     }
 
     function cancelSellOrder() public {

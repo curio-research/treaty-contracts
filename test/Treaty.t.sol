@@ -6,7 +6,7 @@ import {DiamondDeployTest} from "test/DiamondDeploy.t.sol";
 import {Alliance} from "contracts/treaties/Alliance.sol";
 import {FTX} from "contracts/treaties/FTX.sol";
 import {NonAggressionPact} from "contracts/treaties/NonAggressionPact.sol";
-import {EconSanction} from "contracts/treaties/EconSanction.sol";
+import {Embargo} from "contracts/treaties/Embargo.sol";
 import {CollectiveDefenseFund} from "contracts/treaties/CDFund.sol";
 import {SimpleOTC} from "contracts/treaties/SimpleOTC.sol";
 import {HandshakeDeal} from "contracts/treaties/HandshakeDeal.sol";
@@ -23,7 +23,7 @@ contract TreatyTest is Test, DiamondDeployTest {
     // - [x] Case: FTX
     // - [x] Case: Alliance
     // - [x] Case: NAP
-    // - [x] Case: EconSanction
+    // - [x] Case: Embargo
     // - [x] Case: CDFund
     // - [x] Case: SimpleOTC
     // - [x] Case: HandshakeDeal
@@ -151,7 +151,7 @@ contract TreatyTest is Test, DiamondDeployTest {
 
         // Nation 1 deploys TestTreaty treaty
         vm.startPrank(player1);
-        TestTreaty testTreaty = TestTreaty(game.deployTreaty(nation1ID, testTreatyTemplate.name()));
+        TestTreaty testTreaty = TestTreaty(game.deployTreaty(nation1ID, testTreatyTemplate.name(), ""));
         uint256 testTreatyID = getter.getEntityByAddress(address(testTreaty));
         vm.stopPrank();
 
@@ -239,7 +239,7 @@ contract TreatyTest is Test, DiamondDeployTest {
         address army11Addr = getter.getAddress(army11ID);
 
         // Nation 1 deploys Alliance treaty
-        Alliance alliance = Alliance(game.deployTreaty(nation1ID, allianceTemplate.name()));
+        Alliance alliance = Alliance(game.deployTreaty(nation1ID, allianceTemplate.name(), ""));
         uint256 allianceID = getter.getEntityByAddress(address(alliance));
 
         // Nation 1 joins alliance after token approval
@@ -388,7 +388,7 @@ contract TreatyTest is Test, DiamondDeployTest {
 
         // Player 2 (SBF) starts FTX and grants it access to his wallet
         vm.startPrank(player2);
-        FTX ftx = FTX(game.deployTreaty(nation2ID, ftxTemplate.name()));
+        FTX ftx = FTX(game.deployTreaty(nation2ID, ftxTemplate.name(), ""));
         CurioWallet(nation2CapitalAddr).executeTx(address(goldToken), abi.encodeWithSignature("approve(address,uint256)", address(ftx), 10000));
         assertEq(goldToken.balanceOf(nation2CapitalAddr), 0);
         vm.stopPrank();
@@ -459,7 +459,7 @@ contract TreatyTest is Test, DiamondDeployTest {
 
         // Player1 deploys NAPact
         vm.startPrank(player1);
-        NonAggressionPact NAPact = NonAggressionPact(game.deployTreaty(nation1ID, NAPactTemplate.name()));
+        NonAggressionPact nonAggressionPact = NonAggressionPact(game.deployTreaty(nation1ID, nonAggressionPactTemplate.name(), ""));
         vm.stopPrank();
 
         // Deployer registers NAPact treaty & gives troops to p2
@@ -471,13 +471,13 @@ contract TreatyTest is Test, DiamondDeployTest {
 
         // Player1 joins NAPact and whitelists player2
         vm.startPrank(player1);
-        NAPact.treatyJoin();
-        NAPact.addToWhitelist(address(player2));
+        nonAggressionPact.treatyJoin();
+        nonAggressionPact.addToWhitelist(nation2ID);
         vm.stopPrank();
 
         // Player2 joins NAPact
         vm.startPrank(player2);
-        NAPact.treatyJoin();
+        nonAggressionPact.treatyJoin();
         uint256[] memory armyTemplateAmounts = new uint256[](3);
         armyTemplateAmounts[0] = 150;
         armyTemplateAmounts[1] = 150;
@@ -503,13 +503,13 @@ contract TreatyTest is Test, DiamondDeployTest {
         // Player2 leaves treaty and then able to attack
         time += 10;
         vm.warp(time);
-        NAPact.treatyLeave();
+        nonAggressionPact.treatyLeave();
         game.battle(army21ID, nation1CapitalTileID);
 
         vm.stopPrank();
     }
 
-    function testEconSanction() public {
+    function testEmbargo() public {
         /** 
         Outline:
         - Player1 deploys sanctionLeague Treaty and whitelists player2
@@ -521,28 +521,28 @@ contract TreatyTest is Test, DiamondDeployTest {
         uint256 time = block.timestamp + 500;
         vm.warp(time);
 
-        // Player1 deploys NAPact
+        // Player1 deploys embargo
         vm.startPrank(player1);
-        EconSanction econSanction = EconSanction(game.deployTreaty(nation1ID, econSanctionTemplate.name()));
+        Embargo embargo = Embargo(game.deployTreaty(nation1ID, econSanctionTemplate.name(), ""));
         vm.stopPrank();
 
-        // Deployer registers NAPact treaty & gives troops to p2
+        // Deployer registers embargo treaty & gives troops to p2
         vm.startPrank(deployer);
         admin.dripToken(nation2CapitalAddr, "Horseman", 1000);
         admin.dripToken(nation2CapitalAddr, "Warrior", 1000);
         admin.dripToken(nation2CapitalAddr, "Slinger", 1000);
         vm.stopPrank();
 
-        // Player1 joins econSanction and whitelists player2. Then he sanctions himself
+        // Player1 joins embargo and whitelists player2. Then he sanctions himself
         vm.startPrank(player1);
-        econSanction.treatyJoin();
-        econSanction.addToWhitelist(address(player2));
-        econSanction.addToSanctionList(address(player1));
+        embargo.treatyJoin();
+        embargo.addToWhitelist(nation2ID);
+        embargo.addToSanctionList(nation1ID);
         vm.stopPrank();
 
-        // Player2 joins econSanction
+        // Player2 joins embargo
         vm.startPrank(player2);
-        econSanction.treatyJoin();
+        embargo.treatyJoin();
         uint256[] memory armyTemplateAmounts = new uint256[](3);
         armyTemplateAmounts[0] = 150;
         armyTemplateAmounts[1] = 150;
@@ -575,7 +575,7 @@ contract TreatyTest is Test, DiamondDeployTest {
 
         // Player1 removes himself from sanctionList, and then player2 can transfer
         vm.startPrank(player1);
-        econSanction.removeFromSanctionList(address(player1));
+        embargo.removeFromSanctionList(nation1ID);
         vm.stopPrank();
 
         vm.startPrank(player2);
@@ -598,7 +598,7 @@ contract TreatyTest is Test, DiamondDeployTest {
 
         // Player1 deploys NAPact
         vm.startPrank(player1);
-        CollectiveDefenseFund cdFund = CollectiveDefenseFund(game.deployTreaty(nation1ID, CDFundTemplate.name()));
+        CollectiveDefenseFund cdFund = CollectiveDefenseFund(game.deployTreaty(nation1ID, collectiveDefenseFundTemplate.name(), abi.encode(100, 100, 86400, 86400, 50, 50)));
         vm.stopPrank();
 
         // Deployer registers NAPact treaty & assigns tokens to p1 and p2
@@ -606,7 +606,6 @@ contract TreatyTest is Test, DiamondDeployTest {
         // admin.registerTreatyTemplate(address(cdFund), "placeholder ABI");
         admin.dripToken(nation1CapitalAddr, "Gold", 1000);
         admin.dripToken(nation1CapitalAddr, "Food", 1000);
-
         admin.dripToken(nation2CapitalAddr, "Horseman", 1000);
         admin.dripToken(nation2CapitalAddr, "Warrior", 1000);
         admin.dripToken(nation2CapitalAddr, "Slinger", 1000);
@@ -620,7 +619,7 @@ contract TreatyTest is Test, DiamondDeployTest {
         CurioWallet(nation1CapitalAddr).executeTx(address(goldToken), abi.encodeWithSignature("approve(address,uint256)", address(cdFund), 1000));
         CurioWallet(nation1CapitalAddr).executeTx(address(foodToken), abi.encodeWithSignature("approve(address,uint256)", address(cdFund), 1000));
         cdFund.treatyJoin();
-        cdFund.addToWhitelist(address(player2));
+        cdFund.addToWhitelist(nation2ID);
         vm.stopPrank();
 
         // Player2 joins CDFund and attempts to attack Player1
@@ -655,7 +654,7 @@ contract TreatyTest is Test, DiamondDeployTest {
         time += 86400;
         vm.warp(time);
         vm.startPrank(player1);
-        cdFund.cleanUpMembers();
+        cdFund.removeAllOverdueMembers();
         // p1 tries to withdraw money
         uint256 p1PrevGoldBalance = goldToken.balanceOf(nation1CapitalAddr);
         uint256 p1PrevFoodBalance = goldToken.balanceOf(nation1CapitalAddr);
@@ -680,7 +679,7 @@ contract TreatyTest is Test, DiamondDeployTest {
 
         // Player1 deploys NAPact
         vm.startPrank(player1);
-        SimpleOTC otcContract = SimpleOTC(game.deployTreaty(nation1ID, otcContractTemplate.name()));
+        SimpleOTC otcContract = SimpleOTC(game.deployTreaty(nation1ID, otcContractTemplate.name(), ""));
         vm.stopPrank();
 
         // Deployer registers NAPact treaty & assigns tokens to p1 and p2
@@ -722,7 +721,7 @@ contract TreatyTest is Test, DiamondDeployTest {
 
         // Player1 deploys Handshake deal and propose
         vm.startPrank(player1);
-        HandshakeDeal hsDeal = HandshakeDeal(game.deployTreaty(nation1ID, handShakeDealTemplate.name()));
+        HandshakeDeal hsDeal = HandshakeDeal(game.deployTreaty(nation1ID, handshakeDealTemplate.name(), ""));
         hsDeal.treatyJoin();
         hsDeal.proposeDeal(HandshakeDeal.ApprovalFunctionType.approveUpgradeCapital, abi.encode(nation2CapitalID), block.timestamp + 1000);
         vm.stopPrank();

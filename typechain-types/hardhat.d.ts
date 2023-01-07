@@ -113,6 +113,14 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Alliance__factory>;
     getContractFactory(
+      name: "CollectiveDefenseFund",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.CollectiveDefenseFund__factory>;
+    getContractFactory(
+      name: "Embargo",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.Embargo__factory>;
+    getContractFactory(
       name: "FTTERC20",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.FTTERC20__factory>;
@@ -121,9 +129,17 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.FTX__factory>;
     getContractFactory(
-      name: "NATO",
+      name: "HandshakeDeal",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.NATO__factory>;
+    ): Promise<Contracts.HandshakeDeal__factory>;
+    getContractFactory(
+      name: "NonAggressionPact",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.NonAggressionPact__factory>;
+    getContractFactory(
+      name: "SimpleOTC",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.SimpleOTC__factory>;
     getContractFactory(
       name: "TestTreaty",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -303,6 +319,16 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.Alliance>;
     getContractAt(
+      name: "CollectiveDefenseFund",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.CollectiveDefenseFund>;
+    getContractAt(
+      name: "Embargo",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.Embargo>;
+    getContractAt(
       name: "FTTERC20",
       address: string,
       signer?: ethers.Signer
@@ -313,10 +339,20 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.FTX>;
     getContractAt(
-      name: "NATO",
+      name: "HandshakeDeal",
       address: string,
       signer?: ethers.Signer
-    ): Promise<Contracts.NATO>;
+    ): Promise<Contracts.HandshakeDeal>;
+    getContractAt(
+      name: "NonAggressionPact",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.NonAggressionPact>;
+    getContractAt(
+      name: "SimpleOTC",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.SimpleOTC>;
     getContractAt(
       name: "TestTreaty",
       address: string,

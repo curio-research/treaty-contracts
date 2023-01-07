@@ -81,7 +81,9 @@ contract AdminFacet is UseStorage {
         GameLib.validEntityCheck(_nationID);
 
         uint256 treatyID = GameLib.getEntityByAddress(msg.sender);
+        console.log("AdminFacet: addToWhitelist");
         uint256 whitelisted = GameLib.getWhitelisted(_nationID, treatyID);
+        console.log("AdminFacet: addToWhitelist 1");
         require(whitelisted == 0, "CURIO: Nation is already whitelisted");
         Templates.addWhitelisted(treatyID, _nationID);
     }

@@ -159,6 +159,19 @@ const _abi = [
     inputs: [
       {
         internalType: "uint256",
+        name: "_nationID",
+        type: "uint256",
+      },
+    ],
+    name: "addToWhitelist",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
         name: "_health",
         type: "uint256",
       },
@@ -562,6 +575,19 @@ const _abi = [
       },
     ],
     name: "removeEntity",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "_nationID",
+        type: "uint256",
+      },
+    ],
+    name: "removeFromWhitelist",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -985,6 +1011,11 @@ const _abi = [
         internalType: "string",
         name: "_treatyName",
         type: "string",
+      },
+      {
+        internalType: "bytes",
+        name: "_treatyParams",
+        type: "bytes",
       },
     ],
     name: "deployTreaty",
@@ -1965,6 +1996,25 @@ const _abi = [
   {
     inputs: [
       {
+        internalType: "uint256",
+        name: "_entityID",
+        type: "uint256",
+      },
+    ],
+    name: "getTag",
+    outputs: [
+      {
+        internalType: "string",
+        name: "",
+        type: "string",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
         components: [
           {
             internalType: "uint256",
@@ -2209,6 +2259,30 @@ const _abi = [
   {
     inputs: [
       {
+        internalType: "uint256",
+        name: "_nationID",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "_treatyID",
+        type: "uint256",
+      },
+    ],
+    name: "isWhitelisted",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
         components: [
           {
             internalType: "enum QueryType",
@@ -2240,6 +2314,29 @@ const _abi = [
       },
     ],
     stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "string",
+        name: "_functionName",
+        type: "string",
+      },
+      {
+        internalType: "uint256",
+        name: "_nationID",
+        type: "uint256",
+      },
+      {
+        internalType: "bytes",
+        name: "_encodedParams",
+        type: "bytes",
+      },
+    ],
+    name: "treatyApprovalCheck",
+    outputs: [],
+    stateMutability: "nonpayable",
     type: "function",
   },
   {

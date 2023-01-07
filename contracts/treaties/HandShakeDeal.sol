@@ -9,7 +9,6 @@ import {GameLib} from "contracts/libraries/GameLib.sol";
 import {console} from "forge-std/console.sol";
 
 contract HandshakeDeal is CurioTreaty {
-
     enum ApprovalFunctionType {
         approveUpgradeCapital,
         approveMoveCapital,
@@ -29,22 +28,20 @@ contract HandshakeDeal is CurioTreaty {
         approveBattle
     }
 
-    struct Deal{
+    struct Deal {
         uint256 dealID;
         uint256 proposer;
         ApprovalFunctionType functionOfAgreement;
         bytes encodedParams;
         uint256 timeLock;
     }
-    
+
     uint256 public dealCounter;
     mapping(uint256 => uint256[]) public nationIDToDealIDs;
     mapping(uint256 => uint256[]) public nationIDToTroopTypeBanIDs;
     mapping(uint256 => Deal) public dealIDToDeal;
 
-    constructor(
-        address _diamond
-    ) CurioTreaty(_diamond) {
+    constructor(address _diamond) CurioTreaty(_diamond) {
         name = "Simple Handshake Deal";
         description = "Flexible handshake agreement between nations";
         dealCounter = 1;
@@ -70,34 +67,25 @@ contract HandshakeDeal is CurioTreaty {
         ApprovalFunctionType _functionType,
         bytes memory _encodedParams,
         uint256 _timeLock
-        ) public onlySigner {
+    ) public onlySigner {
         uint256 proposerID = getter.getEntityByAddress(msg.sender);
-        dealIDToDeal[dealCounter] = Deal({
-            dealID: dealCounter,
-            proposer: proposerID,
-            functionOfAgreement: _functionType,
-            encodedParams: _encodedParams,
-            timeLock: _timeLock
-        });
+        dealIDToDeal[dealCounter] = Deal({dealID: dealCounter, proposer: proposerID, functionOfAgreement: _functionType, encodedParams: _encodedParams, timeLock: _timeLock});
         nationIDToDealIDs[proposerID].push(dealCounter);
-        dealCounter ++;
+        dealCounter++;
     }
 
     // note: ban trooptype for only the signer in startTroopProduction function
-    function proposeTroopTypeBanDeal(
-        uint256 _troopTypeID,
-        uint256 _timeLock
-        ) public onlySigner {
+    function proposeTroopTypeBanDeal(uint256 _troopTypeID, uint256 _timeLock) public onlySigner {
         uint256 proposerID = getter.getEntityByAddress(msg.sender);
         dealIDToDeal[dealCounter] = Deal({
-            dealID: dealCounter,
+            dealID: dealCounter, // FORMATTING: DO NOT REMOVE THIS COMMENT
             proposer: proposerID,
             functionOfAgreement: ApprovalFunctionType.specialTroopTypeBan,
             encodedParams: abi.encode(_troopTypeID),
             timeLock: _timeLock
         });
         nationIDToTroopTypeBanIDs[proposerID].push(dealCounter);
-        dealCounter ++;
+        dealCounter++;
     }
 
     function signDeal(uint256 _dealID) public onlySigner {
@@ -114,7 +102,7 @@ contract HandshakeDeal is CurioTreaty {
         for (uint256 i = 0; i < signedDealIDs.length; i++) {
             Deal memory deal = dealIDToDeal[signedDealIDs[i]];
             require(block.timestamp > deal.timeLock, "HSDeal: a player can exit only after all timelocks passe");
-            }
+        }
         super.treatyLeave();
     }
 
@@ -226,7 +214,7 @@ contract HandshakeDeal is CurioTreaty {
         for (uint256 i = 0; i < signedDealIDs.length; i++) {
             Deal memory deal = dealIDToDeal[signedDealIDs[i]];
             if (deal.functionOfAgreement == ApprovalFunctionType.approveEndTroopProduction) {
-                (uint256 agreedCapitalID) = abi.decode(deal.encodedParams, (uint256));
+                uint256 agreedCapitalID = abi.decode(deal.encodedParams, (uint256));
                 if (capitalID == agreedCapitalID) {
                     if (block.timestamp < deal.timeLock) {
                         return false;
@@ -243,7 +231,7 @@ contract HandshakeDeal is CurioTreaty {
         for (uint256 i = 0; i < signedDealIDs.length; i++) {
             Deal memory deal = dealIDToDeal[signedDealIDs[i]];
             if (deal.functionOfAgreement == ApprovalFunctionType.approveMove) {
-                (uint256 agreedArmyID, Position memory  agreedTargetPosition) = abi.decode(deal.encodedParams, (uint256, Position));
+                (uint256 agreedArmyID, Position memory agreedTargetPosition) = abi.decode(deal.encodedParams, (uint256, Position));
                 if (agreedArmyID == armyID && GameLib.coincident(targetPosition, agreedTargetPosition)) {
                     if (block.timestamp < deal.timeLock) {
                         return false;
@@ -295,7 +283,7 @@ contract HandshakeDeal is CurioTreaty {
         for (uint256 i = 0; i < signedDealIDs.length; i++) {
             Deal memory deal = dealIDToDeal[signedDealIDs[i]];
             if (deal.functionOfAgreement == ApprovalFunctionType.approveEndGather) {
-                (uint256 agreedArmyID) = abi.decode(deal.encodedParams, (uint256));
+                uint256 agreedArmyID = abi.decode(deal.encodedParams, (uint256));
                 if (agreedArmyID == armyID) {
                     if (block.timestamp < deal.timeLock) {
                         return false;
@@ -312,7 +300,7 @@ contract HandshakeDeal is CurioTreaty {
         for (uint256 i = 0; i < signedDealIDs.length; i++) {
             Deal memory deal = dealIDToDeal[signedDealIDs[i]];
             if (deal.functionOfAgreement == ApprovalFunctionType.approveEndGather) {
-                (uint256 agreedArmyID) = abi.decode(deal.encodedParams, (uint256));
+                uint256 agreedArmyID = abi.decode(deal.encodedParams, (uint256));
                 if (agreedArmyID == armyID) {
                     if (block.timestamp < deal.timeLock) {
                         return false;

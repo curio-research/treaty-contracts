@@ -215,7 +215,7 @@ export const initializeGame = async (hre: HardhatRuntimeEnvironment, worldConsta
 
   // Deploy treaty templates
   startTime = performance.now();
-  const treatyTemplateNames = ['Alliance', 'FTX', 'NATO'];
+  const treatyTemplateNames = ['Alliance', 'FTX'];
   for (const name of treatyTemplateNames) {
     await deployTreatyTemplate(name, admin, hre, diamond, gasLimit);
     await sleep(1000);

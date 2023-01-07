@@ -7,7 +7,6 @@ import {GetterFacet} from "contracts/facets/GetterFacet.sol";
 import {AdminFacet} from "contracts/facets/AdminFacet.sol";
 import {console} from "forge-std/console.sol";
 
-
 abstract contract CurioTreaty is ITreaty {
     // Facets
     address public diamond;
@@ -18,6 +17,10 @@ abstract contract CurioTreaty is ITreaty {
     // Treaty data
     string public name;
     string public description;
+
+    // Cache
+    uint256 public treatyID;
+    uint256 public ownerID;
 
     constructor(address _diamond) {
         require(_diamond != address(0), "CurioTreaty: Diamond address required");
@@ -45,6 +48,12 @@ abstract contract CurioTreaty is ITreaty {
         _;
     }
 
+    /// @dev No need to use if the treaty does not need whitelist
+    modifier onlyWhitelist() {
+        require(getter.isWhitelisted(getter.getEntityByAddress(msg.sender), getter.getEntityByAddress(address(this))), "CurioTreaty: Only whitelisted nations can call");
+        _;
+    }
+
     // ----------------------------------------------------------
     // MEMBERSHIP FUNCTIONS (CALLED BY NATION)
     // ----------------------------------------------------------
@@ -69,6 +78,27 @@ abstract contract CurioTreaty is ITreaty {
     ) public virtual {
         uint256 nationID = getter.getEntityByAddress(msg.sender);
         admin.adminDelegateGameFunction(nationID, _functionName, _subjectID, _canCall);
+    }
+
+    // ----------------------------------------------------------
+    // HELPERS
+    // ----------------------------------------------------------
+
+    function minimumStayCheck(uint256 _nationID, uint256 _duration) public view returns (bool) {
+        uint256 treatyID = getter.getEntityByAddress(address(this));
+
+        // Check if nation has been a treaty signer for at least the duration
+        uint256 nationJoinTime = abi.decode(getter.getComponent("InitTimestamp").getBytesValue(getter.getNationTreatySignature(_nationID, treatyID)), (uint256));
+        return block.timestamp >= nationJoinTime + _duration;
+    }
+
+    function addToWhitelist(uint256 _nationID) public {
+        admin.addToWhitelist(_nationID);
+    }
+
+    function registerTreatyAndOwnerIds() public {
+        treatyID = getter.getEntityByAddress(address(this));
+        ownerID = abi.decode(getter.getComponent("Owner").getBytesValue(treatyID), (uint256));
     }
 
     // ----------------------------------------------------------
