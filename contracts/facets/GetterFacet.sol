@@ -81,13 +81,17 @@ contract GetterFacet is UseStorage {
         return GameLib.getNationTreatySignature(_nationID, _treatyID);
     }
 
-    function isWhitelisted(uint256 _nationID, uint256 _treatyID) external view returns (bool) {
-        return GameLib.getWhitelisted(_nationID, _treatyID) != NULL;
+    function isWhitelistedByTreaty(uint256 _nationID, uint256 _treatyID) external view returns (bool) {
+        return GameLib.getTreatyWhitelisted(_nationID, _treatyID) != NULL;
     }
 
     // ----------------------------------------------------------
     // LOGIC GETTERS
     // ----------------------------------------------------------
+
+    function isPlayerWhitelistedByGame(address _player) external view returns (bool) {
+        return gs().isWhitelistedByGame[_player];
+    }
 
     function isPlayerInitialized(address _player) external view returns (bool) {
         return GameLib.getEntityByAddress(_player) != NULL;

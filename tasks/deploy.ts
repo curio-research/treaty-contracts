@@ -5,7 +5,7 @@ import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { printDivider, indexerUrlSelector, saveMapToLocal, initializeGame } from './util/deployHelper';
 import { generateWorldConstants, MAP_INPUT } from './util/constants';
 import { generateBlankFixmap, generateMap, initializeFixmap } from './util/mapHelper';
-import { GameConfig, scaleMap } from 'curio-vault';
+import { GameConfig, GameMode, scaleMap } from 'curio-vault';
 import * as rw from 'random-words';
 import { saveComponentsToJsonFiles, saveMapToJsonFile, saveWorldConstantsToJsonFile } from '../test/util/saveDataForTests';
 import { DeployArgs } from './util/types';
@@ -39,7 +39,7 @@ task('deploy', 'deploy contracts')
 
       if (fixmap) console.log(chalk.bgRed.black('Using deterministic map'));
 
-      await isConnectionLive();
+      // await isConnectionLive();
 
       // Set up deployer and some local variables
       let [player1] = await hre.ethers.getSigners();
@@ -48,6 +48,7 @@ task('deploy', 'deploy contracts')
       // Generate world constants and tile map
       const worldConstants = generateWorldConstants(player1.address, MAP_INPUT);
       const tileMap = fixmap ? generateBlankFixmap() : generateMap(MAP_INPUT);
+      if (worldConstants.gameMode === GameMode.BATTLE_ROYALE) tileMap[Math.floor(tileMap.length / 2)][Math.floor(tileMap[0].length / 2)] = 0; // set center tile to 0 if battle royale
       saveMapToLocal(tileMap);
 
       // Save components, world constants, and map to JSON files for Foundry testing

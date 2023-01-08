@@ -72,7 +72,6 @@ library Templates {
         uint256 nationID = ECSLib.addEntity();
 
         ECSLib.setString("Tag", nationID, "Nation");
-        ECSLib.setBool("IsActive", nationID);
         ECSLib.setString("Name", nationID, _name);
         ECSLib.setUint("InitTimestamp", nationID, block.timestamp);
         ECSLib.setUint("LastActed", nationID, block.timestamp);
@@ -259,10 +258,10 @@ library Templates {
         return treatyTemplateID;
     }
 
-    function addWhitelisted(uint256 _treatyID, uint256 _nationID) public returns (uint256) {
+    function addTreatyWhitelisted(uint256 _treatyID, uint256 _nationID) public returns (uint256) {
         uint256 whitelistedID = ECSLib.addEntity();
 
-        ECSLib.setString("Tag", whitelistedID, "Whitelisted");
+        ECSLib.setString("Tag", whitelistedID, "TreatyWhitelisted");
         ECSLib.setUint("Treaty", whitelistedID, _treatyID);
         ECSLib.setUint("Nation", whitelistedID, _nationID);
 

@@ -109,6 +109,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.CurioWallet__factory>;
     getContractFactory(
+      name: "TreatyWithWhitelist",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.TreatyWithWhitelist__factory>;
+    getContractFactory(
       name: "Alliance",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Alliance__factory>;
@@ -297,6 +301,11 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.CurioWallet>;
+    getContractAt(
+      name: "TreatyWithWhitelist",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.TreatyWithWhitelist>;
     getContractAt(
       name: "Alliance",
       address: string,

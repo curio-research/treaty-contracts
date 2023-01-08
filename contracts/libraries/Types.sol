@@ -1,7 +1,6 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.13;
 
-import {Set} from "contracts/Set.sol";
 import {Component} from "contracts/Component.sol";
 
 /// Data structures for game
@@ -101,5 +100,7 @@ struct GameState {
     // Accounts
     mapping(address => address) mainToBurner; // main address -> burner address
     mapping(address => address) burnerToMain; // burner address -> main address
+    mapping(address => bool) isWhitelistedByGame;
+    // Other
     uint256 addressNonce; // used for generating tile addresses
 }

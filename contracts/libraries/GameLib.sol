@@ -184,6 +184,9 @@ library GameLib {
             ECSLib.setUint("Nation", tileIDs[i], 0);
         }
 
+        // Remove player address from whitelist
+        gs().isWhitelistedByGame[ECSLib.getAddress("Address", _nationID)] = false;
+
         // Remove nation
         ECSLib.removeEntity(_nationID);
     }
@@ -647,9 +650,9 @@ library GameLib {
         return res.length == 1 ? res[0] : 0;
     }
 
-    function getWhitelisted(uint256 _nationID, uint256 _treatyID) internal view returns (uint256) {
+    function getTreatyWhitelisted(uint256 _nationID, uint256 _treatyID) internal view returns (uint256) {
         QueryCondition[] memory query = new QueryCondition[](3);
-        query[0] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Tag"]), abi.encode("Whitelisted"));
+        query[0] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Tag"]), abi.encode("TreatyWhitelisted"));
         query[1] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Nation"]), abi.encode(_nationID));
         query[2] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Treaty"]), abi.encode(_treatyID));
         uint256[] memory res = ECSLib.query(query);

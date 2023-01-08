@@ -15,7 +15,7 @@ contract GameTest is Test, DiamondDeployTest {
     // GameFacet Coverage Overview
     //
     // Nation:
-    // - [x] initializeNation
+    // - [x] joinGame
     // Capital:
     // - [x] upgradeCapital
     // - [ ] moveCapital
@@ -655,28 +655,78 @@ contract GameTest is Test, DiamondDeployTest {
         vm.warp(time);
         vm.startPrank(deployer);
         admin.removeIdleNations(1000);
-        assertEq(getter.getComponent("Tag").getEntitiesWithValue(abi.encode("Nation")).length, 3);
+        assertTrue(getter.isPlayerWhitelistedByGame(player1));
+        assertTrue(getter.isPlayerWhitelistedByGame(player2));
+        assertTrue(getter.isPlayerWhitelistedByGame(player3));
         vm.stopPrank();
 
         // Nation 3 is removed for being idle for 500 seconds
         vm.startPrank(deployer);
         admin.removeIdleNations(500);
-        assertEq(getter.getComponent("Tag").getEntitiesWithValue(abi.encode("Nation")).length, 2);
+        assertFalse(getter.isPlayerWhitelistedByGame(player3));
         assertEq(getter.getCapital(nation3ID), 0);
         vm.stopPrank();
 
         // Nation 1 is removed for being idle for 50 seconds
         vm.startPrank(deployer);
         admin.removeIdleNations(50);
-        assertEq(getter.getComponent("Tag").getEntitiesWithValue(abi.encode("Nation")).length, 1);
+        assertFalse(getter.isPlayerWhitelistedByGame(player1));
         assertEq(getter.getCapital(nation1ID), 0);
         vm.stopPrank();
 
         // Nation 2 is removed for being idle for 10 seconds
         vm.startPrank(deployer);
         admin.removeIdleNations(10);
-        assertEq(getter.getComponent("Tag").getEntitiesWithValue(abi.encode("Nation")).length, 0);
+        assertFalse(getter.isPlayerWhitelistedByGame(player2));
         assertEq(getter.getCapital(nation2ID), 0);
         vm.stopPrank();
+    }
+
+    function testDelegateAll() public {
+        // Start time
+        uint256 time = block.timestamp + 500;
+        vm.warp(time);
+
+        // Deployer drips gold and food to Nation 1 and 2
+        vm.startPrank(deployer);
+        admin.dripToken(nation1CapitalAddr, "Gold", 100000000);
+        admin.dripToken(nation1CapitalAddr, "Food", 100000000);
+        admin.dripToken(nation2CapitalAddr, "Gold", 100000000);
+        admin.dripToken(nation2CapitalAddr, "Food", 100000000);
+        vm.stopPrank();
+
+        // Nation 2 tries to upgrade capital on behalf of Nation 1
+        vm.startPrank(player2);
+        vm.expectRevert("CURIO: Not delegated to call UpgradeCapital");
+        game.upgradeCapital(nation1CapitalID);
+        vm.stopPrank();
+
+        // Nation 1 delegates all game functions to Nation 2
+        vm.startPrank(player1);
+        game.delegateAllGameFunctions(nation1ID, nation2ID, true);
+        vm.stopPrank();
+
+        // Nation 2 upgrades capital on behalf of Nation 1
+        vm.startPrank(player2);
+        game.upgradeCapital(nation1CapitalID);
+        vm.stopPrank();
+
+        // Nation 1 revokes delegation
+        vm.startPrank(player1);
+        game.delegateGameFunction(nation1ID, "UpgradeCapital", nation2ID, 0, false);
+        vm.stopPrank();
+
+        // Nation 2 fails to upgrade capital on behalf of Nation 1
+        vm.startPrank(player2);
+        vm.expectRevert("CURIO: Not delegated to call UpgradeCapital");
+        game.upgradeCapital(nation1CapitalID);
+        vm.stopPrank();
+    }
+
+    function testCenterTileMountain() public {
+        // Change mode to battle royale
+        vm.startPrank(deployer);
+
+        // TODO: left here
     }
 }

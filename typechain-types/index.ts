@@ -56,6 +56,8 @@ export type { CurioTreaty } from "./contracts/standards/CurioTreaty";
 export { CurioTreaty__factory } from "./factories/contracts/standards/CurioTreaty__factory";
 export type { CurioWallet } from "./contracts/standards/CurioWallet";
 export { CurioWallet__factory } from "./factories/contracts/standards/CurioWallet__factory";
+export type { TreatyWithWhitelist } from "./contracts/standards/TreatyWithWhitelist";
+export { TreatyWithWhitelist__factory } from "./factories/contracts/standards/TreatyWithWhitelist__factory";
 export type { Alliance } from "./contracts/treaties/Alliance";
 export { Alliance__factory } from "./factories/contracts/treaties/Alliance__factory";
 export type { FTTERC20 } from "./contracts/treaties/FTX.sol/FTTERC20";

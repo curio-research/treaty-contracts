@@ -9,7 +9,7 @@ import {CurioTreaty} from "contracts/standards/CurioTreaty.sol";
 
 abstract contract TreatyWithWhitelist is CurioTreaty {
     modifier onlyWhitelist() {
-        require(getter.isWhitelisted(getter.getEntityByAddress(address(this)), getter.getEntityByAddress(msg.sender)), "CurioTreaty: Only whitelisted nations can call");
+        require(getter.isWhitelistedByTreaty(getter.getEntityByAddress(address(this)), getter.getEntityByAddress(msg.sender)), "CurioTreaty: Only whitelisted nations can call");
         _;
     }
 
@@ -22,11 +22,11 @@ abstract contract TreatyWithWhitelist is CurioTreaty {
 
     function treatyAddToWhitelist() public virtual {
         uint256 nationID = getter.getEntityByAddress(msg.sender);
-        admin.addToWhitelist(nationID);
+        admin.addToTreatyWhitelist(nationID);
     }
 
     function treatyRemoveFromWhitelist() public virtual {
         uint256 nationID = getter.getEntityByAddress(msg.sender);
-        admin.removeFromWhitelist(nationID);
+        admin.removeFromTreatyWhitelist(nationID);
     }
 }

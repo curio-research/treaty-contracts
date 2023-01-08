@@ -124,7 +124,7 @@ export const initializeGame = async (hre: HardhatRuntimeEnvironment, worldConsta
   startTime = performance.now();
 
   const functionNames = [
-    'InitializeNation',
+    'JoinGame',
     'UpgradeCapital',
     'MoveCapital',
     'ClaimTile',
