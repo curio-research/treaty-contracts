@@ -34,6 +34,7 @@ contract GameFacet is UseStorage {
         GameLib.inboundPositionCheck(_position);
         require(GameLib.getNationCount() < gs().worldConstants.maxNationCount, "CURIO: Max nation count reached");
         require(GameLib.getEntityByAddress(msg.sender) == NULL, "CURIO: Nation is initialized or removed");
+        require(gs().isWhitelistedByGame[msg.sender], "CURIO: Not whitelisted by game");
 
         // Verify that capital is not on mountain
         Position memory tilePosition = GameLib.getProperTilePosition(_position);

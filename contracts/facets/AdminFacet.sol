@@ -76,22 +76,22 @@ contract AdminFacet is UseStorage {
         ECSLib.removeEntity(signatureID);
     }
 
-    function addToWhitelist(uint256 _nationID) external onlyTreaty {
+    function addToTreatyWhitelist(uint256 _nationID) external onlyTreaty {
         GameLib.ongoingGameCheck();
         GameLib.validEntityCheck(_nationID);
 
         uint256 treatyID = GameLib.getEntityByAddress(msg.sender);
-        uint256 whitelisted = GameLib.getWhitelisted(_nationID, treatyID);
+        uint256 whitelisted = GameLib.getTreatyWhitelisted(_nationID, treatyID);
         require(whitelisted == 0, "CURIO: Nation is already whitelisted");
-        Templates.addWhitelisted(treatyID, _nationID);
+        Templates.addTreatyWhitelisted(treatyID, _nationID);
     }
 
-    function removeFromWhitelist(uint256 _nationID) external onlyTreaty {
+    function removeFromTreatyWhitelist(uint256 _nationID) external onlyTreaty {
         GameLib.ongoingGameCheck();
         GameLib.validEntityCheck(_nationID);
 
         uint256 treatyID = GameLib.getEntityByAddress(msg.sender);
-        uint256 whitelisted = GameLib.getWhitelisted(_nationID, treatyID);
+        uint256 whitelisted = GameLib.getTreatyWhitelisted(_nationID, treatyID);
         require(whitelisted != NULL, "CURIO: Nation is not whitelisted");
         ECSLib.removeEntity(whitelisted);
     }
@@ -143,10 +143,6 @@ contract AdminFacet is UseStorage {
         }
     }
 
-    function allowRejoin(address _address) external onlyAuthorized {
-        ECSLib.removeEntity(ECSLib.getAddressComponent("Address").getEntitiesWithValue(_address)[0]);
-    }
-
     function stopGame() external onlyAuthorized {
         gs().worldConstants.gameLengthInSeconds = block.timestamp - gs().gameInitTimestamp;
     }
@@ -190,6 +186,10 @@ contract AdminFacet is UseStorage {
     // ----------------------------------------------------------------------
     // ADMIN FUNCTIONS (GAME SETUP)
     // ----------------------------------------------------------------------
+
+    function addToGameWhitelist(address _playerAddress) external onlyAuthorized {
+        gs().isWhitelistedByGame[_playerAddress] = true;
+    }
 
     function adminInitializeTile(Position memory _startPosition) external onlyAuthorized {
         GameLib.initializeTile(_startPosition);

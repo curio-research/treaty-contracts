@@ -53,11 +53,11 @@ export interface AdminFacetInterface extends utils.Interface {
     "addInventory(uint256,string)": FunctionFragment;
     "addResourceTemplate(address)": FunctionFragment;
     "addSigner(uint256)": FunctionFragment;
-    "addToWhitelist(uint256)": FunctionFragment;
+    "addToGameWhitelist(address)": FunctionFragment;
+    "addToTreatyWhitelist(uint256)": FunctionFragment;
     "addTroopTemplate(uint256,uint256,uint256,uint256,address)": FunctionFragment;
     "adminDelegateGameFunction(uint256,string,uint256,bool)": FunctionFragment;
     "adminInitializeTile((uint256,uint256))": FunctionFragment;
-    "allowRejoin(address)": FunctionFragment;
     "bulkAddGameParameters(string[],uint256[])": FunctionFragment;
     "bulkInitializeTiles((uint256,uint256)[])": FunctionFragment;
     "disallowHostCapital((uint256,uint256)[])": FunctionFragment;
@@ -72,7 +72,7 @@ export interface AdminFacetInterface extends utils.Interface {
     "registerTemplateShortcuts(string[],uint256[])": FunctionFragment;
     "registerTreatyTemplate(address,string)": FunctionFragment;
     "removeEntity(uint256)": FunctionFragment;
-    "removeFromWhitelist(uint256)": FunctionFragment;
+    "removeFromTreatyWhitelist(uint256)": FunctionFragment;
     "removeIdleNations(uint256)": FunctionFragment;
     "removeSigner(uint256)": FunctionFragment;
     "setComponentValue(string,uint256,bytes)": FunctionFragment;
@@ -94,11 +94,11 @@ export interface AdminFacetInterface extends utils.Interface {
       | "addInventory"
       | "addResourceTemplate"
       | "addSigner"
-      | "addToWhitelist"
+      | "addToGameWhitelist"
+      | "addToTreatyWhitelist"
       | "addTroopTemplate"
       | "adminDelegateGameFunction"
       | "adminInitializeTile"
-      | "allowRejoin"
       | "bulkAddGameParameters"
       | "bulkInitializeTiles"
       | "disallowHostCapital"
@@ -113,7 +113,7 @@ export interface AdminFacetInterface extends utils.Interface {
       | "registerTemplateShortcuts"
       | "registerTreatyTemplate"
       | "removeEntity"
-      | "removeFromWhitelist"
+      | "removeFromTreatyWhitelist"
       | "removeIdleNations"
       | "removeSigner"
       | "setComponentValue"
@@ -156,7 +156,11 @@ export interface AdminFacetInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
-    functionFragment: "addToWhitelist",
+    functionFragment: "addToGameWhitelist",
+    values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "addToTreatyWhitelist",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
@@ -181,10 +185,6 @@ export interface AdminFacetInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "adminInitializeTile",
     values: [PositionStruct]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "allowRejoin",
-    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "bulkAddGameParameters",
@@ -247,7 +247,7 @@ export interface AdminFacetInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
-    functionFragment: "removeFromWhitelist",
+    functionFragment: "removeFromTreatyWhitelist",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
@@ -312,7 +312,11 @@ export interface AdminFacetInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "addSigner", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "addToWhitelist",
+    functionFragment: "addToGameWhitelist",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "addToTreatyWhitelist",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -325,10 +329,6 @@ export interface AdminFacetInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "adminInitializeTile",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "allowRejoin",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -376,7 +376,7 @@ export interface AdminFacetInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "removeFromWhitelist",
+    functionFragment: "removeFromTreatyWhitelist",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -485,7 +485,12 @@ export interface AdminFacet extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    addToWhitelist(
+    addToGameWhitelist(
+      _playerAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    addToTreatyWhitelist(
       _nationID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
@@ -509,11 +514,6 @@ export interface AdminFacet extends BaseContract {
 
     adminInitializeTile(
       _startPosition: PositionStruct,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    allowRejoin(
-      _address: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -594,7 +594,7 @@ export interface AdminFacet extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    removeFromWhitelist(
+    removeFromTreatyWhitelist(
       _nationID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
@@ -689,7 +689,12 @@ export interface AdminFacet extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  addToWhitelist(
+  addToGameWhitelist(
+    _playerAddress: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  addToTreatyWhitelist(
     _nationID: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
@@ -713,11 +718,6 @@ export interface AdminFacet extends BaseContract {
 
   adminInitializeTile(
     _startPosition: PositionStruct,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  allowRejoin(
-    _address: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -798,7 +798,7 @@ export interface AdminFacet extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  removeFromWhitelist(
+  removeFromTreatyWhitelist(
     _nationID: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
@@ -889,7 +889,12 @@ export interface AdminFacet extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    addToWhitelist(
+    addToGameWhitelist(
+      _playerAddress: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    addToTreatyWhitelist(
       _nationID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
@@ -913,11 +918,6 @@ export interface AdminFacet extends BaseContract {
 
     adminInitializeTile(
       _startPosition: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    allowRejoin(
-      _address: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -996,7 +996,7 @@ export interface AdminFacet extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    removeFromWhitelist(
+    removeFromTreatyWhitelist(
       _nationID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
@@ -1090,7 +1090,12 @@ export interface AdminFacet extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    addToWhitelist(
+    addToGameWhitelist(
+      _playerAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    addToTreatyWhitelist(
       _nationID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
@@ -1114,11 +1119,6 @@ export interface AdminFacet extends BaseContract {
 
     adminInitializeTile(
       _startPosition: PositionStruct,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    allowRejoin(
-      _address: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -1199,7 +1199,7 @@ export interface AdminFacet extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    removeFromWhitelist(
+    removeFromTreatyWhitelist(
       _nationID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
@@ -1295,7 +1295,12 @@ export interface AdminFacet extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    addToWhitelist(
+    addToGameWhitelist(
+      _playerAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    addToTreatyWhitelist(
       _nationID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
@@ -1319,11 +1324,6 @@ export interface AdminFacet extends BaseContract {
 
     adminInitializeTile(
       _startPosition: PositionStruct,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    allowRejoin(
-      _address: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1404,7 +1404,7 @@ export interface AdminFacet extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    removeFromWhitelist(
+    removeFromTreatyWhitelist(
       _nationID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;

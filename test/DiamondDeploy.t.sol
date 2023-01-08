@@ -186,6 +186,11 @@ contract DiamondDeployTest is Test {
         testTreatyTemplateID = admin.registerTreatyTemplate(address(testTreatyTemplate), "sample ABI");
         console.log(">>> Treaties initialized");
 
+        // Whitelist all players
+        admin.addToGameWhitelist(player1);
+        admin.addToGameWhitelist(player2);
+        admin.addToGameWhitelist(player3);
+
         vm.stopPrank();
 
         // Initialize players

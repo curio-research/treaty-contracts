@@ -655,27 +655,29 @@ contract GameTest is Test, DiamondDeployTest {
         vm.warp(time);
         vm.startPrank(deployer);
         admin.removeIdleNations(1000);
-        assertEq(getter.getComponent("IsRemoved").getEntities().length, 0);
+        assertTrue(getter.isPlayerWhitelistedByGame(player1));
+        assertTrue(getter.isPlayerWhitelistedByGame(player2));
+        assertTrue(getter.isPlayerWhitelistedByGame(player3));
         vm.stopPrank();
 
         // Nation 3 is removed for being idle for 500 seconds
         vm.startPrank(deployer);
         admin.removeIdleNations(500);
-        assertEq(getter.getComponent("IsRemoved").getEntities().length, 1);
+        assertFalse(getter.isPlayerWhitelistedByGame(player3));
         assertEq(getter.getCapital(nation3ID), 0);
         vm.stopPrank();
 
         // Nation 1 is removed for being idle for 50 seconds
         vm.startPrank(deployer);
         admin.removeIdleNations(50);
-        assertEq(getter.getComponent("IsRemoved").getEntities().length, 2);
+        assertFalse(getter.isPlayerWhitelistedByGame(player1));
         assertEq(getter.getCapital(nation1ID), 0);
         vm.stopPrank();
 
         // Nation 2 is removed for being idle for 10 seconds
         vm.startPrank(deployer);
         admin.removeIdleNations(10);
-        assertEq(getter.getComponent("IsRemoved").getEntities().length, 3);
+        assertFalse(getter.isPlayerWhitelistedByGame(player2));
         assertEq(getter.getCapital(nation2ID), 0);
         vm.stopPrank();
     }
@@ -719,5 +721,12 @@ contract GameTest is Test, DiamondDeployTest {
         vm.expectRevert("CURIO: Not delegated to call UpgradeCapital");
         game.upgradeCapital(nation1CapitalID);
         vm.stopPrank();
+    }
+
+    function testCenterTileMountain() public {
+        // Change mode to battle royale
+        vm.startPrank(deployer);
+
+        // TODO: left here
     }
 }

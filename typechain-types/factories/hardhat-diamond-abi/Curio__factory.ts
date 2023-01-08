@@ -158,12 +158,25 @@ const _abi = [
   {
     inputs: [
       {
+        internalType: "address",
+        name: "_playerAddress",
+        type: "address",
+      },
+    ],
+    name: "addToGameWhitelist",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
         internalType: "uint256",
         name: "_nationID",
         type: "uint256",
       },
     ],
-    name: "addToWhitelist",
+    name: "addToTreatyWhitelist",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -256,19 +269,6 @@ const _abi = [
       },
     ],
     name: "adminInitializeTile",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "_address",
-        type: "address",
-      },
-    ],
-    name: "allowRejoin",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -587,7 +587,7 @@ const _abi = [
         type: "uint256",
       },
     ],
-    name: "removeFromWhitelist",
+    name: "removeFromTreatyWhitelist",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -2258,6 +2258,25 @@ const _abi = [
   {
     inputs: [
       {
+        internalType: "address",
+        name: "_player",
+        type: "address",
+      },
+    ],
+    name: "isPlayerWhitelistedByGame",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
         internalType: "uint256",
         name: "_nationID",
         type: "uint256",
@@ -2268,7 +2287,7 @@ const _abi = [
         type: "uint256",
       },
     ],
-    name: "isWhitelisted",
+    name: "isWhitelistedByTreaty",
     outputs: [
       {
         internalType: "bool",
