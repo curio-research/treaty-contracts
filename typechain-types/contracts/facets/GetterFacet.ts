@@ -126,6 +126,7 @@ export interface GetterFacetInterface extends utils.Interface {
     "getTreatySigners(uint256)": FunctionFragment;
     "getWorldConstants()": FunctionFragment;
     "isPlayerInitialized(address)": FunctionFragment;
+    "isWhitelisted(uint256,uint256)": FunctionFragment;
     "query((uint8,address,bytes)[])": FunctionFragment;
   };
 
@@ -167,6 +168,7 @@ export interface GetterFacetInterface extends utils.Interface {
       | "getTreatySigners"
       | "getWorldConstants"
       | "isPlayerInitialized"
+      | "isWhitelisted"
       | "query"
   ): FunctionFragment;
 
@@ -326,6 +328,10 @@ export interface GetterFacetInterface extends utils.Interface {
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
+    functionFragment: "isWhitelisted",
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "query",
     values: [QueryConditionStruct[]]
   ): string;
@@ -448,6 +454,10 @@ export interface GetterFacetInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "isPlayerInitialized",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "isWhitelisted",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "query", data: BytesLike): Result;
@@ -663,6 +673,12 @@ export interface GetterFacet extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
+    isWhitelisted(
+      _nationID: PromiseOrValue<BigNumberish>,
+      _treatyID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
     query(
       _queryConditions: QueryConditionStruct[],
       overrides?: CallOverrides
@@ -850,6 +866,12 @@ export interface GetterFacet extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
+  isWhitelisted(
+    _nationID: PromiseOrValue<BigNumberish>,
+    _treatyID: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
   query(
     _queryConditions: QueryConditionStruct[],
     overrides?: CallOverrides
@@ -1034,6 +1056,12 @@ export interface GetterFacet extends BaseContract {
 
     isPlayerInitialized(
       _player: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    isWhitelisted(
+      _nationID: PromiseOrValue<BigNumberish>,
+      _treatyID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
@@ -1225,6 +1253,12 @@ export interface GetterFacet extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    isWhitelisted(
+      _nationID: PromiseOrValue<BigNumberish>,
+      _treatyID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     query(
       _queryConditions: QueryConditionStruct[],
       overrides?: CallOverrides
@@ -1408,6 +1442,12 @@ export interface GetterFacet extends BaseContract {
 
     isPlayerInitialized(
       _player: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    isWhitelisted(
+      _nationID: PromiseOrValue<BigNumberish>,
+      _treatyID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

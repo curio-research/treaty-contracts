@@ -184,8 +184,8 @@ library GameLib {
             ECSLib.setUint("Nation", tileIDs[i], 0);
         }
 
-        // Remove nation
-        ECSLib.removeEntity(_nationID);
+        // Set removal status
+        ECSLib.setBool("IsRemoved", _nationID);
     }
 
     function endGather(uint256 _armyID) internal {

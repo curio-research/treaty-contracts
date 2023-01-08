@@ -72,7 +72,6 @@ library Templates {
         uint256 nationID = ECSLib.addEntity();
 
         ECSLib.setString("Tag", nationID, "Nation");
-        ECSLib.setBool("IsActive", nationID);
         ECSLib.setString("Name", nationID, _name);
         ECSLib.setUint("InitTimestamp", nationID, block.timestamp);
         ECSLib.setUint("LastActed", nationID, block.timestamp);

@@ -655,27 +655,27 @@ contract GameTest is Test, DiamondDeployTest {
         vm.warp(time);
         vm.startPrank(deployer);
         admin.removeIdleNations(1000);
-        assertEq(getter.getComponent("Tag").getEntitiesWithValue(abi.encode("Nation")).length, 3);
+        assertEq(getter.getComponent("IsRemoved").getEntities().length, 0);
         vm.stopPrank();
 
         // Nation 3 is removed for being idle for 500 seconds
         vm.startPrank(deployer);
         admin.removeIdleNations(500);
-        assertEq(getter.getComponent("Tag").getEntitiesWithValue(abi.encode("Nation")).length, 2);
+        assertEq(getter.getComponent("IsRemoved").getEntities().length, 1);
         assertEq(getter.getCapital(nation3ID), 0);
         vm.stopPrank();
 
         // Nation 1 is removed for being idle for 50 seconds
         vm.startPrank(deployer);
         admin.removeIdleNations(50);
-        assertEq(getter.getComponent("Tag").getEntitiesWithValue(abi.encode("Nation")).length, 1);
+        assertEq(getter.getComponent("IsRemoved").getEntities().length, 2);
         assertEq(getter.getCapital(nation1ID), 0);
         vm.stopPrank();
 
         // Nation 2 is removed for being idle for 10 seconds
         vm.startPrank(deployer);
         admin.removeIdleNations(10);
-        assertEq(getter.getComponent("Tag").getEntitiesWithValue(abi.encode("Nation")).length, 0);
+        assertEq(getter.getComponent("IsRemoved").getEntities().length, 3);
         assertEq(getter.getCapital(nation2ID), 0);
         vm.stopPrank();
     }

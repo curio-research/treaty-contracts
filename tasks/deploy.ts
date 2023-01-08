@@ -39,7 +39,7 @@ task('deploy', 'deploy contracts')
 
       if (fixmap) console.log(chalk.bgRed.black('Using deterministic map'));
 
-      await isConnectionLive();
+      // await isConnectionLive();
 
       // Set up deployer and some local variables
       let [player1] = await hre.ethers.getSigners();

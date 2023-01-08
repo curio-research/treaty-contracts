@@ -38,6 +38,7 @@ export interface GameFacetInterface extends utils.Interface {
     "authorizeGame(address)": FunctionFragment;
     "battle(uint256,uint256)": FunctionFragment;
     "claimTile(uint256,uint256)": FunctionFragment;
+    "delegateAllGameFunctions(uint256,uint256,bool)": FunctionFragment;
     "delegateGameFunction(uint256,string,uint256,uint256,bool)": FunctionFragment;
     "deployTreaty(uint256,string)": FunctionFragment;
     "disbandArmy(uint256)": FunctionFragment;
@@ -65,6 +66,7 @@ export interface GameFacetInterface extends utils.Interface {
       | "authorizeGame"
       | "battle"
       | "claimTile"
+      | "delegateAllGameFunctions"
       | "delegateGameFunction"
       | "deployTreaty"
       | "disbandArmy"
@@ -98,6 +100,14 @@ export interface GameFacetInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "claimTile",
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "delegateAllGameFunctions",
+    values: [
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<boolean>
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "delegateGameFunction",
@@ -200,6 +210,10 @@ export interface GameFacetInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "battle", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "claimTile", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "delegateAllGameFunctions",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "delegateGameFunction",
     data: BytesLike
@@ -316,6 +330,13 @@ export interface GameFacet extends BaseContract {
     claimTile(
       _armyID: PromiseOrValue<BigNumberish>,
       _tileID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    delegateAllGameFunctions(
+      _nationID: PromiseOrValue<BigNumberish>,
+      _delegateID: PromiseOrValue<BigNumberish>,
+      _canCall: PromiseOrValue<boolean>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -450,6 +471,13 @@ export interface GameFacet extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  delegateAllGameFunctions(
+    _nationID: PromiseOrValue<BigNumberish>,
+    _delegateID: PromiseOrValue<BigNumberish>,
+    _canCall: PromiseOrValue<boolean>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   delegateGameFunction(
     _nationID: PromiseOrValue<BigNumberish>,
     _functionName: PromiseOrValue<string>,
@@ -578,6 +606,13 @@ export interface GameFacet extends BaseContract {
     claimTile(
       _armyID: PromiseOrValue<BigNumberish>,
       _tileID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    delegateAllGameFunctions(
+      _nationID: PromiseOrValue<BigNumberish>,
+      _delegateID: PromiseOrValue<BigNumberish>,
+      _canCall: PromiseOrValue<boolean>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -715,6 +750,13 @@ export interface GameFacet extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    delegateAllGameFunctions(
+      _nationID: PromiseOrValue<BigNumberish>,
+      _delegateID: PromiseOrValue<BigNumberish>,
+      _canCall: PromiseOrValue<boolean>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     delegateGameFunction(
       _nationID: PromiseOrValue<BigNumberish>,
       _functionName: PromiseOrValue<string>,
@@ -844,6 +886,13 @@ export interface GameFacet extends BaseContract {
     claimTile(
       _armyID: PromiseOrValue<BigNumberish>,
       _tileID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    delegateAllGameFunctions(
+      _nationID: PromiseOrValue<BigNumberish>,
+      _delegateID: PromiseOrValue<BigNumberish>,
+      _canCall: PromiseOrValue<boolean>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

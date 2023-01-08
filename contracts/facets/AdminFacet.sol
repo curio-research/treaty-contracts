@@ -143,6 +143,10 @@ contract AdminFacet is UseStorage {
         }
     }
 
+    function allowRejoin(address _address) external onlyAuthorized {
+        ECSLib.removeEntity(ECSLib.getAddressComponent("Address").getEntitiesWithValue(_address)[0]);
+    }
+
     function stopGame() external onlyAuthorized {
         gs().worldConstants.gameLengthInSeconds = block.timestamp - gs().gameInitTimestamp;
     }
@@ -169,18 +173,6 @@ contract AdminFacet is UseStorage {
 
     function removeEntity(uint256 _entity) external onlyAuthorized {
         ECSLib.removeEntity(_entity);
-    }
-
-    /**
-     * @dev Reactivate an inactive nation.
-     * @param _address nation address
-     */
-    function reactivateNation(address _address) external onlyAuthorized {
-        uint256 nationID = GameLib.getEntityByAddress(_address);
-        require(nationID != NULL, "CURIO: Nation already initialized");
-        require(!ECSLib.getBoolComponent("IsActive").has(nationID), "CURIO: Nation is active");
-
-        ECSLib.setBool("IsActive", nationID);
     }
 
     function updateInventoryAmount(uint256 _inventoryID, uint256 _newAmount) external onlyAuthorized {
