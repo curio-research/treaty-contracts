@@ -131,6 +131,18 @@ contract CollectiveDefenseFund is CurioTreaty {
         }
     }
 
+    // Councile member can distribute a certain amount of resources to any member of the treaty at one time
+    function distributeFund(address _memberID, string memory _resourceType, uint256 _amount) external onlyCouncilOrPact {
+        CurioERC20 token = getter.getTokenContract(_resourceType);
+
+        // Amount must not exceed quota
+        if (GameLib.strEq(_resourceType, "Gold")) {
+            require(_amount <= goldWithdrawQuota, "CDFund: Amount exceeds quota");}
+        if (GameLib.strEq(_resourceType, "Food")) {
+            require(_amount <= foodWithdrawQuota, "CDFund: Amount exceeds quota");}
+        token.tranfer(_memberID, _amount);
+    }
+
     // ----------------------------------------------------------
     // Player functions
     // ----------------------------------------------------------
