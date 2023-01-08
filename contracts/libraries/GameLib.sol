@@ -484,6 +484,8 @@ library GameLib {
 
     function getTokenContract(string memory _tokenName) internal view returns (CurioERC20) {
         uint256 tokenTemplateID = gs().templates[_tokenName];
+        require(tokenTemplateID != 0, "CURIO: Token template not found");
+
         return CurioERC20(ECSLib.getAddress("Address", tokenTemplateID));
     }
 
