@@ -94,12 +94,18 @@ export const createTemplates = async (diamond: Curio, tokenAddrs: string[], gasL
   await confirmTx(await diamond.registerTemplateShortcuts(templateNames, templateIDs, { gasLimit }), hre);
 };
 
-// treaty helpers
-// declare metadata to help users understand what each function is used for
+// ------------------------------
+// Treaty Description
+// declare metadata to help users understand the meaning of each treaty function
+// ------------------------------
 
 export const treatyDescriptions: Record<string, Record<string, string>> = {
   Alliance: {
+    headerImage: 'https://www.militarytimes.com/resizer/RhWHiePxZUim5AvA2jEFR6zExdM=/arc-photo-archetype/arc3-prod/public/M3G7VLLKZ5F7DKNTREOSANBWIE.jpg',
     treatyJoin: 'Pay 1000 gold tokens to join the alliance and be granted protection.',
     treatyBesiege: 'Battle a target army belonging to a non-ally nation with all nearby ally armies.',
+  },
+  NATO: {
+    headerImage: 'https://ik.imagekit.io/po8th4g4eqj/prod/tr:w-1168/nato-flags-1168x440.jpg',
   },
 };

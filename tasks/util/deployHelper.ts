@@ -88,7 +88,6 @@ export const uploadABIToIPFS = async (hre: HardhatRuntimeEnvironment, contractNa
 export const uploadToIpfs = async (hre: HardhatRuntimeEnvironment, content: any): Promise<string> => {
   const pinata = pinataSDK(process.env.PINATA_API_KEY!, process.env.PINATA_API_SECRET!);
   try {
-    // await pinata.testAuthentication();
     const response = await pinata.pinJSONToIPFS(content);
     return response.IpfsHash;
   } catch (error) {
