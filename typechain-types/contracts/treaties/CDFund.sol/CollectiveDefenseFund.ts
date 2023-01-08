@@ -21,10 +21,11 @@ import type {
   TypedListener,
   OnEvent,
   PromiseOrValue,
-} from "../../common";
+} from "../../../common";
 
-export interface CurioTreatyInterface extends utils.Interface {
+export interface CollectiveDefenseFundInterface extends utils.Interface {
   functions: {
+    "addToCouncil(uint256)": FunctionFragment;
     "addToWhitelist(uint256)": FunctionFragment;
     "admin()": FunctionFragment;
     "approveBattle(uint256,bytes)": FunctionFragment;
@@ -50,19 +51,38 @@ export interface CurioTreatyInterface extends utils.Interface {
     "approveUpgradeCapital(uint256,bytes)": FunctionFragment;
     "approveUpgradeResource(uint256,bytes)": FunctionFragment;
     "approveUpgradeTile(uint256,bytes)": FunctionFragment;
+    "council()": FunctionFragment;
+    "depositTimeInterval()": FunctionFragment;
     "description()": FunctionFragment;
     "diamond()": FunctionFragment;
+    "foodFee()": FunctionFragment;
+    "foodToken()": FunctionFragment;
+    "foodWithdrawQuota()": FunctionFragment;
     "game()": FunctionFragment;
     "getter()": FunctionFragment;
+    "goldFee()": FunctionFragment;
+    "goldToken()": FunctionFragment;
+    "goldWithdrawQuota()": FunctionFragment;
+    "lastPaid(uint256)": FunctionFragment;
+    "lastWithdrawn(uint256)": FunctionFragment;
     "minimumStayCheck(uint256,uint256)": FunctionFragment;
     "name()": FunctionFragment;
+    "payMembershipFee()": FunctionFragment;
+    "removeAllOverdueMembers()": FunctionFragment;
+    "removeFromCouncil(uint256)": FunctionFragment;
+    "removeMember(uint256)": FunctionFragment;
     "treatyDelegateGameFunction(string,uint256,bool)": FunctionFragment;
     "treatyJoin()": FunctionFragment;
     "treatyLeave()": FunctionFragment;
+    "updateFoodFee(uint256)": FunctionFragment;
+    "updateGoldFee(uint256)": FunctionFragment;
+    "withdraw(uint256,uint256)": FunctionFragment;
+    "withdrawTimeInterval()": FunctionFragment;
   };
 
   getFunction(
     nameOrSignatureOrTopic:
+      | "addToCouncil"
       | "addToWhitelist"
       | "admin"
       | "approveBattle"
@@ -88,17 +108,39 @@ export interface CurioTreatyInterface extends utils.Interface {
       | "approveUpgradeCapital"
       | "approveUpgradeResource"
       | "approveUpgradeTile"
+      | "council"
+      | "depositTimeInterval"
       | "description"
       | "diamond"
+      | "foodFee"
+      | "foodToken"
+      | "foodWithdrawQuota"
       | "game"
       | "getter"
+      | "goldFee"
+      | "goldToken"
+      | "goldWithdrawQuota"
+      | "lastPaid"
+      | "lastWithdrawn"
       | "minimumStayCheck"
       | "name"
+      | "payMembershipFee"
+      | "removeAllOverdueMembers"
+      | "removeFromCouncil"
+      | "removeMember"
       | "treatyDelegateGameFunction"
       | "treatyJoin"
       | "treatyLeave"
+      | "updateFoodFee"
+      | "updateGoldFee"
+      | "withdraw"
+      | "withdrawTimeInterval"
   ): FunctionFragment;
 
+  encodeFunctionData(
+    functionFragment: "addToCouncil",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
   encodeFunctionData(
     functionFragment: "addToWhitelist",
     values: [PromiseOrValue<BigNumberish>]
@@ -196,18 +238,59 @@ export interface CurioTreatyInterface extends utils.Interface {
     functionFragment: "approveUpgradeTile",
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BytesLike>]
   ): string;
+  encodeFunctionData(functionFragment: "council", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "depositTimeInterval",
+    values?: undefined
+  ): string;
   encodeFunctionData(
     functionFragment: "description",
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "diamond", values?: undefined): string;
+  encodeFunctionData(functionFragment: "foodFee", values?: undefined): string;
+  encodeFunctionData(functionFragment: "foodToken", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "foodWithdrawQuota",
+    values?: undefined
+  ): string;
   encodeFunctionData(functionFragment: "game", values?: undefined): string;
   encodeFunctionData(functionFragment: "getter", values?: undefined): string;
+  encodeFunctionData(functionFragment: "goldFee", values?: undefined): string;
+  encodeFunctionData(functionFragment: "goldToken", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "goldWithdrawQuota",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "lastPaid",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "lastWithdrawn",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
   encodeFunctionData(
     functionFragment: "minimumStayCheck",
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(functionFragment: "name", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "payMembershipFee",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "removeAllOverdueMembers",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "removeFromCouncil",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "removeMember",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
   encodeFunctionData(
     functionFragment: "treatyDelegateGameFunction",
     values: [
@@ -224,7 +307,27 @@ export interface CurioTreatyInterface extends utils.Interface {
     functionFragment: "treatyLeave",
     values?: undefined
   ): string;
+  encodeFunctionData(
+    functionFragment: "updateFoodFee",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "updateGoldFee",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "withdraw",
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "withdrawTimeInterval",
+    values?: undefined
+  ): string;
 
+  decodeFunctionResult(
+    functionFragment: "addToCouncil",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "addToWhitelist",
     data: BytesLike
@@ -322,18 +425,56 @@ export interface CurioTreatyInterface extends utils.Interface {
     functionFragment: "approveUpgradeTile",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "council", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "depositTimeInterval",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "description",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "diamond", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "foodFee", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "foodToken", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "foodWithdrawQuota",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "game", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "getter", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "goldFee", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "goldToken", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "goldWithdrawQuota",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "lastPaid", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "lastWithdrawn",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "minimumStayCheck",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "payMembershipFee",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "removeAllOverdueMembers",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "removeFromCouncil",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "removeMember",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "treatyDelegateGameFunction",
     data: BytesLike
@@ -343,16 +484,29 @@ export interface CurioTreatyInterface extends utils.Interface {
     functionFragment: "treatyLeave",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "updateFoodFee",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "updateGoldFee",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "withdraw", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "withdrawTimeInterval",
+    data: BytesLike
+  ): Result;
 
   events: {};
 }
 
-export interface CurioTreaty extends BaseContract {
+export interface CollectiveDefenseFund extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: CurioTreatyInterface;
+  interface: CollectiveDefenseFundInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
@@ -374,6 +528,11 @@ export interface CurioTreaty extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    addToCouncil(
+      _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     addToWhitelist(
       _nationID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -519,13 +678,39 @@ export interface CurioTreaty extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
+    council(overrides?: CallOverrides): Promise<[string]>;
+
+    depositTimeInterval(overrides?: CallOverrides): Promise<[BigNumber]>;
+
     description(overrides?: CallOverrides): Promise<[string]>;
 
     diamond(overrides?: CallOverrides): Promise<[string]>;
 
+    foodFee(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    foodToken(overrides?: CallOverrides): Promise<[string]>;
+
+    foodWithdrawQuota(overrides?: CallOverrides): Promise<[BigNumber]>;
+
     game(overrides?: CallOverrides): Promise<[string]>;
 
     getter(overrides?: CallOverrides): Promise<[string]>;
+
+    goldFee(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    goldToken(overrides?: CallOverrides): Promise<[string]>;
+
+    goldWithdrawQuota(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    lastPaid(
+      arg0: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    lastWithdrawn(
+      arg0: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
 
     minimumStayCheck(
       _nationID: PromiseOrValue<BigNumberish>,
@@ -534,6 +719,24 @@ export interface CurioTreaty extends BaseContract {
     ): Promise<ContractTransaction>;
 
     name(overrides?: CallOverrides): Promise<[string]>;
+
+    payMembershipFee(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    removeAllOverdueMembers(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    removeFromCouncil(
+      _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    removeMember(
+      _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
 
     treatyDelegateGameFunction(
       _functionName: PromiseOrValue<string>,
@@ -549,7 +752,30 @@ export interface CurioTreaty extends BaseContract {
     treatyLeave(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
+
+    updateFoodFee(
+      _newFee: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    updateGoldFee(
+      _newFee: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    withdraw(
+      _goldAmount: PromiseOrValue<BigNumberish>,
+      _foodAmount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    withdrawTimeInterval(overrides?: CallOverrides): Promise<[BigNumber]>;
   };
+
+  addToCouncil(
+    _nationID: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
 
   addToWhitelist(
     _nationID: PromiseOrValue<BigNumberish>,
@@ -696,13 +922,39 @@ export interface CurioTreaty extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
+  council(overrides?: CallOverrides): Promise<string>;
+
+  depositTimeInterval(overrides?: CallOverrides): Promise<BigNumber>;
+
   description(overrides?: CallOverrides): Promise<string>;
 
   diamond(overrides?: CallOverrides): Promise<string>;
 
+  foodFee(overrides?: CallOverrides): Promise<BigNumber>;
+
+  foodToken(overrides?: CallOverrides): Promise<string>;
+
+  foodWithdrawQuota(overrides?: CallOverrides): Promise<BigNumber>;
+
   game(overrides?: CallOverrides): Promise<string>;
 
   getter(overrides?: CallOverrides): Promise<string>;
+
+  goldFee(overrides?: CallOverrides): Promise<BigNumber>;
+
+  goldToken(overrides?: CallOverrides): Promise<string>;
+
+  goldWithdrawQuota(overrides?: CallOverrides): Promise<BigNumber>;
+
+  lastPaid(
+    arg0: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  lastWithdrawn(
+    arg0: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
 
   minimumStayCheck(
     _nationID: PromiseOrValue<BigNumberish>,
@@ -711,6 +963,24 @@ export interface CurioTreaty extends BaseContract {
   ): Promise<ContractTransaction>;
 
   name(overrides?: CallOverrides): Promise<string>;
+
+  payMembershipFee(
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  removeAllOverdueMembers(
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  removeFromCouncil(
+    _nationID: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  removeMember(
+    _nationID: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
 
   treatyDelegateGameFunction(
     _functionName: PromiseOrValue<string>,
@@ -727,7 +997,30 @@ export interface CurioTreaty extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  updateFoodFee(
+    _newFee: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  updateGoldFee(
+    _newFee: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  withdraw(
+    _goldAmount: PromiseOrValue<BigNumberish>,
+    _foodAmount: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  withdrawTimeInterval(overrides?: CallOverrides): Promise<BigNumber>;
+
   callStatic: {
+    addToCouncil(
+      _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     addToWhitelist(
       _nationID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -873,13 +1166,39 @@ export interface CurioTreaty extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
+    council(overrides?: CallOverrides): Promise<string>;
+
+    depositTimeInterval(overrides?: CallOverrides): Promise<BigNumber>;
+
     description(overrides?: CallOverrides): Promise<string>;
 
     diamond(overrides?: CallOverrides): Promise<string>;
 
+    foodFee(overrides?: CallOverrides): Promise<BigNumber>;
+
+    foodToken(overrides?: CallOverrides): Promise<string>;
+
+    foodWithdrawQuota(overrides?: CallOverrides): Promise<BigNumber>;
+
     game(overrides?: CallOverrides): Promise<string>;
 
     getter(overrides?: CallOverrides): Promise<string>;
+
+    goldFee(overrides?: CallOverrides): Promise<BigNumber>;
+
+    goldToken(overrides?: CallOverrides): Promise<string>;
+
+    goldWithdrawQuota(overrides?: CallOverrides): Promise<BigNumber>;
+
+    lastPaid(
+      arg0: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    lastWithdrawn(
+      arg0: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     minimumStayCheck(
       _nationID: PromiseOrValue<BigNumberish>,
@@ -888,6 +1207,20 @@ export interface CurioTreaty extends BaseContract {
     ): Promise<boolean>;
 
     name(overrides?: CallOverrides): Promise<string>;
+
+    payMembershipFee(overrides?: CallOverrides): Promise<void>;
+
+    removeAllOverdueMembers(overrides?: CallOverrides): Promise<void>;
+
+    removeFromCouncil(
+      _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    removeMember(
+      _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     treatyDelegateGameFunction(
       _functionName: PromiseOrValue<string>,
@@ -899,11 +1232,34 @@ export interface CurioTreaty extends BaseContract {
     treatyJoin(overrides?: CallOverrides): Promise<void>;
 
     treatyLeave(overrides?: CallOverrides): Promise<void>;
+
+    updateFoodFee(
+      _newFee: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    updateGoldFee(
+      _newFee: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    withdraw(
+      _goldAmount: PromiseOrValue<BigNumberish>,
+      _foodAmount: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    withdrawTimeInterval(overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   filters: {};
 
   estimateGas: {
+    addToCouncil(
+      _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     addToWhitelist(
       _nationID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -1049,13 +1405,39 @@ export interface CurioTreaty extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    council(overrides?: CallOverrides): Promise<BigNumber>;
+
+    depositTimeInterval(overrides?: CallOverrides): Promise<BigNumber>;
+
     description(overrides?: CallOverrides): Promise<BigNumber>;
 
     diamond(overrides?: CallOverrides): Promise<BigNumber>;
 
+    foodFee(overrides?: CallOverrides): Promise<BigNumber>;
+
+    foodToken(overrides?: CallOverrides): Promise<BigNumber>;
+
+    foodWithdrawQuota(overrides?: CallOverrides): Promise<BigNumber>;
+
     game(overrides?: CallOverrides): Promise<BigNumber>;
 
     getter(overrides?: CallOverrides): Promise<BigNumber>;
+
+    goldFee(overrides?: CallOverrides): Promise<BigNumber>;
+
+    goldToken(overrides?: CallOverrides): Promise<BigNumber>;
+
+    goldWithdrawQuota(overrides?: CallOverrides): Promise<BigNumber>;
+
+    lastPaid(
+      arg0: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    lastWithdrawn(
+      arg0: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     minimumStayCheck(
       _nationID: PromiseOrValue<BigNumberish>,
@@ -1064,6 +1446,24 @@ export interface CurioTreaty extends BaseContract {
     ): Promise<BigNumber>;
 
     name(overrides?: CallOverrides): Promise<BigNumber>;
+
+    payMembershipFee(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    removeAllOverdueMembers(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    removeFromCouncil(
+      _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    removeMember(
+      _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
 
     treatyDelegateGameFunction(
       _functionName: PromiseOrValue<string>,
@@ -1079,9 +1479,32 @@ export interface CurioTreaty extends BaseContract {
     treatyLeave(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
+
+    updateFoodFee(
+      _newFee: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    updateGoldFee(
+      _newFee: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    withdraw(
+      _goldAmount: PromiseOrValue<BigNumberish>,
+      _foodAmount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    withdrawTimeInterval(overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   populateTransaction: {
+    addToCouncil(
+      _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
     addToWhitelist(
       _nationID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -1227,13 +1650,41 @@ export interface CurioTreaty extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    council(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    depositTimeInterval(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     description(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     diamond(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    foodFee(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    foodToken(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    foodWithdrawQuota(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     game(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getter(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    goldFee(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    goldToken(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    goldWithdrawQuota(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    lastPaid(
+      arg0: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    lastWithdrawn(
+      arg0: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     minimumStayCheck(
       _nationID: PromiseOrValue<BigNumberish>,
@@ -1242,6 +1693,24 @@ export interface CurioTreaty extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     name(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    payMembershipFee(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    removeAllOverdueMembers(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    removeFromCouncil(
+      _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    removeMember(
+      _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
 
     treatyDelegateGameFunction(
       _functionName: PromiseOrValue<string>,
@@ -1256,6 +1725,26 @@ export interface CurioTreaty extends BaseContract {
 
     treatyLeave(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    updateFoodFee(
+      _newFee: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    updateGoldFee(
+      _newFee: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    withdraw(
+      _goldAmount: PromiseOrValue<BigNumberish>,
+      _foodAmount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    withdrawTimeInterval(
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
   };
 }

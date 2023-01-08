@@ -957,7 +957,11 @@ contract GameFacet is UseStorage {
     }
 
     // TEMP: hardcoded for this version, where treaty deployment is permissioned
-    function deployTreaty(uint256 _nationID, string memory _treatyName) external returns (address treatyAddress) {
+    function deployTreaty(
+        uint256 _nationID,
+        string memory _treatyName,
+        bytes memory _treatyParams
+    ) external returns (address treatyAddress) {
         // Basic check
         GameLib.ongoingGameCheck();
         GameLib.validEntityCheck(_nationID);
@@ -971,7 +975,10 @@ contract GameFacet is UseStorage {
         }
 
         // Deploy treaty
-        treatyAddress = GameLib.deployTreaty(_nationID, _treatyName);
+        treatyAddress = GameLib.deployTreaty(_nationID, _treatyName, _treatyParams);
+
+        // Register treaty and owner IDs in treaty for convenience
+        CurioTreaty(treatyAddress).registerTreatyAndOwnerIds();
 
         // Set last action time
         ECSLib.setUint("LastActed", _nationID, block.timestamp);

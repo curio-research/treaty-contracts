@@ -5,54 +5,33 @@ import {CurioTreaty} from "contracts/standards/CurioTreaty.sol";
 import {GetterFacet} from "contracts/facets/GetterFacet.sol";
 import {CurioERC20} from "contracts/standards/CurioERC20.sol";
 import {Position} from "contracts/libraries/Types.sol";
+import {Set} from "contracts/Set.sol";
 import {console} from "forge-std/console.sol";
 
 contract CollectiveDefenseFund is CurioTreaty {
-    /** 
-    Outline
-    - function deposit
-        - all members upon joining pay a certain amount of gold & food
-        - regular members should pay a certain amount of fee everyday
-            - recorded by lastPaid
-    - function cleanUpMembers
-        - loop through lastPaid and kick out corresponding member
-    - disable arbitrary kicking out ppl
-    
-    **/
-    address public deployerAddress;
+    // Game cache
     CurioERC20 public goldToken;
     CurioERC20 public foodToken;
+
+    // Treaty-specific data
     uint256 public goldFee;
     uint256 public foodFee;
     uint256 public withdrawTimeInterval;
     uint256 public depositTimeInterval;
-
-    // note: can change to allowance
     uint256 public goldWithdrawQuota;
     uint256 public foodWithdrawQuota;
+    mapping(uint256 => uint256) public lastPaid; // nationID => timestamp
+    mapping(uint256 => uint256) public lastWithdrawn; // nationID => timestamp
+    Set public council;
 
-    mapping(address => uint256) lastPaid;
-    mapping(address => uint256) lastWithdrawn;
-
-    address[] public whitelist;
-    mapping(address => bool) public isWhitelisted;
-
-    address[] public council;
-    mapping(address => bool) public isCouncilMember;
-
-    modifier onlyOwnerOrPact() {
-        require(msg.sender == deployerAddress || msg.sender == address(this), "NAPact: You do not have owner-level permission");
-        _;
-    }
-
-    modifier onlyOwnerCouncilOrPact() {
-        require(msg.sender == deployerAddress || isCouncilMember[msg.sender] || msg.sender == address(this), "NAPact: You do not have owner-level permission");
+    modifier onlyCouncilOrPact() {
+        uint256 callerID = getter.getEntityByAddress(msg.sender);
+        require(council.includes(callerID) || msg.sender == address(this), "NAPact: Only council or pact can call");
         _;
     }
 
     constructor(
         address _diamond,
-        address _deployer,
         uint256 _goldFee,
         uint256 _foodFee,
         uint256 _withdrawTimeInterval,
@@ -60,9 +39,9 @@ contract CollectiveDefenseFund is CurioTreaty {
         uint256 _goldWithdrawQuota,
         uint256 _foodWithdrawQuota
     ) CurioTreaty(_diamond) {
+        // Initialize treaty
         name = "Collective Defense Fund";
         description = "Owner of the League can point to which nation the league is sanctioning";
-
         goldToken = getter.getTokenContract("Gold");
         foodToken = getter.getTokenContract("Food");
         goldFee = _goldFee;
@@ -72,158 +51,99 @@ contract CollectiveDefenseFund is CurioTreaty {
         depositTimeInterval = _depositTimeInterval;
         withdrawTimeInterval = _withdrawTimeInterval;
 
-        deployerAddress = _deployer;
-
-        // fixme: a redundant step that deployer has to join the treaty after deployment;
-        // addSigner in treatyJoin can only be called by treaty
-        whitelist.push(_deployer);
-        isWhitelisted[_deployer] = true;
+        // Create new council and add treaty owner to it by default
+        council = new Set();
+        council.add(ownerID);
     }
 
     // ----------------------------------------------------------
-    // Articles of Treaty
+    // Owner and council functions
     // ----------------------------------------------------------
 
-    function addToWhitelist(address _candidate) public onlyOwnerCouncilOrPact {
-        require(!isWhitelisted[_candidate], "NAPact: Candidate already whitelisted");
-        isWhitelisted[_candidate] = true;
-        whitelist.push(_candidate);
+    function addToWhitelist(uint256 _nationID) public onlyOwner {
+        admin.addToWhitelist(_nationID);
     }
 
-    function removeFromWhitelist(address _candidate) public onlyOwnerCouncilOrPact {
-        isWhitelisted[_candidate] = false;
-        uint256 candidateIndex;
-        for (uint256 i = 0; i < whitelist.length; i++) {
-            if (whitelist[i] == _candidate) {
-                candidateIndex = i;
-            }
-        }
-        whitelist[candidateIndex] = whitelist[whitelist.length - 1];
-        whitelist.pop();
+    function removeFromWhitelist(uint256 _nationID) public onlyOwner {
+        admin.removeFromWhitelist(_nationID);
     }
 
-    function addToCouncilList(address _candidate) public onlyOwnerOrPact {
-        require(!isCouncilMember[_candidate], "NAPact: Candidate already whitelisted");
-        isCouncilMember[_candidate] = true;
-        council.push(_candidate);
+    function addToCouncil(uint256 _nationID) public onlyOwner {
+        council.add(_nationID);
     }
 
-    function removeFromCouncilList(address _candidate) public onlyOwnerOrPact {
-        isCouncilMember[_candidate] = false;
-        uint256 candidateIndex;
-        for (uint256 i = 0; i < council.length; i++) {
-            if (council[i] == _candidate) {
-                candidateIndex = i;
-            }
-        }
-        council[candidateIndex] = council[council.length - 1];
-        council.pop();
+    function removeFromCouncil(uint256 _nationID) public onlyOwner {
+        council.remove(_nationID);
     }
 
-    function removeMember(address _member) public onlyOwnerCouncilOrPact {
-        // member needs to be whitelisted again before joining
-        removeFromWhitelist(_member);
-        // remove membership; same as treaty leave
-        uint256 nationID = getter.getEntityByAddress(_member);
-        admin.removeSigner(nationID);
-    }
-
-    function updateFoodFee(uint256 _newFee) external onlyOwnerCouncilOrPact {
+    function updateFoodFee(uint256 _newFee) external onlyCouncilOrPact {
         foodFee = _newFee;
     }
 
-    function updateGoldFee(uint256 _newFee) external onlyOwnerCouncilOrPact {
+    function updateGoldFee(uint256 _newFee) external onlyCouncilOrPact {
         goldFee = _newFee;
     }
 
-    function payMembershipFee() external {
+    function removeMember(uint256 _nationID) public onlyCouncilOrPact {
+        // Only owner can remove council members
         uint256 treatyID = getter.getEntityByAddress(address(this));
-        require(getter.getNationTreatySignature(getter.getEntityByAddress(msg.sender), treatyID) != 0, "CDFund: Join Treaty first");
+        uint256 ownerID = abi.decode(getter.getComponent("Owner").getBytesValue(treatyID), (uint256));
+        if (getter.getEntityByAddress(msg.sender) == ownerID) {
+            council.remove(_nationID);
+        } else {
+            require(!council.includes(_nationID), "CDFund: Need owner to `removeFromCouncil` first");
+        }
 
-        address senderCapitalAddress = getter.getAddress(getter.getCapital(getter.getEntityByAddress(msg.sender)));
-        require(goldToken.balanceOf(senderCapitalAddress) >= goldFee, "CDFund: Insufficient gold balance");
-        require(foodToken.balanceOf(senderCapitalAddress) >= foodFee, "CDFund: Insufficient food balance");
-
-        require(block.timestamp - lastPaid[senderCapitalAddress] > depositTimeInterval / 2, "CDFund: Last payment was too soon");
-
-        goldToken.transferFrom(senderCapitalAddress, address(this), goldFee);
-        foodToken.transferFrom(senderCapitalAddress, address(this), foodFee);
-
-        lastPaid[msg.sender] = block.timestamp;
+        admin.removeFromWhitelist(_nationID); // need to be whitelisted again for joining
+        admin.removeSigner(_nationID);
     }
 
-    function withdraw(uint256 _goldAmount, uint256 _foodAmount) external onlyOwnerCouncilOrPact {
+    function withdraw(uint256 _goldAmount, uint256 _foodAmount) external onlyCouncilOrPact {
+        // Check that withdrawal amount is within quota
         require(_goldAmount <= goldWithdrawQuota, "CDFund: Amount exceeds quota");
         require(_foodAmount <= foodWithdrawQuota, "CDFund: Amount exceeds quota");
+
+        // Check balance sufficience
         require(goldToken.balanceOf(address(this)) >= _goldAmount, "CDFund: Insufficient balance");
         require(foodToken.balanceOf(address(this)) >= _foodAmount, "CDFund: Insufficient balance");
 
-        address recipientAddress = getter.getAddress(getter.getCapital(getter.getEntityByAddress(msg.sender)));
-        require(block.timestamp - lastWithdrawn[recipientAddress] > withdrawTimeInterval, "CDF: Last withdrawal was too soon");
+        // Check and update last withdrawn time
+        uint256 nationID = getter.getEntityByAddress(msg.sender);
+        require(block.timestamp - lastWithdrawn[nationID] > withdrawTimeInterval, "CDFund: Last withdrawal was too soon");
+        lastWithdrawn[nationID] = block.timestamp;
 
+        // Withdraw
+        address recipientAddress = getter.getAddress(getter.getCapital(getter.getEntityByAddress(msg.sender)));
         goldToken.transfer(recipientAddress, _goldAmount);
         foodToken.transfer(recipientAddress, _foodAmount);
-
-        lastWithdrawn[msg.sender] = block.timestamp;
     }
 
-    function cleanUpMembers() external onlyOwnerCouncilOrPact {
+    function removeAllOverdueMembers() external onlyCouncilOrPact {
+        console.log("removing overdue members");
         uint256 treatyID = getter.getEntityByAddress(address(this));
         uint256[] memory signers = getter.getTreatySigners(treatyID);
 
         for (uint256 i = 0; i < signers.length; i++) {
-            address signerAddress = getter.getAddress(signers[i]);
-            if (block.timestamp - lastPaid[signerAddress] > depositTimeInterval) {
-                removeMember(signerAddress);
+            if (block.timestamp > depositTimeInterval + lastPaid[signers[i]]) {
+                removeMember(signers[i]);
             }
         }
     }
 
     // ----------------------------------------------------------
-    // Treaty Parameter Getters
-    // ----------------------------------------------------------
-    function getGoldFee() external view returns (uint256) {
-        return goldFee;
-    }
-
-    function getFoodFee() external view returns (uint256) {
-        return foodFee;
-    }
-
-    function getGoldWithdrawQuota() external view returns (uint256) {
-        return goldWithdrawQuota;
-    }
-
-    function getFoodWithdrawQuota() external view returns (uint256) {
-        return foodWithdrawQuota;
-    }
-
-    function getDepositInterval() external view returns (uint256) {
-        return depositTimeInterval;
-    }
-
-    function getWithdrawInterval() external view returns (uint256) {
-        return withdrawTimeInterval;
-    }
-
-    // ----------------------------------------------------------
-    // Standardized Functions Called by the Public
+    // Player functions
     // ----------------------------------------------------------
 
-    function treatyJoin() public override {
-        // treaty owner needs to first whitelist the msg.sender
-        require(isWhitelisted[msg.sender], "Candidate is not whitelisted");
+    function treatyJoin() public override onlyWhitelist {
+        // Check whether the nation is whitelisted
+        uint256 nationID = getter.getEntityByAddress(msg.sender);
+        uint256 treatyID = getter.getEntityByAddress(address(this));
+        require(getter.isWhitelisted(nationID, treatyID), "CDFund: Candidate is not whitelisted");
 
-        // Candidate pays membership fees; same logic as payMembershipFee
-        address senderCapitalAddress = getter.getAddress(getter.getCapital(getter.getEntityByAddress(msg.sender)));
-        require(goldToken.balanceOf(senderCapitalAddress) >= goldFee, "CDFund: Insufficient gold balance");
-        require(foodToken.balanceOf(senderCapitalAddress) >= foodFee, "CDFund: Insufficient food balance");
+        // Pay membership fees
+        _payFeesHelper(nationID);
 
-        goldToken.transferFrom(senderCapitalAddress, address(this), goldFee);
-        foodToken.transferFrom(senderCapitalAddress, address(this), foodFee);
-
-        lastPaid[msg.sender] = block.timestamp;
-
+        // Add nation's signature
         super.treatyJoin();
     }
 
@@ -234,35 +154,43 @@ contract CollectiveDefenseFund is CurioTreaty {
         uint256 nationJoinTime = abi.decode(getter.getComponent("InitTimestamp").getBytesValue(getter.getNationTreatySignature(nationID, treatyID)), (uint256));
         require(block.timestamp - nationJoinTime >= 10, "NAPact: Nation must stay for at least 10 seconds");
 
-        // msg.sender removed from whitelist
-        isWhitelisted[msg.sender] = false;
-        uint256 candidateIndex1;
-        for (uint256 i = 0; i < whitelist.length; i++) {
-            if (whitelist[i] == msg.sender) {
-                candidateIndex1 = i;
-            }
-        }
-        whitelist[candidateIndex1] = whitelist[whitelist.length - 1];
-        whitelist.pop();
+        // Remove nation from council
+        council.remove(nationID);
 
-        // msg.sender removed from council (if it is a part of it)
-        if (isCouncilMember[msg.sender]) {
-            uint256 candidateIndex2;
-            for (uint256 i = 0; i < whitelist.length; i++) {
-                if (council[i] == msg.sender) {
-                    candidateIndex2 = i;
-                }
-            }
-            council[candidateIndex2] = whitelist[whitelist.length - 1];
-            council.pop();
-        }
+        // Remove nation from whitelist
+        admin.removeFromWhitelist(nationID); // need to be whitelisted again to join
 
+        // Remove nation's signature
         super.treatyLeave();
     }
 
+    function payMembershipFee() external onlySigner {
+        // Check last paid time
+        uint256 nationID = getter.getEntityByAddress(msg.sender);
+        require(block.timestamp - lastPaid[nationID] > depositTimeInterval, "CDFund: Last payment was too soon");
+
+        _payFeesHelper(nationID);
+    }
+
+    function _payFeesHelper(uint256 _nationID) internal {
+        address senderCapitalAddr = getter.getAddress(getter.getCapital(_nationID));
+
+        // Check balance sufficience
+        require(goldToken.balanceOf(senderCapitalAddr) >= goldFee, "CDFund: Insufficient gold balance");
+        require(foodToken.balanceOf(senderCapitalAddr) >= foodFee, "CDFund: Insufficient food balance");
+
+        // Pay fee
+        goldToken.transferFrom(senderCapitalAddr, address(this), goldFee);
+        foodToken.transferFrom(senderCapitalAddr, address(this), foodFee);
+
+        // Update last paid time
+        lastPaid[_nationID] = block.timestamp;
+    }
+
     // ----------------------------------------------------------
-    // Permission Functions
+    // Permission functions
     // ----------------------------------------------------------
+
     function approveBattle(uint256 _nationID, bytes memory _encodedParams) public view override returns (bool) {
         // Disapprove if target nation is part of collective fund
         (, , uint256 battleTargetID) = abi.decode(_encodedParams, (uint256, uint256, uint256));

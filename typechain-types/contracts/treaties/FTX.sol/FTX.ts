@@ -25,6 +25,7 @@ import type {
 
 export interface FTXInterface extends utils.Interface {
   functions: {
+    "addToWhitelist(uint256)": FunctionFragment;
     "admin()": FunctionFragment;
     "approveBattle(uint256,bytes)": FunctionFragment;
     "approveClaimTile(uint256,bytes)": FunctionFragment;
@@ -44,6 +45,7 @@ export interface FTXInterface extends utils.Interface {
     "approveRecoverTile(uint256,bytes)": FunctionFragment;
     "approveStartGather(uint256,bytes)": FunctionFragment;
     "approveStartTroopProduction(uint256,bytes)": FunctionFragment;
+    "approveTransfer(uint256,bytes)": FunctionFragment;
     "approveUnloadResources(uint256,bytes)": FunctionFragment;
     "approveUpgradeCapital(uint256,bytes)": FunctionFragment;
     "approveUpgradeResource(uint256,bytes)": FunctionFragment;
@@ -55,6 +57,7 @@ export interface FTXInterface extends utils.Interface {
     "getter()": FunctionFragment;
     "goldToken()": FunctionFragment;
     "isBankrupt()": FunctionFragment;
+    "minimumStayCheck(uint256,uint256)": FunctionFragment;
     "name()": FunctionFragment;
     "sbfAddress()": FunctionFragment;
     "sbfCapitalAddress()": FunctionFragment;
@@ -68,6 +71,7 @@ export interface FTXInterface extends utils.Interface {
 
   getFunction(
     nameOrSignatureOrTopic:
+      | "addToWhitelist"
       | "admin"
       | "approveBattle"
       | "approveClaimTile"
@@ -87,6 +91,7 @@ export interface FTXInterface extends utils.Interface {
       | "approveRecoverTile"
       | "approveStartGather"
       | "approveStartTroopProduction"
+      | "approveTransfer"
       | "approveUnloadResources"
       | "approveUpgradeCapital"
       | "approveUpgradeResource"
@@ -98,6 +103,7 @@ export interface FTXInterface extends utils.Interface {
       | "getter"
       | "goldToken"
       | "isBankrupt"
+      | "minimumStayCheck"
       | "name"
       | "sbfAddress"
       | "sbfCapitalAddress"
@@ -109,6 +115,10 @@ export interface FTXInterface extends utils.Interface {
       | "treatyWithdraw"
   ): FunctionFragment;
 
+  encodeFunctionData(
+    functionFragment: "addToWhitelist",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
   encodeFunctionData(functionFragment: "admin", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "approveBattle",
@@ -183,6 +193,10 @@ export interface FTXInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
+    functionFragment: "approveTransfer",
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BytesLike>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "approveUnloadResources",
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BytesLike>]
   ): string;
@@ -210,6 +224,10 @@ export interface FTXInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "isBankrupt",
     values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "minimumStayCheck",
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(functionFragment: "name", values?: undefined): string;
   encodeFunctionData(
@@ -246,6 +264,10 @@ export interface FTXInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>]
   ): string;
 
+  decodeFunctionResult(
+    functionFragment: "addToWhitelist",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "admin", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "approveBattle",
@@ -320,6 +342,10 @@ export interface FTXInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "approveTransfer",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "approveUnloadResources",
     data: BytesLike
   ): Result;
@@ -345,6 +371,10 @@ export interface FTXInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "getter", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "goldToken", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "isBankrupt", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "minimumStayCheck",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "sbfAddress", data: BytesLike): Result;
   decodeFunctionResult(
@@ -400,6 +430,11 @@ export interface FTX extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    addToWhitelist(
+      _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     admin(overrides?: CallOverrides): Promise<[string]>;
 
     approveBattle(
@@ -510,6 +545,12 @@ export interface FTX extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
+    approveTransfer(
+      _nationID: PromiseOrValue<BigNumberish>,
+      _encodedParams: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
     approveUnloadResources(
       _nationID: PromiseOrValue<BigNumberish>,
       _encodedParams: PromiseOrValue<BytesLike>,
@@ -548,6 +589,12 @@ export interface FTX extends BaseContract {
 
     isBankrupt(overrides?: CallOverrides): Promise<[boolean]>;
 
+    minimumStayCheck(
+      _nationID: PromiseOrValue<BigNumberish>,
+      _duration: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     name(overrides?: CallOverrides): Promise<[string]>;
 
     sbfAddress(overrides?: CallOverrides): Promise<[string]>;
@@ -583,6 +630,11 @@ export interface FTX extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
   };
+
+  addToWhitelist(
+    _nationID: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
 
   admin(overrides?: CallOverrides): Promise<string>;
 
@@ -694,6 +746,12 @@ export interface FTX extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
+  approveTransfer(
+    _nationID: PromiseOrValue<BigNumberish>,
+    _encodedParams: PromiseOrValue<BytesLike>,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
   approveUnloadResources(
     _nationID: PromiseOrValue<BigNumberish>,
     _encodedParams: PromiseOrValue<BytesLike>,
@@ -732,6 +790,12 @@ export interface FTX extends BaseContract {
 
   isBankrupt(overrides?: CallOverrides): Promise<boolean>;
 
+  minimumStayCheck(
+    _nationID: PromiseOrValue<BigNumberish>,
+    _duration: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   name(overrides?: CallOverrides): Promise<string>;
 
   sbfAddress(overrides?: CallOverrides): Promise<string>;
@@ -768,6 +832,11 @@ export interface FTX extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
+    addToWhitelist(
+      _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     admin(overrides?: CallOverrides): Promise<string>;
 
     approveBattle(
@@ -878,6 +947,12 @@ export interface FTX extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
+    approveTransfer(
+      _nationID: PromiseOrValue<BigNumberish>,
+      _encodedParams: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
     approveUnloadResources(
       _nationID: PromiseOrValue<BigNumberish>,
       _encodedParams: PromiseOrValue<BytesLike>,
@@ -916,6 +991,12 @@ export interface FTX extends BaseContract {
 
     isBankrupt(overrides?: CallOverrides): Promise<boolean>;
 
+    minimumStayCheck(
+      _nationID: PromiseOrValue<BigNumberish>,
+      _duration: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
     name(overrides?: CallOverrides): Promise<string>;
 
     sbfAddress(overrides?: CallOverrides): Promise<string>;
@@ -949,6 +1030,11 @@ export interface FTX extends BaseContract {
   filters: {};
 
   estimateGas: {
+    addToWhitelist(
+      _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     admin(overrides?: CallOverrides): Promise<BigNumber>;
 
     approveBattle(
@@ -1059,6 +1145,12 @@ export interface FTX extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    approveTransfer(
+      _nationID: PromiseOrValue<BigNumberish>,
+      _encodedParams: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     approveUnloadResources(
       _nationID: PromiseOrValue<BigNumberish>,
       _encodedParams: PromiseOrValue<BytesLike>,
@@ -1097,6 +1189,12 @@ export interface FTX extends BaseContract {
 
     isBankrupt(overrides?: CallOverrides): Promise<BigNumber>;
 
+    minimumStayCheck(
+      _nationID: PromiseOrValue<BigNumberish>,
+      _duration: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     name(overrides?: CallOverrides): Promise<BigNumber>;
 
     sbfAddress(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1134,6 +1232,11 @@ export interface FTX extends BaseContract {
   };
 
   populateTransaction: {
+    addToWhitelist(
+      _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
     admin(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     approveBattle(
@@ -1244,6 +1347,12 @@ export interface FTX extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    approveTransfer(
+      _nationID: PromiseOrValue<BigNumberish>,
+      _encodedParams: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     approveUnloadResources(
       _nationID: PromiseOrValue<BigNumberish>,
       _encodedParams: PromiseOrValue<BytesLike>,
@@ -1281,6 +1390,12 @@ export interface FTX extends BaseContract {
     goldToken(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     isBankrupt(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    minimumStayCheck(
+      _nationID: PromiseOrValue<BigNumberish>,
+      _duration: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
 
     name(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 

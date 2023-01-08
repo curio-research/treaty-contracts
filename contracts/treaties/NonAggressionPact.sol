@@ -8,85 +8,35 @@ import {Position} from "contracts/libraries/Types.sol";
 import {console} from "forge-std/console.sol";
 
 contract NonAggressionPact is CurioTreaty {
-    address public deployer;
-    address[] public whitelist;
-    mapping(address => bool) public isWhitelisted;
-
-    modifier onlyOwnerOrPact() {
-        require(msg.sender == deployer || msg.sender == address(this), "NAPact: You do not have owner-level permission");
-        _;
-    }
-
-    constructor(address _diamond, address _deployer) CurioTreaty(_diamond) {
+    constructor(address _diamond) CurioTreaty(_diamond) {
         name = "Non-Aggression Pact";
         description = "Member nations cannot battle armies or tiles of one another";
-
-        deployer = _deployer;
-
-        // fixme: a redundant step that deployer has to join the treaty after deployment;
-        // addSigner in treatyJoin can only be called by treaty
-        whitelist.push(_deployer);
-        isWhitelisted[_deployer] = true;
     }
 
-    // ----------------------------------------------------------
-    // Articles of Treaty
-    // ----------------------------------------------------------
-
-    function addToWhitelist(address _candidate) public onlyOwnerOrPact {
-        require(!isWhitelisted[_candidate], "NAPact: Candidate already whitelisted");
-        isWhitelisted[_candidate] = true;
-        whitelist.push(_candidate);
+    function addToWhitelist(uint256 _nationID) public onlyOwner {
+        admin.addToWhitelist(_nationID);
     }
 
-    function removeFromWhitelist(address _candidate) public onlyOwnerOrPact {
-        isWhitelisted[_candidate] = false;
-        uint256 candidateIndex;
-        for (uint256 i = 0; i < whitelist.length; i++) {
-            if (whitelist[i] == _candidate) {
-                candidateIndex = i;
-            }
-        }
-        whitelist[candidateIndex] = whitelist[whitelist.length - 1];
-        whitelist.pop();
+    function removeFromWhitelist(uint256 _nationID) public onlyOwner {
+        admin.removeFromWhitelist(_nationID);
     }
 
-    function removeMember(address _member) public onlyOwnerOrPact {
-        // member needs to be whitelisted again before joining
-        removeFromWhitelist(_member);
-
-        // remove membership; same as treaty leave
-        uint256 nationID = getter.getEntityByAddress(_member);
-        admin.removeSigner(nationID);
+    function removeMember(uint256 _nationID) public onlyOwner {
+        admin.removeFromWhitelist(_nationID); // need to be whitelisted again for joining
+        admin.removeSigner(_nationID);
     }
 
-    // ----------------------------------------------------------
-    // Standardized Functions Called by the Public
-    // ----------------------------------------------------------
-
-    function treatyJoin() public override {
-        // treaty owner needs to first whitelist the msg.sender
-        require(isWhitelisted[msg.sender], "Candidate is not whitelisted");
+    function treatyJoin() public override onlyWhitelist {
         super.treatyJoin();
     }
 
     function treatyLeave() public override {
-        // Check if nation has stayed in pact for at least 10 seconds
+        // Check if nation has stayed in pact for at least 30 seconds
         uint256 nationID = getter.getEntityByAddress(msg.sender);
-        uint256 treatyID = getter.getEntityByAddress(address(this));
-        uint256 nationJoinTime = abi.decode(getter.getComponent("InitTimestamp").getBytesValue(getter.getNationTreatySignature(nationID, treatyID)), (uint256));
-        require(block.timestamp - nationJoinTime >= 10, "NAPact: Nation must stay for at least 10 seconds");
+        require(minimumStayCheck(nationID, 30), "NAPact: Must stay for at least 30 seconds");
 
-        // msg.sender removed from whitelist
-        isWhitelisted[msg.sender] = false;
-        uint256 candidateIndex;
-        for (uint256 i = 0; i < whitelist.length; i++) {
-            if (whitelist[i] == msg.sender) {
-                candidateIndex = i;
-            }
-        }
-        whitelist[candidateIndex] = whitelist[whitelist.length - 1];
-        whitelist.pop();
+        // Remove nation from whitelist
+        admin.removeFromWhitelist(nationID);
 
         super.treatyLeave();
     }
@@ -96,7 +46,7 @@ contract NonAggressionPact is CurioTreaty {
     // ----------------------------------------------------------
 
     function approveBattle(uint256 _nationID, bytes memory _encodedParams) public view override returns (bool) {
-        // Disapprove if target nation is part of NAPact
+        // Disapprove if target nation is part of pact
         (, , uint256 battleTargetID) = abi.decode(_encodedParams, (uint256, uint256, uint256));
         uint256 targetNationID = getter.getNation(battleTargetID);
         uint256 treatyID = getter.getEntityByAddress(address(this));
