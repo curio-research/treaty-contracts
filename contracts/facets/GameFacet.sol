@@ -820,13 +820,6 @@ contract GameFacet is UseStorage {
         ECSLib.setUint("LastActed", nationID, block.timestamp);
     }
 
-    // FIXME: need to set LastRecovered of a nation's resources when chaos starts
-    function harvestResources(uint256[] memory resourceIDs) external {
-        for (uint256 i = 0; i < resourceIDs.length; i++) {
-            harvestResource(resourceIDs[i]);
-        }
-    }
-
     // TODO: harvest gold & food on a capital; consider merge this with the function above
     function harvestResourcesFromCapital(uint256 _capitalID) public {
         // Basic checks
@@ -972,6 +965,36 @@ contract GameFacet is UseStorage {
 
         // Deploy treaty
         treatyAddress = GameLib.deployTreaty(_nationID, _treatyName);
+
+        // Set last action time
+        ECSLib.setUint("LastActed", _nationID, block.timestamp);
+    }
+
+    // ----------------------------------------------------------
+    // AGGREGATE FUNCTIONS
+    // ----------------------------------------------------------
+
+    function harvestResources(uint256[] memory resourceIDs) external {
+        for (uint256 i = 0; i < resourceIDs.length; i++) {
+            harvestResource(resourceIDs[i]);
+        }
+    }
+
+    /// @dev Allows a nation to delegate or undelegate all their game functions to another nation or treaty
+    function delegateAllGameFunctions(
+        uint256 _nationID,
+        uint256 _delegateID,
+        bool _canCall
+    ) external {
+        // Basic checks
+        GameLib.ongoingGameCheck();
+        GameLib.validEntityCheck(_nationID);
+        GameLib.validEntityCheck(_delegateID);
+
+        // Delegate all functions
+        for (uint256 i; i < gs().gameFunctionNames.length; i++) {
+            GameLib.delegateGameFunction(_nationID, gs().gameFunctionNames[i], _delegateID, 0, _canCall);
+        }
 
         // Set last action time
         ECSLib.setUint("LastActed", _nationID, block.timestamp);

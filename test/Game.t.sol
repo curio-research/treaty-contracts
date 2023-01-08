@@ -679,4 +679,45 @@ contract GameTest is Test, DiamondDeployTest {
         assertEq(getter.getCapital(nation2ID), 0);
         vm.stopPrank();
     }
+
+    function testDelegateAll() public {
+        // Start time
+        uint256 time = block.timestamp + 500;
+        vm.warp(time);
+
+        // Deployer drips gold and food to Nation 1 and 2
+        vm.startPrank(deployer);
+        admin.dripToken(nation1CapitalAddr, "Gold", 100000000);
+        admin.dripToken(nation1CapitalAddr, "Food", 100000000);
+        admin.dripToken(nation2CapitalAddr, "Gold", 100000000);
+        admin.dripToken(nation2CapitalAddr, "Food", 100000000);
+        vm.stopPrank();
+
+        // Nation 2 tries to upgrade capital on behalf of Nation 1
+        vm.startPrank(player2);
+        vm.expectRevert("CURIO: Not delegated to call UpgradeCapital");
+        game.upgradeCapital(nation1CapitalID);
+        vm.stopPrank();
+
+        // Nation 1 delegates all game functions to Nation 2
+        vm.startPrank(player1);
+        game.delegateAllGameFunctions(nation1ID, nation2ID, true);
+        vm.stopPrank();
+
+        // Nation 2 upgrades capital on behalf of Nation 1
+        vm.startPrank(player2);
+        game.upgradeCapital(nation1CapitalID);
+        vm.stopPrank();
+
+        // Nation 1 revokes delegation
+        vm.startPrank(player1);
+        game.delegateGameFunction(nation1ID, "UpgradeCapital", nation2ID, 0, false);
+        vm.stopPrank();
+
+        // Nation 2 fails to upgrade capital on behalf of Nation 1
+        vm.startPrank(player2);
+        vm.expectRevert("CURIO: Not delegated to call UpgradeCapital");
+        game.upgradeCapital(nation1CapitalID);
+        vm.stopPrank();
+    }
 }
