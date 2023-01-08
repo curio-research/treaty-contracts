@@ -195,15 +195,15 @@ contract DiamondDeployTest is Test {
 
         // Initialize players
         vm.prank(player1);
-        nation1ID = game.initializeNation(nation1Pos, "Nation 1");
+        nation1ID = game.joinGame(nation1Pos, "Nation 1");
         nation1CapitalID = getter.getCapital(nation1ID);
         nation1CapitalAddr = getter.getAddress(nation1CapitalID);
         vm.prank(player2);
-        nation2ID = game.initializeNation(nation2Pos, "Nation 2");
+        nation2ID = game.joinGame(nation2Pos, "Nation 2");
         nation2CapitalID = getter.getCapital(nation2ID);
         nation2CapitalAddr = getter.getAddress(nation2CapitalID);
         vm.prank(player3);
-        nation3ID = game.initializeNation(nation3Pos, "Nation 3");
+        nation3ID = game.joinGame(nation3Pos, "Nation 3");
         nation3CapitalID = getter.getCapital(nation3ID);
         nation3CapitalAddr = getter.getAddress(nation3CapitalID);
         console.log(">>> Nations initialized");
@@ -259,7 +259,7 @@ contract DiamondDeployTest is Test {
 
     function _registerFunctionNames() private {
         string[] memory gameFunctionNames = new string[](21);
-        gameFunctionNames[0] = "InitializeNation";
+        gameFunctionNames[0] = "JoinGame";
         gameFunctionNames[1] = "UpgradeCapital";
         gameFunctionNames[2] = "MoveCapital";
         gameFunctionNames[3] = "ClaimTile";

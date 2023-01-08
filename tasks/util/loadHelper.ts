@@ -69,7 +69,7 @@ export const prepareLoadTest = async (input: LoadTestSetupInput, players: Wallet
   const playerIds: number[] = [];
   for (let i = 0; i < players.length; i++) {
     console.log(chalk.bgRed.yellow.dim(`>>> Initializing player ${i} with city`));
-    await (await diamond.connect(players[i]).initializeNation({ x: i * TILE_WIDTH, y: 0 }, `Player ${i}`, { gasLimit })).wait();
+    await (await diamond.connect(players[i]).joinGame({ x: i * TILE_WIDTH, y: 0 }, `Player ${i}`, { gasLimit })).wait();
     playerIds.push((await diamond.getEntityByAddress(players[i].address)).toNumber());
   }
   console.log(chalk.bgRed.yellow(`>>> Players initialized with city after ${performance.now() - startTime} ms`));

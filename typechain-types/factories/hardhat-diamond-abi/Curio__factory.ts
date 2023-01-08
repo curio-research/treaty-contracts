@@ -1102,12 +1102,12 @@ const _abi = [
   {
     inputs: [
       {
-        internalType: "uint256",
-        name: "_resourceID",
-        type: "uint256",
+        internalType: "uint256[]",
+        name: "resourceIDs",
+        type: "uint256[]",
       },
     ],
-    name: "harvestResource",
+    name: "harvestAllResources",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -1115,12 +1115,12 @@ const _abi = [
   {
     inputs: [
       {
-        internalType: "uint256[]",
-        name: "resourceIDs",
-        type: "uint256[]",
+        internalType: "uint256",
+        name: "_resourceID",
+        type: "uint256",
       },
     ],
-    name: "harvestResources",
+    name: "harvestResource",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -1163,7 +1163,7 @@ const _abi = [
         type: "string",
       },
     ],
-    name: "initializeNation",
+    name: "joinGame",
     outputs: [
       {
         internalType: "uint256",

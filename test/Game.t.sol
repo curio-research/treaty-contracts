@@ -15,7 +15,7 @@ contract GameTest is Test, DiamondDeployTest {
     // GameFacet Coverage Overview
     //
     // Nation:
-    // - [x] initializeNation
+    // - [x] joinGame
     // Capital:
     // - [x] upgradeCapital
     // - [ ] moveCapital

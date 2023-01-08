@@ -28,7 +28,7 @@ contract GameFacet is UseStorage {
         gs().burnerToMain[_burnerAddress] = msg.sender;
     }
 
-    function initializeNation(Position memory _position, string memory _name) external returns (uint256 nationID) {
+    function joinGame(Position memory _position, string memory _name) external returns (uint256 nationID) {
         // Basic checks
         GameLib.ongoingGameCheck();
         GameLib.inboundPositionCheck(_position);
@@ -975,7 +975,7 @@ contract GameFacet is UseStorage {
     // AGGREGATE FUNCTIONS
     // ----------------------------------------------------------
 
-    function harvestResources(uint256[] memory resourceIDs) external {
+    function harvestAllResources(uint256[] memory resourceIDs) external {
         for (uint256 i = 0; i < resourceIDs.length; i++) {
             harvestResource(resourceIDs[i]);
         }
