@@ -85,7 +85,6 @@ contract CollectiveDefenseFund is CurioTreaty {
     }
 
     function removeMember(uint256 _nationID) public onlyCouncilOrPact {
-        console.log("remvoing member");
         // Only owner can remove council members
         uint256 treatyID = getter.getEntityByAddress(address(this));
         uint256 ownerID = abi.decode(getter.getComponent("Owner").getBytesValue(treatyID), (uint256));
