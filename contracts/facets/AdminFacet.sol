@@ -280,12 +280,12 @@ contract AdminFacet is UseStorage {
     function registerTreatyTemplate(
         address _address,
         string memory _abiHash,
-        string memory metadataLink
+        string memory _metadataLink
     ) external onlyAuthorized returns (uint256 treatyTemplateID) {
         CurioTreaty treaty = CurioTreaty(_address);
         string memory _name = treaty.name();
         string memory _description = treaty.description();
-        treatyTemplateID = Templates.addTreatyTemplate(_address, _name, _description, _abiHash, metadataLink);
+        treatyTemplateID = Templates.addTreatyTemplate(_address, _name, _description, _abiHash, _metadataLink);
         gs().templates[_name] = treatyTemplateID;
     }
 

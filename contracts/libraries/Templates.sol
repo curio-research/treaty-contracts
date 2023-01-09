@@ -248,7 +248,7 @@ library Templates {
         string memory _name,
         string memory _description,
         string memory _abiHash,
-        string memory metadataLink
+        string memory _metadataLink
     ) public returns (uint256) {
         uint256 treatyTemplateID = ECSLib.addEntity();
 
@@ -257,7 +257,7 @@ library Templates {
         ECSLib.setString("Description", treatyTemplateID, _description);
         ECSLib.setString("ABIHash", treatyTemplateID, _abiHash);
         ECSLib.setAddress("Address", treatyTemplateID, _address);
-        ECSLib.setString("Metadata", treatyTemplateID, metadataLink);
+        ECSLib.setString("Metadata", treatyTemplateID, _metadataLink);
 
         return treatyTemplateID;
     }

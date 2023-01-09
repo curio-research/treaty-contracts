@@ -1646,7 +1646,7 @@ export interface Curio extends BaseContract {
     registerTreatyTemplate(
       _address: PromiseOrValue<string>,
       _abiHash: PromiseOrValue<string>,
-      metadataLink: PromiseOrValue<string>,
+      _metadataLink: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -2337,7 +2337,7 @@ export interface Curio extends BaseContract {
   registerTreatyTemplate(
     _address: PromiseOrValue<string>,
     _abiHash: PromiseOrValue<string>,
-    metadataLink: PromiseOrValue<string>,
+    _metadataLink: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -3014,7 +3014,7 @@ export interface Curio extends BaseContract {
     registerTreatyTemplate(
       _address: PromiseOrValue<string>,
       _abiHash: PromiseOrValue<string>,
-      metadataLink: PromiseOrValue<string>,
+      _metadataLink: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -3750,7 +3750,7 @@ export interface Curio extends BaseContract {
     registerTreatyTemplate(
       _address: PromiseOrValue<string>,
       _abiHash: PromiseOrValue<string>,
-      metadataLink: PromiseOrValue<string>,
+      _metadataLink: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -4432,7 +4432,7 @@ export interface Curio extends BaseContract {
     registerTreatyTemplate(
       _address: PromiseOrValue<string>,
       _abiHash: PromiseOrValue<string>,
-      metadataLink: PromiseOrValue<string>,
+      _metadataLink: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

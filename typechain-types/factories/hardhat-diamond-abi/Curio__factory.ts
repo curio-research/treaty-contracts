@@ -556,7 +556,7 @@ const _abi = [
       },
       {
         internalType: "string",
-        name: "metadataLink",
+        name: "_metadataLink",
         type: "string",
       },
     ],
