@@ -8,7 +8,7 @@ import { chainInfo, COMPONENT_SPECS, GameMode, position, TILE_TYPE } from 'curio
 import { ECSLib } from '../../typechain-types/contracts/libraries/ECSLib';
 import { GameLib } from '../../typechain-types/contracts/libraries/GameLib';
 import { CurioERC20 } from '../../typechain-types/contracts/standards/CurioERC20';
-import { createTemplates } from './constants';
+import { createTemplates, treatyDescriptions } from './constants';
 import { deployDiamond, getDiamond, deployFacets } from './diamondDeploy';
 import { encodeTileMap } from './mapHelper';
 import GAME_PARAMETERS from '../game_parameters.json';
@@ -85,13 +85,28 @@ export const uploadABIToIPFS = async (hre: HardhatRuntimeEnvironment, contractNa
   }
 };
 
+export const uploadToIpfs = async (hre: HardhatRuntimeEnvironment, content: any): Promise<string> => {
+  const pinata = pinataSDK(process.env.PINATA_API_KEY!, process.env.PINATA_API_SECRET!);
+  try {
+    const response = await pinata.pinJSONToIPFS(content);
+    return response.IpfsHash;
+  } catch (error) {
+    console.log(chalk.bgRed('✦ Pinata error: ' + error));
+    return '';
+  }
+};
+
 // Retrieve at https://gateway.pinata.cloud/ipfs/<hash>
 export const deployTreatyTemplate = async (name: string, admin: Signer, hre: HardhatRuntimeEnvironment, diamond: Curio, gasLimit: number) => {
   const args = name === 'FTX' ? [diamond.address, await admin.getAddress()] : [diamond.address];
   const treaty = await deployProxy<any>(name, admin, hre, args);
   const abiHash = await uploadABIToIPFS(hre, name);
+
+  // create metadata description here
+  const metadataUrl = await uploadToIpfs(hre, treatyDescriptions[name] || {});
+
   console.log(chalk.dim(`✦ Treaty ${name} deployed and ABI uploaded to IPFS at hash=${abiHash}`));
-  diamond.connect(admin).registerTreatyTemplate(treaty.address, abiHash, { gasLimit });
+  diamond.connect(admin).registerTreatyTemplate(treaty.address, abiHash, metadataUrl, { gasLimit });
 };
 
 /**

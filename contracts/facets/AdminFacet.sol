@@ -277,11 +277,15 @@ contract AdminFacet is UseStorage {
      * @notice This function is currently used for permissioned deployment of treaties. In the future, treaties will be
      *         deployed permissionlessly by players.
      */
-    function registerTreatyTemplate(address _address, string memory _abiHash) external onlyAuthorized returns (uint256 treatyTemplateID) {
+    function registerTreatyTemplate(
+        address _address,
+        string memory _abiHash,
+        string memory _metadataLink
+    ) external onlyAuthorized returns (uint256 treatyTemplateID) {
         CurioTreaty treaty = CurioTreaty(_address);
         string memory _name = treaty.name();
         string memory _description = treaty.description();
-        treatyTemplateID = Templates.addTreatyTemplate(_address, _name, _description, _abiHash);
+        treatyTemplateID = Templates.addTreatyTemplate(_address, _name, _description, _abiHash, _metadataLink);
         gs().templates[_name] = treatyTemplateID;
     }
 

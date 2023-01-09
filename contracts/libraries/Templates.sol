@@ -225,6 +225,7 @@ library Templates {
         string memory _name,
         string memory _description,
         string memory _abiHash,
+        string memory _metadata,
         uint256 _deployerID
     ) public returns (uint256) {
         uint256 treatyID = ECSLib.addEntity();
@@ -237,6 +238,7 @@ library Templates {
         ECSLib.setString("ABIHash", treatyID, _abiHash);
         ECSLib.setUint("Owner", treatyID, _deployerID);
         ECSLib.setAddress("Address", treatyID, _address);
+        ECSLib.setString("Metadata", treatyID, _metadata);
 
         return treatyID;
     }
@@ -245,7 +247,8 @@ library Templates {
         address _address,
         string memory _name,
         string memory _description,
-        string memory _abiHash
+        string memory _abiHash,
+        string memory _metadataLink
     ) public returns (uint256) {
         uint256 treatyTemplateID = ECSLib.addEntity();
 
@@ -254,6 +257,7 @@ library Templates {
         ECSLib.setString("Description", treatyTemplateID, _description);
         ECSLib.setString("ABIHash", treatyTemplateID, _abiHash);
         ECSLib.setAddress("Address", treatyTemplateID, _address);
+        ECSLib.setString("Metadata", treatyTemplateID, _metadataLink);
 
         return treatyTemplateID;
     }

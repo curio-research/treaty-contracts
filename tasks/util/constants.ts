@@ -37,7 +37,7 @@ export const generateWorldConstants = (adminAddr: string, mapInput: MapInput): a
     // manual configs
     maxArmyCountPerNation: 2,
     maxNationCount: 1000,
-    gameMode: GameMode.REGULAR,
+    gameMode: GameMode.BATTLE_ROYALE,
     gameLengthInSeconds: 2000000000,
     // maxTransferDistance: 100,
     // generated constants
@@ -92,4 +92,20 @@ export const createTemplates = async (diamond: Curio, tokenAddrs: string[], gasL
 
   // Register template names used for shortcuts
   await confirmTx(await diamond.registerTemplateShortcuts(templateNames, templateIDs, { gasLimit }), hre);
+};
+
+// ------------------------------
+// Treaty Description
+// declare metadata to help users understand the meaning of each treaty function
+// ------------------------------
+
+export const treatyDescriptions: Record<string, Record<string, string>> = {
+  Alliance: {
+    headerImage: 'https://www.militarytimes.com/resizer/RhWHiePxZUim5AvA2jEFR6zExdM=/arc-photo-archetype/arc3-prod/public/M3G7VLLKZ5F7DKNTREOSANBWIE.jpg',
+    treatyJoin: 'Pay 1000 gold tokens to join the alliance and be granted protection.',
+    treatyBesiege: 'Battle a target army belonging to a non-ally nation with all nearby ally armies.',
+  },
+  NATO: {
+    headerImage: 'https://ik.imagekit.io/po8th4g4eqj/prod/tr:w-1168/nato-flags-1168x440.jpg',
+  },
 };

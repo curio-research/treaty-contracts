@@ -70,7 +70,7 @@ export interface AdminFacetInterface extends utils.Interface {
     "registerComponents(address,(string,uint8)[])": FunctionFragment;
     "registerFunctionNames(string[])": FunctionFragment;
     "registerTemplateShortcuts(string[],uint256[])": FunctionFragment;
-    "registerTreatyTemplate(address,string)": FunctionFragment;
+    "registerTreatyTemplate(address,string,string)": FunctionFragment;
     "removeEntity(uint256)": FunctionFragment;
     "removeFromTreatyWhitelist(uint256)": FunctionFragment;
     "removeIdleNations(uint256)": FunctionFragment;
@@ -240,7 +240,11 @@ export interface AdminFacetInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "registerTreatyTemplate",
-    values: [PromiseOrValue<string>, PromiseOrValue<string>]
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<string>
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "removeEntity",
@@ -586,6 +590,7 @@ export interface AdminFacet extends BaseContract {
     registerTreatyTemplate(
       _address: PromiseOrValue<string>,
       _abiHash: PromiseOrValue<string>,
+      _metadataLink: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -790,6 +795,7 @@ export interface AdminFacet extends BaseContract {
   registerTreatyTemplate(
     _address: PromiseOrValue<string>,
     _abiHash: PromiseOrValue<string>,
+    _metadataLink: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -988,6 +994,7 @@ export interface AdminFacet extends BaseContract {
     registerTreatyTemplate(
       _address: PromiseOrValue<string>,
       _abiHash: PromiseOrValue<string>,
+      _metadataLink: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1191,6 +1198,7 @@ export interface AdminFacet extends BaseContract {
     registerTreatyTemplate(
       _address: PromiseOrValue<string>,
       _abiHash: PromiseOrValue<string>,
+      _metadataLink: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -1396,6 +1404,7 @@ export interface AdminFacet extends BaseContract {
     registerTreatyTemplate(
       _address: PromiseOrValue<string>,
       _abiHash: PromiseOrValue<string>,
+      _metadataLink: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

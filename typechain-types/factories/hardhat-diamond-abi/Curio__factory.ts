@@ -554,6 +554,11 @@ const _abi = [
         name: "_abiHash",
         type: "string",
       },
+      {
+        internalType: "string",
+        name: "_metadataLink",
+        type: "string",
+      },
     ],
     name: "registerTreatyTemplate",
     outputs: [
