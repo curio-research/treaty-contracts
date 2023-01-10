@@ -22,11 +22,11 @@ contract Embargo is CurioTreaty {
     // ----------------------------------------------------------
 
     function addToWhitelist(uint256 _nationID) public onlyOwner {
-        admin.addToWhitelist(_nationID);
+        admin.addToTreatyWhitelist(_nationID);
     }
 
     function removeFromWhitelist(uint256 _nationID) public onlyOwner {
-        admin.removeFromWhitelist(_nationID);
+        admin.removeFromTreatyWhitelist(_nationID);
     }
 
     function addToSanctionList(uint256 _nationID) public onlyOwner {
@@ -38,7 +38,7 @@ contract Embargo is CurioTreaty {
     }
 
     function removeMember(uint256 _nationID) public onlyOwner {
-        admin.removeFromWhitelist(_nationID); // need to be whitelisted again for joining
+        admin.removeFromTreatyWhitelist(_nationID); // need to be whitelisted again for joining
         admin.removeSigner(_nationID);
     }
 

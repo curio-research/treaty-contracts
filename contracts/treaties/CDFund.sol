@@ -61,11 +61,11 @@ contract CollectiveDefenseFund is CurioTreaty {
     // ----------------------------------------------------------
 
     function addToWhitelist(uint256 _nationID) public onlyOwner {
-        admin.addToWhitelist(_nationID);
+        admin.addToTreatyWhitelist(_nationID);
     }
 
     function removeFromWhitelist(uint256 _nationID) public onlyOwner {
-        admin.removeFromWhitelist(_nationID);
+        admin.removeFromTreatyWhitelist(_nationID);
     }
 
     function addToCouncil(uint256 _nationID) public onlyOwner {
@@ -94,7 +94,7 @@ contract CollectiveDefenseFund is CurioTreaty {
             require(!council.includes(_nationID), "CDFund: Need owner to `removeFromCouncil` first");
         }
 
-        admin.removeFromWhitelist(_nationID); // need to be whitelisted again for joining
+        admin.removeFromTreatyWhitelist(_nationID); // need to be whitelisted again for joining
         admin.removeSigner(_nationID);
     }
 
@@ -162,7 +162,7 @@ contract CollectiveDefenseFund is CurioTreaty {
         // Check whether the nation is whitelisted
         uint256 nationID = getter.getEntityByAddress(msg.sender);
         uint256 treatyID = getter.getEntityByAddress(address(this));
-        require(getter.isWhitelisted(nationID, treatyID), "CDFund: Candidate is not whitelisted");
+        require(getter.isWhitelistedByTreaty(nationID, treatyID), "CDFund: Candidate is not whitelisted");
 
         // Pay membership fees
         _payFeesHelper(nationID);
@@ -182,7 +182,7 @@ contract CollectiveDefenseFund is CurioTreaty {
         council.remove(nationID);
 
         // Remove nation from whitelist
-        admin.removeFromWhitelist(nationID); // need to be whitelisted again to join
+        admin.removeFromTreatyWhitelist(nationID); // need to be whitelisted again to join
 
         // Remove nation's signature
         super.treatyLeave();

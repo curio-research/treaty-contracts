@@ -72,7 +72,6 @@ library Templates {
         uint256 nationID = ECSLib.addEntity();
 
         ECSLib.setString("Tag", nationID, "Nation");
-        ECSLib.setBool("IsActive", nationID);
         ECSLib.setString("Name", nationID, _name);
         ECSLib.setUint("InitTimestamp", nationID, block.timestamp);
         ECSLib.setUint("LastActed", nationID, block.timestamp);
@@ -226,6 +225,7 @@ library Templates {
         string memory _name,
         string memory _description,
         string memory _abiHash,
+        string memory _metadata,
         uint256 _deployerID
     ) public returns (uint256) {
         uint256 treatyID = ECSLib.addEntity();
@@ -238,6 +238,7 @@ library Templates {
         ECSLib.setString("ABIHash", treatyID, _abiHash);
         ECSLib.setUint("Owner", treatyID, _deployerID);
         ECSLib.setAddress("Address", treatyID, _address);
+        ECSLib.setString("Metadata", treatyID, _metadata);
 
         return treatyID;
     }
@@ -246,7 +247,8 @@ library Templates {
         address _address,
         string memory _name,
         string memory _description,
-        string memory _abiHash
+        string memory _abiHash,
+        string memory _metadataLink
     ) public returns (uint256) {
         uint256 treatyTemplateID = ECSLib.addEntity();
 
@@ -255,14 +257,15 @@ library Templates {
         ECSLib.setString("Description", treatyTemplateID, _description);
         ECSLib.setString("ABIHash", treatyTemplateID, _abiHash);
         ECSLib.setAddress("Address", treatyTemplateID, _address);
+        ECSLib.setString("Metadata", treatyTemplateID, _metadataLink);
 
         return treatyTemplateID;
     }
 
-    function addWhitelisted(uint256 _treatyID, uint256 _nationID) public returns (uint256) {
+    function addTreatyWhitelisted(uint256 _treatyID, uint256 _nationID) public returns (uint256) {
         uint256 whitelistedID = ECSLib.addEntity();
 
-        ECSLib.setString("Tag", whitelistedID, "Whitelisted");
+        ECSLib.setString("Tag", whitelistedID, "TreatyWhitelisted");
         ECSLib.setUint("Treaty", whitelistedID, _treatyID);
         ECSLib.setUint("Nation", whitelistedID, _nationID);
 

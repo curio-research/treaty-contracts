@@ -50,7 +50,7 @@ abstract contract CurioTreaty is ITreaty {
 
     /// @dev No need to use if the treaty does not need whitelist
     modifier onlyWhitelist() {
-        require(getter.isWhitelisted(getter.getEntityByAddress(msg.sender), getter.getEntityByAddress(address(this))), "CurioTreaty: Only whitelisted nations can call");
+        require(getter.isWhitelistedByTreaty(getter.getEntityByAddress(msg.sender), getter.getEntityByAddress(address(this))), "CurioTreaty: Only whitelisted nations can call");
         _;
     }
 

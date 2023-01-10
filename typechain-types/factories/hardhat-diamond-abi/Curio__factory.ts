@@ -158,12 +158,25 @@ const _abi = [
   {
     inputs: [
       {
+        internalType: "address",
+        name: "_playerAddress",
+        type: "address",
+      },
+    ],
+    name: "addToGameWhitelist",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
         internalType: "uint256",
         name: "_nationID",
         type: "uint256",
       },
     ],
-    name: "addToWhitelist",
+    name: "addToTreatyWhitelist",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -472,19 +485,6 @@ const _abi = [
     inputs: [
       {
         internalType: "address",
-        name: "_address",
-        type: "address",
-      },
-    ],
-    name: "reactivateNation",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
         name: "_gameAddr",
         type: "address",
       },
@@ -554,6 +554,11 @@ const _abi = [
         name: "_abiHash",
         type: "string",
       },
+      {
+        internalType: "string",
+        name: "_metadataLink",
+        type: "string",
+      },
     ],
     name: "registerTreatyTemplate",
     outputs: [
@@ -587,7 +592,7 @@ const _abi = [
         type: "uint256",
       },
     ],
-    name: "removeFromWhitelist",
+    name: "removeFromTreatyWhitelist",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -975,6 +980,29 @@ const _abi = [
         type: "uint256",
       },
       {
+        internalType: "uint256",
+        name: "_delegateID",
+        type: "uint256",
+      },
+      {
+        internalType: "bool",
+        name: "_canCall",
+        type: "bool",
+      },
+    ],
+    name: "delegateAllGameFunctions",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "_nationID",
+        type: "uint256",
+      },
+      {
         internalType: "string",
         name: "_functionName",
         type: "string",
@@ -1084,12 +1112,12 @@ const _abi = [
   {
     inputs: [
       {
-        internalType: "uint256",
-        name: "_resourceID",
-        type: "uint256",
+        internalType: "uint256[]",
+        name: "resourceIDs",
+        type: "uint256[]",
       },
     ],
-    name: "harvestResource",
+    name: "harvestAllResources",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -1097,12 +1125,12 @@ const _abi = [
   {
     inputs: [
       {
-        internalType: "uint256[]",
-        name: "resourceIDs",
-        type: "uint256[]",
+        internalType: "uint256",
+        name: "_resourceID",
+        type: "uint256",
       },
     ],
-    name: "harvestResources",
+    name: "harvestResource",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -1145,7 +1173,7 @@ const _abi = [
         type: "string",
       },
     ],
-    name: "initializeNation",
+    name: "joinGame",
     outputs: [
       {
         internalType: "uint256",
@@ -2259,6 +2287,25 @@ const _abi = [
   {
     inputs: [
       {
+        internalType: "address",
+        name: "_player",
+        type: "address",
+      },
+    ],
+    name: "isPlayerWhitelistedByGame",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
         internalType: "uint256",
         name: "_nationID",
         type: "uint256",
@@ -2269,7 +2316,7 @@ const _abi = [
         type: "uint256",
       },
     ],
-    name: "isWhitelisted",
+    name: "isWhitelistedByTreaty",
     outputs: [
       {
         internalType: "bool",

@@ -127,7 +127,8 @@ export interface GetterFacetInterface extends utils.Interface {
     "getTreatySigners(uint256)": FunctionFragment;
     "getWorldConstants()": FunctionFragment;
     "isPlayerInitialized(address)": FunctionFragment;
-    "isWhitelisted(uint256,uint256)": FunctionFragment;
+    "isPlayerWhitelistedByGame(address)": FunctionFragment;
+    "isWhitelistedByTreaty(uint256,uint256)": FunctionFragment;
     "query((uint8,address,bytes)[])": FunctionFragment;
     "treatyApprovalCheck(string,uint256,bytes)": FunctionFragment;
   };
@@ -171,7 +172,8 @@ export interface GetterFacetInterface extends utils.Interface {
       | "getTreatySigners"
       | "getWorldConstants"
       | "isPlayerInitialized"
-      | "isWhitelisted"
+      | "isPlayerWhitelistedByGame"
+      | "isWhitelistedByTreaty"
       | "query"
       | "treatyApprovalCheck"
   ): FunctionFragment;
@@ -336,7 +338,11 @@ export interface GetterFacetInterface extends utils.Interface {
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
-    functionFragment: "isWhitelisted",
+    functionFragment: "isPlayerWhitelistedByGame",
+    values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "isWhitelistedByTreaty",
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
@@ -474,7 +480,11 @@ export interface GetterFacetInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "isWhitelisted",
+    functionFragment: "isPlayerWhitelistedByGame",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "isWhitelistedByTreaty",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "query", data: BytesLike): Result;
@@ -699,7 +709,12 @@ export interface GetterFacet extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
-    isWhitelisted(
+    isPlayerWhitelistedByGame(
+      _player: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
+    isWhitelistedByTreaty(
       _nationID: PromiseOrValue<BigNumberish>,
       _treatyID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -904,7 +919,12 @@ export interface GetterFacet extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
-  isWhitelisted(
+  isPlayerWhitelistedByGame(
+    _player: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
+  isWhitelistedByTreaty(
     _nationID: PromiseOrValue<BigNumberish>,
     _treatyID: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
@@ -1109,7 +1129,12 @@ export interface GetterFacet extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    isWhitelisted(
+    isPlayerWhitelistedByGame(
+      _player: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    isWhitelistedByTreaty(
       _nationID: PromiseOrValue<BigNumberish>,
       _treatyID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -1315,7 +1340,12 @@ export interface GetterFacet extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    isWhitelisted(
+    isPlayerWhitelistedByGame(
+      _player: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    isWhitelistedByTreaty(
       _nationID: PromiseOrValue<BigNumberish>,
       _treatyID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -1519,7 +1549,12 @@ export interface GetterFacet extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    isWhitelisted(
+    isPlayerWhitelistedByGame(
+      _player: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    isWhitelistedByTreaty(
       _nationID: PromiseOrValue<BigNumberish>,
       _treatyID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides

@@ -81,13 +81,21 @@ contract GetterFacet is UseStorage {
         return GameLib.getTreatySigners(_treatyID);
     }
 
-    function isWhitelisted(uint256 _nationID, uint256 _treatyID) external view returns (bool) {
-        return GameLib.getWhitelisted(_nationID, _treatyID) != NULL;
+    function getNationTreatySignature(uint256 _nationID, uint256 _treatyID) external view returns (uint256) {
+        return GameLib.getNationTreatySignature(_nationID, _treatyID);
+    }
+
+    function isWhitelistedByTreaty(uint256 _nationID, uint256 _treatyID) external view returns (bool) {
+        return GameLib.getTreatyWhitelisted(_nationID, _treatyID) != NULL;
     }
 
     // ----------------------------------------------------------
     // LOGIC GETTERS
     // ----------------------------------------------------------
+
+    function isPlayerWhitelistedByGame(address _player) external view returns (bool) {
+        return gs().isWhitelistedByGame[_player];
+    }
 
     function isPlayerInitialized(address _player) external view returns (bool) {
         return GameLib.getEntityByAddress(_player) != NULL;
@@ -101,15 +109,13 @@ contract GetterFacet is UseStorage {
         return GameLib.getArmiesFromNation(_nationID);
     }
 
-    function getNationTreatySignature(uint256 _nationID, uint256 _treatyID) external view returns (uint256) {
-        return GameLib.getNationTreatySignature(_nationID, _treatyID);
-    }
-
-    function treatyApprovalCheck(string memory _functionName,
+    function treatyApprovalCheck(
+        string memory _functionName,
         uint256 _nationID,
-        bytes memory _encodedParams) external {
-            return GameLib.treatyApprovalCheck(_functionName, _nationID, _encodedParams);
-        }
+        bytes memory _encodedParams
+    ) external {
+        return GameLib.treatyApprovalCheck(_functionName, _nationID, _encodedParams);
+    }
 
     function getInventoryBalance(address _keeperAddress, string memory _resourceType) external view returns (uint256) {
         uint256 entityID = GameLib.getEntityByAddress(_keeperAddress);

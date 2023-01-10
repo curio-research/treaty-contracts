@@ -76,22 +76,22 @@ contract AdminFacet is UseStorage {
         ECSLib.removeEntity(signatureID);
     }
 
-    function addToWhitelist(uint256 _nationID) external onlyTreaty {
+    function addToTreatyWhitelist(uint256 _nationID) external onlyTreaty {
         GameLib.ongoingGameCheck();
         GameLib.validEntityCheck(_nationID);
 
         uint256 treatyID = GameLib.getEntityByAddress(msg.sender);
-        uint256 whitelisted = GameLib.getWhitelisted(_nationID, treatyID);
+        uint256 whitelisted = GameLib.getTreatyWhitelisted(_nationID, treatyID);
         require(whitelisted == 0, "CURIO: Nation is already whitelisted");
-        Templates.addWhitelisted(treatyID, _nationID);
+        Templates.addTreatyWhitelisted(treatyID, _nationID);
     }
 
-    function removeFromWhitelist(uint256 _nationID) external onlyTreaty {
+    function removeFromTreatyWhitelist(uint256 _nationID) external onlyTreaty {
         GameLib.ongoingGameCheck();
         GameLib.validEntityCheck(_nationID);
 
         uint256 treatyID = GameLib.getEntityByAddress(msg.sender);
-        uint256 whitelisted = GameLib.getWhitelisted(_nationID, treatyID);
+        uint256 whitelisted = GameLib.getTreatyWhitelisted(_nationID, treatyID);
         require(whitelisted != NULL, "CURIO: Nation is not whitelisted");
         ECSLib.removeEntity(whitelisted);
     }
@@ -171,18 +171,6 @@ contract AdminFacet is UseStorage {
         ECSLib.removeEntity(_entity);
     }
 
-    /**
-     * @dev Reactivate an inactive nation.
-     * @param _address nation address
-     */
-    function reactivateNation(address _address) external onlyAuthorized {
-        uint256 nationID = GameLib.getEntityByAddress(_address);
-        require(nationID != NULL, "CURIO: Nation already initialized");
-        require(!ECSLib.getBoolComponent("IsActive").has(nationID), "CURIO: Nation is active");
-
-        ECSLib.setBool("IsActive", nationID);
-    }
-
     function updateInventoryAmount(uint256 _inventoryID, uint256 _newAmount) external onlyAuthorized {
         ECSLib.setUint("Amount", _inventoryID, _newAmount);
     }
@@ -198,6 +186,10 @@ contract AdminFacet is UseStorage {
     // ----------------------------------------------------------------------
     // ADMIN FUNCTIONS (GAME SETUP)
     // ----------------------------------------------------------------------
+
+    function addToGameWhitelist(address _playerAddress) external onlyAuthorized {
+        gs().isWhitelistedByGame[_playerAddress] = true;
+    }
 
     function adminInitializeTile(Position memory _startPosition) external onlyAuthorized {
         GameLib.initializeTile(_startPosition);
@@ -285,11 +277,15 @@ contract AdminFacet is UseStorage {
      * @notice This function is currently used for permissioned deployment of treaties. In the future, treaties will be
      *         deployed permissionlessly by players.
      */
-    function registerTreatyTemplate(address _address, string memory _abiHash) external onlyAuthorized returns (uint256 treatyTemplateID) {
+    function registerTreatyTemplate(
+        address _address,
+        string memory _abiHash,
+        string memory _metadataLink
+    ) external onlyAuthorized returns (uint256 treatyTemplateID) {
         CurioTreaty treaty = CurioTreaty(_address);
         string memory _name = treaty.name();
         string memory _description = treaty.description();
-        treatyTemplateID = Templates.addTreatyTemplate(_address, _name, _description, _abiHash);
+        treatyTemplateID = Templates.addTreatyTemplate(_address, _name, _description, _abiHash, _metadataLink);
         gs().templates[_name] = treatyTemplateID;
     }
 

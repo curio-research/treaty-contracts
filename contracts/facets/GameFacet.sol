@@ -28,12 +28,12 @@ contract GameFacet is UseStorage {
         gs().burnerToMain[_burnerAddress] = msg.sender;
     }
 
-    function initializeNation(Position memory _position, string memory _name) external returns (uint256 nationID) {
+    function joinGame(Position memory _position, string memory _name) external returns (uint256 nationID) {
         // Basic checks
         GameLib.ongoingGameCheck();
         GameLib.inboundPositionCheck(_position);
-        require(GameLib.getNationCount() < gs().worldConstants.maxNationCount, "CURIO: Max nation count reached");
-        require(GameLib.getEntityByAddress(msg.sender) == NULL, "CURIO: Nation already initialized");
+        require(gs().isWhitelistedByGame[msg.sender] || GameLib.getNationCount() < gs().worldConstants.maxNationCount, "CURIO: Not whitelisted and max nation count reached");
+        require(GameLib.getEntityByAddress(msg.sender) == NULL, "CURIO: Nation is initialized or removed");
 
         // Verify that capital is not on mountain
         Position memory tilePosition = GameLib.getProperTilePosition(_position);
@@ -819,13 +819,6 @@ contract GameFacet is UseStorage {
         ECSLib.setUint("LastActed", nationID, block.timestamp);
     }
 
-    // FIXME: need to set LastRecovered of a nation's resources when chaos starts
-    function harvestResources(uint256[] memory resourceIDs) external {
-        for (uint256 i = 0; i < resourceIDs.length; i++) {
-            harvestResource(resourceIDs[i]);
-        }
-    }
-
     // TODO: harvest gold & food on a capital; consider merge this with the function above
     function harvestResourcesFromCapital(uint256 _capitalID) public {
         // Basic checks
@@ -979,6 +972,36 @@ contract GameFacet is UseStorage {
 
         // Register treaty and owner IDs in treaty for convenience
         CurioTreaty(treatyAddress).registerTreatyAndOwnerIds();
+
+        // Set last action time
+        ECSLib.setUint("LastActed", _nationID, block.timestamp);
+    }
+
+    // ----------------------------------------------------------
+    // AGGREGATE FUNCTIONS
+    // ----------------------------------------------------------
+
+    function harvestAllResources(uint256[] memory resourceIDs) external {
+        for (uint256 i = 0; i < resourceIDs.length; i++) {
+            harvestResource(resourceIDs[i]);
+        }
+    }
+
+    /// @dev Allows a nation to delegate or undelegate all their game functions to another nation or treaty
+    function delegateAllGameFunctions(
+        uint256 _nationID,
+        uint256 _delegateID,
+        bool _canCall
+    ) external {
+        // Basic checks
+        GameLib.ongoingGameCheck();
+        GameLib.validEntityCheck(_nationID);
+        GameLib.validEntityCheck(_delegateID);
+
+        // Delegate all functions
+        for (uint256 i; i < gs().gameFunctionNames.length; i++) {
+            GameLib.delegateGameFunction(_nationID, gs().gameFunctionNames[i], _delegateID, 0, _canCall);
+        }
 
         // Set last action time
         ECSLib.setUint("LastActed", _nationID, block.timestamp);

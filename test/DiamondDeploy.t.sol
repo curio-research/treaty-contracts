@@ -190,36 +190,41 @@ contract DiamondDeployTest is Test {
 
         // Initialize treaties
         allianceTemplate = new Alliance(diamond);
-        allianceTemplateID = admin.registerTreatyTemplate(address(allianceTemplate), "sample ABI");
+        allianceTemplateID = admin.registerTreatyTemplate(address(allianceTemplate), "sample ABI", "sample metadata");
         ftxTemplate = new FTX(diamond, address(this));
-        ftxTemplateID = admin.registerTreatyTemplate(address(ftxTemplate), "sample ABI");
+        ftxTemplateID = admin.registerTreatyTemplate(address(ftxTemplate), "sample ABI", "sample metadata");
         testTreatyTemplate = new TestTreaty(diamond);
-        testTreatyTemplateID = admin.registerTreatyTemplate(address(testTreatyTemplate), "sample ABI");
+        testTreatyTemplateID = admin.registerTreatyTemplate(address(testTreatyTemplate), "sample ABI", "sample metadata");
         collectiveDefenseFundTemplate = new CollectiveDefenseFund(diamond, 100, 100, 86400, 86400, 50, 50);
-        collectiveDefenseFundTemplateID = admin.registerTreatyTemplate(address(collectiveDefenseFundTemplate), "sample ABI");
+        collectiveDefenseFundTemplateID = admin.registerTreatyTemplate(address(collectiveDefenseFundTemplate), "sample ABI", "sample metadata");
         embargoTemplate = new Embargo(diamond);
-        embargoTemplateID = admin.registerTreatyTemplate(address(embargoTemplate), "sample ABI");
+        embargoTemplateID = admin.registerTreatyTemplate(address(embargoTemplate), "sample ABI", "sample metadata");
         nonAggressionPactTemplate = new NonAggressionPact(diamond);
-        nonAggressionPactTemplateID = admin.registerTreatyTemplate(address(nonAggressionPactTemplate), "sample ABI");
+        nonAggressionPactTemplateID = admin.registerTreatyTemplate(address(nonAggressionPactTemplate), "sample ABI", "sample metadata");
         otcContractTemplate = new SimpleOTC(diamond);
-        otcContractTemplateID = admin.registerTreatyTemplate(address(otcContractTemplate), "sample ABI");
+        otcContractTemplateID = admin.registerTreatyTemplate(address(otcContractTemplate), "sample ABI", "sample metadata");
         // handshakeDealTemplate = new HandshakeDeal(diamond);
         // handshakeDealTemplateID = admin.registerTreatyTemplate(address(handshakeDealTemplate), "sample ABI");
         console.log(">>> Treaties initialized");
+
+        // Whitelist all players
+        admin.addToGameWhitelist(player1);
+        admin.addToGameWhitelist(player2);
+        admin.addToGameWhitelist(player3);
 
         vm.stopPrank();
 
         // Initialize players
         vm.prank(player1);
-        nation1ID = game.initializeNation(nation1Pos, "Nation 1");
+        nation1ID = game.joinGame(nation1Pos, "Nation 1");
         nation1CapitalID = getter.getCapital(nation1ID);
         nation1CapitalAddr = getter.getAddress(nation1CapitalID);
         vm.prank(player2);
-        nation2ID = game.initializeNation(nation2Pos, "Nation 2");
+        nation2ID = game.joinGame(nation2Pos, "Nation 2");
         nation2CapitalID = getter.getCapital(nation2ID);
         nation2CapitalAddr = getter.getAddress(nation2CapitalID);
         vm.prank(player3);
-        nation3ID = game.initializeNation(nation3Pos, "Nation 3");
+        nation3ID = game.joinGame(nation3Pos, "Nation 3");
         nation3CapitalID = getter.getCapital(nation3ID);
         nation3CapitalAddr = getter.getAddress(nation3CapitalID);
         console.log(">>> Nations initialized");
@@ -275,7 +280,7 @@ contract DiamondDeployTest is Test {
 
     function _registerFunctionNames() private {
         string[] memory gameFunctionNames = new string[](21);
-        gameFunctionNames[0] = "InitializeNation";
+        gameFunctionNames[0] = "JoinGame";
         gameFunctionNames[1] = "UpgradeCapital";
         gameFunctionNames[2] = "MoveCapital";
         gameFunctionNames[3] = "ClaimTile";
