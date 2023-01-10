@@ -130,16 +130,28 @@ contract CollectiveDefenseFund is CurioTreaty {
         }
     }
 
-    // Council member can distribute certain amount of fund to any member state
-    function distributeFund(uint256 _memberID, string memory _resourceType, uint256 _amount) external onlyCouncilOrPact {
-        if (GameLib.strEq(_resourceType, "Gold")) {
+    // Council member can distribute certain amount of fund to any in-game entity which can hold tokens
+    function distributeFund(
+        uint256 _toID,
+        string memory _resourceType,
+        uint256 _amount
+    ) external onlyCouncilOrPact {
+        // Check that withdrawal amount is within quota
+        if (_strEq(_resourceType, "Gold")) {
             require(_amount < goldWithdrawQuota, "CDFund: Amount exceeds quota");
-        }
-        if (GameLib.strEq(_resourceType, "Food")) {
+        } else if (_strEq(_resourceType, "Food")) {
             require(_amount < foodWithdrawQuota, "CDFund: Amount exceeds quota");
+        } else {
+            revert("CDFund: Invalid resource type");
         }
+
+        // Check address is not null
+        address toAddr = getter.getAddress(_toID);
+        require(toAddr != address(0), "CDFund: Invalid address");
+
+        // Transfer
         CurioERC20 token = getter.getTokenContract(_resourceType);
-        token.transfer(getter.getEntitiesAddr(_memberID), _amount);
+        token.transfer(toAddr, _amount);
     }
 
     // ----------------------------------------------------------
@@ -211,5 +223,14 @@ contract CollectiveDefenseFund is CurioTreaty {
         if (getter.getNationTreatySignature(targetNationID, treatyID) != 0) return false;
 
         return super.approveBattle(_nationID, _encodedParams);
+    }
+
+    // ----------------------------------------------------------
+    // Helper functions
+    // ----------------------------------------------------------
+
+    function _strEq(string memory _s1, string memory _s2) private pure returns (bool) {
+        if (bytes(_s1).length != bytes(_s2).length) return false;
+        return (keccak256(abi.encodePacked((_s1))) == keccak256(abi.encodePacked((_s2))));
     }
 }

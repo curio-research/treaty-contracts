@@ -5,7 +5,6 @@ import {CurioTreaty} from "contracts/standards/CurioTreaty.sol";
 import {GetterFacet} from "contracts/facets/GetterFacet.sol";
 import {CurioERC20} from "contracts/standards/CurioERC20.sol";
 import {Position} from "contracts/libraries/Types.sol";
-import {GameLib} from "contracts/libraries/GameLib.sol";
 import {console} from "forge-std/console.sol";
 
 contract HandshakeDeal is CurioTreaty {
@@ -232,7 +231,7 @@ contract HandshakeDeal is CurioTreaty {
             Deal memory deal = dealIDToDeal[signedDealIDs[i]];
             if (deal.functionOfAgreement == ApprovalFunctionType.approveMove) {
                 (uint256 agreedArmyID, Position memory agreedTargetPosition) = abi.decode(deal.encodedParams, (uint256, Position));
-                if (agreedArmyID == armyID && GameLib.coincident(targetPosition, agreedTargetPosition)) {
+                if (agreedArmyID == armyID && _coincident(targetPosition, agreedTargetPosition)) {
                     if (block.timestamp < deal.timeLock) {
                         return false;
                     }
@@ -377,5 +376,13 @@ contract HandshakeDeal is CurioTreaty {
             }
         }
         return super.approveStartTroopProduction(_nationID, _encodedParams);
+    }
+
+    // ----------------------------------------------------------
+    // Helper functions
+    // ----------------------------------------------------------
+
+    function _coincident(Position memory _p1, Position memory _p2) private pure returns (bool) {
+        return _p1.x == _p2.x && _p1.y == _p2.y;
     }
 }
