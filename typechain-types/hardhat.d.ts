@@ -129,6 +129,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.FTX__factory>;
     getContractFactory(
+      name: "HandshakeDeal",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.HandshakeDeal__factory>;
+    getContractFactory(
       name: "NonAggressionPact",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.NonAggressionPact__factory>;
@@ -334,6 +338,11 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.FTX>;
+    getContractAt(
+      name: "HandshakeDeal",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.HandshakeDeal>;
     getContractAt(
       name: "NonAggressionPact",
       address: string,

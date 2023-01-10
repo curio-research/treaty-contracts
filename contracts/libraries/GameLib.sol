@@ -18,7 +18,7 @@ import {NonAggressionPact} from "contracts/treaties/NonAggressionPact.sol";
 import {Embargo} from "contracts/treaties/Embargo.sol";
 import {CollectiveDefenseFund} from "contracts/treaties/CDFund.sol";
 import {SimpleOTC} from "contracts/treaties/SimpleOTC.sol";
-// import {HandshakeDeal} from "contracts/treaties/HandshakeDeal.sol";
+import {HandshakeDeal} from "contracts/treaties/HandshakeDeal.sol";
 
 import {console} from "forge-std/console.sol";
 
@@ -470,15 +470,22 @@ library GameLib {
             treatyAddress = address(new CollectiveDefenseFund(address(this), a, b, c, d, e, f));
         } else if (GameLib.strEq(_treatyName, "Simple OTC Trading Agreement")) {
             treatyAddress = address(new SimpleOTC(address(this)));
-            // } else if (GameLib.strEq(_treatyName, "Simple Handshake Deal")) {
-            //     treatyAddress = address(new HandshakeDeal(address(this)));
+        } else if (GameLib.strEq(_treatyName, "Simple Handshake Deal")) {
+            treatyAddress = address(new HandshakeDeal(address(this)));
         } else {
             revert("CURIO: Unsupported treaty name");
         }
 
         // Register treaty
         uint256 treatyTemplateID = gs().templates[_treatyName];
-        Templates.addTreaty(treatyAddress, ECSLib.getString("Name", treatyTemplateID), ECSLib.getString("Description", treatyTemplateID), ECSLib.getString("ABIHash", treatyTemplateID), ECSLib.getString("Metadata", treatyTemplateID), _nationID);
+        Templates.addTreaty(
+            treatyAddress, // STYLE: DO NOT REMOVE THIS COMMENT
+            ECSLib.getString("Name", treatyTemplateID),
+            ECSLib.getString("Description", treatyTemplateID),
+            ECSLib.getString("ABIHash", treatyTemplateID),
+            ECSLib.getString("Metadata", treatyTemplateID),
+            _nationID
+        );
     }
 
     // ----------------------------------------------------------
