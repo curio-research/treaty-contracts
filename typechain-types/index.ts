@@ -66,8 +66,6 @@ export type { FTTERC20 } from "./contracts/treaties/FTX.sol/FTTERC20";
 export { FTTERC20__factory } from "./factories/contracts/treaties/FTX.sol/FTTERC20__factory";
 export type { FTX } from "./contracts/treaties/FTX.sol/FTX";
 export { FTX__factory } from "./factories/contracts/treaties/FTX.sol/FTX__factory";
-export type { HandshakeDeal } from "./contracts/treaties/HandshakeDeal";
-export { HandshakeDeal__factory } from "./factories/contracts/treaties/HandshakeDeal__factory";
 export type { NonAggressionPact } from "./contracts/treaties/NonAggressionPact";
 export { NonAggressionPact__factory } from "./factories/contracts/treaties/NonAggressionPact__factory";
 export type { SimpleOTC } from "./contracts/treaties/SimpleOTC";

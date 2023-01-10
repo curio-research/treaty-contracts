@@ -21,7 +21,7 @@ import {NonAggressionPact} from "contracts/treaties/NonAggressionPact.sol";
 import {Embargo} from "contracts/treaties/Embargo.sol";
 import {CollectiveDefenseFund} from "contracts/treaties/CDFund.sol";
 import {SimpleOTC} from "contracts/treaties/SimpleOTC.sol";
-import {HandshakeDeal} from "contracts/treaties/HandshakeDeal.sol";
+// import {HandshakeDeal} from "contracts/treaties/HandshakeDeal.sol";
 import {CurioERC20} from "contracts/standards/CurioERC20.sol";
 import {console} from "forge-std/console.sol";
 import {stdJson} from "forge-std/StdJson.sol";
@@ -53,7 +53,7 @@ contract DiamondDeployTest is Test {
     Embargo public embargoTemplate;
     NonAggressionPact public nonAggressionPactTemplate;
     SimpleOTC public otcContractTemplate;
-    HandshakeDeal public handshakeDealTemplate;
+    // HandshakeDeal public handshakeDealTemplate;
 
     uint256 public allianceTemplateID;
     uint256 public ftxTemplateID;
@@ -62,7 +62,7 @@ contract DiamondDeployTest is Test {
     uint256 public embargoTemplateID;
     uint256 public nonAggressionPactTemplateID;
     uint256 public otcContractTemplateID;
-    uint256 public handshakeDealTemplateID;
+    // uint256 public handshakeDealTemplateID;
 
     // Players (nations)
     address public deployer = address(0);
@@ -203,8 +203,8 @@ contract DiamondDeployTest is Test {
         nonAggressionPactTemplateID = admin.registerTreatyTemplate(address(nonAggressionPactTemplate), "sample ABI");
         otcContractTemplate = new SimpleOTC(diamond);
         otcContractTemplateID = admin.registerTreatyTemplate(address(otcContractTemplate), "sample ABI");
-        handshakeDealTemplate = new HandshakeDeal(diamond);
-        handshakeDealTemplateID = admin.registerTreatyTemplate(address(handshakeDealTemplate), "sample ABI");
+        // handshakeDealTemplate = new HandshakeDeal(diamond);
+        // handshakeDealTemplateID = admin.registerTreatyTemplate(address(handshakeDealTemplate), "sample ABI");
         console.log(">>> Treaties initialized");
 
         vm.stopPrank();

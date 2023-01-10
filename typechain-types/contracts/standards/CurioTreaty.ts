@@ -25,7 +25,6 @@ import type {
 
 export interface CurioTreatyInterface extends utils.Interface {
   functions: {
-    "addToWhitelist(uint256)": FunctionFragment;
     "admin()": FunctionFragment;
     "approveBattle(uint256,bytes)": FunctionFragment;
     "approveClaimTile(uint256,bytes)": FunctionFragment;
@@ -56,14 +55,16 @@ export interface CurioTreatyInterface extends utils.Interface {
     "getter()": FunctionFragment;
     "minimumStayCheck(uint256,uint256)": FunctionFragment;
     "name()": FunctionFragment;
+    "ownerID()": FunctionFragment;
+    "registerTreatyAndOwnerIds()": FunctionFragment;
     "treatyDelegateGameFunction(string,uint256,bool)": FunctionFragment;
+    "treatyID()": FunctionFragment;
     "treatyJoin()": FunctionFragment;
     "treatyLeave()": FunctionFragment;
   };
 
   getFunction(
     nameOrSignatureOrTopic:
-      | "addToWhitelist"
       | "admin"
       | "approveBattle"
       | "approveClaimTile"
@@ -94,15 +95,14 @@ export interface CurioTreatyInterface extends utils.Interface {
       | "getter"
       | "minimumStayCheck"
       | "name"
+      | "ownerID"
+      | "registerTreatyAndOwnerIds"
       | "treatyDelegateGameFunction"
+      | "treatyID"
       | "treatyJoin"
       | "treatyLeave"
   ): FunctionFragment;
 
-  encodeFunctionData(
-    functionFragment: "addToWhitelist",
-    values: [PromiseOrValue<BigNumberish>]
-  ): string;
   encodeFunctionData(functionFragment: "admin", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "approveBattle",
@@ -208,6 +208,11 @@ export interface CurioTreatyInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(functionFragment: "name", values?: undefined): string;
+  encodeFunctionData(functionFragment: "ownerID", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "registerTreatyAndOwnerIds",
+    values?: undefined
+  ): string;
   encodeFunctionData(
     functionFragment: "treatyDelegateGameFunction",
     values: [
@@ -216,6 +221,7 @@ export interface CurioTreatyInterface extends utils.Interface {
       PromiseOrValue<boolean>
     ]
   ): string;
+  encodeFunctionData(functionFragment: "treatyID", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "treatyJoin",
     values?: undefined
@@ -225,10 +231,6 @@ export interface CurioTreatyInterface extends utils.Interface {
     values?: undefined
   ): string;
 
-  decodeFunctionResult(
-    functionFragment: "addToWhitelist",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "admin", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "approveBattle",
@@ -334,10 +336,16 @@ export interface CurioTreatyInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "ownerID", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "registerTreatyAndOwnerIds",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "treatyDelegateGameFunction",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "treatyID", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "treatyJoin", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "treatyLeave",
@@ -374,11 +382,6 @@ export interface CurioTreaty extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    addToWhitelist(
-      _nationID: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
     admin(overrides?: CallOverrides): Promise<[string]>;
 
     approveBattle(
@@ -530,10 +533,16 @@ export interface CurioTreaty extends BaseContract {
     minimumStayCheck(
       _nationID: PromiseOrValue<BigNumberish>,
       _duration: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
 
     name(overrides?: CallOverrides): Promise<[string]>;
+
+    ownerID(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    registerTreatyAndOwnerIds(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
 
     treatyDelegateGameFunction(
       _functionName: PromiseOrValue<string>,
@@ -541,6 +550,8 @@ export interface CurioTreaty extends BaseContract {
       _canCall: PromiseOrValue<boolean>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
+
+    treatyID(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     treatyJoin(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -550,11 +561,6 @@ export interface CurioTreaty extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
   };
-
-  addToWhitelist(
-    _nationID: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
 
   admin(overrides?: CallOverrides): Promise<string>;
 
@@ -707,10 +713,16 @@ export interface CurioTreaty extends BaseContract {
   minimumStayCheck(
     _nationID: PromiseOrValue<BigNumberish>,
     _duration: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
+    overrides?: CallOverrides
+  ): Promise<boolean>;
 
   name(overrides?: CallOverrides): Promise<string>;
+
+  ownerID(overrides?: CallOverrides): Promise<BigNumber>;
+
+  registerTreatyAndOwnerIds(
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
 
   treatyDelegateGameFunction(
     _functionName: PromiseOrValue<string>,
@@ -718,6 +730,8 @@ export interface CurioTreaty extends BaseContract {
     _canCall: PromiseOrValue<boolean>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
+
+  treatyID(overrides?: CallOverrides): Promise<BigNumber>;
 
   treatyJoin(
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -728,11 +742,6 @@ export interface CurioTreaty extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
-    addToWhitelist(
-      _nationID: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     admin(overrides?: CallOverrides): Promise<string>;
 
     approveBattle(
@@ -889,12 +898,18 @@ export interface CurioTreaty extends BaseContract {
 
     name(overrides?: CallOverrides): Promise<string>;
 
+    ownerID(overrides?: CallOverrides): Promise<BigNumber>;
+
+    registerTreatyAndOwnerIds(overrides?: CallOverrides): Promise<void>;
+
     treatyDelegateGameFunction(
       _functionName: PromiseOrValue<string>,
       _subjectID: PromiseOrValue<BigNumberish>,
       _canCall: PromiseOrValue<boolean>,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    treatyID(overrides?: CallOverrides): Promise<BigNumber>;
 
     treatyJoin(overrides?: CallOverrides): Promise<void>;
 
@@ -904,11 +919,6 @@ export interface CurioTreaty extends BaseContract {
   filters: {};
 
   estimateGas: {
-    addToWhitelist(
-      _nationID: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
     admin(overrides?: CallOverrides): Promise<BigNumber>;
 
     approveBattle(
@@ -1060,10 +1070,16 @@ export interface CurioTreaty extends BaseContract {
     minimumStayCheck(
       _nationID: PromiseOrValue<BigNumberish>,
       _duration: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     name(overrides?: CallOverrides): Promise<BigNumber>;
+
+    ownerID(overrides?: CallOverrides): Promise<BigNumber>;
+
+    registerTreatyAndOwnerIds(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
 
     treatyDelegateGameFunction(
       _functionName: PromiseOrValue<string>,
@@ -1071,6 +1087,8 @@ export interface CurioTreaty extends BaseContract {
       _canCall: PromiseOrValue<boolean>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
+
+    treatyID(overrides?: CallOverrides): Promise<BigNumber>;
 
     treatyJoin(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -1082,11 +1100,6 @@ export interface CurioTreaty extends BaseContract {
   };
 
   populateTransaction: {
-    addToWhitelist(
-      _nationID: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
     admin(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     approveBattle(
@@ -1238,10 +1251,16 @@ export interface CurioTreaty extends BaseContract {
     minimumStayCheck(
       _nationID: PromiseOrValue<BigNumberish>,
       _duration: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     name(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    ownerID(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    registerTreatyAndOwnerIds(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
 
     treatyDelegateGameFunction(
       _functionName: PromiseOrValue<string>,
@@ -1249,6 +1268,8 @@ export interface CurioTreaty extends BaseContract {
       _canCall: PromiseOrValue<boolean>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
+
+    treatyID(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     treatyJoin(
       overrides?: Overrides & { from?: PromiseOrValue<string> }

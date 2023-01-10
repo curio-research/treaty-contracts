@@ -25,7 +25,6 @@ import type {
 
 export interface FTXInterface extends utils.Interface {
   functions: {
-    "addToWhitelist(uint256)": FunctionFragment;
     "admin()": FunctionFragment;
     "approveBattle(uint256,bytes)": FunctionFragment;
     "approveClaimTile(uint256,bytes)": FunctionFragment;
@@ -59,10 +58,13 @@ export interface FTXInterface extends utils.Interface {
     "isBankrupt()": FunctionFragment;
     "minimumStayCheck(uint256,uint256)": FunctionFragment;
     "name()": FunctionFragment;
+    "ownerID()": FunctionFragment;
+    "registerTreatyAndOwnerIds()": FunctionFragment;
     "sbfAddress()": FunctionFragment;
     "sbfCapitalAddress()": FunctionFragment;
     "treatyDelegateGameFunction(string,uint256,bool)": FunctionFragment;
     "treatyDeposit(uint256)": FunctionFragment;
+    "treatyID()": FunctionFragment;
     "treatyJoin()": FunctionFragment;
     "treatyLeave()": FunctionFragment;
     "treatyRun()": FunctionFragment;
@@ -71,7 +73,6 @@ export interface FTXInterface extends utils.Interface {
 
   getFunction(
     nameOrSignatureOrTopic:
-      | "addToWhitelist"
       | "admin"
       | "approveBattle"
       | "approveClaimTile"
@@ -105,20 +106,19 @@ export interface FTXInterface extends utils.Interface {
       | "isBankrupt"
       | "minimumStayCheck"
       | "name"
+      | "ownerID"
+      | "registerTreatyAndOwnerIds"
       | "sbfAddress"
       | "sbfCapitalAddress"
       | "treatyDelegateGameFunction"
       | "treatyDeposit"
+      | "treatyID"
       | "treatyJoin"
       | "treatyLeave"
       | "treatyRun"
       | "treatyWithdraw"
   ): FunctionFragment;
 
-  encodeFunctionData(
-    functionFragment: "addToWhitelist",
-    values: [PromiseOrValue<BigNumberish>]
-  ): string;
   encodeFunctionData(functionFragment: "admin", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "approveBattle",
@@ -230,6 +230,11 @@ export interface FTXInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(functionFragment: "name", values?: undefined): string;
+  encodeFunctionData(functionFragment: "ownerID", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "registerTreatyAndOwnerIds",
+    values?: undefined
+  ): string;
   encodeFunctionData(
     functionFragment: "sbfAddress",
     values?: undefined
@@ -250,6 +255,7 @@ export interface FTXInterface extends utils.Interface {
     functionFragment: "treatyDeposit",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
+  encodeFunctionData(functionFragment: "treatyID", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "treatyJoin",
     values?: undefined
@@ -264,10 +270,6 @@ export interface FTXInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>]
   ): string;
 
-  decodeFunctionResult(
-    functionFragment: "addToWhitelist",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "admin", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "approveBattle",
@@ -376,6 +378,11 @@ export interface FTXInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "ownerID", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "registerTreatyAndOwnerIds",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "sbfAddress", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "sbfCapitalAddress",
@@ -389,6 +396,7 @@ export interface FTXInterface extends utils.Interface {
     functionFragment: "treatyDeposit",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "treatyID", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "treatyJoin", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "treatyLeave",
@@ -430,11 +438,6 @@ export interface FTX extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    addToWhitelist(
-      _nationID: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
     admin(overrides?: CallOverrides): Promise<[string]>;
 
     approveBattle(
@@ -592,10 +595,16 @@ export interface FTX extends BaseContract {
     minimumStayCheck(
       _nationID: PromiseOrValue<BigNumberish>,
       _duration: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
 
     name(overrides?: CallOverrides): Promise<[string]>;
+
+    ownerID(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    registerTreatyAndOwnerIds(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
 
     sbfAddress(overrides?: CallOverrides): Promise<[string]>;
 
@@ -612,6 +621,8 @@ export interface FTX extends BaseContract {
       _amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
+
+    treatyID(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     treatyJoin(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -630,11 +641,6 @@ export interface FTX extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
   };
-
-  addToWhitelist(
-    _nationID: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
 
   admin(overrides?: CallOverrides): Promise<string>;
 
@@ -793,10 +799,16 @@ export interface FTX extends BaseContract {
   minimumStayCheck(
     _nationID: PromiseOrValue<BigNumberish>,
     _duration: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
+    overrides?: CallOverrides
+  ): Promise<boolean>;
 
   name(overrides?: CallOverrides): Promise<string>;
+
+  ownerID(overrides?: CallOverrides): Promise<BigNumber>;
+
+  registerTreatyAndOwnerIds(
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
 
   sbfAddress(overrides?: CallOverrides): Promise<string>;
 
@@ -813,6 +825,8 @@ export interface FTX extends BaseContract {
     _amount: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
+
+  treatyID(overrides?: CallOverrides): Promise<BigNumber>;
 
   treatyJoin(
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -832,11 +846,6 @@ export interface FTX extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
-    addToWhitelist(
-      _nationID: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     admin(overrides?: CallOverrides): Promise<string>;
 
     approveBattle(
@@ -999,6 +1008,10 @@ export interface FTX extends BaseContract {
 
     name(overrides?: CallOverrides): Promise<string>;
 
+    ownerID(overrides?: CallOverrides): Promise<BigNumber>;
+
+    registerTreatyAndOwnerIds(overrides?: CallOverrides): Promise<void>;
+
     sbfAddress(overrides?: CallOverrides): Promise<string>;
 
     sbfCapitalAddress(overrides?: CallOverrides): Promise<string>;
@@ -1015,6 +1028,8 @@ export interface FTX extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
+    treatyID(overrides?: CallOverrides): Promise<BigNumber>;
+
     treatyJoin(overrides?: CallOverrides): Promise<void>;
 
     treatyLeave(overrides?: CallOverrides): Promise<void>;
@@ -1030,11 +1045,6 @@ export interface FTX extends BaseContract {
   filters: {};
 
   estimateGas: {
-    addToWhitelist(
-      _nationID: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
     admin(overrides?: CallOverrides): Promise<BigNumber>;
 
     approveBattle(
@@ -1192,10 +1202,16 @@ export interface FTX extends BaseContract {
     minimumStayCheck(
       _nationID: PromiseOrValue<BigNumberish>,
       _duration: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     name(overrides?: CallOverrides): Promise<BigNumber>;
+
+    ownerID(overrides?: CallOverrides): Promise<BigNumber>;
+
+    registerTreatyAndOwnerIds(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
 
     sbfAddress(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1212,6 +1228,8 @@ export interface FTX extends BaseContract {
       _amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
+
+    treatyID(overrides?: CallOverrides): Promise<BigNumber>;
 
     treatyJoin(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -1232,11 +1250,6 @@ export interface FTX extends BaseContract {
   };
 
   populateTransaction: {
-    addToWhitelist(
-      _nationID: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
     admin(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     approveBattle(
@@ -1394,10 +1407,16 @@ export interface FTX extends BaseContract {
     minimumStayCheck(
       _nationID: PromiseOrValue<BigNumberish>,
       _duration: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     name(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    ownerID(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    registerTreatyAndOwnerIds(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
 
     sbfAddress(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
@@ -1414,6 +1433,8 @@ export interface FTX extends BaseContract {
       _amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
+
+    treatyID(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     treatyJoin(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
