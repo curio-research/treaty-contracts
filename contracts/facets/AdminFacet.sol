@@ -191,6 +191,10 @@ contract AdminFacet is UseStorage {
         gs().isWhitelistedByGame[_playerAddress] = true;
     }
 
+    function removeFromGameWhitelist(address _playerAddress) external onlyAuthorized {
+        gs().isWhitelistedByGame[_playerAddress] = false;
+    }
+
     function adminInitializeTile(Position memory _startPosition) external onlyAuthorized {
         GameLib.initializeTile(_startPosition);
     }

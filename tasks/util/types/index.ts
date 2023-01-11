@@ -33,3 +33,8 @@ export interface DeployArgs extends HardhatArguments {
 export interface UnlockTileArgs extends HardhatArguments {
   diamond: string;
 }
+
+export interface WhitelistPlayerArgs extends HardhatArguments {
+  diamond: string;
+  player: string;
+}
