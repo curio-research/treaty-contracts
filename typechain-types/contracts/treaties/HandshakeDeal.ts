@@ -59,10 +59,8 @@ export interface HandshakeDealInterface extends utils.Interface {
     "minimumStayCheck(uint256,uint256)": FunctionFragment;
     "name()": FunctionFragment;
     "nationIDToDealIDs(uint256,uint256)": FunctionFragment;
-    "nationIDToTroopTypeBanIDs(uint256,uint256)": FunctionFragment;
     "ownerID()": FunctionFragment;
     "proposeDeal(uint8,bytes,uint256)": FunctionFragment;
-    "proposeTroopTypeBanDeal(uint256,uint256)": FunctionFragment;
     "registerTreatyAndOwnerIds()": FunctionFragment;
     "signDeal(uint256)": FunctionFragment;
     "treatyDelegateGameFunction(string,uint256,bool)": FunctionFragment;
@@ -107,10 +105,8 @@ export interface HandshakeDealInterface extends utils.Interface {
       | "minimumStayCheck"
       | "name"
       | "nationIDToDealIDs"
-      | "nationIDToTroopTypeBanIDs"
       | "ownerID"
       | "proposeDeal"
-      | "proposeTroopTypeBanDeal"
       | "registerTreatyAndOwnerIds"
       | "signDeal"
       | "treatyDelegateGameFunction"
@@ -237,10 +233,6 @@ export interface HandshakeDealInterface extends utils.Interface {
     functionFragment: "nationIDToDealIDs",
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
   ): string;
-  encodeFunctionData(
-    functionFragment: "nationIDToTroopTypeBanIDs",
-    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
-  ): string;
   encodeFunctionData(functionFragment: "ownerID", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "proposeDeal",
@@ -249,10 +241,6 @@ export interface HandshakeDealInterface extends utils.Interface {
       PromiseOrValue<BytesLike>,
       PromiseOrValue<BigNumberish>
     ]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "proposeTroopTypeBanDeal",
-    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "registerTreatyAndOwnerIds",
@@ -395,17 +383,9 @@ export interface HandshakeDealInterface extends utils.Interface {
     functionFragment: "nationIDToDealIDs",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "nationIDToTroopTypeBanIDs",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "ownerID", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "proposeDeal",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "proposeTroopTypeBanDeal",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -636,23 +616,11 @@ export interface HandshakeDeal extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
-    nationIDToTroopTypeBanIDs(
-      arg0: PromiseOrValue<BigNumberish>,
-      arg1: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
     ownerID(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     proposeDeal(
       _functionType: PromiseOrValue<BigNumberish>,
       _encodedParams: PromiseOrValue<BytesLike>,
-      _timeLock: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    proposeTroopTypeBanDeal(
-      _troopTemplateID: PromiseOrValue<BigNumberish>,
       _timeLock: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
@@ -866,23 +834,11 @@ export interface HandshakeDeal extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  nationIDToTroopTypeBanIDs(
-    arg0: PromiseOrValue<BigNumberish>,
-    arg1: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
   ownerID(overrides?: CallOverrides): Promise<BigNumber>;
 
   proposeDeal(
     _functionType: PromiseOrValue<BigNumberish>,
     _encodedParams: PromiseOrValue<BytesLike>,
-    _timeLock: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  proposeTroopTypeBanDeal(
-    _troopTemplateID: PromiseOrValue<BigNumberish>,
     _timeLock: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
@@ -1096,23 +1052,11 @@ export interface HandshakeDeal extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    nationIDToTroopTypeBanIDs(
-      arg0: PromiseOrValue<BigNumberish>,
-      arg1: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     ownerID(overrides?: CallOverrides): Promise<BigNumber>;
 
     proposeDeal(
       _functionType: PromiseOrValue<BigNumberish>,
       _encodedParams: PromiseOrValue<BytesLike>,
-      _timeLock: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    proposeTroopTypeBanDeal(
-      _troopTemplateID: PromiseOrValue<BigNumberish>,
       _timeLock: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -1315,23 +1259,11 @@ export interface HandshakeDeal extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    nationIDToTroopTypeBanIDs(
-      arg0: PromiseOrValue<BigNumberish>,
-      arg1: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     ownerID(overrides?: CallOverrides): Promise<BigNumber>;
 
     proposeDeal(
       _functionType: PromiseOrValue<BigNumberish>,
       _encodedParams: PromiseOrValue<BytesLike>,
-      _timeLock: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    proposeTroopTypeBanDeal(
-      _troopTemplateID: PromiseOrValue<BigNumberish>,
       _timeLock: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
@@ -1538,23 +1470,11 @@ export interface HandshakeDeal extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    nationIDToTroopTypeBanIDs(
-      arg0: PromiseOrValue<BigNumberish>,
-      arg1: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     ownerID(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     proposeDeal(
       _functionType: PromiseOrValue<BigNumberish>,
       _encodedParams: PromiseOrValue<BytesLike>,
-      _timeLock: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    proposeTroopTypeBanDeal(
-      _troopTemplateID: PromiseOrValue<BigNumberish>,
       _timeLock: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;

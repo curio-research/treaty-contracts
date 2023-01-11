@@ -14,8 +14,7 @@ contract HandshakeDeal is CurioTreaty {
         approveUpgradeTile,
         approveRecoverTile,
         approveDisownTile,
-        specialTroopTypeBan,
-        approveEndTroopProduction,
+        approveStartTroopProduction,
         approveMove,
         approveStartGather,
         approveEndGather,
@@ -36,7 +35,6 @@ contract HandshakeDeal is CurioTreaty {
 
     uint256 public dealCount;
     mapping(uint256 => uint256[]) public nationIDToDealIDs;
-    mapping(uint256 => uint256[]) public nationIDToTroopTypeBanIDs; // FIXME: what?
     mapping(uint256 => Deal) public idToDeal;
 
     constructor(address _diamond) CurioTreaty(_diamond) {
@@ -48,6 +46,7 @@ contract HandshakeDeal is CurioTreaty {
     // Articles of Treaty
     // ----------------------------------------------------------
 
+    // Note: If approveStartTroopProduction, _encodedParams should only contain troopTemplateID
     function proposeDeal(
         ApprovalFunctionType _functionType,
         bytes memory _encodedParams,
@@ -64,23 +63,6 @@ contract HandshakeDeal is CurioTreaty {
             timeLock: _timeLock
         });
         nationIDToDealIDs[proposerID].push(dealCount);
-
-        return dealCount;
-    }
-
-    // note: ban trooptype for only the signer in startTroopProduction function
-    function proposeTroopTypeBanDeal(uint256 _troopTemplateID, uint256 _timeLock) public onlySigner returns (uint256) {
-        uint256 proposerID = getter.getEntityByAddress(msg.sender);
-        dealCount++;
-
-        idToDeal[dealCount] = Deal({
-            dealID: dealCount, // FORMATTING: DO NOT REMOVE THIS COMMENT
-            proposerID: proposerID,
-            functionOfAgreement: ApprovalFunctionType.specialTroopTypeBan,
-            encodedParams: abi.encode(_troopTemplateID),
-            timeLock: _timeLock
-        });
-        nationIDToTroopTypeBanIDs[proposerID].push(dealCount);
 
         return dealCount;
     }
@@ -208,23 +190,6 @@ contract HandshakeDeal is CurioTreaty {
             }
         }
         return super.approveDisownTile(_nationID, _encodedParams);
-    }
-
-    function approveEndTroopProduction(uint256 _nationID, bytes memory _encodedParams) public view override returns (bool) {
-        (, uint256 capitalID) = abi.decode(_encodedParams, (uint256, uint256));
-        uint256[] memory signedDealIDs = nationIDToDealIDs[_nationID];
-        for (uint256 i = 0; i < signedDealIDs.length; i++) {
-            Deal memory deal = idToDeal[signedDealIDs[i]];
-            if (deal.functionOfAgreement == ApprovalFunctionType.approveEndTroopProduction) {
-                uint256 specifiedCapitalID = abi.decode(deal.encodedParams, (uint256));
-                if (capitalID == specifiedCapitalID) {
-                    if (block.timestamp < deal.timeLock) {
-                        return false;
-                    }
-                }
-            }
-        }
-        return super.approveEndTroopProduction(_nationID, _encodedParams);
     }
 
     function approveMove(uint256 _nationID, bytes memory _encodedParams) public view override returns (bool) {
@@ -364,12 +329,13 @@ contract HandshakeDeal is CurioTreaty {
         return super.approveUpgradeResource(_nationID, _encodedParams);
     }
 
+    // Note: This function only bans trooptype, not production amount
     function approveStartTroopProduction(uint256 _nationID, bytes memory _encodedParams) public view override returns (bool) {
         (, , uint256 troopTemplateID) = abi.decode(_encodedParams, (uint256, uint256, uint256));
         uint256[] memory signedDealIDs = nationIDToDealIDs[_nationID];
         for (uint256 i = 0; i < signedDealIDs.length; i++) {
             Deal memory deal = idToDeal[signedDealIDs[i]];
-            if (deal.functionOfAgreement == ApprovalFunctionType.specialTroopTypeBan) {
+            if (deal.functionOfAgreement == ApprovalFunctionType.approveStartTroopProduction) {
                 uint256 agreedTemplateID = abi.decode(deal.encodedParams, (uint256));
                 if (agreedTemplateID == troopTemplateID) {
                     if (block.timestamp < deal.timeLock) {
