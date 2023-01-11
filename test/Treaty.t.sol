@@ -702,16 +702,18 @@ contract TreatyTest is Test, DiamondDeployTest {
         CurioWallet(nation1CapitalAddr).executeTx(address(goldToken), abi.encodeWithSignature("approve(address,uint256)", address(otcContract), 1000));
         CurioWallet(nation1CapitalAddr).executeTx(address(foodToken), abi.encodeWithSignature("approve(address,uint256)", address(otcContract), 1000));
 
-        otcContract.createSellOrder("Gold", "Food", 2, 100);
-        assertEq(goldToken.balanceOf(address(otcContract)), 100);
-        assertEq(goldToken.balanceOf(nation1CapitalAddr), 900);
+        // When order is created, no tokens are transferred
+        otcContract.createOrder("Gold", 2, "Food", 200);
+        assertEq(goldToken.balanceOf(nation1CapitalAddr), 1000);
+        assertEq(foodToken.balanceOf(nation1CapitalAddr), 1000);
         vm.stopPrank();
 
+        // Player 2 takes order
         vm.startPrank(player2);
-        otcContract.buyOrder(player1);
-        assertEq(goldToken.balanceOf(address(otcContract)), 0);
-        assertEq(goldToken.balanceOf(nation2CapitalAddr), 1100);
+        otcContract.takeOrder(player1);
+        assertEq(goldToken.balanceOf(nation1CapitalAddr), 998);
         assertEq(foodToken.balanceOf(nation1CapitalAddr), 1200);
+        assertEq(goldToken.balanceOf(nation2CapitalAddr), 1002);
         assertEq(foodToken.balanceOf(nation2CapitalAddr), 800);
     }
 

@@ -2,17 +2,15 @@
 pragma solidity ^0.8.13;
 
 import {CurioTreaty} from "contracts/standards/CurioTreaty.sol";
-import {GetterFacet} from "contracts/facets/GetterFacet.sol";
 import {CurioERC20} from "contracts/standards/CurioERC20.sol";
-import {Position} from "contracts/libraries/Types.sol";
 import {console} from "forge-std/console.sol";
 
-struct SellOrder {
+struct Order {
     string sellTokenName;
+    uint256 sellAmount;
     string buyTokenName;
-    uint256 sellTokenPrice;
-    uint256 sellTokenAmount;
-    uint256 startTimestamp;
+    uint256 buyAmount;
+    uint256 createdAt;
 }
 
 contract SimpleOTC is CurioTreaty {
@@ -24,59 +22,54 @@ contract SimpleOTC is CurioTreaty {
     - Each player has one active sell order at most
     */
 
-    mapping(address => SellOrder) public addrToSellOrder;
-    mapping(address => bool) public addrHasSellOrder;
+    mapping(address => Order) public addressToOrder;
+    Order public emptyOrder;
 
     constructor(address _diamond) CurioTreaty(_diamond) {
         name = "Simple OTC Trading Agreement";
         description = "OTC Trading between players";
+
+        emptyOrder = Order({sellTokenName: "", sellAmount: 0, buyTokenName: "", buyAmount: 0, createdAt: 0});
     }
 
-    function createSellOrder(
+    function createOrder(
         string memory _sellTokenName,
+        uint256 _sellAmount,
         string memory _buyTokenName,
-        uint256 _sellTokenPrice,
-        uint256 _sellTokenAmount
+        uint256 _buyAmount
     ) public {
-        require(!addrHasSellOrder[msg.sender], "OTC: You have an existing order");
-        CurioERC20 sellToken = getter.getTokenContract(_sellTokenName);
-        address sellerCapitalAddress = getter.getAddress(getter.getCapital(getter.getEntityByAddress(msg.sender)));
-        sellToken.transferFrom(sellerCapitalAddress, address(this), _sellTokenAmount);
+        require(addressToOrder[msg.sender].sellAmount == 0, "OTC: You have an existing order");
+        require(_sellAmount > 0 && _buyAmount > 0, "OTC: Amounts must be greater than 0");
 
-        addrHasSellOrder[msg.sender] = true;
-        addrToSellOrder[msg.sender] = SellOrder({
+        addressToOrder[msg.sender] = Order({
             sellTokenName: _sellTokenName, // FORMATTING: DO NOT REMOVE THIS COMMENT
+            sellAmount: _sellAmount,
             buyTokenName: _buyTokenName,
-            sellTokenPrice: _sellTokenPrice,
-            sellTokenAmount: _sellTokenAmount,
-            startTimestamp: block.timestamp
+            buyAmount: _buyAmount,
+            createdAt: block.timestamp
         });
     }
 
-    function cancelSellOrder() public {
-        require(addrHasSellOrder[msg.sender], "OTC: You don't have an existing order");
-        require(block.timestamp - addrToSellOrder[msg.sender].startTimestamp > 120, "OTC: Order was created within the last 2 minutes");
+    function cancelOrder() public {
+        require(addressToOrder[msg.sender].sellAmount > 0, "OTC: You have no existing order");
+        require(block.timestamp > addressToOrder[msg.sender].createdAt + 120, "OTC: Can only cancel after 2 minutes");
 
-        SellOrder memory targetOrder = addrToSellOrder[msg.sender];
-        CurioERC20 sellToken = getter.getTokenContract(targetOrder.sellTokenName);
-        address sellerCapitalAddress = getter.getAddress(getter.getCapital(getter.getEntityByAddress(msg.sender)));
-
-        sellToken.transfer(sellerCapitalAddress, targetOrder.sellTokenAmount);
-
-        addrHasSellOrder[msg.sender] = false;
+        // Set order to empty
+        addressToOrder[msg.sender] = emptyOrder;
     }
 
-    function buyOrder(address _seller) public {
-        require(addrHasSellOrder[_seller], "OTC: Seller doesn't have an existing order");
-        SellOrder memory targetOrder = addrToSellOrder[_seller];
+    function takeOrder(address _seller) public {
+        require(addressToOrder[_seller].sellAmount > 0, "OTC: Seller has no existing order");
+
+        // Fetch token pair
+        Order memory targetOrder = addressToOrder[_seller];
         CurioERC20 sellToken = getter.getTokenContract(targetOrder.sellTokenName);
         CurioERC20 buyToken = getter.getTokenContract(targetOrder.buyTokenName);
 
+        // Transfer tokens
         address buyerCapitalAddress = getter.getAddress(getter.getCapital(getter.getEntityByAddress(msg.sender)));
         address sellerCapitalAddress = getter.getAddress(getter.getCapital(getter.getEntityByAddress(_seller)));
-        sellToken.transfer(buyerCapitalAddress, targetOrder.sellTokenAmount);
-        buyToken.transferFrom(buyerCapitalAddress, sellerCapitalAddress, targetOrder.sellTokenAmount * targetOrder.sellTokenPrice);
-
-        addrHasSellOrder[_seller] = false;
+        sellToken.transferFrom(sellerCapitalAddress, buyerCapitalAddress, targetOrder.sellAmount);
+        buyToken.transferFrom(buyerCapitalAddress, sellerCapitalAddress, targetOrder.buyAmount);
     }
 }
