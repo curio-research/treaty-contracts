@@ -501,12 +501,7 @@ library GameLib {
 
     function getEntityByAddress(address _entityAddress) internal view returns (uint256) {
         uint256[] memory res = AddressComponent(gs().components["Address"]).getEntitiesWithValue(_entityAddress);
-        if (res.length > 1) {
-            console.log("res length:", res.length);
-            console.log(res[0], res[1]);
-            console.log(ECSLib.getString("Tag", res[0]));
-            console.log(ECSLib.getString("Tag", res[1]));
-        }
+
         require(res.length <= 1, "CURIO: Found more than one entity");
         return res.length == 1 ? res[0] : 0;
     }

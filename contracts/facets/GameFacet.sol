@@ -962,8 +962,7 @@ contract GameFacet is UseStorage {
         // Permission checks
         if (msg.sender != address(this)) {
             uint256 callerID = GameLib.getEntityByAddress(msg.sender);
-            // fixme: Not delegated to call DeployTreaty ? where did u do that in Treaty.t?
-            // GameLib.nationDelegationCheck("DeployTreaty", _nationID, callerID, 0);
+            GameLib.nationDelegationCheck("DeployTreaty", _nationID, callerID, 0);
             GameLib.treatyApprovalCheck("DeployTreaty", _nationID, abi.encode(callerID, _treatyName));
         }
 
