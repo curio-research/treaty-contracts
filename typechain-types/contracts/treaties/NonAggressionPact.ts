@@ -23,8 +23,9 @@ import type {
   PromiseOrValue,
 } from "../../common";
 
-export interface TestTreatyInterface extends utils.Interface {
+export interface NonAggressionPactInterface extends utils.Interface {
   functions: {
+    "addToWhitelist(uint256)": FunctionFragment;
     "admin()": FunctionFragment;
     "approveBattle(uint256,bytes)": FunctionFragment;
     "approveClaimTile(uint256,bytes)": FunctionFragment;
@@ -57,15 +58,17 @@ export interface TestTreatyInterface extends utils.Interface {
     "name()": FunctionFragment;
     "ownerID()": FunctionFragment;
     "registerTreatyAndOwnerIds()": FunctionFragment;
+    "removeFromWhitelist(uint256)": FunctionFragment;
+    "removeMember(uint256)": FunctionFragment;
     "treatyDelegateGameFunction(string,uint256,bool)": FunctionFragment;
     "treatyID()": FunctionFragment;
     "treatyJoin()": FunctionFragment;
     "treatyLeave()": FunctionFragment;
-    "treatyUpgradeCapital(uint256)": FunctionFragment;
   };
 
   getFunction(
     nameOrSignatureOrTopic:
+      | "addToWhitelist"
       | "admin"
       | "approveBattle"
       | "approveClaimTile"
@@ -98,13 +101,18 @@ export interface TestTreatyInterface extends utils.Interface {
       | "name"
       | "ownerID"
       | "registerTreatyAndOwnerIds"
+      | "removeFromWhitelist"
+      | "removeMember"
       | "treatyDelegateGameFunction"
       | "treatyID"
       | "treatyJoin"
       | "treatyLeave"
-      | "treatyUpgradeCapital"
   ): FunctionFragment;
 
+  encodeFunctionData(
+    functionFragment: "addToWhitelist",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
   encodeFunctionData(functionFragment: "admin", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "approveBattle",
@@ -216,6 +224,14 @@ export interface TestTreatyInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "removeFromWhitelist",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "removeMember",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "treatyDelegateGameFunction",
     values: [
       PromiseOrValue<string>,
@@ -232,11 +248,11 @@ export interface TestTreatyInterface extends utils.Interface {
     functionFragment: "treatyLeave",
     values?: undefined
   ): string;
-  encodeFunctionData(
-    functionFragment: "treatyUpgradeCapital",
-    values: [PromiseOrValue<BigNumberish>]
-  ): string;
 
+  decodeFunctionResult(
+    functionFragment: "addToWhitelist",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "admin", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "approveBattle",
@@ -348,6 +364,14 @@ export interface TestTreatyInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "removeFromWhitelist",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "removeMember",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "treatyDelegateGameFunction",
     data: BytesLike
   ): Result;
@@ -357,20 +381,16 @@ export interface TestTreatyInterface extends utils.Interface {
     functionFragment: "treatyLeave",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "treatyUpgradeCapital",
-    data: BytesLike
-  ): Result;
 
   events: {};
 }
 
-export interface TestTreaty extends BaseContract {
+export interface NonAggressionPact extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: TestTreatyInterface;
+  interface: NonAggressionPactInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
@@ -392,6 +412,11 @@ export interface TestTreaty extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    addToWhitelist(
+      _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     admin(overrides?: CallOverrides): Promise<[string]>;
 
     approveBattle(
@@ -554,6 +579,16 @@ export interface TestTreaty extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    removeFromWhitelist(
+      _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    removeMember(
+      _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     treatyDelegateGameFunction(
       _functionName: PromiseOrValue<string>,
       _subjectID: PromiseOrValue<BigNumberish>,
@@ -570,12 +605,12 @@ export interface TestTreaty extends BaseContract {
     treatyLeave(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
-
-    treatyUpgradeCapital(
-      _capitalID: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
   };
+
+  addToWhitelist(
+    _nationID: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
 
   admin(overrides?: CallOverrides): Promise<string>;
 
@@ -739,6 +774,16 @@ export interface TestTreaty extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  removeFromWhitelist(
+    _nationID: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  removeMember(
+    _nationID: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   treatyDelegateGameFunction(
     _functionName: PromiseOrValue<string>,
     _subjectID: PromiseOrValue<BigNumberish>,
@@ -756,12 +801,12 @@ export interface TestTreaty extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  treatyUpgradeCapital(
-    _capitalID: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
   callStatic: {
+    addToWhitelist(
+      _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     admin(overrides?: CallOverrides): Promise<string>;
 
     approveBattle(
@@ -922,6 +967,16 @@ export interface TestTreaty extends BaseContract {
 
     registerTreatyAndOwnerIds(overrides?: CallOverrides): Promise<void>;
 
+    removeFromWhitelist(
+      _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    removeMember(
+      _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     treatyDelegateGameFunction(
       _functionName: PromiseOrValue<string>,
       _subjectID: PromiseOrValue<BigNumberish>,
@@ -934,16 +989,16 @@ export interface TestTreaty extends BaseContract {
     treatyJoin(overrides?: CallOverrides): Promise<void>;
 
     treatyLeave(overrides?: CallOverrides): Promise<void>;
-
-    treatyUpgradeCapital(
-      _capitalID: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<void>;
   };
 
   filters: {};
 
   estimateGas: {
+    addToWhitelist(
+      _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     admin(overrides?: CallOverrides): Promise<BigNumber>;
 
     approveBattle(
@@ -1106,6 +1161,16 @@ export interface TestTreaty extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    removeFromWhitelist(
+      _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    removeMember(
+      _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     treatyDelegateGameFunction(
       _functionName: PromiseOrValue<string>,
       _subjectID: PromiseOrValue<BigNumberish>,
@@ -1122,14 +1187,14 @@ export interface TestTreaty extends BaseContract {
     treatyLeave(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
-
-    treatyUpgradeCapital(
-      _capitalID: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
   };
 
   populateTransaction: {
+    addToWhitelist(
+      _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
     admin(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     approveBattle(
@@ -1292,6 +1357,16 @@ export interface TestTreaty extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
+    removeFromWhitelist(
+      _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    removeMember(
+      _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
     treatyDelegateGameFunction(
       _functionName: PromiseOrValue<string>,
       _subjectID: PromiseOrValue<BigNumberish>,
@@ -1306,11 +1381,6 @@ export interface TestTreaty extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     treatyLeave(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    treatyUpgradeCapital(
-      _capitalID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
   };

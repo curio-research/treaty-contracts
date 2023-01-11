@@ -108,6 +108,14 @@ contract CurioERC20 is IERC20 {
     }
 
     function transfer(address _to, uint256 _amount) public override returns (bool) {
+        // Permission checks
+        if (msg.sender != address(this)) {
+            uint256 fromID = getter.getEntityByAddress(msg.sender);
+            uint256 fromNationID = getter.getComponent("Nation").getEntitiesWithValue(abi.encode(fromID)).length > 0 ? fromID : getter.getNation(fromID);
+            uint256 toID = getter.getEntityByAddress(_to);
+            getter.treatyApprovalCheck("Transfer", fromNationID, abi.encode(toID, _amount));
+        }
+
         _transferHelper(msg.sender, _to, _amount);
 
         return true;

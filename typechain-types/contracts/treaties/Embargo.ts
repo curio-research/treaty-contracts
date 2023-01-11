@@ -23,8 +23,10 @@ import type {
   PromiseOrValue,
 } from "../../common";
 
-export interface NATOInterface extends utils.Interface {
+export interface EmbargoInterface extends utils.Interface {
   functions: {
+    "addToSanctionList(uint256)": FunctionFragment;
+    "addToWhitelist(uint256)": FunctionFragment;
     "admin()": FunctionFragment;
     "approveBattle(uint256,bytes)": FunctionFragment;
     "approveClaimTile(uint256,bytes)": FunctionFragment;
@@ -39,32 +41,38 @@ export interface NATOInterface extends utils.Interface {
     "approveJoinTreaty(uint256,bytes)": FunctionFragment;
     "approveLeaveTreaty(uint256,bytes)": FunctionFragment;
     "approveMove(uint256,bytes)": FunctionFragment;
-    "approveMoveArmy()": FunctionFragment;
     "approveMoveCapital(uint256,bytes)": FunctionFragment;
     "approveOrganizeArmy(uint256,bytes)": FunctionFragment;
     "approveRecoverTile(uint256,bytes)": FunctionFragment;
     "approveStartGather(uint256,bytes)": FunctionFragment;
     "approveStartTroopProduction(uint256,bytes)": FunctionFragment;
+    "approveTransfer(uint256,bytes)": FunctionFragment;
     "approveUnloadResources(uint256,bytes)": FunctionFragment;
     "approveUpgradeCapital(uint256,bytes)": FunctionFragment;
     "approveUpgradeResource(uint256,bytes)": FunctionFragment;
     "approveUpgradeTile(uint256,bytes)": FunctionFragment;
-    "denounceTreaty()": FunctionFragment;
     "description()": FunctionFragment;
     "diamond()": FunctionFragment;
     "game()": FunctionFragment;
     "getter()": FunctionFragment;
-    "isMemberStates(address)": FunctionFragment;
-    "joinTreaty()": FunctionFragment;
-    "memberStates(uint256)": FunctionFragment;
+    "minimumStayCheck(uint256,uint256)": FunctionFragment;
     "name()": FunctionFragment;
+    "ownerID()": FunctionFragment;
+    "registerTreatyAndOwnerIds()": FunctionFragment;
+    "removeFromSanctionList(uint256)": FunctionFragment;
+    "removeFromWhitelist(uint256)": FunctionFragment;
+    "removeMember(uint256)": FunctionFragment;
+    "sanctionList()": FunctionFragment;
     "treatyDelegateGameFunction(string,uint256,bool)": FunctionFragment;
+    "treatyID()": FunctionFragment;
     "treatyJoin()": FunctionFragment;
     "treatyLeave()": FunctionFragment;
   };
 
   getFunction(
     nameOrSignatureOrTopic:
+      | "addToSanctionList"
+      | "addToWhitelist"
       | "admin"
       | "approveBattle"
       | "approveClaimTile"
@@ -79,30 +87,42 @@ export interface NATOInterface extends utils.Interface {
       | "approveJoinTreaty"
       | "approveLeaveTreaty"
       | "approveMove"
-      | "approveMoveArmy"
       | "approveMoveCapital"
       | "approveOrganizeArmy"
       | "approveRecoverTile"
       | "approveStartGather"
       | "approveStartTroopProduction"
+      | "approveTransfer"
       | "approveUnloadResources"
       | "approveUpgradeCapital"
       | "approveUpgradeResource"
       | "approveUpgradeTile"
-      | "denounceTreaty"
       | "description"
       | "diamond"
       | "game"
       | "getter"
-      | "isMemberStates"
-      | "joinTreaty"
-      | "memberStates"
+      | "minimumStayCheck"
       | "name"
+      | "ownerID"
+      | "registerTreatyAndOwnerIds"
+      | "removeFromSanctionList"
+      | "removeFromWhitelist"
+      | "removeMember"
+      | "sanctionList"
       | "treatyDelegateGameFunction"
+      | "treatyID"
       | "treatyJoin"
       | "treatyLeave"
   ): FunctionFragment;
 
+  encodeFunctionData(
+    functionFragment: "addToSanctionList",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "addToWhitelist",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
   encodeFunctionData(functionFragment: "admin", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "approveBattle",
@@ -157,10 +177,6 @@ export interface NATOInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
-    functionFragment: "approveMoveArmy",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
     functionFragment: "approveMoveCapital",
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BytesLike>]
   ): string;
@@ -181,6 +197,10 @@ export interface NATOInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
+    functionFragment: "approveTransfer",
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BytesLike>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "approveUnloadResources",
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BytesLike>]
   ): string;
@@ -197,10 +217,6 @@ export interface NATOInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
-    functionFragment: "denounceTreaty",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
     functionFragment: "description",
     values?: undefined
   ): string;
@@ -208,18 +224,31 @@ export interface NATOInterface extends utils.Interface {
   encodeFunctionData(functionFragment: "game", values?: undefined): string;
   encodeFunctionData(functionFragment: "getter", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "isMemberStates",
-    values: [PromiseOrValue<string>]
+    functionFragment: "minimumStayCheck",
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
   ): string;
+  encodeFunctionData(functionFragment: "name", values?: undefined): string;
+  encodeFunctionData(functionFragment: "ownerID", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "joinTreaty",
+    functionFragment: "registerTreatyAndOwnerIds",
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "memberStates",
+    functionFragment: "removeFromSanctionList",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
-  encodeFunctionData(functionFragment: "name", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "removeFromWhitelist",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "removeMember",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "sanctionList",
+    values?: undefined
+  ): string;
   encodeFunctionData(
     functionFragment: "treatyDelegateGameFunction",
     values: [
@@ -228,6 +257,7 @@ export interface NATOInterface extends utils.Interface {
       PromiseOrValue<boolean>
     ]
   ): string;
+  encodeFunctionData(functionFragment: "treatyID", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "treatyJoin",
     values?: undefined
@@ -237,6 +267,14 @@ export interface NATOInterface extends utils.Interface {
     values?: undefined
   ): string;
 
+  decodeFunctionResult(
+    functionFragment: "addToSanctionList",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "addToWhitelist",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "admin", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "approveBattle",
@@ -291,10 +329,6 @@ export interface NATOInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "approveMoveArmy",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "approveMoveCapital",
     data: BytesLike
   ): Result;
@@ -315,6 +349,10 @@ export interface NATOInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "approveTransfer",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "approveUnloadResources",
     data: BytesLike
   ): Result;
@@ -331,10 +369,6 @@ export interface NATOInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "denounceTreaty",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "description",
     data: BytesLike
   ): Result;
@@ -342,19 +376,36 @@ export interface NATOInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "game", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "getter", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "isMemberStates",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "joinTreaty", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "memberStates",
+    functionFragment: "minimumStayCheck",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "ownerID", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "registerTreatyAndOwnerIds",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "removeFromSanctionList",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "removeFromWhitelist",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "removeMember",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "sanctionList",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "treatyDelegateGameFunction",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "treatyID", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "treatyJoin", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "treatyLeave",
@@ -364,12 +415,12 @@ export interface NATOInterface extends utils.Interface {
   events: {};
 }
 
-export interface NATO extends BaseContract {
+export interface Embargo extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: NATOInterface;
+  interface: EmbargoInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
@@ -391,6 +442,16 @@ export interface NATO extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    addToSanctionList(
+      _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    addToWhitelist(
+      _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     admin(overrides?: CallOverrides): Promise<[string]>;
 
     approveBattle(
@@ -471,8 +532,6 @@ export interface NATO extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
-    approveMoveArmy(overrides?: CallOverrides): Promise<[boolean]>;
-
     approveMoveCapital(
       _nationID: PromiseOrValue<BigNumberish>,
       _encodedParams: PromiseOrValue<BytesLike>,
@@ -503,6 +562,12 @@ export interface NATO extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
+    approveTransfer(
+      _nationID: PromiseOrValue<BigNumberish>,
+      _encodedParams: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
     approveUnloadResources(
       _nationID: PromiseOrValue<BigNumberish>,
       _encodedParams: PromiseOrValue<BytesLike>,
@@ -527,10 +592,6 @@ export interface NATO extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
-    denounceTreaty(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
     description(overrides?: CallOverrides): Promise<[string]>;
 
     diamond(overrides?: CallOverrides): Promise<[string]>;
@@ -539,21 +600,36 @@ export interface NATO extends BaseContract {
 
     getter(overrides?: CallOverrides): Promise<[string]>;
 
-    isMemberStates(
-      arg0: PromiseOrValue<string>,
+    minimumStayCheck(
+      _nationID: PromiseOrValue<BigNumberish>,
+      _duration: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
-    joinTreaty(
+    name(overrides?: CallOverrides): Promise<[string]>;
+
+    ownerID(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    registerTreatyAndOwnerIds(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    memberStates(
-      arg0: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[string]>;
+    removeFromSanctionList(
+      _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
 
-    name(overrides?: CallOverrides): Promise<[string]>;
+    removeFromWhitelist(
+      _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    removeMember(
+      _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    sanctionList(overrides?: CallOverrides): Promise<[string]>;
 
     treatyDelegateGameFunction(
       _functionName: PromiseOrValue<string>,
@@ -561,6 +637,8 @@ export interface NATO extends BaseContract {
       _canCall: PromiseOrValue<boolean>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
+
+    treatyID(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     treatyJoin(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -570,6 +648,16 @@ export interface NATO extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
   };
+
+  addToSanctionList(
+    _nationID: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  addToWhitelist(
+    _nationID: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
 
   admin(overrides?: CallOverrides): Promise<string>;
 
@@ -651,8 +739,6 @@ export interface NATO extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
-  approveMoveArmy(overrides?: CallOverrides): Promise<boolean>;
-
   approveMoveCapital(
     _nationID: PromiseOrValue<BigNumberish>,
     _encodedParams: PromiseOrValue<BytesLike>,
@@ -683,6 +769,12 @@ export interface NATO extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
+  approveTransfer(
+    _nationID: PromiseOrValue<BigNumberish>,
+    _encodedParams: PromiseOrValue<BytesLike>,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
   approveUnloadResources(
     _nationID: PromiseOrValue<BigNumberish>,
     _encodedParams: PromiseOrValue<BytesLike>,
@@ -707,10 +799,6 @@ export interface NATO extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
-  denounceTreaty(
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
   description(overrides?: CallOverrides): Promise<string>;
 
   diamond(overrides?: CallOverrides): Promise<string>;
@@ -719,21 +807,36 @@ export interface NATO extends BaseContract {
 
   getter(overrides?: CallOverrides): Promise<string>;
 
-  isMemberStates(
-    arg0: PromiseOrValue<string>,
+  minimumStayCheck(
+    _nationID: PromiseOrValue<BigNumberish>,
+    _duration: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<boolean>;
 
-  joinTreaty(
+  name(overrides?: CallOverrides): Promise<string>;
+
+  ownerID(overrides?: CallOverrides): Promise<BigNumber>;
+
+  registerTreatyAndOwnerIds(
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  memberStates(
-    arg0: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<string>;
+  removeFromSanctionList(
+    _nationID: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
 
-  name(overrides?: CallOverrides): Promise<string>;
+  removeFromWhitelist(
+    _nationID: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  removeMember(
+    _nationID: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  sanctionList(overrides?: CallOverrides): Promise<string>;
 
   treatyDelegateGameFunction(
     _functionName: PromiseOrValue<string>,
@@ -741,6 +844,8 @@ export interface NATO extends BaseContract {
     _canCall: PromiseOrValue<boolean>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
+
+  treatyID(overrides?: CallOverrides): Promise<BigNumber>;
 
   treatyJoin(
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -751,6 +856,16 @@ export interface NATO extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
+    addToSanctionList(
+      _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    addToWhitelist(
+      _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     admin(overrides?: CallOverrides): Promise<string>;
 
     approveBattle(
@@ -831,8 +946,6 @@ export interface NATO extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    approveMoveArmy(overrides?: CallOverrides): Promise<boolean>;
-
     approveMoveCapital(
       _nationID: PromiseOrValue<BigNumberish>,
       _encodedParams: PromiseOrValue<BytesLike>,
@@ -863,6 +976,12 @@ export interface NATO extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
+    approveTransfer(
+      _nationID: PromiseOrValue<BigNumberish>,
+      _encodedParams: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
     approveUnloadResources(
       _nationID: PromiseOrValue<BigNumberish>,
       _encodedParams: PromiseOrValue<BytesLike>,
@@ -887,8 +1006,6 @@ export interface NATO extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    denounceTreaty(overrides?: CallOverrides): Promise<boolean>;
-
     description(overrides?: CallOverrides): Promise<string>;
 
     diamond(overrides?: CallOverrides): Promise<string>;
@@ -897,19 +1014,34 @@ export interface NATO extends BaseContract {
 
     getter(overrides?: CallOverrides): Promise<string>;
 
-    isMemberStates(
-      arg0: PromiseOrValue<string>,
+    minimumStayCheck(
+      _nationID: PromiseOrValue<BigNumberish>,
+      _duration: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    joinTreaty(overrides?: CallOverrides): Promise<boolean>;
-
-    memberStates(
-      arg0: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<string>;
-
     name(overrides?: CallOverrides): Promise<string>;
+
+    ownerID(overrides?: CallOverrides): Promise<BigNumber>;
+
+    registerTreatyAndOwnerIds(overrides?: CallOverrides): Promise<void>;
+
+    removeFromSanctionList(
+      _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    removeFromWhitelist(
+      _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    removeMember(
+      _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    sanctionList(overrides?: CallOverrides): Promise<string>;
 
     treatyDelegateGameFunction(
       _functionName: PromiseOrValue<string>,
@@ -917,6 +1049,8 @@ export interface NATO extends BaseContract {
       _canCall: PromiseOrValue<boolean>,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    treatyID(overrides?: CallOverrides): Promise<BigNumber>;
 
     treatyJoin(overrides?: CallOverrides): Promise<void>;
 
@@ -926,6 +1060,16 @@ export interface NATO extends BaseContract {
   filters: {};
 
   estimateGas: {
+    addToSanctionList(
+      _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    addToWhitelist(
+      _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     admin(overrides?: CallOverrides): Promise<BigNumber>;
 
     approveBattle(
@@ -1006,8 +1150,6 @@ export interface NATO extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    approveMoveArmy(overrides?: CallOverrides): Promise<BigNumber>;
-
     approveMoveCapital(
       _nationID: PromiseOrValue<BigNumberish>,
       _encodedParams: PromiseOrValue<BytesLike>,
@@ -1038,6 +1180,12 @@ export interface NATO extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    approveTransfer(
+      _nationID: PromiseOrValue<BigNumberish>,
+      _encodedParams: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     approveUnloadResources(
       _nationID: PromiseOrValue<BigNumberish>,
       _encodedParams: PromiseOrValue<BytesLike>,
@@ -1062,10 +1210,6 @@ export interface NATO extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    denounceTreaty(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
     description(overrides?: CallOverrides): Promise<BigNumber>;
 
     diamond(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1074,21 +1218,36 @@ export interface NATO extends BaseContract {
 
     getter(overrides?: CallOverrides): Promise<BigNumber>;
 
-    isMemberStates(
-      arg0: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    joinTreaty(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    memberStates(
-      arg0: PromiseOrValue<BigNumberish>,
+    minimumStayCheck(
+      _nationID: PromiseOrValue<BigNumberish>,
+      _duration: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     name(overrides?: CallOverrides): Promise<BigNumber>;
+
+    ownerID(overrides?: CallOverrides): Promise<BigNumber>;
+
+    registerTreatyAndOwnerIds(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    removeFromSanctionList(
+      _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    removeFromWhitelist(
+      _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    removeMember(
+      _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    sanctionList(overrides?: CallOverrides): Promise<BigNumber>;
 
     treatyDelegateGameFunction(
       _functionName: PromiseOrValue<string>,
@@ -1096,6 +1255,8 @@ export interface NATO extends BaseContract {
       _canCall: PromiseOrValue<boolean>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
+
+    treatyID(overrides?: CallOverrides): Promise<BigNumber>;
 
     treatyJoin(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -1107,6 +1268,16 @@ export interface NATO extends BaseContract {
   };
 
   populateTransaction: {
+    addToSanctionList(
+      _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    addToWhitelist(
+      _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
     admin(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     approveBattle(
@@ -1187,8 +1358,6 @@ export interface NATO extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    approveMoveArmy(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
     approveMoveCapital(
       _nationID: PromiseOrValue<BigNumberish>,
       _encodedParams: PromiseOrValue<BytesLike>,
@@ -1219,6 +1388,12 @@ export interface NATO extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    approveTransfer(
+      _nationID: PromiseOrValue<BigNumberish>,
+      _encodedParams: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     approveUnloadResources(
       _nationID: PromiseOrValue<BigNumberish>,
       _encodedParams: PromiseOrValue<BytesLike>,
@@ -1243,10 +1418,6 @@ export interface NATO extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    denounceTreaty(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
     description(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     diamond(overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -1255,21 +1426,36 @@ export interface NATO extends BaseContract {
 
     getter(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    isMemberStates(
-      arg0: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    joinTreaty(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    memberStates(
-      arg0: PromiseOrValue<BigNumberish>,
+    minimumStayCheck(
+      _nationID: PromiseOrValue<BigNumberish>,
+      _duration: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     name(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    ownerID(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    registerTreatyAndOwnerIds(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    removeFromSanctionList(
+      _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    removeFromWhitelist(
+      _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    removeMember(
+      _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    sanctionList(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     treatyDelegateGameFunction(
       _functionName: PromiseOrValue<string>,
@@ -1277,6 +1463,8 @@ export interface NATO extends BaseContract {
       _canCall: PromiseOrValue<boolean>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
+
+    treatyID(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     treatyJoin(
       overrides?: Overrides & { from?: PromiseOrValue<string> }

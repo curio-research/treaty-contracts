@@ -16,8 +16,12 @@ import {Strings} from "openzeppelin-contracts/contracts/utils/Strings.sol";
 import {ComponentSpec, GameMode, GameParamSpec, Position, WorldConstants} from "contracts/libraries/Types.sol";
 import {Alliance} from "contracts/treaties/Alliance.sol";
 import {FTX} from "contracts/treaties/FTX.sol";
-import {NATO} from "contracts/treaties/NATO.sol";
 import {TestTreaty} from "contracts/treaties/TestTreaty.sol";
+import {NonAggressionPact} from "contracts/treaties/NonAggressionPact.sol";
+import {Embargo} from "contracts/treaties/Embargo.sol";
+import {CollectiveDefenseFund} from "contracts/treaties/CDFund.sol";
+import {SimpleOTC} from "contracts/treaties/SimpleOTC.sol";
+import {HandshakeDeal} from "contracts/treaties/HandshakeDeal.sol";
 import {CurioERC20} from "contracts/standards/CurioERC20.sol";
 import {console} from "forge-std/console.sol";
 import {stdJson} from "forge-std/StdJson.sol";
@@ -44,12 +48,21 @@ contract DiamondDeployTest is Test {
     // Treaties
     Alliance public allianceTemplate;
     FTX public ftxTemplate;
-    NATO public natoTemplate;
     TestTreaty public testTreatyTemplate;
+    CollectiveDefenseFund public collectiveDefenseFundTemplate;
+    Embargo public embargoTemplate;
+    NonAggressionPact public nonAggressionPactTemplate;
+    SimpleOTC public otcContractTemplate;
+    HandshakeDeal public handshakeDealTemplate;
+
     uint256 public allianceTemplateID;
     uint256 public ftxTemplateID;
-    uint256 public natoTemplateID;
     uint256 public testTreatyTemplateID;
+    uint256 public collectiveDefenseFundTemplateID;
+    uint256 public embargoTemplateID;
+    uint256 public nonAggressionPactTemplateID;
+    uint256 public otcContractTemplateID;
+    uint256 public handshakeDealTemplateID;
 
     // Players (nations)
     address public deployer = address(0);
@@ -177,13 +190,21 @@ contract DiamondDeployTest is Test {
 
         // Initialize treaties
         allianceTemplate = new Alliance(diamond);
-        allianceTemplateID = admin.registerTreatyTemplate(address(allianceTemplate), "sample ABI");
+        allianceTemplateID = admin.registerTreatyTemplate(address(allianceTemplate), "sample ABI", "sample metadata");
         ftxTemplate = new FTX(diamond, address(this));
-        ftxTemplateID = admin.registerTreatyTemplate(address(ftxTemplate), "sample ABI");
-        natoTemplate = new NATO(diamond);
-        natoTemplateID = admin.registerTreatyTemplate(address(natoTemplate), "sample ABI");
+        ftxTemplateID = admin.registerTreatyTemplate(address(ftxTemplate), "sample ABI", "sample metadata");
         testTreatyTemplate = new TestTreaty(diamond);
-        testTreatyTemplateID = admin.registerTreatyTemplate(address(testTreatyTemplate), "sample ABI");
+        testTreatyTemplateID = admin.registerTreatyTemplate(address(testTreatyTemplate), "sample ABI", "sample metadata");
+        collectiveDefenseFundTemplate = new CollectiveDefenseFund(diamond, 100, 100, 86400, 86400, 50, 50);
+        collectiveDefenseFundTemplateID = admin.registerTreatyTemplate(address(collectiveDefenseFundTemplate), "sample ABI", "sample metadata");
+        embargoTemplate = new Embargo(diamond);
+        embargoTemplateID = admin.registerTreatyTemplate(address(embargoTemplate), "sample ABI", "sample metadata");
+        nonAggressionPactTemplate = new NonAggressionPact(diamond);
+        nonAggressionPactTemplateID = admin.registerTreatyTemplate(address(nonAggressionPactTemplate), "sample ABI", "sample metadata");
+        otcContractTemplate = new SimpleOTC(diamond);
+        otcContractTemplateID = admin.registerTreatyTemplate(address(otcContractTemplate), "sample ABI", "sample metadata");
+        handshakeDealTemplate = new HandshakeDeal(diamond);
+        handshakeDealTemplateID = admin.registerTreatyTemplate(address(handshakeDealTemplate), "sample ABI", "sample metadata");
         console.log(">>> Treaties initialized");
 
         // Whitelist all players

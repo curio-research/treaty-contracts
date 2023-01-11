@@ -14,6 +14,12 @@ import {CurioTreaty} from "contracts/standards/CurioTreaty.sol";
 import {Alliance} from "contracts/treaties/Alliance.sol";
 import {FTX} from "contracts/treaties/FTX.sol";
 import {TestTreaty} from "contracts/treaties/TestTreaty.sol";
+import {NonAggressionPact} from "contracts/treaties/NonAggressionPact.sol";
+import {Embargo} from "contracts/treaties/Embargo.sol";
+import {CollectiveDefenseFund} from "contracts/treaties/CDFund.sol";
+import {SimpleOTC} from "contracts/treaties/SimpleOTC.sol";
+import {HandshakeDeal} from "contracts/treaties/HandshakeDeal.sol";
+
 import {console} from "forge-std/console.sol";
 
 /// @title Util library
@@ -443,8 +449,11 @@ library GameLib {
         }
     }
 
-    // FIXME: encountering "TypeError: Definition of base has to precede definition of derived contract" issue
-    function deployTreaty(uint256 _nationID, string memory _treatyName) internal returns (address treatyAddress) {
+    function deployTreaty(
+        uint256 _nationID,
+        string memory _treatyName,
+        bytes memory _treatyParams
+    ) internal returns (address treatyAddress) {
         // Deploy treaty
         if (GameLib.strEq(_treatyName, "Alliance")) {
             treatyAddress = address(new Alliance(address(this)));
@@ -452,13 +461,31 @@ library GameLib {
             treatyAddress = address(new FTX(address(this), ECSLib.getAddress("Address", _nationID)));
         } else if (GameLib.strEq(_treatyName, "Test Treaty")) {
             treatyAddress = address(new TestTreaty(address(this)));
+        } else if (GameLib.strEq(_treatyName, "Non-Aggression Pact")) {
+            treatyAddress = address(new NonAggressionPact(address(this)));
+        } else if (GameLib.strEq(_treatyName, "Embargo Pact")) {
+            treatyAddress = address(new Embargo(address(this)));
+        } else if (GameLib.strEq(_treatyName, "Collective Defense Fund")) {
+            (uint256 a, uint256 b, uint256 c, uint256 d, uint256 e, uint256 f) = abi.decode(_treatyParams, (uint256, uint256, uint256, uint256, uint256, uint256));
+            treatyAddress = address(new CollectiveDefenseFund(address(this), a, b, c, d, e, f));
+        } else if (GameLib.strEq(_treatyName, "Simple OTC Trading Agreement")) {
+            treatyAddress = address(new SimpleOTC(address(this)));
+        } else if (GameLib.strEq(_treatyName, "Simple Handshake Deal")) {
+            treatyAddress = address(new HandshakeDeal(address(this)));
         } else {
             revert("CURIO: Unsupported treaty name");
         }
 
         // Register treaty
         uint256 treatyTemplateID = gs().templates[_treatyName];
-        Templates.addTreaty(treatyAddress, ECSLib.getString("Name", treatyTemplateID), ECSLib.getString("Description", treatyTemplateID), ECSLib.getString("ABIHash", treatyTemplateID), ECSLib.getString("Metadata", treatyTemplateID), _nationID);
+        Templates.addTreaty(
+            treatyAddress, // STYLE: DO NOT REMOVE THIS COMMENT
+            ECSLib.getString("Name", treatyTemplateID),
+            ECSLib.getString("Description", treatyTemplateID),
+            ECSLib.getString("ABIHash", treatyTemplateID),
+            ECSLib.getString("Metadata", treatyTemplateID),
+            _nationID
+        );
     }
 
     // ----------------------------------------------------------
@@ -467,11 +494,14 @@ library GameLib {
 
     function getTokenContract(string memory _tokenName) internal view returns (CurioERC20) {
         uint256 tokenTemplateID = gs().templates[_tokenName];
+        require(tokenTemplateID != 0, "CURIO: Token template not found");
+
         return CurioERC20(ECSLib.getAddress("Address", tokenTemplateID));
     }
 
     function getEntityByAddress(address _entityAddress) internal view returns (uint256) {
         uint256[] memory res = AddressComponent(gs().components["Address"]).getEntitiesWithValue(_entityAddress);
+
         require(res.length <= 1, "CURIO: Found more than one entity");
         return res.length == 1 ? res[0] : 0;
     }

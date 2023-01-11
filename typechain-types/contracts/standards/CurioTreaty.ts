@@ -44,6 +44,7 @@ export interface CurioTreatyInterface extends utils.Interface {
     "approveRecoverTile(uint256,bytes)": FunctionFragment;
     "approveStartGather(uint256,bytes)": FunctionFragment;
     "approveStartTroopProduction(uint256,bytes)": FunctionFragment;
+    "approveTransfer(uint256,bytes)": FunctionFragment;
     "approveUnloadResources(uint256,bytes)": FunctionFragment;
     "approveUpgradeCapital(uint256,bytes)": FunctionFragment;
     "approveUpgradeResource(uint256,bytes)": FunctionFragment;
@@ -52,8 +53,12 @@ export interface CurioTreatyInterface extends utils.Interface {
     "diamond()": FunctionFragment;
     "game()": FunctionFragment;
     "getter()": FunctionFragment;
+    "minimumStayCheck(uint256,uint256)": FunctionFragment;
     "name()": FunctionFragment;
+    "ownerID()": FunctionFragment;
+    "registerTreatyAndOwnerIds()": FunctionFragment;
     "treatyDelegateGameFunction(string,uint256,bool)": FunctionFragment;
+    "treatyID()": FunctionFragment;
     "treatyJoin()": FunctionFragment;
     "treatyLeave()": FunctionFragment;
   };
@@ -79,6 +84,7 @@ export interface CurioTreatyInterface extends utils.Interface {
       | "approveRecoverTile"
       | "approveStartGather"
       | "approveStartTroopProduction"
+      | "approveTransfer"
       | "approveUnloadResources"
       | "approveUpgradeCapital"
       | "approveUpgradeResource"
@@ -87,8 +93,12 @@ export interface CurioTreatyInterface extends utils.Interface {
       | "diamond"
       | "game"
       | "getter"
+      | "minimumStayCheck"
       | "name"
+      | "ownerID"
+      | "registerTreatyAndOwnerIds"
       | "treatyDelegateGameFunction"
+      | "treatyID"
       | "treatyJoin"
       | "treatyLeave"
   ): FunctionFragment;
@@ -167,6 +177,10 @@ export interface CurioTreatyInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
+    functionFragment: "approveTransfer",
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BytesLike>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "approveUnloadResources",
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BytesLike>]
   ): string;
@@ -189,7 +203,16 @@ export interface CurioTreatyInterface extends utils.Interface {
   encodeFunctionData(functionFragment: "diamond", values?: undefined): string;
   encodeFunctionData(functionFragment: "game", values?: undefined): string;
   encodeFunctionData(functionFragment: "getter", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "minimumStayCheck",
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
+  ): string;
   encodeFunctionData(functionFragment: "name", values?: undefined): string;
+  encodeFunctionData(functionFragment: "ownerID", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "registerTreatyAndOwnerIds",
+    values?: undefined
+  ): string;
   encodeFunctionData(
     functionFragment: "treatyDelegateGameFunction",
     values: [
@@ -198,6 +221,7 @@ export interface CurioTreatyInterface extends utils.Interface {
       PromiseOrValue<boolean>
     ]
   ): string;
+  encodeFunctionData(functionFragment: "treatyID", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "treatyJoin",
     values?: undefined
@@ -281,6 +305,10 @@ export interface CurioTreatyInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "approveTransfer",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "approveUnloadResources",
     data: BytesLike
   ): Result;
@@ -303,11 +331,21 @@ export interface CurioTreatyInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "diamond", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "game", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "getter", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "minimumStayCheck",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "ownerID", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "registerTreatyAndOwnerIds",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "treatyDelegateGameFunction",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "treatyID", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "treatyJoin", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "treatyLeave",
@@ -454,6 +492,12 @@ export interface CurioTreaty extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
+    approveTransfer(
+      _nationID: PromiseOrValue<BigNumberish>,
+      _encodedParams: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
     approveUnloadResources(
       _nationID: PromiseOrValue<BigNumberish>,
       _encodedParams: PromiseOrValue<BytesLike>,
@@ -486,7 +530,19 @@ export interface CurioTreaty extends BaseContract {
 
     getter(overrides?: CallOverrides): Promise<[string]>;
 
+    minimumStayCheck(
+      _nationID: PromiseOrValue<BigNumberish>,
+      _duration: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
     name(overrides?: CallOverrides): Promise<[string]>;
+
+    ownerID(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    registerTreatyAndOwnerIds(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
 
     treatyDelegateGameFunction(
       _functionName: PromiseOrValue<string>,
@@ -494,6 +550,8 @@ export interface CurioTreaty extends BaseContract {
       _canCall: PromiseOrValue<boolean>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
+
+    treatyID(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     treatyJoin(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -614,6 +672,12 @@ export interface CurioTreaty extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
+  approveTransfer(
+    _nationID: PromiseOrValue<BigNumberish>,
+    _encodedParams: PromiseOrValue<BytesLike>,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
   approveUnloadResources(
     _nationID: PromiseOrValue<BigNumberish>,
     _encodedParams: PromiseOrValue<BytesLike>,
@@ -646,7 +710,19 @@ export interface CurioTreaty extends BaseContract {
 
   getter(overrides?: CallOverrides): Promise<string>;
 
+  minimumStayCheck(
+    _nationID: PromiseOrValue<BigNumberish>,
+    _duration: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
   name(overrides?: CallOverrides): Promise<string>;
+
+  ownerID(overrides?: CallOverrides): Promise<BigNumber>;
+
+  registerTreatyAndOwnerIds(
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
 
   treatyDelegateGameFunction(
     _functionName: PromiseOrValue<string>,
@@ -654,6 +730,8 @@ export interface CurioTreaty extends BaseContract {
     _canCall: PromiseOrValue<boolean>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
+
+  treatyID(overrides?: CallOverrides): Promise<BigNumber>;
 
   treatyJoin(
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -774,6 +852,12 @@ export interface CurioTreaty extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
+    approveTransfer(
+      _nationID: PromiseOrValue<BigNumberish>,
+      _encodedParams: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
     approveUnloadResources(
       _nationID: PromiseOrValue<BigNumberish>,
       _encodedParams: PromiseOrValue<BytesLike>,
@@ -806,7 +890,17 @@ export interface CurioTreaty extends BaseContract {
 
     getter(overrides?: CallOverrides): Promise<string>;
 
+    minimumStayCheck(
+      _nationID: PromiseOrValue<BigNumberish>,
+      _duration: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
     name(overrides?: CallOverrides): Promise<string>;
+
+    ownerID(overrides?: CallOverrides): Promise<BigNumber>;
+
+    registerTreatyAndOwnerIds(overrides?: CallOverrides): Promise<void>;
 
     treatyDelegateGameFunction(
       _functionName: PromiseOrValue<string>,
@@ -814,6 +908,8 @@ export interface CurioTreaty extends BaseContract {
       _canCall: PromiseOrValue<boolean>,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    treatyID(overrides?: CallOverrides): Promise<BigNumber>;
 
     treatyJoin(overrides?: CallOverrides): Promise<void>;
 
@@ -933,6 +1029,12 @@ export interface CurioTreaty extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    approveTransfer(
+      _nationID: PromiseOrValue<BigNumberish>,
+      _encodedParams: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     approveUnloadResources(
       _nationID: PromiseOrValue<BigNumberish>,
       _encodedParams: PromiseOrValue<BytesLike>,
@@ -965,7 +1067,19 @@ export interface CurioTreaty extends BaseContract {
 
     getter(overrides?: CallOverrides): Promise<BigNumber>;
 
+    minimumStayCheck(
+      _nationID: PromiseOrValue<BigNumberish>,
+      _duration: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     name(overrides?: CallOverrides): Promise<BigNumber>;
+
+    ownerID(overrides?: CallOverrides): Promise<BigNumber>;
+
+    registerTreatyAndOwnerIds(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
 
     treatyDelegateGameFunction(
       _functionName: PromiseOrValue<string>,
@@ -973,6 +1087,8 @@ export interface CurioTreaty extends BaseContract {
       _canCall: PromiseOrValue<boolean>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
+
+    treatyID(overrides?: CallOverrides): Promise<BigNumber>;
 
     treatyJoin(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -1094,6 +1210,12 @@ export interface CurioTreaty extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    approveTransfer(
+      _nationID: PromiseOrValue<BigNumberish>,
+      _encodedParams: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     approveUnloadResources(
       _nationID: PromiseOrValue<BigNumberish>,
       _encodedParams: PromiseOrValue<BytesLike>,
@@ -1126,7 +1248,19 @@ export interface CurioTreaty extends BaseContract {
 
     getter(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    minimumStayCheck(
+      _nationID: PromiseOrValue<BigNumberish>,
+      _duration: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     name(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    ownerID(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    registerTreatyAndOwnerIds(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
 
     treatyDelegateGameFunction(
       _functionName: PromiseOrValue<string>,
@@ -1134,6 +1268,8 @@ export interface CurioTreaty extends BaseContract {
       _canCall: PromiseOrValue<boolean>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
+
+    treatyID(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     treatyJoin(
       overrides?: Overrides & { from?: PromiseOrValue<string> }

@@ -23,7 +23,7 @@ import type {
   PromiseOrValue,
 } from "../../common";
 
-export interface TestTreatyInterface extends utils.Interface {
+export interface HandshakeDealInterface extends utils.Interface {
   functions: {
     "admin()": FunctionFragment;
     "approveBattle(uint256,bytes)": FunctionFragment;
@@ -49,19 +49,24 @@ export interface TestTreatyInterface extends utils.Interface {
     "approveUpgradeCapital(uint256,bytes)": FunctionFragment;
     "approveUpgradeResource(uint256,bytes)": FunctionFragment;
     "approveUpgradeTile(uint256,bytes)": FunctionFragment;
+    "dealCount()": FunctionFragment;
     "description()": FunctionFragment;
     "diamond()": FunctionFragment;
     "game()": FunctionFragment;
+    "getNationDeals(uint256)": FunctionFragment;
     "getter()": FunctionFragment;
+    "idToDeal(uint256)": FunctionFragment;
     "minimumStayCheck(uint256,uint256)": FunctionFragment;
     "name()": FunctionFragment;
+    "nationIDToDealIDs(uint256,uint256)": FunctionFragment;
     "ownerID()": FunctionFragment;
+    "proposeDeal(uint8,bytes,uint256)": FunctionFragment;
     "registerTreatyAndOwnerIds()": FunctionFragment;
+    "signDeal(uint256)": FunctionFragment;
     "treatyDelegateGameFunction(string,uint256,bool)": FunctionFragment;
     "treatyID()": FunctionFragment;
     "treatyJoin()": FunctionFragment;
     "treatyLeave()": FunctionFragment;
-    "treatyUpgradeCapital(uint256)": FunctionFragment;
   };
 
   getFunction(
@@ -90,19 +95,24 @@ export interface TestTreatyInterface extends utils.Interface {
       | "approveUpgradeCapital"
       | "approveUpgradeResource"
       | "approveUpgradeTile"
+      | "dealCount"
       | "description"
       | "diamond"
       | "game"
+      | "getNationDeals"
       | "getter"
+      | "idToDeal"
       | "minimumStayCheck"
       | "name"
+      | "nationIDToDealIDs"
       | "ownerID"
+      | "proposeDeal"
       | "registerTreatyAndOwnerIds"
+      | "signDeal"
       | "treatyDelegateGameFunction"
       | "treatyID"
       | "treatyJoin"
       | "treatyLeave"
-      | "treatyUpgradeCapital"
   ): FunctionFragment;
 
   encodeFunctionData(functionFragment: "admin", values?: undefined): string;
@@ -198,22 +208,47 @@ export interface TestTreatyInterface extends utils.Interface {
     functionFragment: "approveUpgradeTile",
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BytesLike>]
   ): string;
+  encodeFunctionData(functionFragment: "dealCount", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "description",
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "diamond", values?: undefined): string;
   encodeFunctionData(functionFragment: "game", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "getNationDeals",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
   encodeFunctionData(functionFragment: "getter", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "idToDeal",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
   encodeFunctionData(
     functionFragment: "minimumStayCheck",
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(functionFragment: "name", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "nationIDToDealIDs",
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
+  ): string;
   encodeFunctionData(functionFragment: "ownerID", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "proposeDeal",
+    values: [
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BytesLike>,
+      PromiseOrValue<BigNumberish>
+    ]
+  ): string;
   encodeFunctionData(
     functionFragment: "registerTreatyAndOwnerIds",
     values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "signDeal",
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "treatyDelegateGameFunction",
@@ -231,10 +266,6 @@ export interface TestTreatyInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "treatyLeave",
     values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "treatyUpgradeCapital",
-    values: [PromiseOrValue<BigNumberish>]
   ): string;
 
   decodeFunctionResult(functionFragment: "admin", data: BytesLike): Result;
@@ -330,23 +361,38 @@ export interface TestTreatyInterface extends utils.Interface {
     functionFragment: "approveUpgradeTile",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "dealCount", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "description",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "diamond", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "game", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "getNationDeals",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "getter", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "idToDeal", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "minimumStayCheck",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "nationIDToDealIDs",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "ownerID", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "proposeDeal",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "registerTreatyAndOwnerIds",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "signDeal", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "treatyDelegateGameFunction",
     data: BytesLike
@@ -357,20 +403,16 @@ export interface TestTreatyInterface extends utils.Interface {
     functionFragment: "treatyLeave",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "treatyUpgradeCapital",
-    data: BytesLike
-  ): Result;
 
   events: {};
 }
 
-export interface TestTreaty extends BaseContract {
+export interface HandshakeDeal extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: TestTreatyInterface;
+  interface: HandshakeDealInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
@@ -532,13 +574,33 @@ export interface TestTreaty extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
+    dealCount(overrides?: CallOverrides): Promise<[BigNumber]>;
+
     description(overrides?: CallOverrides): Promise<[string]>;
 
     diamond(overrides?: CallOverrides): Promise<[string]>;
 
     game(overrides?: CallOverrides): Promise<[string]>;
 
+    getNationDeals(
+      _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber[]]>;
+
     getter(overrides?: CallOverrides): Promise<[string]>;
+
+    idToDeal(
+      arg0: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, BigNumber, number, string, BigNumber] & {
+        dealID: BigNumber;
+        proposerID: BigNumber;
+        functionOfAgreement: number;
+        encodedParams: string;
+        timeLock: BigNumber;
+      }
+    >;
 
     minimumStayCheck(
       _nationID: PromiseOrValue<BigNumberish>,
@@ -548,9 +610,27 @@ export interface TestTreaty extends BaseContract {
 
     name(overrides?: CallOverrides): Promise<[string]>;
 
+    nationIDToDealIDs(
+      arg0: PromiseOrValue<BigNumberish>,
+      arg1: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
     ownerID(overrides?: CallOverrides): Promise<[BigNumber]>;
 
+    proposeDeal(
+      _functionType: PromiseOrValue<BigNumberish>,
+      _encodedParams: PromiseOrValue<BytesLike>,
+      _timeLock: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     registerTreatyAndOwnerIds(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    signDeal(
+      _dealID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -568,11 +648,6 @@ export interface TestTreaty extends BaseContract {
     ): Promise<ContractTransaction>;
 
     treatyLeave(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    treatyUpgradeCapital(
-      _capitalID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
   };
@@ -717,13 +792,33 @@ export interface TestTreaty extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
+  dealCount(overrides?: CallOverrides): Promise<BigNumber>;
+
   description(overrides?: CallOverrides): Promise<string>;
 
   diamond(overrides?: CallOverrides): Promise<string>;
 
   game(overrides?: CallOverrides): Promise<string>;
 
+  getNationDeals(
+    _nationID: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber[]>;
+
   getter(overrides?: CallOverrides): Promise<string>;
+
+  idToDeal(
+    arg0: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<
+    [BigNumber, BigNumber, number, string, BigNumber] & {
+      dealID: BigNumber;
+      proposerID: BigNumber;
+      functionOfAgreement: number;
+      encodedParams: string;
+      timeLock: BigNumber;
+    }
+  >;
 
   minimumStayCheck(
     _nationID: PromiseOrValue<BigNumberish>,
@@ -733,9 +828,27 @@ export interface TestTreaty extends BaseContract {
 
   name(overrides?: CallOverrides): Promise<string>;
 
+  nationIDToDealIDs(
+    arg0: PromiseOrValue<BigNumberish>,
+    arg1: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
   ownerID(overrides?: CallOverrides): Promise<BigNumber>;
 
+  proposeDeal(
+    _functionType: PromiseOrValue<BigNumberish>,
+    _encodedParams: PromiseOrValue<BytesLike>,
+    _timeLock: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   registerTreatyAndOwnerIds(
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  signDeal(
+    _dealID: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -753,11 +866,6 @@ export interface TestTreaty extends BaseContract {
   ): Promise<ContractTransaction>;
 
   treatyLeave(
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  treatyUpgradeCapital(
-    _capitalID: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -902,13 +1010,33 @@ export interface TestTreaty extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
+    dealCount(overrides?: CallOverrides): Promise<BigNumber>;
+
     description(overrides?: CallOverrides): Promise<string>;
 
     diamond(overrides?: CallOverrides): Promise<string>;
 
     game(overrides?: CallOverrides): Promise<string>;
 
+    getNationDeals(
+      _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber[]>;
+
     getter(overrides?: CallOverrides): Promise<string>;
+
+    idToDeal(
+      arg0: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, BigNumber, number, string, BigNumber] & {
+        dealID: BigNumber;
+        proposerID: BigNumber;
+        functionOfAgreement: number;
+        encodedParams: string;
+        timeLock: BigNumber;
+      }
+    >;
 
     minimumStayCheck(
       _nationID: PromiseOrValue<BigNumberish>,
@@ -918,9 +1046,27 @@ export interface TestTreaty extends BaseContract {
 
     name(overrides?: CallOverrides): Promise<string>;
 
+    nationIDToDealIDs(
+      arg0: PromiseOrValue<BigNumberish>,
+      arg1: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     ownerID(overrides?: CallOverrides): Promise<BigNumber>;
 
+    proposeDeal(
+      _functionType: PromiseOrValue<BigNumberish>,
+      _encodedParams: PromiseOrValue<BytesLike>,
+      _timeLock: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     registerTreatyAndOwnerIds(overrides?: CallOverrides): Promise<void>;
+
+    signDeal(
+      _dealID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     treatyDelegateGameFunction(
       _functionName: PromiseOrValue<string>,
@@ -934,11 +1080,6 @@ export interface TestTreaty extends BaseContract {
     treatyJoin(overrides?: CallOverrides): Promise<void>;
 
     treatyLeave(overrides?: CallOverrides): Promise<void>;
-
-    treatyUpgradeCapital(
-      _capitalID: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<void>;
   };
 
   filters: {};
@@ -1084,13 +1225,25 @@ export interface TestTreaty extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    dealCount(overrides?: CallOverrides): Promise<BigNumber>;
+
     description(overrides?: CallOverrides): Promise<BigNumber>;
 
     diamond(overrides?: CallOverrides): Promise<BigNumber>;
 
     game(overrides?: CallOverrides): Promise<BigNumber>;
 
+    getNationDeals(
+      _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     getter(overrides?: CallOverrides): Promise<BigNumber>;
+
+    idToDeal(
+      arg0: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     minimumStayCheck(
       _nationID: PromiseOrValue<BigNumberish>,
@@ -1100,9 +1253,27 @@ export interface TestTreaty extends BaseContract {
 
     name(overrides?: CallOverrides): Promise<BigNumber>;
 
+    nationIDToDealIDs(
+      arg0: PromiseOrValue<BigNumberish>,
+      arg1: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     ownerID(overrides?: CallOverrides): Promise<BigNumber>;
 
+    proposeDeal(
+      _functionType: PromiseOrValue<BigNumberish>,
+      _encodedParams: PromiseOrValue<BytesLike>,
+      _timeLock: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     registerTreatyAndOwnerIds(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    signDeal(
+      _dealID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -1120,11 +1291,6 @@ export interface TestTreaty extends BaseContract {
     ): Promise<BigNumber>;
 
     treatyLeave(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    treatyUpgradeCapital(
-      _capitalID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
   };
@@ -1270,13 +1436,25 @@ export interface TestTreaty extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    dealCount(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     description(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     diamond(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     game(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    getNationDeals(
+      _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     getter(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    idToDeal(
+      arg0: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     minimumStayCheck(
       _nationID: PromiseOrValue<BigNumberish>,
@@ -1286,9 +1464,27 @@ export interface TestTreaty extends BaseContract {
 
     name(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    nationIDToDealIDs(
+      arg0: PromiseOrValue<BigNumberish>,
+      arg1: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     ownerID(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    proposeDeal(
+      _functionType: PromiseOrValue<BigNumberish>,
+      _encodedParams: PromiseOrValue<BytesLike>,
+      _timeLock: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
     registerTreatyAndOwnerIds(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    signDeal(
+      _dealID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1306,11 +1502,6 @@ export interface TestTreaty extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     treatyLeave(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    treatyUpgradeCapital(
-      _capitalID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
   };

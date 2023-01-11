@@ -5,6 +5,11 @@ import {Test} from "forge-std/Test.sol";
 import {DiamondDeployTest} from "test/DiamondDeploy.t.sol";
 import {Alliance} from "contracts/treaties/Alliance.sol";
 import {FTX} from "contracts/treaties/FTX.sol";
+import {NonAggressionPact} from "contracts/treaties/NonAggressionPact.sol";
+import {Embargo} from "contracts/treaties/Embargo.sol";
+import {CollectiveDefenseFund} from "contracts/treaties/CDFund.sol";
+import {SimpleOTC} from "contracts/treaties/SimpleOTC.sol";
+import {HandshakeDeal} from "contracts/treaties/HandshakeDeal.sol";
 import {TestTreaty} from "contracts/treaties/TestTreaty.sol";
 import {CurioWallet} from "contracts/standards/CurioWallet.sol";
 import {Position} from "contracts/libraries/Types.sol";
@@ -17,6 +22,11 @@ contract TreatyTest is Test, DiamondDeployTest {
     // - [x] Token approval
     // - [x] Case: FTX
     // - [x] Case: Alliance
+    // - [x] Case: NAP
+    // - [x] Case: Embargo
+    // - [x] Case: CDFund
+    // - [x] Case: SimpleOTC
+    // - [x] Case: HandshakeDeal
 
     function testDelegation() public {
         // Start time
@@ -141,7 +151,7 @@ contract TreatyTest is Test, DiamondDeployTest {
 
         // Nation 1 deploys TestTreaty treaty
         vm.startPrank(player1);
-        TestTreaty testTreaty = TestTreaty(game.deployTreaty(nation1ID, testTreatyTemplate.name()));
+        TestTreaty testTreaty = TestTreaty(game.deployTreaty(nation1ID, testTreatyTemplate.name(), ""));
         uint256 testTreatyID = getter.getEntityByAddress(address(testTreaty));
         vm.stopPrank();
 
@@ -229,7 +239,7 @@ contract TreatyTest is Test, DiamondDeployTest {
         address army11Addr = getter.getAddress(army11ID);
 
         // Nation 1 deploys Alliance treaty
-        Alliance alliance = Alliance(game.deployTreaty(nation1ID, allianceTemplate.name()));
+        Alliance alliance = Alliance(game.deployTreaty(nation1ID, allianceTemplate.name(), ""));
         uint256 allianceID = getter.getEntityByAddress(address(alliance));
 
         // Nation 1 joins alliance after token approval
@@ -378,14 +388,14 @@ contract TreatyTest is Test, DiamondDeployTest {
 
         // Player 2 (SBF) starts FTX and grants it access to his wallet
         vm.startPrank(player2);
-        FTX ftx = FTX(game.deployTreaty(nation2ID, ftxTemplate.name()));
+        FTX ftx = FTX(game.deployTreaty(nation2ID, ftxTemplate.name(), ""));
         CurioWallet(nation2CapitalAddr).executeTx(address(goldToken), abi.encodeWithSignature("approve(address,uint256)", address(ftx), 10000));
         assertEq(goldToken.balanceOf(nation2CapitalAddr), 0);
         vm.stopPrank();
 
         // Deployer registers FTX treaty
         vm.startPrank(deployer);
-        admin.registerTreatyTemplate(address(ftx), "placeholder ABI");
+        admin.registerTreatyTemplate(address(ftx), "placeholder ABI", "");
         vm.stopPrank();
 
         // Player 1 deposits to FTX
@@ -432,5 +442,320 @@ contract TreatyTest is Test, DiamondDeployTest {
         vm.expectRevert();
         ftx.treatyWithdraw(7);
         assertEq(goldToken.balanceOf(nation1CapitalAddr), 1);
+    }
+
+    function testNAPact() public {
+        /**
+        Outline:
+        - player1 deploys treaty
+        - player1 whitelists player2, and then player2 joins
+            - player2 needs to first approve token spending
+        - player2 battles player1 but reverts
+        **/
+
+        // Start time
+        uint256 time = block.timestamp + 500;
+        vm.warp(time);
+
+        // Player1 deploys NAPact and whitelists self
+        vm.startPrank(player1);
+        NonAggressionPact nonAggressionPact = NonAggressionPact(game.deployTreaty(nation1ID, nonAggressionPactTemplate.name(), ""));
+        nonAggressionPact.addToWhitelist(nation1ID);
+        vm.stopPrank();
+
+        // Deployer registers NAPact treaty & gives troops to p2
+        vm.startPrank(deployer);
+        admin.dripToken(nation2CapitalAddr, "Horseman", 1000);
+        admin.dripToken(nation2CapitalAddr, "Warrior", 1000);
+        admin.dripToken(nation2CapitalAddr, "Slinger", 1000);
+        vm.stopPrank();
+
+        // Player1 joins NAPact and whitelists player2
+        vm.startPrank(player1);
+        nonAggressionPact.treatyJoin();
+        nonAggressionPact.addToWhitelist(nation2ID);
+        vm.stopPrank();
+
+        // Player2 joins NAPact
+        vm.startPrank(player2);
+        nonAggressionPact.treatyJoin();
+        uint256[] memory armyTemplateAmounts = new uint256[](3);
+        armyTemplateAmounts[0] = 150;
+        armyTemplateAmounts[1] = 150;
+        armyTemplateAmounts[2] = 150;
+        uint256[] memory armyTemplateIDs = new uint256[](3);
+        armyTemplateIDs[0] = warriorTemplateID;
+        armyTemplateIDs[1] = horsemanTemplateID;
+        armyTemplateIDs[2] = slingerTemplateID;
+        uint256 army21ID = game.organizeArmy(nation2CapitalID, armyTemplateIDs, armyTemplateAmounts);
+
+        // Player2 moves army from (62, 32) to (62, 14)
+        for (uint256 i = 34; i > 14; i -= 2) {
+            time += 1;
+            vm.warp(time);
+            game.move(army21ID, Position({x: 62, y: i}));
+        }
+
+        // Player2 battles Player1's army but reverted
+        uint256 nation1CapitalTileID = getter.getTileAt(getter.getPositionExternal("StartPosition", nation1CapitalID));
+        vm.expectRevert("CURIO: Treaty disapproved Battle");
+        game.battle(army21ID, nation1CapitalTileID);
+
+        // Player2 leaves treaty and then able to attack
+        time += 30;
+        vm.warp(time);
+        nonAggressionPact.treatyLeave();
+        game.battle(army21ID, nation1CapitalTileID);
+
+        vm.stopPrank();
+    }
+
+    function testEmbargo() public {
+        /** 
+        Outline:
+        - Player1 deploys sanctionLeague Treaty and whitelists player2
+        - Player1 sanctions himself (for simplicity reason; same as sanctioning p3)
+        - Player2 joins
+        - Player2 transfers gold from its army to player3's capital but reverted
+        **/
+        // Start time
+        uint256 time = block.timestamp + 500;
+        vm.warp(time);
+
+        // Player1 deploys embargo and whitelists self
+        vm.startPrank(player1);
+        Embargo embargo = Embargo(game.deployTreaty(nation1ID, embargoTemplate.name(), ""));
+        embargo.addToWhitelist(nation1ID);
+        vm.stopPrank();
+
+        // Deployer registers embargo treaty & gives troops to p2
+        vm.startPrank(deployer);
+        admin.dripToken(nation2CapitalAddr, "Horseman", 1000);
+        admin.dripToken(nation2CapitalAddr, "Warrior", 1000);
+        admin.dripToken(nation2CapitalAddr, "Slinger", 1000);
+        vm.stopPrank();
+
+        // Player1 joins embargo and whitelists player2. Then he sanctions himself
+        vm.startPrank(player1);
+        embargo.treatyJoin();
+        embargo.addToWhitelist(nation2ID);
+        embargo.addToSanctionList(nation1ID);
+        vm.stopPrank();
+
+        // Player2 joins embargo
+        vm.startPrank(player2);
+        embargo.treatyJoin();
+        uint256[] memory armyTemplateAmounts = new uint256[](3);
+        armyTemplateAmounts[0] = 150;
+        armyTemplateAmounts[1] = 150;
+        armyTemplateAmounts[2] = 150;
+        uint256[] memory armyTemplateIDs = new uint256[](3);
+        armyTemplateIDs[0] = warriorTemplateID;
+        armyTemplateIDs[1] = horsemanTemplateID;
+        armyTemplateIDs[2] = slingerTemplateID;
+        uint256 army21ID = game.organizeArmy(nation2CapitalID, armyTemplateIDs, armyTemplateAmounts);
+        address army21Addr = getter.getAddress(army21ID);
+        vm.stopPrank();
+
+        // Deployer drips some gold to army21
+        vm.startPrank(deployer);
+        admin.dripToken(army21Addr, "Gold", 1000);
+        vm.stopPrank();
+
+        // Player2 moves army from (62, 32) to (62, 14)
+        vm.startPrank(player2);
+        for (uint256 i = 34; i > 14; i -= 2) {
+            time += 1;
+            vm.warp(time);
+            game.move(army21ID, Position({x: 62, y: i}));
+        }
+
+        // Player2 Army's transfer to p1 capital reverts
+        vm.expectRevert();
+        CurioWallet(army21Addr).executeTx(address(goldToken), abi.encodeWithSignature("transfer(address,uint256)", nation1CapitalAddr, 10));
+        vm.stopPrank();
+
+        // Player1 removes himself from sanctionList, and then player2 can transfer
+        vm.startPrank(player1);
+        embargo.removeFromSanctionList(nation1ID);
+        vm.stopPrank();
+
+        vm.startPrank(player2);
+        CurioWallet(army21Addr).executeTx(address(goldToken), abi.encodeWithSignature("transfer(address,uint256)", nation1CapitalAddr, 10));
+        vm.stopPrank();
+    }
+
+    function testCDFund() public {
+        /*
+        Outline:
+        - deployer gives both resource and troops to p1 and p2
+        - Player1 deploys CDFund Treaty and whitelists player2
+        - Player2 joins
+        - Player2 attacks player1 but reverted
+        - Player2 forgot to pay, and player1 kicks player2 out
+        - Player2 attacks player1 and succeeds
+        */
+        uint256 time = block.timestamp + 500;
+        vm.warp(time);
+
+        // Player1 deploys NAPact and whitelists self
+        vm.startPrank(player1);
+        address cdFundAddr = game.deployTreaty(nation1ID, collectiveDefenseFundTemplate.name(), abi.encode(100, 100, 86400, 86400, 50, 50));
+        CollectiveDefenseFund cdFund = CollectiveDefenseFund(cdFundAddr);
+        cdFund.addToWhitelist(nation1ID);
+        vm.stopPrank();
+
+        // Deployer registers NAPact treaty & assigns tokens to p1 and p2
+        vm.startPrank(deployer);
+        // admin.registerTreatyTemplate(address(cdFund), "placeholder ABI");
+        admin.dripToken(nation1CapitalAddr, "Gold", 1000);
+        admin.dripToken(nation1CapitalAddr, "Food", 1000);
+        admin.dripToken(nation2CapitalAddr, "Horseman", 1000);
+        admin.dripToken(nation2CapitalAddr, "Warrior", 1000);
+        admin.dripToken(nation2CapitalAddr, "Slinger", 1000);
+        admin.dripToken(nation2CapitalAddr, "Gold", 1000);
+        admin.dripToken(nation2CapitalAddr, "Food", 1000);
+
+        vm.stopPrank();
+
+        // Player1 joins CDFund and whitelists player2.
+        vm.startPrank(player1);
+        CurioWallet(nation1CapitalAddr).executeTx(address(goldToken), abi.encodeWithSignature("approve(address,uint256)", address(cdFund), 1000));
+        CurioWallet(nation1CapitalAddr).executeTx(address(foodToken), abi.encodeWithSignature("approve(address,uint256)", address(cdFund), 1000));
+        cdFund.treatyJoin();
+        cdFund.addToWhitelist(nation2ID);
+        vm.stopPrank();
+
+        // Player2 joins CDFund and attempts to attack Player1
+        vm.startPrank(player2);
+        CurioWallet(nation2CapitalAddr).executeTx(address(goldToken), abi.encodeWithSignature("approve(address,uint256)", address(cdFund), 1000));
+        CurioWallet(nation2CapitalAddr).executeTx(address(foodToken), abi.encodeWithSignature("approve(address,uint256)", address(cdFund), 1000));
+        cdFund.treatyJoin();
+        uint256[] memory armyTemplateAmounts = new uint256[](3);
+        armyTemplateAmounts[0] = 150;
+        armyTemplateAmounts[1] = 150;
+        armyTemplateAmounts[2] = 150;
+        uint256[] memory armyTemplateIDs = new uint256[](3);
+        armyTemplateIDs[0] = warriorTemplateID;
+        armyTemplateIDs[1] = horsemanTemplateID;
+        armyTemplateIDs[2] = slingerTemplateID;
+        uint256 army21ID = game.organizeArmy(nation2CapitalID, armyTemplateIDs, armyTemplateAmounts);
+
+        // Player2 moves army from (62, 32) to (62, 14)
+        for (uint256 i = 34; i > 14; i -= 2) {
+            time += 1;
+            vm.warp(time);
+            game.move(army21ID, Position({x: 62, y: i}));
+        }
+
+        // Player2 Army battling p1 capital reverts
+        uint256 nation1CapitalTile = getter.getTileAt(getter.getPositionExternal("StartPosition", nation1CapitalID));
+        vm.expectRevert("CURIO: Treaty disapproved Battle");
+        game.battle(army21ID, nation1CapitalTile);
+        vm.stopPrank();
+
+        // One day has passed, and p2 is kicked out by p1 cuz he forgot to pay
+        time += 86400;
+        vm.warp(time);
+        vm.startPrank(player1);
+        cdFund.addToCouncil(nation1ID);
+        cdFund.payMembershipFee();
+        cdFund.removeAllOverdueMembers();
+
+        // p1 tries to withdraw money
+        uint256 p1PrevGoldBalance = goldToken.balanceOf(nation1CapitalAddr);
+        uint256 p1PrevFoodBalance = goldToken.balanceOf(nation1CapitalAddr);
+        cdFund.withdraw(10, 10);
+        assertTrue(goldToken.balanceOf(nation1CapitalAddr) == p1PrevGoldBalance + 10 && foodToken.balanceOf(nation1CapitalAddr) == p1PrevFoodBalance + 10);
+        vm.stopPrank();
+
+        // now that p2 is not in the league, he can battle p1
+        vm.startPrank(player2);
+        game.battle(army21ID, nation1CapitalTile);
+        vm.stopPrank();
+    }
+
+    function testSimpleOTC() public {
+        /**
+        Outline
+        - p1 deploys contracts and puts on an order to sell 100 gold for 200 food
+        - p2 talks to p1 and decides to purchase from p1
+         */
+        uint256 time = block.timestamp + 500;
+        vm.warp(time);
+
+        // Player1 deploys NAPact
+        vm.startPrank(player1);
+        SimpleOTC otcContract = SimpleOTC(game.deployTreaty(nation1ID, otcContractTemplate.name(), ""));
+        vm.stopPrank();
+
+        // Deployer registers NAPact treaty & assigns tokens to p1 and p2
+        vm.startPrank(deployer);
+        admin.dripToken(nation1CapitalAddr, "Gold", 1000);
+        admin.dripToken(nation1CapitalAddr, "Food", 1000);
+
+        admin.dripToken(nation2CapitalAddr, "Gold", 1000);
+        admin.dripToken(nation2CapitalAddr, "Food", 1000);
+        vm.stopPrank();
+
+        vm.startPrank(player1);
+        CurioWallet(nation1CapitalAddr).executeTx(address(goldToken), abi.encodeWithSignature("approve(address,uint256)", address(otcContract), 1000));
+        CurioWallet(nation1CapitalAddr).executeTx(address(foodToken), abi.encodeWithSignature("approve(address,uint256)", address(otcContract), 1000));
+
+        // When order is created, no tokens are transferred
+        otcContract.createOrder("Gold", 2, "Food", 200);
+        assertEq(goldToken.balanceOf(nation1CapitalAddr), 1000);
+        assertEq(foodToken.balanceOf(nation1CapitalAddr), 1000);
+        vm.stopPrank();
+
+        // Player 2 takes order
+        vm.startPrank(player2);
+        otcContract.takeOrder(player1);
+        assertEq(goldToken.balanceOf(nation1CapitalAddr), 998);
+        assertEq(foodToken.balanceOf(nation1CapitalAddr), 1200);
+        assertEq(goldToken.balanceOf(nation2CapitalAddr), 1002);
+        assertEq(foodToken.balanceOf(nation2CapitalAddr), 800);
+    }
+
+    function testHandshakeDeal() public {
+        /**
+        Outline:
+        - p1 proposed a deal to prevent upgrading p2's capital
+        - p2 signed the deal
+        - p2 attempts to upgrade its capital but fails
+         */
+
+        uint256 time = block.timestamp + 500;
+        vm.warp(time);
+
+        // Player1 deploys Handshake deal and propose
+        vm.startPrank(player1);
+        HandshakeDeal hsDeal = HandshakeDeal(game.deployTreaty(nation1ID, handshakeDealTemplate.name(), ""));
+        hsDeal.treatyJoin();
+        hsDeal.proposeDeal(HandshakeDeal.ApprovalFunctionType.approveUpgradeCapital, abi.encode(nation2CapitalID), block.timestamp + 1000);
+        vm.stopPrank();
+
+        // assigns tokens to p1 and p2
+        vm.startPrank(deployer);
+        admin.dripToken(nation1CapitalAddr, "Gold", 10000000);
+        admin.dripToken(nation1CapitalAddr, "Food", 10000000);
+
+        admin.dripToken(nation2CapitalAddr, "Gold", 10000000);
+        admin.dripToken(nation2CapitalAddr, "Food", 10000000);
+        vm.stopPrank();
+
+        // Player2 joins treaty and signs the deal
+        vm.startPrank(player2);
+        uint256[] memory p1Deals = hsDeal.getNationDeals(nation1ID);
+        uint256 p1DealID = p1Deals[0];
+        hsDeal.treatyJoin();
+        hsDeal.signDeal(p1DealID);
+        vm.expectRevert("CURIO: Treaty disapproved UpgradeCapital");
+        game.upgradeCapital(nation2CapitalID);
+
+        // todo: make sure that timelocks have passed before a player can exit
+        time += 1001;
+        vm.warp(time);
+        game.upgradeCapital(nation2CapitalID);
     }
 }

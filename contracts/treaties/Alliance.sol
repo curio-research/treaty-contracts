@@ -31,9 +31,7 @@ contract Alliance is CurioTreaty {
     function treatyLeave() public override {
         // Check if nation has stayed in alliance for at least 10 seconds
         uint256 nationID = getter.getEntityByAddress(msg.sender);
-        uint256 treatyID = getter.getEntityByAddress(address(this));
-        uint256 nationJoinTime = abi.decode(getter.getComponent("InitTimestamp").getBytesValue(getter.getNationTreatySignature(nationID, treatyID)), (uint256));
-        require(block.timestamp - nationJoinTime >= 10, "Alliance: Nation must stay for at least 10 seconds");
+        require(minimumStayCheck(nationID, 10), "Alliance: Nation must stay for at least 10 seconds");
 
         // Transfer 1000 gold from treaty back to nation
         address nationCapitalAddress = getter.getAddress(getter.getCapital(nationID));
@@ -55,7 +53,7 @@ contract Alliance is CurioTreaty {
         uint256 treatyID = getter.getEntityByAddress(address(this));
         require(getter.getNationTreatySignature(targetNationID, treatyID) == 0, "Alliance: Cannot besiege army of ally nation");
 
-        // Get tiles beloning to the 9-tile region around the target army
+        // Get tiles belonging to the 9-tile region around the target army
         // Note: Need to be updated if attackRange is increased to above tileWidth
         Position[] memory nearbyTilePositions = getter.getTileRegionTilePositions(getter.getPositionExternal("StartPosition", _targetArmyID));
 

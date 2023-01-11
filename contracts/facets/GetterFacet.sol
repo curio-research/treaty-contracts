@@ -56,6 +56,10 @@ contract GetterFacet is UseStorage {
         return ECSLib.getUint("Amount", _entity);
     }
 
+    function getTag(uint256 _entityID) external view returns (string memory) {
+        return ECSLib.getString("Tag", _entityID);
+    }
+
     // Used for fetching all treaties a player has signed
     function getSignedTreaties(uint256 _nationID) external view returns (uint256[] memory) {
         return GameLib.getSignedTreaties(_nationID);
@@ -103,6 +107,14 @@ contract GetterFacet is UseStorage {
 
     function getNationArmies(uint256 _nationID) external view returns (uint256[] memory) {
         return GameLib.getArmiesFromNation(_nationID);
+    }
+
+    function treatyApprovalCheck(
+        string memory _functionName,
+        uint256 _nationID,
+        bytes memory _encodedParams
+    ) external {
+        return GameLib.treatyApprovalCheck(_functionName, _nationID, _encodedParams);
     }
 
     function getInventoryBalance(address _keeperAddress, string memory _resourceType) external view returns (uint256) {
