@@ -72,6 +72,7 @@ export interface AdminFacetInterface extends utils.Interface {
     "registerTemplateShortcuts(string[],uint256[])": FunctionFragment;
     "registerTreatyTemplate(address,string,string)": FunctionFragment;
     "removeEntity(uint256)": FunctionFragment;
+    "removeFromGameWhitelist(address)": FunctionFragment;
     "removeFromTreatyWhitelist(uint256)": FunctionFragment;
     "removeIdleNations(uint256)": FunctionFragment;
     "removeSigner(uint256)": FunctionFragment;
@@ -113,6 +114,7 @@ export interface AdminFacetInterface extends utils.Interface {
       | "registerTemplateShortcuts"
       | "registerTreatyTemplate"
       | "removeEntity"
+      | "removeFromGameWhitelist"
       | "removeFromTreatyWhitelist"
       | "removeIdleNations"
       | "removeSigner"
@@ -251,6 +253,10 @@ export interface AdminFacetInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
+    functionFragment: "removeFromGameWhitelist",
+    values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "removeFromTreatyWhitelist",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
@@ -377,6 +383,10 @@ export interface AdminFacetInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "removeEntity",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "removeFromGameWhitelist",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -599,6 +609,11 @@ export interface AdminFacet extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    removeFromGameWhitelist(
+      _playerAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     removeFromTreatyWhitelist(
       _nationID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -804,6 +819,11 @@ export interface AdminFacet extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  removeFromGameWhitelist(
+    _playerAddress: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   removeFromTreatyWhitelist(
     _nationID: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -1000,6 +1020,11 @@ export interface AdminFacet extends BaseContract {
 
     removeEntity(
       _entity: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    removeFromGameWhitelist(
+      _playerAddress: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1207,6 +1232,11 @@ export interface AdminFacet extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    removeFromGameWhitelist(
+      _playerAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     removeFromTreatyWhitelist(
       _nationID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -1410,6 +1440,11 @@ export interface AdminFacet extends BaseContract {
 
     removeEntity(
       _entity: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    removeFromGameWhitelist(
+      _playerAddress: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

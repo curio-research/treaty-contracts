@@ -220,7 +220,6 @@ contract AdminFacet is UseStorage {
      */
 
     function bulkInitializeTiles(Position[] memory _positions) external onlyAuthorized {
-        console.log("bulk");
         for (uint256 i = 0; i < _positions.length; i++) {
             GameLib.initializeTile(_positions[i]);
         }

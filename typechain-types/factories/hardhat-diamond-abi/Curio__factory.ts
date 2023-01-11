@@ -587,6 +587,19 @@ const _abi = [
   {
     inputs: [
       {
+        internalType: "address",
+        name: "_playerAddress",
+        type: "address",
+      },
+    ],
+    name: "removeFromGameWhitelist",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
         internalType: "uint256",
         name: "_nationID",
         type: "uint256",
