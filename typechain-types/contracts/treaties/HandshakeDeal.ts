@@ -598,7 +598,7 @@ export interface HandshakeDeal extends BaseContract {
         proposerID: BigNumber;
         functionOfAgreement: number;
         encodedParams: string;
-        timeLock: BigNumber;
+        effectiveDuration: BigNumber;
       }
     >;
 
@@ -621,7 +621,7 @@ export interface HandshakeDeal extends BaseContract {
     proposeDeal(
       _functionType: PromiseOrValue<BigNumberish>,
       _encodedParams: PromiseOrValue<BytesLike>,
-      _timeLock: PromiseOrValue<BigNumberish>,
+      _effectiveDuration: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -816,7 +816,7 @@ export interface HandshakeDeal extends BaseContract {
       proposerID: BigNumber;
       functionOfAgreement: number;
       encodedParams: string;
-      timeLock: BigNumber;
+      effectiveDuration: BigNumber;
     }
   >;
 
@@ -839,7 +839,7 @@ export interface HandshakeDeal extends BaseContract {
   proposeDeal(
     _functionType: PromiseOrValue<BigNumberish>,
     _encodedParams: PromiseOrValue<BytesLike>,
-    _timeLock: PromiseOrValue<BigNumberish>,
+    _effectiveDuration: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -1034,7 +1034,7 @@ export interface HandshakeDeal extends BaseContract {
         proposerID: BigNumber;
         functionOfAgreement: number;
         encodedParams: string;
-        timeLock: BigNumber;
+        effectiveDuration: BigNumber;
       }
     >;
 
@@ -1057,7 +1057,7 @@ export interface HandshakeDeal extends BaseContract {
     proposeDeal(
       _functionType: PromiseOrValue<BigNumberish>,
       _encodedParams: PromiseOrValue<BytesLike>,
-      _timeLock: PromiseOrValue<BigNumberish>,
+      _effectiveDuration: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1264,7 +1264,7 @@ export interface HandshakeDeal extends BaseContract {
     proposeDeal(
       _functionType: PromiseOrValue<BigNumberish>,
       _encodedParams: PromiseOrValue<BytesLike>,
-      _timeLock: PromiseOrValue<BigNumberish>,
+      _effectiveDuration: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -1475,7 +1475,7 @@ export interface HandshakeDeal extends BaseContract {
     proposeDeal(
       _functionType: PromiseOrValue<BigNumberish>,
       _encodedParams: PromiseOrValue<BytesLike>,
-      _timeLock: PromiseOrValue<BigNumberish>,
+      _effectiveDuration: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

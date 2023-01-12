@@ -732,7 +732,7 @@ contract TreatyTest is Test, DiamondDeployTest {
         vm.startPrank(player1);
         HandshakeDeal hsDeal = HandshakeDeal(game.deployTreaty(nation1ID, handshakeDealTemplate.name(), ""));
         hsDeal.treatyJoin();
-        hsDeal.proposeDeal(HandshakeDeal.ApprovalFunctionType.approveUpgradeCapital, abi.encode(nation2CapitalID), block.timestamp + 1000);
+        hsDeal.proposeDeal(HandshakeDeal.ApprovalFunctionType.approveUpgradeCapital, abi.encode(nation2CapitalID), 1000);
         vm.stopPrank();
 
         // assigns tokens to p1 and p2
