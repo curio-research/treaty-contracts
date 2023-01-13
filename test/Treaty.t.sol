@@ -7,7 +7,7 @@ import {Alliance} from "contracts/treaties/Alliance.sol";
 import {FTX} from "contracts/treaties/FTX.sol";
 import {NonAggressionPact} from "contracts/treaties/NonAggressionPact.sol";
 import {Embargo} from "contracts/treaties/Embargo.sol";
-import {CollectiveDefenseFund} from "contracts/treaties/CDFund.sol";
+import {CollectiveDefenseFund} from "contracts/treaties/CollectiveDefenseFund.sol";
 import {SimpleOTC} from "contracts/treaties/SimpleOTC.sol";
 import {HandshakeDeal} from "contracts/treaties/HandshakeDeal.sol";
 import {TestTreaty} from "contracts/treaties/TestTreaty.sol";

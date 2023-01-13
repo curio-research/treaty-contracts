@@ -72,7 +72,7 @@ export const saveMapToLocal = async (tileMap: any) => {
   console.log(`✦ Map saved locally at: ${mapPath}`);
 };
 
-export const uploadABIToIPFS = async (hre: HardhatRuntimeEnvironment, contractName: string): Promise<string> => {
+export const uploadAbiToIpfs = async (hre: HardhatRuntimeEnvironment, contractName: string): Promise<string> => {
   const pinata = pinataSDK(process.env.PINATA_API_KEY!, process.env.PINATA_API_SECRET!);
   try {
     await pinata.testAuthentication();
@@ -85,7 +85,7 @@ export const uploadABIToIPFS = async (hre: HardhatRuntimeEnvironment, contractNa
   }
 };
 
-export const uploadToIpfs = async (hre: HardhatRuntimeEnvironment, content: any): Promise<string> => {
+export const uploadToIpfs = async (content: any): Promise<string> => {
   const pinata = pinataSDK(process.env.PINATA_API_KEY!, process.env.PINATA_API_SECRET!);
   try {
     const response = await pinata.pinJSONToIPFS(content);
@@ -98,15 +98,26 @@ export const uploadToIpfs = async (hre: HardhatRuntimeEnvironment, content: any)
 
 // Retrieve at https://gateway.pinata.cloud/ipfs/<hash>
 export const deployTreatyTemplate = async (name: string, admin: Signer, hre: HardhatRuntimeEnvironment, diamond: Curio, gasLimit: number) => {
-  const args = name === 'FTX' ? [diamond.address, await admin.getAddress()] : [diamond.address];
-  const treaty = await deployProxy<any>(name, admin, hre, args);
-  const abiHash = await uploadABIToIPFS(hre, name);
+  const args: any[] = [diamond.address];
+  if (name === 'FTX') {
+    args.push(await admin.getAddress());
+  } else if (name === 'CollectiveDefenseFund') {
+    args.push(100, 100, 86400, 86400, 50, 50);
+  }
 
-  // create metadata description here
-  const metadataUrl = await uploadToIpfs(hre, treatyDescriptions[name] || {});
+  // Deploy treaty template
+  await sleep(50);
+  const treaty = await deployProxy<any>(name, admin, hre, args);
+
+  // Upload ABI and metadata to IPFS
+  const abiHash = await uploadAbiToIpfs(hre, name);
+  const metadataUrl = await uploadToIpfs(treatyDescriptions[name] || {});
+
+  // Register treaty template
+  await sleep(50);
+  await (await diamond.connect(admin).registerTreatyTemplate(treaty.address, abiHash, metadataUrl, { gasLimit })).wait();
 
   console.log(chalk.dim(`✦ Treaty ${name} deployed and ABI uploaded to IPFS at hash=${abiHash}`));
-  diamond.connect(admin).registerTreatyTemplate(treaty.address, abiHash, metadataUrl, { gasLimit });
 };
 
 /**
@@ -159,7 +170,7 @@ export const initializeGame = async (hre: HardhatRuntimeEnvironment, worldConsta
     'UpgradeResource',
     'Battle',
     'DelegateGameFunction',
-    'DeployTreaty', // STYLE: DO NOT REMOVE THIS COMMENT
+    'DeployTreaty', // FORMATTING: DO NOT REMOVE THIS COMMENT
   ];
 
   await confirmTx(await diamond.registerFunctionNames(functionNames, { gasLimit }), hre);
@@ -210,13 +221,11 @@ export const initializeGame = async (hre: HardhatRuntimeEnvironment, worldConsta
   await confirmTx(await diamond.storeEncodedColumnBatches(encodedTileMap, { gasLimit }), hre);
   console.log(`✦ Lazy setting ${tileMap.length}x${tileMap[0].length} map took ${Math.floor(performance.now() - startTime)} ms`);
 
-  // Bulk initialize special tiles
+  // Bulk initialize tiles
   const tileWidth = Number(worldConstants.tileWidth);
-  // const specialTilePositions: position[] = [];
   const allTilePositions: position[] = [];
   tileMap.forEach((col, i) =>
     col.forEach((val, j) => {
-      // if (val !== TILE_TYPE.LAND) specialTilePositions.push({ x: i * tileWidth, y: j * tileWidth });
       allTilePositions.push({ x: i * tileWidth, y: j * tileWidth });
     })
   );
@@ -230,10 +239,9 @@ export const initializeGame = async (hre: HardhatRuntimeEnvironment, worldConsta
 
   // Deploy treaty templates
   startTime = performance.now();
-  const treatyTemplateNames = ['Alliance', 'FTX'];
+  const treatyTemplateNames = ['Alliance', 'FTX', 'TestTreaty', 'NonAggressionPact', 'Embargo', 'CollectiveDefenseFund', 'SimpleOTC', 'HandshakeDeal'];
   for (const name of treatyTemplateNames) {
     await deployTreatyTemplate(name, admin, hre, diamond, gasLimit);
-    await sleep(1000);
   }
   console.log(`✦ Treaty template deployment took ${Math.floor(performance.now() - startTime)} ms`);
 
@@ -244,8 +252,9 @@ export const initializeGame = async (hre: HardhatRuntimeEnvironment, worldConsta
     const centerTilePos = { x: Math.floor(tileMap.length / 2) * worldConstants.tileWidth, y: Math.floor(tileMap[0].length / 2) * worldConstants.tileWidth };
     const region = { xMin: centerTilePos.x - regionWidth, xMax: centerTilePos.x + regionWidth, yMin: centerTilePos.y - regionWidth, yMax: centerTilePos.y + regionWidth };
     const regionTiles = allTilePositions.filter((pos) => pos.x >= region.xMin && pos.x <= region.xMax && pos.y >= region.yMin && pos.y <= region.yMax);
+    await sleep(1000);
     await confirmTx(await diamond.disallowHostCapital(regionTiles, { gasLimit }), hre);
-    await sleep(50);
+    await sleep(1000);
     await confirmTx(await diamond.lockTiles(regionTiles, { gasLimit }), hre);
     console.log(`✦ Battle royale setup took ${Math.floor(performance.now() - startTime)} ms`);
   }

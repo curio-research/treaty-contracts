@@ -39,7 +39,7 @@ contract HandshakeDeal is CurioTreaty {
     mapping(uint256 => Deal) public idToDeal;
 
     constructor(address _diamond) CurioTreaty(_diamond) {
-        name = "Simple Handshake Deal";
+        name = "Handshake Deal";
         description = "Flexible handshake agreement between nations";
     }
 

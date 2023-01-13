@@ -12,7 +12,7 @@ contract Embargo is CurioTreaty {
     Set public sanctionList;
 
     constructor(address _diamond) CurioTreaty(_diamond) {
-        name = "Embargo Pact";
+        name = "Embargo";
         description = "Owner of the League can point to which nation the league is sanctioning";
         sanctionList = new Set();
     }

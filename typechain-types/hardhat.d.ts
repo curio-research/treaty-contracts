@@ -117,6 +117,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.CollectiveDefenseFund__factory>;
     getContractFactory(
+      name: "CollectiveDefenseFund",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.CollectiveDefenseFund__factory>;
+    getContractFactory(
       name: "Embargo",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Embargo__factory>;
@@ -318,6 +322,11 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.Alliance>;
+    getContractAt(
+      name: "CollectiveDefenseFund",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.CollectiveDefenseFund>;
     getContractAt(
       name: "CollectiveDefenseFund",
       address: string,

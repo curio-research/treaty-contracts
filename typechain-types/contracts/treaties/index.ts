@@ -6,6 +6,7 @@ export type { cdFundSol };
 import type * as ftxSol from "./FTX.sol";
 export type { ftxSol };
 export type { Alliance } from "./Alliance";
+export type { CollectiveDefenseFund } from "./CollectiveDefenseFund";
 export type { Embargo } from "./Embargo";
 export type { HandshakeDeal } from "./HandshakeDeal";
 export type { NonAggressionPact } from "./NonAggressionPact";
