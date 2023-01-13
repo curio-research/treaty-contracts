@@ -1,3 +1,4 @@
+import masterWhitelist from './util/whitelist.json';
 import chalk from 'chalk';
 import { publishDeployment, isConnectionLive, startGameSync } from './../api/deployment';
 import { task } from 'hardhat/config';
@@ -9,7 +10,6 @@ import { GameConfig, GameMode, scaleMap } from 'curio-vault';
 import * as rw from 'random-words';
 import { saveComponentsToJsonFiles, saveMapToJsonFile, saveWorldConstantsToJsonFile } from '../test/util/saveDataForTests';
 import { DeployArgs } from './util/types';
-import WHITELIST from './whitelist.json';
 
 /**
  * Deploy script for publishing games
@@ -25,6 +25,7 @@ task('deploy', 'deploy contracts')
   .addFlag('fixmap', 'Use deterministic map') // default is non-deterministic maps; deterministic maps are mainly used for client development
   .addFlag('test', 'For load testing') // default is no
   .addFlag('indexer', 'Use production indexer') // whether to use indexer or not
+  .addOptionalParam('whitelist', 'Whitelist group')
   .addOptionalParam('name', 'Deployment name')
   .setAction(async (args: DeployArgs, hre: HardhatRuntimeEnvironment) => {
     try {
@@ -32,7 +33,7 @@ task('deploy', 'deploy contracts')
       printDivider();
 
       const s = performance.now();
-      const { port, release, fixmap, indexer, name } = args;
+      const { port, release, fixmap, indexer, name, whitelist } = args;
 
       // Read variables from run flags
       const isDev = hre.network.name === 'localhost' || hre.network.name === 'hardhat' || hre.network.name === 'altlayer' || hre.network.name === 'tailscale';
@@ -62,8 +63,12 @@ task('deploy', 'deploy contracts')
       const diamond = await initializeGame(hre, worldConstants, tileMap);
 
       // Whitelist players
-      for (const address of WHITELIST) {
-        await (await diamond.addToGameWhitelist(address)).wait();
+      if (whitelist) {
+        const whitelistPlayers = (masterWhitelist as any)[whitelist];
+
+        for (const address of whitelistPlayers) {
+          await (await diamond.addToGameWhitelist(address)).wait();
+        }
       }
 
       if (fixmap) await initializeFixmap(hre, diamond);
