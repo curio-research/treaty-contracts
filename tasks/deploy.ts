@@ -1,4 +1,4 @@
-import { masterWhitelist } from './util/whitelist';
+import masterWhitelist from './util/whitelist.json';
 import chalk from 'chalk';
 import { publishDeployment, isConnectionLive, startGameSync } from './../api/deployment';
 import { task } from 'hardhat/config';
@@ -64,7 +64,7 @@ task('deploy', 'deploy contracts')
 
       // Whitelist players
       if (whitelist) {
-        const whitelistPlayers = masterWhitelist[whitelist];
+        const whitelistPlayers = (masterWhitelist as any)[whitelist];
 
         for (const address of whitelistPlayers) {
           await (await diamond.addToGameWhitelist(address)).wait();
