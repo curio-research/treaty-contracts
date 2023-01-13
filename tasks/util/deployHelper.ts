@@ -98,12 +98,7 @@ export const uploadToIpfs = async (content: any): Promise<string> => {
 
 // Retrieve at https://gateway.pinata.cloud/ipfs/<hash>
 export const deployTreatyTemplate = async (name: string, admin: Signer, hre: HardhatRuntimeEnvironment, diamond: Curio, gasLimit: number) => {
-  const args: any[] = [diamond.address];
-  if (name === 'FTX') {
-    args.push(await admin.getAddress());
-  } else if (name === 'CollectiveDefenseFund') {
-    args.push(100, 100, 86400, 86400, 50, 50);
-  }
+  const args = [diamond.address];
 
   // Deploy treaty template
   await sleep(50);
@@ -239,7 +234,7 @@ export const initializeGame = async (hre: HardhatRuntimeEnvironment, worldConsta
 
   // Deploy treaty templates
   startTime = performance.now();
-  const treatyTemplateNames = ['Alliance', 'FTX', 'TestTreaty', 'NonAggressionPact', 'Embargo', 'CollectiveDefenseFund', 'SimpleOTC', 'HandshakeDeal'];
+  const treatyTemplateNames = ['Alliance', 'NonAggressionPact', 'Embargo', 'CollectiveDefenseFund', 'SimpleOTC', 'HandshakeDeal'];
   for (const name of treatyTemplateNames) {
     await deployTreatyTemplate(name, admin, hre, diamond, gasLimit);
   }

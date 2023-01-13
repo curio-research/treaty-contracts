@@ -14,12 +14,12 @@ contract CollectiveDefenseFund is CurioTreaty {
     CurioERC20 public foodToken;
 
     // Treaty-specific data
-    uint256 public goldFee;
-    uint256 public foodFee;
-    uint256 public withdrawTimeInterval;
-    uint256 public depositTimeInterval;
-    uint256 public goldWithdrawQuota;
-    uint256 public foodWithdrawQuota;
+    uint256 public goldFee = 100;
+    uint256 public foodFee = 100;
+    uint256 public withdrawTimeInterval = 86400;
+    uint256 public depositTimeInterval = 86400;
+    uint256 public goldWithdrawQuota = 50;
+    uint256 public foodWithdrawQuota = 50;
     mapping(uint256 => uint256) public lastPaid; // nationID => timestamp
     mapping(uint256 => uint256) public lastWithdrawn; // nationID => timestamp
     Set public council;
@@ -30,26 +30,12 @@ contract CollectiveDefenseFund is CurioTreaty {
         _;
     }
 
-    constructor(
-        address _diamond,
-        uint256 _goldFee,
-        uint256 _foodFee,
-        uint256 _withdrawTimeInterval,
-        uint256 _depositTimeInterval,
-        uint256 _goldWithdrawQuota,
-        uint256 _foodWithdrawQuota
-    ) CurioTreaty(_diamond) {
+    constructor(address _diamond) CurioTreaty(_diamond) {
         // Initialize treaty
         name = "Collective Defense Fund";
         description = "Owner of the League can point to which nation the league is sanctioning";
         goldToken = getter.getTokenContract("Gold");
         foodToken = getter.getTokenContract("Food");
-        goldFee = _goldFee;
-        foodFee = _foodFee;
-        goldWithdrawQuota = _goldWithdrawQuota;
-        foodWithdrawQuota = _foodWithdrawQuota;
-        depositTimeInterval = _depositTimeInterval;
-        withdrawTimeInterval = _withdrawTimeInterval;
 
         // Create new council and add treaty owner to it by default
         council = new Set();

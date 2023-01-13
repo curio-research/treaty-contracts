@@ -4,7 +4,6 @@ pragma solidity ^0.8.13;
 import {Test} from "forge-std/Test.sol";
 import {DiamondDeployTest} from "test/DiamondDeploy.t.sol";
 import {Alliance} from "contracts/treaties/Alliance.sol";
-import {FTX} from "contracts/treaties/FTX.sol";
 import {NonAggressionPact} from "contracts/treaties/NonAggressionPact.sol";
 import {Embargo} from "contracts/treaties/Embargo.sol";
 import {CollectiveDefenseFund} from "contracts/treaties/CollectiveDefenseFund.sol";
@@ -20,7 +19,6 @@ contract TreatyTest is Test, DiamondDeployTest {
     // - [x] Nation delegation
     // - [x] Treaty approval
     // - [x] Token approval
-    // - [x] Case: FTX
     // - [x] Case: Alliance
     // - [x] Case: NAP
     // - [x] Case: Embargo
@@ -151,7 +149,7 @@ contract TreatyTest is Test, DiamondDeployTest {
 
         // Nation 1 deploys TestTreaty treaty
         vm.startPrank(player1);
-        TestTreaty testTreaty = TestTreaty(game.deployTreaty(nation1ID, testTreatyTemplate.name(), ""));
+        TestTreaty testTreaty = TestTreaty(game.deployTreaty(nation1ID, testTreatyTemplate.name()));
         uint256 testTreatyID = getter.getEntityByAddress(address(testTreaty));
         vm.stopPrank();
 
@@ -239,7 +237,7 @@ contract TreatyTest is Test, DiamondDeployTest {
         address army11Addr = getter.getAddress(army11ID);
 
         // Nation 1 deploys Alliance treaty
-        Alliance alliance = Alliance(game.deployTreaty(nation1ID, allianceTemplate.name(), ""));
+        Alliance alliance = Alliance(game.deployTreaty(nation1ID, allianceTemplate.name()));
         uint256 allianceID = getter.getEntityByAddress(address(alliance));
 
         // Nation 1 joins alliance after token approval
@@ -377,72 +375,72 @@ contract TreatyTest is Test, DiamondDeployTest {
         vm.stopPrank();
     }
 
-    function testFTX() public {
-        // Start time
-        uint256 time = block.timestamp + 500;
-        vm.warp(time);
+    // function testFTX() public {
+    //     // Start time
+    //     uint256 time = block.timestamp + 500;
+    //     vm.warp(time);
 
-        // Deploy transfers gold to Player 1
-        vm.prank(deployer);
-        admin.dripToken(nation1CapitalAddr, "Gold", 8);
+    //     // Deploy transfers gold to Player 1
+    //     vm.prank(deployer);
+    //     admin.dripToken(nation1CapitalAddr, "Gold", 8);
 
-        // Player 2 (SBF) starts FTX and grants it access to his wallet
-        vm.startPrank(player2);
-        FTX ftx = FTX(game.deployTreaty(nation2ID, ftxTemplate.name(), ""));
-        CurioWallet(nation2CapitalAddr).executeTx(address(goldToken), abi.encodeWithSignature("approve(address,uint256)", address(ftx), 10000));
-        assertEq(goldToken.balanceOf(nation2CapitalAddr), 0);
-        vm.stopPrank();
+    //     // Player 2 (SBF) starts FTX and grants it access to his wallet
+    //     vm.startPrank(player2);
+    //     FTX ftx = FTX(game.deployTreaty(nation2ID, ftxTemplate.name()));
+    //     CurioWallet(nation2CapitalAddr).executeTx(address(goldToken), abi.encodeWithSignature("approve(address,uint256)", address(ftx), 10000));
+    //     assertEq(goldToken.balanceOf(nation2CapitalAddr), 0);
+    //     vm.stopPrank();
 
-        // Deployer registers FTX treaty
-        vm.startPrank(deployer);
-        admin.registerTreatyTemplate(address(ftx), "placeholder ABI", "");
-        vm.stopPrank();
+    //     // Deployer registers FTX treaty
+    //     vm.startPrank(deployer);
+    //     admin.registerTreatyTemplate(address(ftx), "placeholder ABI", "");
+    //     vm.stopPrank();
 
-        // Player 1 deposits to FTX
-        vm.startPrank(player1);
-        CurioWallet(nation1CapitalAddr).executeTx(address(goldToken), abi.encodeWithSignature("approve(address,uint256)", address(ftx), 2));
-        ftx.treatyDeposit(2);
-        assertEq(goldToken.balanceOf(nation1CapitalAddr), 6);
-        assertEq(ftx.fttToken().balanceOf(nation1CapitalAddr), 2);
-        assertEq(goldToken.balanceOf(nation2CapitalAddr), 2);
+    //     // Player 1 deposits to FTX
+    //     vm.startPrank(player1);
+    //     CurioWallet(nation1CapitalAddr).executeTx(address(goldToken), abi.encodeWithSignature("approve(address,uint256)", address(ftx), 2));
+    //     ftx.treatyDeposit(2);
+    //     assertEq(goldToken.balanceOf(nation1CapitalAddr), 6);
+    //     assertEq(ftx.fttToken().balanceOf(nation1CapitalAddr), 2);
+    //     assertEq(goldToken.balanceOf(nation2CapitalAddr), 2);
 
-        // Player 1 withdraws successfully
-        ftx.treatyWithdraw(1);
-        assertEq(goldToken.balanceOf(nation1CapitalAddr), 7);
-        assertEq(ftx.fttToken().balanceOf(nation1CapitalAddr), 1);
-        assertEq(goldToken.balanceOf(nation2CapitalAddr), 1);
+    //     // Player 1 withdraws successfully
+    //     ftx.treatyWithdraw(1);
+    //     assertEq(goldToken.balanceOf(nation1CapitalAddr), 7);
+    //     assertEq(ftx.fttToken().balanceOf(nation1CapitalAddr), 1);
+    //     assertEq(goldToken.balanceOf(nation2CapitalAddr), 1);
 
-        // Player 1 gives FTX all gold
-        CurioWallet(nation1CapitalAddr).executeTx(address(goldToken), abi.encodeWithSignature("approve(address,uint256)", address(ftx), 7));
-        ftx.treatyDeposit(7);
-        assertEq(goldToken.balanceOf(nation1CapitalAddr), 0);
-        assertEq(ftx.fttToken().balanceOf(nation1CapitalAddr), 8);
-        assertEq(goldToken.balanceOf(nation2CapitalAddr), 8);
-        vm.stopPrank();
+    //     // Player 1 gives FTX all gold
+    //     CurioWallet(nation1CapitalAddr).executeTx(address(goldToken), abi.encodeWithSignature("approve(address,uint256)", address(ftx), 7));
+    //     ftx.treatyDeposit(7);
+    //     assertEq(goldToken.balanceOf(nation1CapitalAddr), 0);
+    //     assertEq(ftx.fttToken().balanceOf(nation1CapitalAddr), 8);
+    //     assertEq(goldToken.balanceOf(nation2CapitalAddr), 8);
+    //     vm.stopPrank();
 
-        // Player 2 (SBF) transfers all but 1 gold to Player 3 (Caroline)
-        vm.startPrank(player2);
-        CurioWallet(nation2CapitalAddr).executeTx(address(goldToken), abi.encodeWithSignature("transfer(address,uint256)", nation3CapitalAddr, 7));
-        assertEq(goldToken.balanceOf(nation2CapitalAddr), 1);
-        vm.stopPrank();
+    //     // Player 2 (SBF) transfers all but 1 gold to Player 3 (Caroline)
+    //     vm.startPrank(player2);
+    //     CurioWallet(nation2CapitalAddr).executeTx(address(goldToken), abi.encodeWithSignature("transfer(address,uint256)", nation3CapitalAddr, 7));
+    //     assertEq(goldToken.balanceOf(nation2CapitalAddr), 1);
+    //     vm.stopPrank();
 
-        // Player 1 manages to withdraw only 1 gold from FTX
-        vm.prank(player1);
-        ftx.treatyWithdraw(8);
-        assertEq(goldToken.balanceOf(nation1CapitalAddr), 1);
-        assertEq(goldToken.balanceOf(nation2CapitalAddr), 0);
+    //     // Player 1 manages to withdraw only 1 gold from FTX
+    //     vm.prank(player1);
+    //     ftx.treatyWithdraw(8);
+    //     assertEq(goldToken.balanceOf(nation1CapitalAddr), 1);
+    //     assertEq(goldToken.balanceOf(nation2CapitalAddr), 0);
 
-        // Player 2 (SBF) declares FTX bankrupt
-        vm.prank(player2);
-        ftx.treatyRun();
-        assertTrue(ftx.isBankrupt());
+    //     // Player 2 (SBF) declares FTX bankrupt
+    //     vm.prank(player2);
+    //     ftx.treatyRun();
+    //     assertTrue(ftx.isBankrupt());
 
-        // Player 1 fails to withdraw rest of balance from FTX
-        vm.prank(player1);
-        vm.expectRevert();
-        ftx.treatyWithdraw(7);
-        assertEq(goldToken.balanceOf(nation1CapitalAddr), 1);
-    }
+    //     // Player 1 fails to withdraw rest of balance from FTX
+    //     vm.prank(player1);
+    //     vm.expectRevert();
+    //     ftx.treatyWithdraw(7);
+    //     assertEq(goldToken.balanceOf(nation1CapitalAddr), 1);
+    // }
 
     function testNAPact() public {
         /**
@@ -459,7 +457,7 @@ contract TreatyTest is Test, DiamondDeployTest {
 
         // Player1 deploys NAPact and whitelists self
         vm.startPrank(player1);
-        NonAggressionPact nonAggressionPact = NonAggressionPact(game.deployTreaty(nation1ID, nonAggressionPactTemplate.name(), ""));
+        NonAggressionPact nonAggressionPact = NonAggressionPact(game.deployTreaty(nation1ID, nonAggressionPactTemplate.name()));
         nonAggressionPact.addToWhitelist(nation1ID);
         vm.stopPrank();
 
@@ -524,7 +522,7 @@ contract TreatyTest is Test, DiamondDeployTest {
 
         // Player1 deploys embargo and whitelists self
         vm.startPrank(player1);
-        Embargo embargo = Embargo(game.deployTreaty(nation1ID, embargoTemplate.name(), ""));
+        Embargo embargo = Embargo(game.deployTreaty(nation1ID, embargoTemplate.name()));
         embargo.addToWhitelist(nation1ID);
         vm.stopPrank();
 
@@ -600,7 +598,7 @@ contract TreatyTest is Test, DiamondDeployTest {
 
         // Player1 deploys NAPact and whitelists self
         vm.startPrank(player1);
-        address collectiveDefenseFundAddr = game.deployTreaty(nation1ID, collectiveDefenseFundTemplate.name(), abi.encode(100, 100, 86400, 86400, 50, 50));
+        address collectiveDefenseFundAddr = game.deployTreaty(nation1ID, collectiveDefenseFundTemplate.name());
         CollectiveDefenseFund collectiveDefenseFund = CollectiveDefenseFund(collectiveDefenseFundAddr);
         collectiveDefenseFund.addToWhitelist(nation1ID);
         vm.stopPrank();
@@ -686,7 +684,7 @@ contract TreatyTest is Test, DiamondDeployTest {
 
         // Player1 deploys NAPact
         vm.startPrank(player1);
-        SimpleOTC otcContract = SimpleOTC(game.deployTreaty(nation1ID, otcContractTemplate.name(), ""));
+        SimpleOTC otcContract = SimpleOTC(game.deployTreaty(nation1ID, otcContractTemplate.name()));
         vm.stopPrank();
 
         // Deployer registers NAPact treaty & assigns tokens to p1 and p2
@@ -730,7 +728,7 @@ contract TreatyTest is Test, DiamondDeployTest {
 
         // Player1 deploys Handshake deal and propose
         vm.startPrank(player1);
-        HandshakeDeal hsDeal = HandshakeDeal(game.deployTreaty(nation1ID, handshakeDealTemplate.name(), ""));
+        HandshakeDeal hsDeal = HandshakeDeal(game.deployTreaty(nation1ID, handshakeDealTemplate.name()));
         hsDeal.treatyJoin();
         hsDeal.proposeDeal(HandshakeDeal.ApprovalFunctionType.approveUpgradeCapital, abi.encode(nation2CapitalID), 1000);
         vm.stopPrank();

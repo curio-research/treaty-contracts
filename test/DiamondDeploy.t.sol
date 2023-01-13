@@ -15,7 +15,6 @@ import {AdminFacet} from "contracts/facets/AdminFacet.sol";
 import {Strings} from "openzeppelin-contracts/contracts/utils/Strings.sol";
 import {ComponentSpec, GameMode, GameParamSpec, Position, WorldConstants} from "contracts/libraries/Types.sol";
 import {Alliance} from "contracts/treaties/Alliance.sol";
-import {FTX} from "contracts/treaties/FTX.sol";
 import {TestTreaty} from "contracts/treaties/TestTreaty.sol";
 import {NonAggressionPact} from "contracts/treaties/NonAggressionPact.sol";
 import {Embargo} from "contracts/treaties/Embargo.sol";
@@ -47,7 +46,6 @@ contract DiamondDeployTest is Test {
 
     // Treaties
     Alliance public allianceTemplate;
-    FTX public ftxTemplate;
     TestTreaty public testTreatyTemplate;
     CollectiveDefenseFund public collectiveDefenseFundTemplate;
     Embargo public embargoTemplate;
@@ -56,7 +54,6 @@ contract DiamondDeployTest is Test {
     HandshakeDeal public handshakeDealTemplate;
 
     uint256 public allianceTemplateID;
-    uint256 public ftxTemplateID;
     uint256 public testTreatyTemplateID;
     uint256 public collectiveDefenseFundTemplateID;
     uint256 public embargoTemplateID;
@@ -191,11 +188,9 @@ contract DiamondDeployTest is Test {
         // Initialize treaties
         allianceTemplate = new Alliance(diamond);
         allianceTemplateID = admin.registerTreatyTemplate(address(allianceTemplate), "sample ABI", "sample metadata");
-        ftxTemplate = new FTX(diamond, address(this));
-        ftxTemplateID = admin.registerTreatyTemplate(address(ftxTemplate), "sample ABI", "sample metadata");
         testTreatyTemplate = new TestTreaty(diamond);
         testTreatyTemplateID = admin.registerTreatyTemplate(address(testTreatyTemplate), "sample ABI", "sample metadata");
-        collectiveDefenseFundTemplate = new CollectiveDefenseFund(diamond, 100, 100, 86400, 86400, 50, 50);
+        collectiveDefenseFundTemplate = new CollectiveDefenseFund(diamond);
         collectiveDefenseFundTemplateID = admin.registerTreatyTemplate(address(collectiveDefenseFundTemplate), "sample ABI", "sample metadata");
         embargoTemplate = new Embargo(diamond);
         embargoTemplateID = admin.registerTreatyTemplate(address(embargoTemplate), "sample ABI", "sample metadata");
