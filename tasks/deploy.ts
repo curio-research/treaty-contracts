@@ -9,6 +9,7 @@ import { GameConfig, GameMode, scaleMap } from 'curio-vault';
 import * as rw from 'random-words';
 import { saveComponentsToJsonFiles, saveMapToJsonFile, saveWorldConstantsToJsonFile } from '../test/util/saveDataForTests';
 import { DeployArgs } from './util/types';
+import WHITELIST from './whitelist.json';
 
 /**
  * Deploy script for publishing games
@@ -59,6 +60,11 @@ task('deploy', 'deploy contracts')
 
       // Initialize game
       const diamond = await initializeGame(hre, worldConstants, tileMap);
+
+      // Whitelist players
+      for (const address of WHITELIST) {
+        await (await diamond.addToGameWhitelist(address)).wait();
+      }
 
       if (fixmap) await initializeFixmap(hre, diamond);
 

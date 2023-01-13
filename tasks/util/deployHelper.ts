@@ -252,9 +252,9 @@ export const initializeGame = async (hre: HardhatRuntimeEnvironment, worldConsta
     const centerTilePos = { x: Math.floor(tileMap.length / 2) * worldConstants.tileWidth, y: Math.floor(tileMap[0].length / 2) * worldConstants.tileWidth };
     const region = { xMin: centerTilePos.x - regionWidth, xMax: centerTilePos.x + regionWidth, yMin: centerTilePos.y - regionWidth, yMax: centerTilePos.y + regionWidth };
     const regionTiles = allTilePositions.filter((pos) => pos.x >= region.xMin && pos.x <= region.xMax && pos.y >= region.yMin && pos.y <= region.yMax);
-    await sleep(1000);
+    await sleep(50);
     await confirmTx(await diamond.disallowHostCapital(regionTiles, { gasLimit }), hre);
-    await sleep(1000);
+    await sleep(50);
     await confirmTx(await diamond.lockTiles(regionTiles, { gasLimit }), hre);
     console.log(`✦ Battle royale setup took ${Math.floor(performance.now() - startTime)} ms`);
   }
