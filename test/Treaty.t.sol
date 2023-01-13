@@ -7,7 +7,7 @@ import {Alliance} from "contracts/treaties/Alliance.sol";
 import {FTX} from "contracts/treaties/FTX.sol";
 import {NonAggressionPact} from "contracts/treaties/NonAggressionPact.sol";
 import {Embargo} from "contracts/treaties/Embargo.sol";
-import {CollectiveDefenseFund} from "contracts/treaties/CDFund.sol";
+import {CollectiveDefenseFund} from "contracts/treaties/CollectiveDefenseFund.sol";
 import {SimpleOTC} from "contracts/treaties/SimpleOTC.sol";
 import {HandshakeDeal} from "contracts/treaties/HandshakeDeal.sol";
 import {TestTreaty} from "contracts/treaties/TestTreaty.sol";
@@ -585,7 +585,7 @@ contract TreatyTest is Test, DiamondDeployTest {
         vm.stopPrank();
     }
 
-    function testCDFund() public {
+    function testCollectiveDefenseFund() public {
         /*
         Outline:
         - deployer gives both resource and troops to p1 and p2
@@ -600,14 +600,14 @@ contract TreatyTest is Test, DiamondDeployTest {
 
         // Player1 deploys NAPact and whitelists self
         vm.startPrank(player1);
-        address cdFundAddr = game.deployTreaty(nation1ID, collectiveDefenseFundTemplate.name(), abi.encode(100, 100, 86400, 86400, 50, 50));
-        CollectiveDefenseFund cdFund = CollectiveDefenseFund(cdFundAddr);
-        cdFund.addToWhitelist(nation1ID);
+        address collectiveDefenseFundAddr = game.deployTreaty(nation1ID, collectiveDefenseFundTemplate.name(), abi.encode(100, 100, 86400, 86400, 50, 50));
+        CollectiveDefenseFund collectiveDefenseFund = CollectiveDefenseFund(collectiveDefenseFundAddr);
+        collectiveDefenseFund.addToWhitelist(nation1ID);
         vm.stopPrank();
 
         // Deployer registers NAPact treaty & assigns tokens to p1 and p2
         vm.startPrank(deployer);
-        // admin.registerTreatyTemplate(address(cdFund), "placeholder ABI");
+        // admin.registerTreatyTemplate(address(collectiveDefenseFund), "placeholder ABI");
         admin.dripToken(nation1CapitalAddr, "Gold", 1000);
         admin.dripToken(nation1CapitalAddr, "Food", 1000);
         admin.dripToken(nation2CapitalAddr, "Horseman", 1000);
@@ -620,17 +620,17 @@ contract TreatyTest is Test, DiamondDeployTest {
 
         // Player1 joins CDFund and whitelists player2.
         vm.startPrank(player1);
-        CurioWallet(nation1CapitalAddr).executeTx(address(goldToken), abi.encodeWithSignature("approve(address,uint256)", address(cdFund), 1000));
-        CurioWallet(nation1CapitalAddr).executeTx(address(foodToken), abi.encodeWithSignature("approve(address,uint256)", address(cdFund), 1000));
-        cdFund.treatyJoin();
-        cdFund.addToWhitelist(nation2ID);
+        CurioWallet(nation1CapitalAddr).executeTx(address(goldToken), abi.encodeWithSignature("approve(address,uint256)", address(collectiveDefenseFund), 1000));
+        CurioWallet(nation1CapitalAddr).executeTx(address(foodToken), abi.encodeWithSignature("approve(address,uint256)", address(collectiveDefenseFund), 1000));
+        collectiveDefenseFund.treatyJoin();
+        collectiveDefenseFund.addToWhitelist(nation2ID);
         vm.stopPrank();
 
         // Player2 joins CDFund and attempts to attack Player1
         vm.startPrank(player2);
-        CurioWallet(nation2CapitalAddr).executeTx(address(goldToken), abi.encodeWithSignature("approve(address,uint256)", address(cdFund), 1000));
-        CurioWallet(nation2CapitalAddr).executeTx(address(foodToken), abi.encodeWithSignature("approve(address,uint256)", address(cdFund), 1000));
-        cdFund.treatyJoin();
+        CurioWallet(nation2CapitalAddr).executeTx(address(goldToken), abi.encodeWithSignature("approve(address,uint256)", address(collectiveDefenseFund), 1000));
+        CurioWallet(nation2CapitalAddr).executeTx(address(foodToken), abi.encodeWithSignature("approve(address,uint256)", address(collectiveDefenseFund), 1000));
+        collectiveDefenseFund.treatyJoin();
         uint256[] memory armyTemplateAmounts = new uint256[](3);
         armyTemplateAmounts[0] = 150;
         armyTemplateAmounts[1] = 150;
@@ -658,14 +658,14 @@ contract TreatyTest is Test, DiamondDeployTest {
         time += 86400;
         vm.warp(time);
         vm.startPrank(player1);
-        cdFund.addToCouncil(nation1ID);
-        cdFund.payMembershipFee();
-        cdFund.removeAllOverdueMembers();
+        collectiveDefenseFund.addToCouncil(nation1ID);
+        collectiveDefenseFund.payMembershipFee();
+        collectiveDefenseFund.removeAllOverdueMembers();
 
         // p1 tries to withdraw money
         uint256 p1PrevGoldBalance = goldToken.balanceOf(nation1CapitalAddr);
         uint256 p1PrevFoodBalance = goldToken.balanceOf(nation1CapitalAddr);
-        cdFund.withdraw(10, 10);
+        collectiveDefenseFund.withdraw(10, 10);
         assertTrue(goldToken.balanceOf(nation1CapitalAddr) == p1PrevGoldBalance + 10 && foodToken.balanceOf(nation1CapitalAddr) == p1PrevFoodBalance + 10);
         vm.stopPrank();
 
@@ -732,7 +732,7 @@ contract TreatyTest is Test, DiamondDeployTest {
         vm.startPrank(player1);
         HandshakeDeal hsDeal = HandshakeDeal(game.deployTreaty(nation1ID, handshakeDealTemplate.name(), ""));
         hsDeal.treatyJoin();
-        hsDeal.proposeDeal(HandshakeDeal.ApprovalFunctionType.approveUpgradeCapital, abi.encode(nation2CapitalID), block.timestamp + 1000);
+        hsDeal.proposeDeal(HandshakeDeal.ApprovalFunctionType.approveUpgradeCapital, abi.encode(nation2CapitalID), 1000);
         vm.stopPrank();
 
         // assigns tokens to p1 and p2

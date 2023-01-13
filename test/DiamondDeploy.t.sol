@@ -19,7 +19,7 @@ import {FTX} from "contracts/treaties/FTX.sol";
 import {TestTreaty} from "contracts/treaties/TestTreaty.sol";
 import {NonAggressionPact} from "contracts/treaties/NonAggressionPact.sol";
 import {Embargo} from "contracts/treaties/Embargo.sol";
-import {CollectiveDefenseFund} from "contracts/treaties/CDFund.sol";
+import {CollectiveDefenseFund} from "contracts/treaties/CollectiveDefenseFund.sol";
 import {SimpleOTC} from "contracts/treaties/SimpleOTC.sol";
 import {HandshakeDeal} from "contracts/treaties/HandshakeDeal.sol";
 import {CurioERC20} from "contracts/standards/CurioERC20.sol";

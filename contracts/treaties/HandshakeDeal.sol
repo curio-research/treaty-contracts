@@ -30,7 +30,8 @@ contract HandshakeDeal is CurioTreaty {
         uint256 proposerID;
         ApprovalFunctionType functionOfAgreement;
         bytes encodedParams;
-        uint256 timeLock;
+        uint256 signedAt;
+        uint256 effectiveDuration;
     }
 
     uint256 public dealCount;
@@ -38,7 +39,7 @@ contract HandshakeDeal is CurioTreaty {
     mapping(uint256 => Deal) public idToDeal;
 
     constructor(address _diamond) CurioTreaty(_diamond) {
-        name = "Simple Handshake Deal";
+        name = "Handshake Deal";
         description = "Flexible handshake agreement between nations";
     }
 
@@ -50,7 +51,7 @@ contract HandshakeDeal is CurioTreaty {
     function proposeDeal(
         ApprovalFunctionType _functionType,
         bytes memory _encodedParams,
-        uint256 _timeLock
+        uint256 _effectiveDuration
     ) public onlySigner returns (uint256) {
         uint256 proposerID = getter.getEntityByAddress(msg.sender);
         dealCount++;
@@ -60,7 +61,8 @@ contract HandshakeDeal is CurioTreaty {
             proposerID: proposerID,
             functionOfAgreement: _functionType,
             encodedParams: _encodedParams,
-            timeLock: _timeLock
+            signedAt: block.timestamp,
+            effectiveDuration: _effectiveDuration
         });
         nationIDToDealIDs[proposerID].push(dealCount);
 
@@ -79,12 +81,12 @@ contract HandshakeDeal is CurioTreaty {
     // Permission Functions
     // ----------------------------------------------------------
 
-    // note: a player can exit only after all timelocks pass
+    // note: a player can exit only after all time locks pass
     function treatyLeave() public override {
         uint256[] memory signedDealIDs = nationIDToDealIDs[getter.getEntityByAddress(msg.sender)];
         for (uint256 i = 0; i < signedDealIDs.length; i++) {
             Deal memory deal = idToDeal[signedDealIDs[i]];
-            require(block.timestamp > deal.timeLock, "Handshake: Can exit only after all timelocks pass");
+            require(block.timestamp < deal.signedAt + deal.effectiveDuration, "Handshake: Can exit only after all timelocks pass");
         }
 
         super.treatyLeave();
@@ -98,7 +100,7 @@ contract HandshakeDeal is CurioTreaty {
             if (deal.functionOfAgreement == ApprovalFunctionType.approveUpgradeCapital) {
                 uint256 specifiedCapitalID = abi.decode(deal.encodedParams, (uint256));
                 if (capitalID == specifiedCapitalID) {
-                    if (block.timestamp < deal.timeLock) {
+                    if (block.timestamp < deal.signedAt + deal.effectiveDuration) {
                         return false;
                     }
                 }
@@ -115,7 +117,7 @@ contract HandshakeDeal is CurioTreaty {
             if (deal.functionOfAgreement == ApprovalFunctionType.approveMoveCapital) {
                 (uint256 specifiedCapitalID, uint256 specifiedTargetTileID) = abi.decode(deal.encodedParams, (uint256, uint256));
                 if (capitalID == specifiedCapitalID && targetTileID == specifiedTargetTileID) {
-                    if (block.timestamp < deal.timeLock) {
+                    if (block.timestamp < deal.signedAt + deal.effectiveDuration) {
                         return false;
                     }
                 }
@@ -132,7 +134,7 @@ contract HandshakeDeal is CurioTreaty {
             if (deal.functionOfAgreement == ApprovalFunctionType.approveClaimTile) {
                 uint256 specifiedTileID = abi.decode(deal.encodedParams, (uint256));
                 if (tileID == specifiedTileID) {
-                    if (block.timestamp < deal.timeLock) {
+                    if (block.timestamp < deal.signedAt + deal.effectiveDuration) {
                         return false;
                     }
                 }
@@ -149,7 +151,7 @@ contract HandshakeDeal is CurioTreaty {
             if (deal.functionOfAgreement == ApprovalFunctionType.approveUpgradeTile) {
                 uint256 specifiedTileID = abi.decode(deal.encodedParams, (uint256));
                 if (tileID == specifiedTileID) {
-                    if (block.timestamp < deal.timeLock) {
+                    if (block.timestamp < deal.signedAt + deal.effectiveDuration) {
                         return false;
                     }
                 }
@@ -166,7 +168,7 @@ contract HandshakeDeal is CurioTreaty {
             if (deal.functionOfAgreement == ApprovalFunctionType.approveRecoverTile) {
                 uint256 specifiedTileID = abi.decode(deal.encodedParams, (uint256));
                 if (tileID == specifiedTileID) {
-                    if (block.timestamp < deal.timeLock) {
+                    if (block.timestamp < deal.signedAt + deal.effectiveDuration) {
                         return false;
                     }
                 }
@@ -183,7 +185,7 @@ contract HandshakeDeal is CurioTreaty {
             if (deal.functionOfAgreement == ApprovalFunctionType.approveDisownTile) {
                 uint256 specifiedTileID = abi.decode(deal.encodedParams, (uint256));
                 if (tileID == specifiedTileID) {
-                    if (block.timestamp < deal.timeLock) {
+                    if (block.timestamp < deal.signedAt + deal.effectiveDuration) {
                         return false;
                     }
                 }
@@ -200,7 +202,7 @@ contract HandshakeDeal is CurioTreaty {
             if (deal.functionOfAgreement == ApprovalFunctionType.approveMove) {
                 (uint256 specifiedArmyID, Position memory specifiedTargetPosition) = abi.decode(deal.encodedParams, (uint256, Position));
                 if (specifiedArmyID == armyID && _coincident(targetPosition, specifiedTargetPosition)) {
-                    if (block.timestamp < deal.timeLock) {
+                    if (block.timestamp < deal.signedAt + deal.effectiveDuration) {
                         return false;
                     }
                 }
@@ -218,7 +220,7 @@ contract HandshakeDeal is CurioTreaty {
             if (deal.functionOfAgreement == ApprovalFunctionType.approveBattle) {
                 (uint256 specifiedArmyID, uint256 specifiedTargetID) = abi.decode(deal.encodedParams, (uint256, uint256));
                 if (specifiedArmyID == armyID && specifiedTargetID == battleTargetID) {
-                    if (block.timestamp < deal.timeLock) {
+                    if (block.timestamp < deal.signedAt + deal.effectiveDuration) {
                         return false;
                     }
                 }
@@ -235,7 +237,7 @@ contract HandshakeDeal is CurioTreaty {
             if (deal.functionOfAgreement == ApprovalFunctionType.approveStartGather) {
                 (uint256 specifiedArmyID, uint256 specifiedResourceID) = abi.decode(deal.encodedParams, (uint256, uint256));
                 if (specifiedArmyID == armyID && specifiedResourceID == resourceID) {
-                    if (block.timestamp < deal.timeLock) {
+                    if (block.timestamp < deal.signedAt + deal.effectiveDuration) {
                         return false;
                     }
                 }
@@ -252,7 +254,7 @@ contract HandshakeDeal is CurioTreaty {
             if (deal.functionOfAgreement == ApprovalFunctionType.approveEndGather) {
                 uint256 specifiedArmyID = abi.decode(deal.encodedParams, (uint256));
                 if (specifiedArmyID == armyID) {
-                    if (block.timestamp < deal.timeLock) {
+                    if (block.timestamp < deal.signedAt + deal.effectiveDuration) {
                         return false;
                     }
                 }
@@ -269,7 +271,7 @@ contract HandshakeDeal is CurioTreaty {
             if (deal.functionOfAgreement == ApprovalFunctionType.approveEndGather) {
                 uint256 specifiedArmyID = abi.decode(deal.encodedParams, (uint256));
                 if (specifiedArmyID == armyID) {
-                    if (block.timestamp < deal.timeLock) {
+                    if (block.timestamp < deal.signedAt + deal.effectiveDuration) {
                         return false;
                     }
                 }
@@ -286,7 +288,7 @@ contract HandshakeDeal is CurioTreaty {
             if (deal.functionOfAgreement == ApprovalFunctionType.approveHarvestResource) {
                 uint256 specifiedResourceID = abi.decode(deal.encodedParams, (uint256));
                 if (specifiedResourceID == resourceID) {
-                    if (block.timestamp < deal.timeLock) {
+                    if (block.timestamp < deal.signedAt + deal.effectiveDuration) {
                         return false;
                     }
                 }
@@ -303,7 +305,7 @@ contract HandshakeDeal is CurioTreaty {
             if (deal.functionOfAgreement == ApprovalFunctionType.approveHarvestResourcesFromCapital) {
                 uint256 specifiedCapitalID = abi.decode(deal.encodedParams, (uint256));
                 if (specifiedCapitalID == capitalID) {
-                    if (block.timestamp < deal.timeLock) {
+                    if (block.timestamp < deal.signedAt + deal.effectiveDuration) {
                         return false;
                     }
                 }
@@ -320,7 +322,7 @@ contract HandshakeDeal is CurioTreaty {
             if (deal.functionOfAgreement == ApprovalFunctionType.approveUpgradeResource) {
                 uint256 specifiedCapitalID = abi.decode(deal.encodedParams, (uint256));
                 if (specifiedCapitalID == resourceID) {
-                    if (block.timestamp < deal.timeLock) {
+                    if (block.timestamp < deal.signedAt + deal.effectiveDuration) {
                         return false;
                     }
                 }
@@ -338,7 +340,7 @@ contract HandshakeDeal is CurioTreaty {
             if (deal.functionOfAgreement == ApprovalFunctionType.approveStartTroopProduction) {
                 uint256 agreedTemplateID = abi.decode(deal.encodedParams, (uint256));
                 if (agreedTemplateID == troopTemplateID) {
-                    if (block.timestamp < deal.timeLock) {
+                    if (block.timestamp < deal.signedAt + deal.effectiveDuration) {
                         return false;
                     }
                 }

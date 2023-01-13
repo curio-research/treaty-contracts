@@ -23,8 +23,10 @@ import type {
   PromiseOrValue,
 } from "../../common";
 
-export interface HandshakeDealInterface extends utils.Interface {
+export interface CollectiveDefenseFundInterface extends utils.Interface {
   functions: {
+    "addToCouncil(uint256)": FunctionFragment;
+    "addToWhitelist(uint256)": FunctionFragment;
     "admin()": FunctionFragment;
     "approveBattle(uint256,bytes)": FunctionFragment;
     "approveClaimTile(uint256,bytes)": FunctionFragment;
@@ -49,28 +51,44 @@ export interface HandshakeDealInterface extends utils.Interface {
     "approveUpgradeCapital(uint256,bytes)": FunctionFragment;
     "approveUpgradeResource(uint256,bytes)": FunctionFragment;
     "approveUpgradeTile(uint256,bytes)": FunctionFragment;
-    "dealCount()": FunctionFragment;
+    "council()": FunctionFragment;
+    "depositTimeInterval()": FunctionFragment;
     "description()": FunctionFragment;
     "diamond()": FunctionFragment;
+    "distributeFund(uint256,string,uint256)": FunctionFragment;
+    "foodFee()": FunctionFragment;
+    "foodToken()": FunctionFragment;
+    "foodWithdrawQuota()": FunctionFragment;
     "game()": FunctionFragment;
-    "getNationDeals(uint256)": FunctionFragment;
     "getter()": FunctionFragment;
-    "idToDeal(uint256)": FunctionFragment;
+    "goldFee()": FunctionFragment;
+    "goldToken()": FunctionFragment;
+    "goldWithdrawQuota()": FunctionFragment;
+    "lastPaid(uint256)": FunctionFragment;
+    "lastWithdrawn(uint256)": FunctionFragment;
     "minimumStayCheck(uint256,uint256)": FunctionFragment;
     "name()": FunctionFragment;
-    "nationIDToDealIDs(uint256,uint256)": FunctionFragment;
     "ownerID()": FunctionFragment;
-    "proposeDeal(uint8,bytes,uint256)": FunctionFragment;
+    "payMembershipFee()": FunctionFragment;
     "registerTreatyAndOwnerIds()": FunctionFragment;
-    "signDeal(uint256)": FunctionFragment;
+    "removeAllOverdueMembers()": FunctionFragment;
+    "removeFromCouncil(uint256)": FunctionFragment;
+    "removeFromWhitelist(uint256)": FunctionFragment;
+    "removeMember(uint256)": FunctionFragment;
     "treatyDelegateGameFunction(string,uint256,bool)": FunctionFragment;
     "treatyID()": FunctionFragment;
     "treatyJoin()": FunctionFragment;
     "treatyLeave()": FunctionFragment;
+    "updateFoodFee(uint256)": FunctionFragment;
+    "updateGoldFee(uint256)": FunctionFragment;
+    "withdraw(uint256,uint256)": FunctionFragment;
+    "withdrawTimeInterval()": FunctionFragment;
   };
 
   getFunction(
     nameOrSignatureOrTopic:
+      | "addToCouncil"
+      | "addToWhitelist"
       | "admin"
       | "approveBattle"
       | "approveClaimTile"
@@ -95,26 +113,48 @@ export interface HandshakeDealInterface extends utils.Interface {
       | "approveUpgradeCapital"
       | "approveUpgradeResource"
       | "approveUpgradeTile"
-      | "dealCount"
+      | "council"
+      | "depositTimeInterval"
       | "description"
       | "diamond"
+      | "distributeFund"
+      | "foodFee"
+      | "foodToken"
+      | "foodWithdrawQuota"
       | "game"
-      | "getNationDeals"
       | "getter"
-      | "idToDeal"
+      | "goldFee"
+      | "goldToken"
+      | "goldWithdrawQuota"
+      | "lastPaid"
+      | "lastWithdrawn"
       | "minimumStayCheck"
       | "name"
-      | "nationIDToDealIDs"
       | "ownerID"
-      | "proposeDeal"
+      | "payMembershipFee"
       | "registerTreatyAndOwnerIds"
-      | "signDeal"
+      | "removeAllOverdueMembers"
+      | "removeFromCouncil"
+      | "removeFromWhitelist"
+      | "removeMember"
       | "treatyDelegateGameFunction"
       | "treatyID"
       | "treatyJoin"
       | "treatyLeave"
+      | "updateFoodFee"
+      | "updateGoldFee"
+      | "withdraw"
+      | "withdrawTimeInterval"
   ): FunctionFragment;
 
+  encodeFunctionData(
+    functionFragment: "addToCouncil",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "addToWhitelist",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
   encodeFunctionData(functionFragment: "admin", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "approveBattle",
@@ -208,20 +248,44 @@ export interface HandshakeDealInterface extends utils.Interface {
     functionFragment: "approveUpgradeTile",
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BytesLike>]
   ): string;
-  encodeFunctionData(functionFragment: "dealCount", values?: undefined): string;
+  encodeFunctionData(functionFragment: "council", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "depositTimeInterval",
+    values?: undefined
+  ): string;
   encodeFunctionData(
     functionFragment: "description",
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "diamond", values?: undefined): string;
-  encodeFunctionData(functionFragment: "game", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "getNationDeals",
+    functionFragment: "distributeFund",
+    values: [
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>
+    ]
+  ): string;
+  encodeFunctionData(functionFragment: "foodFee", values?: undefined): string;
+  encodeFunctionData(functionFragment: "foodToken", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "foodWithdrawQuota",
+    values?: undefined
+  ): string;
+  encodeFunctionData(functionFragment: "game", values?: undefined): string;
+  encodeFunctionData(functionFragment: "getter", values?: undefined): string;
+  encodeFunctionData(functionFragment: "goldFee", values?: undefined): string;
+  encodeFunctionData(functionFragment: "goldToken", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "goldWithdrawQuota",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "lastPaid",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
-  encodeFunctionData(functionFragment: "getter", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "idToDeal",
+    functionFragment: "lastWithdrawn",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
@@ -229,25 +293,29 @@ export interface HandshakeDealInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(functionFragment: "name", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "nationIDToDealIDs",
-    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
-  ): string;
   encodeFunctionData(functionFragment: "ownerID", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "proposeDeal",
-    values: [
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<BytesLike>,
-      PromiseOrValue<BigNumberish>
-    ]
+    functionFragment: "payMembershipFee",
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "registerTreatyAndOwnerIds",
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "signDeal",
+    functionFragment: "removeAllOverdueMembers",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "removeFromCouncil",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "removeFromWhitelist",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "removeMember",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
@@ -267,7 +335,31 @@ export interface HandshakeDealInterface extends utils.Interface {
     functionFragment: "treatyLeave",
     values?: undefined
   ): string;
+  encodeFunctionData(
+    functionFragment: "updateFoodFee",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "updateGoldFee",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "withdraw",
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "withdrawTimeInterval",
+    values?: undefined
+  ): string;
 
+  decodeFunctionResult(
+    functionFragment: "addToCouncil",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "addToWhitelist",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "admin", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "approveBattle",
@@ -361,38 +453,69 @@ export interface HandshakeDealInterface extends utils.Interface {
     functionFragment: "approveUpgradeTile",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "dealCount", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "council", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "depositTimeInterval",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "description",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "diamond", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "game", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "getNationDeals",
+    functionFragment: "distributeFund",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "foodFee", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "foodToken", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "foodWithdrawQuota",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "game", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "getter", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "idToDeal", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "goldFee", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "goldToken", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "goldWithdrawQuota",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "lastPaid", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "lastWithdrawn",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "minimumStayCheck",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "nationIDToDealIDs",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "ownerID", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "proposeDeal",
+    functionFragment: "payMembershipFee",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "registerTreatyAndOwnerIds",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "signDeal", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "removeAllOverdueMembers",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "removeFromCouncil",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "removeFromWhitelist",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "removeMember",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "treatyDelegateGameFunction",
     data: BytesLike
@@ -403,16 +526,29 @@ export interface HandshakeDealInterface extends utils.Interface {
     functionFragment: "treatyLeave",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "updateFoodFee",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "updateGoldFee",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "withdraw", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "withdrawTimeInterval",
+    data: BytesLike
+  ): Result;
 
   events: {};
 }
 
-export interface HandshakeDeal extends BaseContract {
+export interface CollectiveDefenseFund extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: HandshakeDealInterface;
+  interface: CollectiveDefenseFundInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
@@ -434,6 +570,16 @@ export interface HandshakeDeal extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    addToCouncil(
+      _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    addToWhitelist(
+      _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     admin(overrides?: CallOverrides): Promise<[string]>;
 
     approveBattle(
@@ -574,34 +720,46 @@ export interface HandshakeDeal extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
-    dealCount(overrides?: CallOverrides): Promise<[BigNumber]>;
+    council(overrides?: CallOverrides): Promise<[string]>;
+
+    depositTimeInterval(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     description(overrides?: CallOverrides): Promise<[string]>;
 
     diamond(overrides?: CallOverrides): Promise<[string]>;
 
-    game(overrides?: CallOverrides): Promise<[string]>;
+    distributeFund(
+      _toID: PromiseOrValue<BigNumberish>,
+      _resourceType: PromiseOrValue<string>,
+      _amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
 
-    getNationDeals(
-      _nationID: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber[]]>;
+    foodFee(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    foodToken(overrides?: CallOverrides): Promise<[string]>;
+
+    foodWithdrawQuota(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    game(overrides?: CallOverrides): Promise<[string]>;
 
     getter(overrides?: CallOverrides): Promise<[string]>;
 
-    idToDeal(
+    goldFee(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    goldToken(overrides?: CallOverrides): Promise<[string]>;
+
+    goldWithdrawQuota(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    lastPaid(
       arg0: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber, number, string, BigNumber, BigNumber] & {
-        dealID: BigNumber;
-        proposerID: BigNumber;
-        functionOfAgreement: number;
-        encodedParams: string;
-        signedAt: BigNumber;
-        effectiveDuration: BigNumber;
-      }
-    >;
+    ): Promise<[BigNumber]>;
+
+    lastWithdrawn(
+      arg0: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
 
     minimumStayCheck(
       _nationID: PromiseOrValue<BigNumberish>,
@@ -611,18 +769,9 @@ export interface HandshakeDeal extends BaseContract {
 
     name(overrides?: CallOverrides): Promise<[string]>;
 
-    nationIDToDealIDs(
-      arg0: PromiseOrValue<BigNumberish>,
-      arg1: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
     ownerID(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    proposeDeal(
-      _functionType: PromiseOrValue<BigNumberish>,
-      _encodedParams: PromiseOrValue<BytesLike>,
-      _effectiveDuration: PromiseOrValue<BigNumberish>,
+    payMembershipFee(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -630,8 +779,22 @@ export interface HandshakeDeal extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    signDeal(
-      _dealID: PromiseOrValue<BigNumberish>,
+    removeAllOverdueMembers(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    removeFromCouncil(
+      _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    removeFromWhitelist(
+      _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    removeMember(
+      _nationID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -651,7 +814,35 @@ export interface HandshakeDeal extends BaseContract {
     treatyLeave(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
+
+    updateFoodFee(
+      _newFee: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    updateGoldFee(
+      _newFee: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    withdraw(
+      _goldAmount: PromiseOrValue<BigNumberish>,
+      _foodAmount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    withdrawTimeInterval(overrides?: CallOverrides): Promise<[BigNumber]>;
   };
+
+  addToCouncil(
+    _nationID: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  addToWhitelist(
+    _nationID: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
 
   admin(overrides?: CallOverrides): Promise<string>;
 
@@ -793,34 +984,46 @@ export interface HandshakeDeal extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
-  dealCount(overrides?: CallOverrides): Promise<BigNumber>;
+  council(overrides?: CallOverrides): Promise<string>;
+
+  depositTimeInterval(overrides?: CallOverrides): Promise<BigNumber>;
 
   description(overrides?: CallOverrides): Promise<string>;
 
   diamond(overrides?: CallOverrides): Promise<string>;
 
-  game(overrides?: CallOverrides): Promise<string>;
+  distributeFund(
+    _toID: PromiseOrValue<BigNumberish>,
+    _resourceType: PromiseOrValue<string>,
+    _amount: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
 
-  getNationDeals(
-    _nationID: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<BigNumber[]>;
+  foodFee(overrides?: CallOverrides): Promise<BigNumber>;
+
+  foodToken(overrides?: CallOverrides): Promise<string>;
+
+  foodWithdrawQuota(overrides?: CallOverrides): Promise<BigNumber>;
+
+  game(overrides?: CallOverrides): Promise<string>;
 
   getter(overrides?: CallOverrides): Promise<string>;
 
-  idToDeal(
+  goldFee(overrides?: CallOverrides): Promise<BigNumber>;
+
+  goldToken(overrides?: CallOverrides): Promise<string>;
+
+  goldWithdrawQuota(overrides?: CallOverrides): Promise<BigNumber>;
+
+  lastPaid(
     arg0: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
-  ): Promise<
-    [BigNumber, BigNumber, number, string, BigNumber, BigNumber] & {
-      dealID: BigNumber;
-      proposerID: BigNumber;
-      functionOfAgreement: number;
-      encodedParams: string;
-      signedAt: BigNumber;
-      effectiveDuration: BigNumber;
-    }
-  >;
+  ): Promise<BigNumber>;
+
+  lastWithdrawn(
+    arg0: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
 
   minimumStayCheck(
     _nationID: PromiseOrValue<BigNumberish>,
@@ -830,18 +1033,9 @@ export interface HandshakeDeal extends BaseContract {
 
   name(overrides?: CallOverrides): Promise<string>;
 
-  nationIDToDealIDs(
-    arg0: PromiseOrValue<BigNumberish>,
-    arg1: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
   ownerID(overrides?: CallOverrides): Promise<BigNumber>;
 
-  proposeDeal(
-    _functionType: PromiseOrValue<BigNumberish>,
-    _encodedParams: PromiseOrValue<BytesLike>,
-    _effectiveDuration: PromiseOrValue<BigNumberish>,
+  payMembershipFee(
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -849,8 +1043,22 @@ export interface HandshakeDeal extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  signDeal(
-    _dealID: PromiseOrValue<BigNumberish>,
+  removeAllOverdueMembers(
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  removeFromCouncil(
+    _nationID: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  removeFromWhitelist(
+    _nationID: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  removeMember(
+    _nationID: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -871,7 +1079,35 @@ export interface HandshakeDeal extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  updateFoodFee(
+    _newFee: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  updateGoldFee(
+    _newFee: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  withdraw(
+    _goldAmount: PromiseOrValue<BigNumberish>,
+    _foodAmount: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  withdrawTimeInterval(overrides?: CallOverrides): Promise<BigNumber>;
+
   callStatic: {
+    addToCouncil(
+      _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    addToWhitelist(
+      _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     admin(overrides?: CallOverrides): Promise<string>;
 
     approveBattle(
@@ -1012,34 +1248,46 @@ export interface HandshakeDeal extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    dealCount(overrides?: CallOverrides): Promise<BigNumber>;
+    council(overrides?: CallOverrides): Promise<string>;
+
+    depositTimeInterval(overrides?: CallOverrides): Promise<BigNumber>;
 
     description(overrides?: CallOverrides): Promise<string>;
 
     diamond(overrides?: CallOverrides): Promise<string>;
 
-    game(overrides?: CallOverrides): Promise<string>;
-
-    getNationDeals(
-      _nationID: PromiseOrValue<BigNumberish>,
+    distributeFund(
+      _toID: PromiseOrValue<BigNumberish>,
+      _resourceType: PromiseOrValue<string>,
+      _amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<BigNumber[]>;
+    ): Promise<void>;
+
+    foodFee(overrides?: CallOverrides): Promise<BigNumber>;
+
+    foodToken(overrides?: CallOverrides): Promise<string>;
+
+    foodWithdrawQuota(overrides?: CallOverrides): Promise<BigNumber>;
+
+    game(overrides?: CallOverrides): Promise<string>;
 
     getter(overrides?: CallOverrides): Promise<string>;
 
-    idToDeal(
+    goldFee(overrides?: CallOverrides): Promise<BigNumber>;
+
+    goldToken(overrides?: CallOverrides): Promise<string>;
+
+    goldWithdrawQuota(overrides?: CallOverrides): Promise<BigNumber>;
+
+    lastPaid(
       arg0: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber, number, string, BigNumber, BigNumber] & {
-        dealID: BigNumber;
-        proposerID: BigNumber;
-        functionOfAgreement: number;
-        encodedParams: string;
-        signedAt: BigNumber;
-        effectiveDuration: BigNumber;
-      }
-    >;
+    ): Promise<BigNumber>;
+
+    lastWithdrawn(
+      arg0: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     minimumStayCheck(
       _nationID: PromiseOrValue<BigNumberish>,
@@ -1049,25 +1297,26 @@ export interface HandshakeDeal extends BaseContract {
 
     name(overrides?: CallOverrides): Promise<string>;
 
-    nationIDToDealIDs(
-      arg0: PromiseOrValue<BigNumberish>,
-      arg1: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     ownerID(overrides?: CallOverrides): Promise<BigNumber>;
 
-    proposeDeal(
-      _functionType: PromiseOrValue<BigNumberish>,
-      _encodedParams: PromiseOrValue<BytesLike>,
-      _effectiveDuration: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    payMembershipFee(overrides?: CallOverrides): Promise<void>;
 
     registerTreatyAndOwnerIds(overrides?: CallOverrides): Promise<void>;
 
-    signDeal(
-      _dealID: PromiseOrValue<BigNumberish>,
+    removeAllOverdueMembers(overrides?: CallOverrides): Promise<void>;
+
+    removeFromCouncil(
+      _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    removeFromWhitelist(
+      _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    removeMember(
+      _nationID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1083,11 +1332,39 @@ export interface HandshakeDeal extends BaseContract {
     treatyJoin(overrides?: CallOverrides): Promise<void>;
 
     treatyLeave(overrides?: CallOverrides): Promise<void>;
+
+    updateFoodFee(
+      _newFee: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    updateGoldFee(
+      _newFee: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    withdraw(
+      _goldAmount: PromiseOrValue<BigNumberish>,
+      _foodAmount: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    withdrawTimeInterval(overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   filters: {};
 
   estimateGas: {
+    addToCouncil(
+      _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    addToWhitelist(
+      _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     admin(overrides?: CallOverrides): Promise<BigNumber>;
 
     approveBattle(
@@ -1228,22 +1505,43 @@ export interface HandshakeDeal extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    dealCount(overrides?: CallOverrides): Promise<BigNumber>;
+    council(overrides?: CallOverrides): Promise<BigNumber>;
+
+    depositTimeInterval(overrides?: CallOverrides): Promise<BigNumber>;
 
     description(overrides?: CallOverrides): Promise<BigNumber>;
 
     diamond(overrides?: CallOverrides): Promise<BigNumber>;
 
-    game(overrides?: CallOverrides): Promise<BigNumber>;
-
-    getNationDeals(
-      _nationID: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
+    distributeFund(
+      _toID: PromiseOrValue<BigNumberish>,
+      _resourceType: PromiseOrValue<string>,
+      _amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
+
+    foodFee(overrides?: CallOverrides): Promise<BigNumber>;
+
+    foodToken(overrides?: CallOverrides): Promise<BigNumber>;
+
+    foodWithdrawQuota(overrides?: CallOverrides): Promise<BigNumber>;
+
+    game(overrides?: CallOverrides): Promise<BigNumber>;
 
     getter(overrides?: CallOverrides): Promise<BigNumber>;
 
-    idToDeal(
+    goldFee(overrides?: CallOverrides): Promise<BigNumber>;
+
+    goldToken(overrides?: CallOverrides): Promise<BigNumber>;
+
+    goldWithdrawQuota(overrides?: CallOverrides): Promise<BigNumber>;
+
+    lastPaid(
+      arg0: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    lastWithdrawn(
       arg0: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -1256,18 +1554,9 @@ export interface HandshakeDeal extends BaseContract {
 
     name(overrides?: CallOverrides): Promise<BigNumber>;
 
-    nationIDToDealIDs(
-      arg0: PromiseOrValue<BigNumberish>,
-      arg1: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     ownerID(overrides?: CallOverrides): Promise<BigNumber>;
 
-    proposeDeal(
-      _functionType: PromiseOrValue<BigNumberish>,
-      _encodedParams: PromiseOrValue<BytesLike>,
-      _effectiveDuration: PromiseOrValue<BigNumberish>,
+    payMembershipFee(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -1275,8 +1564,22 @@ export interface HandshakeDeal extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    signDeal(
-      _dealID: PromiseOrValue<BigNumberish>,
+    removeAllOverdueMembers(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    removeFromCouncil(
+      _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    removeFromWhitelist(
+      _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    removeMember(
+      _nationID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -1296,9 +1599,37 @@ export interface HandshakeDeal extends BaseContract {
     treatyLeave(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
+
+    updateFoodFee(
+      _newFee: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    updateGoldFee(
+      _newFee: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    withdraw(
+      _goldAmount: PromiseOrValue<BigNumberish>,
+      _foodAmount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    withdrawTimeInterval(overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   populateTransaction: {
+    addToCouncil(
+      _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    addToWhitelist(
+      _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
     admin(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     approveBattle(
@@ -1439,22 +1770,45 @@ export interface HandshakeDeal extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    dealCount(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    council(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    depositTimeInterval(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     description(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     diamond(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    game(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    getNationDeals(
-      _nationID: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
+    distributeFund(
+      _toID: PromiseOrValue<BigNumberish>,
+      _resourceType: PromiseOrValue<string>,
+      _amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
+
+    foodFee(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    foodToken(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    foodWithdrawQuota(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    game(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getter(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    idToDeal(
+    goldFee(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    goldToken(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    goldWithdrawQuota(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    lastPaid(
+      arg0: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    lastWithdrawn(
       arg0: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
@@ -1467,18 +1821,9 @@ export interface HandshakeDeal extends BaseContract {
 
     name(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    nationIDToDealIDs(
-      arg0: PromiseOrValue<BigNumberish>,
-      arg1: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     ownerID(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    proposeDeal(
-      _functionType: PromiseOrValue<BigNumberish>,
-      _encodedParams: PromiseOrValue<BytesLike>,
-      _effectiveDuration: PromiseOrValue<BigNumberish>,
+    payMembershipFee(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1486,8 +1831,22 @@ export interface HandshakeDeal extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    signDeal(
-      _dealID: PromiseOrValue<BigNumberish>,
+    removeAllOverdueMembers(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    removeFromCouncil(
+      _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    removeFromWhitelist(
+      _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    removeMember(
+      _nationID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1506,6 +1865,26 @@ export interface HandshakeDeal extends BaseContract {
 
     treatyLeave(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    updateFoodFee(
+      _newFee: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    updateGoldFee(
+      _newFee: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    withdraw(
+      _goldAmount: PromiseOrValue<BigNumberish>,
+      _foodAmount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    withdrawTimeInterval(
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
   };
 }
