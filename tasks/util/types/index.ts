@@ -28,6 +28,7 @@ export interface DeployArgs extends HardhatArguments {
   port: string | undefined;
   indexer: boolean;
   name: string | undefined;
+  whitelist: string | undefined;
 }
 
 export interface UnlockTileArgs extends HardhatArguments {
