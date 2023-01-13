@@ -12,7 +12,6 @@ import {AddressComponent, BoolComponent, IntComponent, PositionComponent, String
 import {CurioERC20} from "contracts/standards/CurioERC20.sol";
 import {CurioTreaty} from "contracts/standards/CurioTreaty.sol";
 import {Alliance} from "contracts/treaties/Alliance.sol";
-import {FTX} from "contracts/treaties/FTX.sol";
 import {TestTreaty} from "contracts/treaties/TestTreaty.sol";
 import {NonAggressionPact} from "contracts/treaties/NonAggressionPact.sol";
 import {Embargo} from "contracts/treaties/Embargo.sol";
@@ -449,16 +448,10 @@ library GameLib {
         }
     }
 
-    function deployTreaty(
-        uint256 _nationID,
-        string memory _treatyName,
-        bytes memory _treatyParams
-    ) internal returns (address treatyAddress) {
+    function deployTreaty(uint256 _nationID, string memory _treatyName) internal returns (address treatyAddress) {
         // Deploy treaty
         if (GameLib.strEq(_treatyName, "Alliance")) {
             treatyAddress = address(new Alliance(address(this)));
-        } else if (GameLib.strEq(_treatyName, "FTX")) {
-            treatyAddress = address(new FTX(address(this), ECSLib.getAddress("Address", _nationID)));
         } else if (GameLib.strEq(_treatyName, "Test Treaty")) {
             treatyAddress = address(new TestTreaty(address(this)));
         } else if (GameLib.strEq(_treatyName, "Non-Aggression Pact")) {
@@ -466,8 +459,7 @@ library GameLib {
         } else if (GameLib.strEq(_treatyName, "Embargo")) {
             treatyAddress = address(new Embargo(address(this)));
         } else if (GameLib.strEq(_treatyName, "Collective Defense Fund")) {
-            (uint256 a, uint256 b, uint256 c, uint256 d, uint256 e, uint256 f) = abi.decode(_treatyParams, (uint256, uint256, uint256, uint256, uint256, uint256));
-            treatyAddress = address(new CollectiveDefenseFund(address(this), a, b, c, d, e, f));
+            treatyAddress = address(new CollectiveDefenseFund(address(this)));
         } else if (GameLib.strEq(_treatyName, "Simple OTC Trading Agreement")) {
             treatyAddress = address(new SimpleOTC(address(this)));
         } else if (GameLib.strEq(_treatyName, "Handshake Deal")) {

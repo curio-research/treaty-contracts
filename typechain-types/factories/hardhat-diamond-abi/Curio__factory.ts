@@ -1053,11 +1053,6 @@ const _abi = [
         name: "_treatyName",
         type: "string",
       },
-      {
-        internalType: "bytes",
-        name: "_treatyParams",
-        type: "bytes",
-      },
     ],
     name: "deployTreaty",
     outputs: [
