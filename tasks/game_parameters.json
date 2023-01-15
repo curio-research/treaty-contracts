@@ -5,7 +5,7 @@
         "level": 0,
         "object": "Gold",
         "subject": "Army",
-        "value": 6358
+        "value": 7786
     },
     {
         "componentName": "Rate",
@@ -13,7 +13,7 @@
         "level": 0,
         "object": "Food",
         "subject": "Army",
-        "value": 57236
+        "value": 70092
     },
     {
         "componentName": "Load",
@@ -21,7 +21,7 @@
         "level": 0,
         "object": "Resource",
         "subject": "Troop",
-        "value": 9097
+        "value": 38642
     },
     {
         "componentName": "Cost",
@@ -61,7 +61,7 @@
         "level": 0,
         "object": "Gold",
         "subject": "Goldmine",
-        "value": 421
+        "value": 387
     },
     {
         "componentName": "Yield",
@@ -77,7 +77,7 @@
         "level": 0,
         "object": "Gold",
         "subject": "Goldmine",
-        "value": 379500
+        "value": 1858666
     },
     {
         "componentName": "Load",
@@ -93,7 +93,7 @@
         "level": 0,
         "object": "Gold",
         "subject": "Goldmine",
-        "value": 1299
+        "value": 70364
     },
     {
         "componentName": "Cost",
@@ -101,7 +101,7 @@
         "level": 0,
         "object": "Food",
         "subject": "Goldmine",
-        "value": 243
+        "value": 13193
     },
     {
         "componentName": "Cooldown",
@@ -109,7 +109,7 @@
         "level": 0,
         "object": "",
         "subject": "Goldmine",
-        "value": 0
+        "value": 27
     },
     {
         "componentName": "Yield",
@@ -117,7 +117,7 @@
         "level": 1,
         "object": "Gold",
         "subject": "Goldmine",
-        "value": 743
+        "value": 642
     },
     {
         "componentName": "Yield",
@@ -133,7 +133,7 @@
         "level": 1,
         "object": "Gold",
         "subject": "Goldmine",
-        "value": 669500
+        "value": 3084000
     },
     {
         "componentName": "Load",
@@ -149,7 +149,7 @@
         "level": 1,
         "object": "Gold",
         "subject": "Goldmine",
-        "value": 6001
+        "value": 272208
     },
     {
         "componentName": "Cost",
@@ -157,7 +157,7 @@
         "level": 1,
         "object": "Food",
         "subject": "Goldmine",
-        "value": 1125
+        "value": 51039
     },
     {
         "componentName": "Cooldown",
@@ -165,7 +165,7 @@
         "level": 1,
         "object": "",
         "subject": "Goldmine",
-        "value": 1
+        "value": 63
     },
     {
         "componentName": "Yield",
@@ -173,7 +173,7 @@
         "level": 2,
         "object": "Gold",
         "subject": "Goldmine",
-        "value": 961
+        "value": 823
     },
     {
         "componentName": "Yield",
@@ -189,7 +189,7 @@
         "level": 2,
         "object": "Gold",
         "subject": "Goldmine",
-        "value": 865750
+        "value": 3953333
     },
     {
         "componentName": "Load",
@@ -205,7 +205,7 @@
         "level": 2,
         "object": "Gold",
         "subject": "Goldmine",
-        "value": 13333
+        "value": 574748
     },
     {
         "componentName": "Cost",
@@ -213,7 +213,7 @@
         "level": 2,
         "object": "Food",
         "subject": "Goldmine",
-        "value": 2499
+        "value": 107765
     },
     {
         "componentName": "Cooldown",
@@ -221,7 +221,7 @@
         "level": 2,
         "object": "",
         "subject": "Goldmine",
-        "value": 2
+        "value": 104
     },
     {
         "componentName": "Yield",
@@ -229,7 +229,7 @@
         "level": 3,
         "object": "Gold",
         "subject": "Goldmine",
-        "value": 1127
+        "value": 963
     },
     {
         "componentName": "Yield",
@@ -245,7 +245,7 @@
         "level": 3,
         "object": "Gold",
         "subject": "Goldmine",
-        "value": 1014500
+        "value": 4626666
     },
     {
         "componentName": "Load",
@@ -261,7 +261,7 @@
         "level": 3,
         "object": "Gold",
         "subject": "Goldmine",
-        "value": 23211
+        "value": 972096
     },
     {
         "componentName": "Cost",
@@ -269,7 +269,7 @@
         "level": 3,
         "object": "Food",
         "subject": "Goldmine",
-        "value": 4352
+        "value": 182268
     },
     {
         "componentName": "Cooldown",
@@ -277,7 +277,7 @@
         "level": 3,
         "object": "",
         "subject": "Goldmine",
-        "value": 3
+        "value": 151
     },
     {
         "componentName": "Yield",
@@ -285,7 +285,7 @@
         "level": 4,
         "object": "Gold",
         "subject": "Goldmine",
-        "value": 1260
+        "value": 1078
     },
     {
         "componentName": "Yield",
@@ -301,7 +301,7 @@
         "level": 4,
         "object": "Gold",
         "subject": "Goldmine",
-        "value": 1134250
+        "value": 5177333
     },
     {
         "componentName": "Load",
@@ -317,7 +317,7 @@
         "level": 4,
         "object": "Gold",
         "subject": "Goldmine",
-        "value": 35806
+        "value": 1467510
     },
     {
         "componentName": "Cost",
@@ -325,7 +325,7 @@
         "level": 4,
         "object": "Food",
         "subject": "Goldmine",
-        "value": 6713
+        "value": 275158
     },
     {
         "componentName": "Cooldown",
@@ -333,7 +333,7 @@
         "level": 4,
         "object": "",
         "subject": "Goldmine",
-        "value": 4
+        "value": 204
     },
     {
         "componentName": "Yield",
@@ -341,7 +341,7 @@
         "level": 5,
         "object": "Gold",
         "subject": "Goldmine",
-        "value": 1371
+        "value": 1175
     },
     {
         "componentName": "Yield",
@@ -357,7 +357,7 @@
         "level": 5,
         "object": "Gold",
         "subject": "Goldmine",
-        "value": 1234500
+        "value": 5642666
     },
     {
         "componentName": "Load",
@@ -373,7 +373,7 @@
         "level": 5,
         "object": "Gold",
         "subject": "Goldmine",
-        "value": 51433
+        "value": 2068353
     },
     {
         "componentName": "Cost",
@@ -381,7 +381,7 @@
         "level": 5,
         "object": "Food",
         "subject": "Goldmine",
-        "value": 9643
+        "value": 387816
     },
     {
         "componentName": "Cooldown",
@@ -389,7 +389,7 @@
         "level": 5,
         "object": "",
         "subject": "Goldmine",
-        "value": 5
+        "value": 263
     },
     {
         "componentName": "Yield",
@@ -397,7 +397,7 @@
         "level": 6,
         "object": "Gold",
         "subject": "Goldmine",
-        "value": 1467
+        "value": 1259
     },
     {
         "componentName": "Yield",
@@ -413,7 +413,7 @@
         "level": 6,
         "object": "Gold",
         "subject": "Goldmine",
-        "value": 1320500
+        "value": 6046666
     },
     {
         "componentName": "Load",
@@ -429,7 +429,7 @@
         "level": 6,
         "object": "Gold",
         "subject": "Goldmine",
-        "value": 70504
+        "value": 2785873
     },
     {
         "componentName": "Cost",
@@ -437,7 +437,7 @@
         "level": 6,
         "object": "Food",
         "subject": "Goldmine",
-        "value": 13219
+        "value": 522351
     },
     {
         "componentName": "Cooldown",
@@ -445,7 +445,7 @@
         "level": 6,
         "object": "",
         "subject": "Goldmine",
-        "value": 7
+        "value": 331
     },
     {
         "componentName": "Yield",
@@ -453,7 +453,7 @@
         "level": 7,
         "object": "Gold",
         "subject": "Goldmine",
-        "value": 1551
+        "value": 1333
     },
     {
         "componentName": "Yield",
@@ -469,7 +469,7 @@
         "level": 7,
         "object": "Gold",
         "subject": "Goldmine",
-        "value": 1396250
+        "value": 6402666
     },
     {
         "componentName": "Load",
@@ -485,7 +485,7 @@
         "level": 7,
         "object": "Gold",
         "subject": "Goldmine",
-        "value": 93575
+        "value": 3633131
     },
     {
         "componentName": "Cost",
@@ -493,7 +493,7 @@
         "level": 7,
         "object": "Food",
         "subject": "Goldmine",
-        "value": 17545
+        "value": 681212
     },
     {
         "componentName": "Cooldown",
@@ -501,7 +501,7 @@
         "level": 7,
         "object": "",
         "subject": "Goldmine",
-        "value": 9
+        "value": 408
     },
     {
         "componentName": "Yield",
@@ -509,7 +509,7 @@
         "level": 8,
         "object": "Gold",
         "subject": "Goldmine",
-        "value": 1626
+        "value": 1400
     },
     {
         "componentName": "Yield",
@@ -525,7 +525,7 @@
         "level": 8,
         "object": "Gold",
         "subject": "Goldmine",
-        "value": 1463500
+        "value": 6721333
     },
     {
         "componentName": "Load",
@@ -541,7 +541,7 @@
         "level": 8,
         "object": "Gold",
         "subject": "Goldmine",
-        "value": 121253
+        "value": 4626700
     },
     {
         "componentName": "Cost",
@@ -549,7 +549,7 @@
         "level": 8,
         "object": "Food",
         "subject": "Goldmine",
-        "value": 22734
+        "value": 867506
     },
     {
         "componentName": "Cooldown",
@@ -557,7 +557,7 @@
         "level": 8,
         "object": "",
         "subject": "Goldmine",
-        "value": 11
+        "value": 495
     },
     {
         "componentName": "Yield",
@@ -565,7 +565,7 @@
         "level": 9,
         "object": "Gold",
         "subject": "Goldmine",
-        "value": 1693
+        "value": 1460
     },
     {
         "componentName": "Yield",
@@ -581,7 +581,7 @@
         "level": 9,
         "object": "Gold",
         "subject": "Goldmine",
-        "value": 1524250
+        "value": 7008000
     },
     {
         "componentName": "Load",
@@ -597,7 +597,7 @@
         "level": 9,
         "object": "Gold",
         "subject": "Goldmine",
-        "value": 154324
+        "value": 5784270
     },
     {
         "componentName": "Cost",
@@ -605,7 +605,7 @@
         "level": 9,
         "object": "Food",
         "subject": "Goldmine",
-        "value": 28935
+        "value": 1084550
     },
     {
         "componentName": "Cooldown",
@@ -613,7 +613,7 @@
         "level": 9,
         "object": "",
         "subject": "Goldmine",
-        "value": 13
+        "value": 594
     },
     {
         "componentName": "Yield",
@@ -621,7 +621,7 @@
         "level": 10,
         "object": "Gold",
         "subject": "Goldmine",
-        "value": 1755
+        "value": 1515
     },
     {
         "componentName": "Yield",
@@ -637,7 +637,7 @@
         "level": 10,
         "object": "Gold",
         "subject": "Goldmine",
-        "value": 1579500
+        "value": 7272000
     },
     {
         "componentName": "Load",
@@ -653,7 +653,7 @@
         "level": 10,
         "object": "Gold",
         "subject": "Goldmine",
-        "value": 193673
+        "value": 7131254
     },
     {
         "componentName": "Cost",
@@ -661,7 +661,7 @@
         "level": 10,
         "object": "Food",
         "subject": "Goldmine",
-        "value": 36313
+        "value": 1337110
     },
     {
         "componentName": "Cooldown",
@@ -669,7 +669,7 @@
         "level": 10,
         "object": "",
         "subject": "Goldmine",
-        "value": 16
+        "value": 706
     },
     {
         "componentName": "Yield",
@@ -677,7 +677,7 @@
         "level": 11,
         "object": "Gold",
         "subject": "Goldmine",
-        "value": 1811
+        "value": 1565
     },
     {
         "componentName": "Yield",
@@ -693,7 +693,7 @@
         "level": 11,
         "object": "Gold",
         "subject": "Goldmine",
-        "value": 1630250
+        "value": 7513333
     },
     {
         "componentName": "Load",
@@ -709,7 +709,7 @@
         "level": 11,
         "object": "Gold",
         "subject": "Goldmine",
-        "value": 240375
+        "value": 8689795
     },
     {
         "componentName": "Cost",
@@ -717,7 +717,7 @@
         "level": 11,
         "object": "Food",
         "subject": "Goldmine",
-        "value": 45070
+        "value": 1629336
     },
     {
         "componentName": "Cooldown",
@@ -725,7 +725,7 @@
         "level": 11,
         "object": "",
         "subject": "Goldmine",
-        "value": 19
+        "value": 832
     },
     {
         "componentName": "Yield",
@@ -733,7 +733,7 @@
         "level": 12,
         "object": "Gold",
         "subject": "Goldmine",
-        "value": 1863
+        "value": 1611
     },
     {
         "componentName": "Yield",
@@ -749,7 +749,7 @@
         "level": 12,
         "object": "Gold",
         "subject": "Goldmine",
-        "value": 1677000
+        "value": 7737333
     },
     {
         "componentName": "Load",
@@ -765,7 +765,7 @@
         "level": 12,
         "object": "Gold",
         "subject": "Goldmine",
-        "value": 295647
+        "value": 10491412
     },
     {
         "componentName": "Cost",
@@ -773,7 +773,7 @@
         "level": 12,
         "object": "Food",
         "subject": "Goldmine",
-        "value": 55433
+        "value": 1967139
     },
     {
         "componentName": "Cooldown",
@@ -781,7 +781,7 @@
         "level": 12,
         "object": "",
         "subject": "Goldmine",
-        "value": 23
+        "value": 976
     },
     {
         "componentName": "Yield",
@@ -789,7 +789,7 @@
         "level": 13,
         "object": "Gold",
         "subject": "Goldmine",
-        "value": 1911
+        "value": 1655
     },
     {
         "componentName": "Yield",
@@ -805,7 +805,7 @@
         "level": 13,
         "object": "Gold",
         "subject": "Goldmine",
-        "value": 1720750
+        "value": 7945333
     },
     {
         "componentName": "Load",
@@ -821,7 +821,7 @@
         "level": 13,
         "object": "Gold",
         "subject": "Goldmine",
-        "value": 361034
+        "value": 12568368
     },
     {
         "componentName": "Cost",
@@ -829,7 +829,7 @@
         "level": 13,
         "object": "Food",
         "subject": "Goldmine",
-        "value": 67694
+        "value": 2356569
     },
     {
         "componentName": "Cooldown",
@@ -837,7 +837,7 @@
         "level": 13,
         "object": "",
         "subject": "Goldmine",
-        "value": 28
+        "value": 1138
     },
     {
         "componentName": "Yield",
@@ -845,7 +845,7 @@
         "level": 14,
         "object": "Gold",
         "subject": "Goldmine",
-        "value": 1956
+        "value": 1695
     },
     {
         "componentName": "Yield",
@@ -861,7 +861,7 @@
         "level": 14,
         "object": "Gold",
         "subject": "Goldmine",
-        "value": 1761250
+        "value": 8140000
     },
     {
         "componentName": "Load",
@@ -877,7 +877,7 @@
         "level": 14,
         "object": "Gold",
         "subject": "Goldmine",
-        "value": 438117
+        "value": 14960044
     },
     {
         "componentName": "Cost",
@@ -885,7 +885,7 @@
         "level": 14,
         "object": "Food",
         "subject": "Goldmine",
-        "value": 82146
+        "value": 2805008
     },
     {
         "componentName": "Cooldown",
@@ -893,7 +893,7 @@
         "level": 14,
         "object": "",
         "subject": "Goldmine",
-        "value": 33
+        "value": 1323
     },
     {
         "componentName": "Yield",
@@ -901,7 +901,7 @@
         "level": 15,
         "object": "Gold",
         "subject": "Goldmine",
-        "value": 1999
+        "value": 1734
     },
     {
         "componentName": "Yield",
@@ -917,12 +917,180 @@
         "level": 15,
         "object": "Gold",
         "subject": "Goldmine",
-        "value": 1799500
+        "value": 8324000
     },
     {
         "componentName": "Load",
         "functionName": "",
         "level": 15,
+        "object": "Food",
+        "subject": "Goldmine",
+        "value": 0
+    },
+    {
+        "componentName": "Cost",
+        "functionName": "Upgrade",
+        "level": 15,
+        "object": "Gold",
+        "subject": "Goldmine",
+        "value": 17712768
+    },
+    {
+        "componentName": "Cost",
+        "functionName": "Upgrade",
+        "level": 15,
+        "object": "Food",
+        "subject": "Goldmine",
+        "value": 3321144
+    },
+    {
+        "componentName": "Cooldown",
+        "functionName": "Upgrade",
+        "level": 15,
+        "object": "",
+        "subject": "Goldmine",
+        "value": 1532
+    },
+    {
+        "componentName": "Yield",
+        "functionName": "",
+        "level": 16,
+        "object": "Gold",
+        "subject": "Goldmine",
+        "value": 1770
+    },
+    {
+        "componentName": "Yield",
+        "functionName": "",
+        "level": 16,
+        "object": "Food",
+        "subject": "Goldmine",
+        "value": 0
+    },
+    {
+        "componentName": "Load",
+        "functionName": "",
+        "level": 16,
+        "object": "Gold",
+        "subject": "Goldmine",
+        "value": 8496000
+    },
+    {
+        "componentName": "Load",
+        "functionName": "",
+        "level": 16,
+        "object": "Food",
+        "subject": "Goldmine",
+        "value": 0
+    },
+    {
+        "componentName": "Cost",
+        "functionName": "Upgrade",
+        "level": 16,
+        "object": "Gold",
+        "subject": "Goldmine",
+        "value": 20871362
+    },
+    {
+        "componentName": "Cost",
+        "functionName": "Upgrade",
+        "level": 16,
+        "object": "Food",
+        "subject": "Goldmine",
+        "value": 3913380
+    },
+    {
+        "componentName": "Cooldown",
+        "functionName": "Upgrade",
+        "level": 16,
+        "object": "",
+        "subject": "Goldmine",
+        "value": 1768
+    },
+    {
+        "componentName": "Yield",
+        "functionName": "",
+        "level": 17,
+        "object": "Gold",
+        "subject": "Goldmine",
+        "value": 1804
+    },
+    {
+        "componentName": "Yield",
+        "functionName": "",
+        "level": 17,
+        "object": "Food",
+        "subject": "Goldmine",
+        "value": 0
+    },
+    {
+        "componentName": "Load",
+        "functionName": "",
+        "level": 17,
+        "object": "Gold",
+        "subject": "Goldmine",
+        "value": 8660000
+    },
+    {
+        "componentName": "Load",
+        "functionName": "",
+        "level": 17,
+        "object": "Food",
+        "subject": "Goldmine",
+        "value": 0
+    },
+    {
+        "componentName": "Cost",
+        "functionName": "Upgrade",
+        "level": 17,
+        "object": "Gold",
+        "subject": "Goldmine",
+        "value": 24499752
+    },
+    {
+        "componentName": "Cost",
+        "functionName": "Upgrade",
+        "level": 17,
+        "object": "Food",
+        "subject": "Goldmine",
+        "value": 4593703
+    },
+    {
+        "componentName": "Cooldown",
+        "functionName": "Upgrade",
+        "level": 17,
+        "object": "",
+        "subject": "Goldmine",
+        "value": 2036
+    },
+    {
+        "componentName": "Yield",
+        "functionName": "",
+        "level": 18,
+        "object": "Gold",
+        "subject": "Goldmine",
+        "value": 1836
+    },
+    {
+        "componentName": "Yield",
+        "functionName": "",
+        "level": 18,
+        "object": "Food",
+        "subject": "Goldmine",
+        "value": 0
+    },
+    {
+        "componentName": "Load",
+        "functionName": "",
+        "level": 18,
+        "object": "Gold",
+        "subject": "Goldmine",
+        "value": 8814666
+    },
+    {
+        "componentName": "Load",
+        "functionName": "",
+        "level": 18,
         "object": "Food",
         "subject": "Goldmine",
         "value": 0
@@ -941,7 +1109,7 @@
         "level": 0,
         "object": "Food",
         "subject": "Farm",
-        "value": 2249
+        "value": 2066
     },
     {
         "componentName": "Load",
@@ -957,7 +1125,7 @@
         "level": 0,
         "object": "Food",
         "subject": "Farm",
-        "value": 2024750
+        "value": 9918666
     },
     {
         "componentName": "Cost",
@@ -965,7 +1133,7 @@
         "level": 0,
         "object": "Gold",
         "subject": "Farm",
-        "value": 3897
+        "value": 211094
     },
     {
         "componentName": "Cost",
@@ -973,7 +1141,7 @@
         "level": 0,
         "object": "Food",
         "subject": "Farm",
-        "value": 1094
+        "value": 59289
     },
     {
         "componentName": "Cooldown",
@@ -981,7 +1149,7 @@
         "level": 0,
         "object": "",
         "subject": "Farm",
-        "value": 0
+        "value": 27
     },
     {
         "componentName": "Yield",
@@ -997,7 +1165,7 @@
         "level": 1,
         "object": "Food",
         "subject": "Farm",
-        "value": 3967
+        "value": 3427
     },
     {
         "componentName": "Load",
@@ -1013,7 +1181,7 @@
         "level": 1,
         "object": "Food",
         "subject": "Farm",
-        "value": 3570500
+        "value": 16450666
     },
     {
         "componentName": "Cost",
@@ -1021,7 +1189,7 @@
         "level": 1,
         "object": "Gold",
         "subject": "Farm",
-        "value": 18003
+        "value": 816625
     },
     {
         "componentName": "Cost",
@@ -1029,7 +1197,7 @@
         "level": 1,
         "object": "Food",
         "subject": "Farm",
-        "value": 5053
+        "value": 229265
     },
     {
         "componentName": "Cooldown",
@@ -1037,7 +1205,7 @@
         "level": 1,
         "object": "",
         "subject": "Farm",
-        "value": 1
+        "value": 63
     },
     {
         "componentName": "Yield",
@@ -1053,7 +1221,7 @@
         "level": 2,
         "object": "Food",
         "subject": "Farm",
-        "value": 5131
+        "value": 4392
     },
     {
         "componentName": "Load",
@@ -1069,7 +1237,7 @@
         "level": 2,
         "object": "Food",
         "subject": "Farm",
-        "value": 4618000
+        "value": 21085333
     },
     {
         "componentName": "Cost",
@@ -1077,7 +1245,7 @@
         "level": 2,
         "object": "Gold",
         "subject": "Farm",
-        "value": 39999
+        "value": 1724246
     },
     {
         "componentName": "Cost",
@@ -1085,7 +1253,7 @@
         "level": 2,
         "object": "Food",
         "subject": "Farm",
-        "value": 11229
+        "value": 484019
     },
     {
         "componentName": "Cooldown",
@@ -1093,7 +1261,7 @@
         "level": 2,
         "object": "",
         "subject": "Farm",
-        "value": 2
+        "value": 104
     },
     {
         "componentName": "Yield",
@@ -1109,7 +1277,7 @@
         "level": 3,
         "object": "Food",
         "subject": "Farm",
-        "value": 6012
+        "value": 5141
     },
     {
         "componentName": "Load",
@@ -1125,7 +1293,7 @@
         "level": 3,
         "object": "Food",
         "subject": "Farm",
-        "value": 5411000
+        "value": 24680000
     },
     {
         "componentName": "Cost",
@@ -1133,7 +1301,7 @@
         "level": 3,
         "object": "Gold",
         "subject": "Farm",
-        "value": 69633
+        "value": 2916288
     },
     {
         "componentName": "Cost",
@@ -1141,7 +1309,7 @@
         "level": 3,
         "object": "Food",
         "subject": "Farm",
-        "value": 19547
+        "value": 818754
     },
     {
         "componentName": "Cooldown",
@@ -1149,7 +1317,7 @@
         "level": 3,
         "object": "",
         "subject": "Farm",
-        "value": 3
+        "value": 151
     },
     {
         "componentName": "Yield",
@@ -1165,7 +1333,7 @@
         "level": 4,
         "object": "Food",
         "subject": "Farm",
-        "value": 6721
+        "value": 5753
     },
     {
         "componentName": "Load",
@@ -1181,7 +1349,7 @@
         "level": 4,
         "object": "Food",
         "subject": "Farm",
-        "value": 6049750
+        "value": 27617333
     },
     {
         "componentName": "Cost",
@@ -1189,7 +1357,7 @@
         "level": 4,
         "object": "Gold",
         "subject": "Farm",
-        "value": 107418
+        "value": 4402530
     },
     {
         "componentName": "Cost",
@@ -1197,7 +1365,7 @@
         "level": 4,
         "object": "Food",
         "subject": "Farm",
-        "value": 30154
+        "value": 1236016
     },
     {
         "componentName": "Cooldown",
@@ -1205,7 +1373,7 @@
         "level": 4,
         "object": "",
         "subject": "Farm",
-        "value": 4
+        "value": 204
     },
     {
         "componentName": "Yield",
@@ -1221,7 +1389,7 @@
         "level": 5,
         "object": "Food",
         "subject": "Farm",
-        "value": 7315
+        "value": 6270
     },
     {
         "componentName": "Load",
@@ -1237,7 +1405,7 @@
         "level": 5,
         "object": "Food",
         "subject": "Farm",
-        "value": 6584250
+        "value": 30100000
     },
     {
         "componentName": "Cost",
@@ -1245,7 +1413,7 @@
         "level": 5,
         "object": "Gold",
         "subject": "Farm",
-        "value": 154300
+        "value": 6205061
     },
     {
         "componentName": "Cost",
@@ -1253,7 +1421,7 @@
         "level": 5,
         "object": "Food",
         "subject": "Farm",
-        "value": 43313
+        "value": 1742106
     },
     {
         "componentName": "Cooldown",
@@ -1261,7 +1429,7 @@
         "level": 5,
         "object": "",
         "subject": "Farm",
-        "value": 5
+        "value": 263
     },
     {
         "componentName": "Yield",
@@ -1277,7 +1445,7 @@
         "level": 6,
         "object": "Food",
         "subject": "Farm",
-        "value": 7826
+        "value": 6719
     },
     {
         "componentName": "Load",
@@ -1293,7 +1461,7 @@
         "level": 6,
         "object": "Food",
         "subject": "Farm",
-        "value": 7043750
+        "value": 32252000
     },
     {
         "componentName": "Cost",
@@ -1301,7 +1469,7 @@
         "level": 6,
         "object": "Gold",
         "subject": "Farm",
-        "value": 211513
+        "value": 8357620
     },
     {
         "componentName": "Cost",
@@ -1309,7 +1477,7 @@
         "level": 6,
         "object": "Food",
         "subject": "Farm",
-        "value": 59381
+        "value": 2346225
     },
     {
         "componentName": "Cooldown",
@@ -1317,7 +1485,7 @@
         "level": 6,
         "object": "",
         "subject": "Farm",
-        "value": 7
+        "value": 331
     },
     {
         "componentName": "Yield",
@@ -1333,7 +1501,7 @@
         "level": 7,
         "object": "Food",
         "subject": "Farm",
-        "value": 8274
+        "value": 7114
     },
     {
         "componentName": "Load",
@@ -1349,7 +1517,7 @@
         "level": 7,
         "object": "Food",
         "subject": "Farm",
-        "value": 7447000
+        "value": 34149333
     },
     {
         "componentName": "Cost",
@@ -1357,7 +1525,7 @@
         "level": 7,
         "object": "Gold",
         "subject": "Farm",
-        "value": 280726
+        "value": 10899395
     },
     {
         "componentName": "Cost",
@@ -1365,7 +1533,7 @@
         "level": 7,
         "object": "Food",
         "subject": "Farm",
-        "value": 78803
+        "value": 3059638
     },
     {
         "componentName": "Cooldown",
@@ -1373,7 +1541,7 @@
         "level": 7,
         "object": "",
         "subject": "Farm",
-        "value": 9
+        "value": 408
     },
     {
         "componentName": "Yield",
@@ -1389,7 +1557,7 @@
         "level": 8,
         "object": "Food",
         "subject": "Farm",
-        "value": 8673
+        "value": 7468
     },
     {
         "componentName": "Load",
@@ -1405,7 +1573,7 @@
         "level": 8,
         "object": "Food",
         "subject": "Farm",
-        "value": 7806250
+        "value": 35846666
     },
     {
         "componentName": "Cost",
@@ -1413,7 +1581,7 @@
         "level": 8,
         "object": "Gold",
         "subject": "Farm",
-        "value": 363759
+        "value": 13880102
     },
     {
         "componentName": "Cost",
@@ -1421,7 +1589,7 @@
         "level": 8,
         "object": "Food",
         "subject": "Farm",
-        "value": 102119
+        "value": 3896120
     },
     {
         "componentName": "Cooldown",
@@ -1429,7 +1597,7 @@
         "level": 8,
         "object": "",
         "subject": "Farm",
-        "value": 11
+        "value": 495
     },
     {
         "componentName": "Yield",
@@ -1445,7 +1613,7 @@
         "level": 9,
         "object": "Food",
         "subject": "Farm",
-        "value": 9033
+        "value": 7788
     },
     {
         "componentName": "Load",
@@ -1461,7 +1629,7 @@
         "level": 9,
         "object": "Food",
         "subject": "Farm",
-        "value": 8130000
+        "value": 37382666
     },
     {
         "componentName": "Cost",
@@ -1469,7 +1637,7 @@
         "level": 9,
         "object": "Gold",
         "subject": "Farm",
-        "value": 462972
+        "value": 17352810
     },
     {
         "componentName": "Cost",
@@ -1477,7 +1645,7 @@
         "level": 9,
         "object": "Food",
         "subject": "Farm",
-        "value": 129967
+        "value": 4871833
     },
     {
         "componentName": "Cooldown",
@@ -1485,7 +1653,7 @@
         "level": 9,
         "object": "",
         "subject": "Farm",
-        "value": 13
+        "value": 594
     },
     {
         "componentName": "Yield",
@@ -1501,7 +1669,7 @@
         "level": 10,
         "object": "Food",
         "subject": "Farm",
-        "value": 9360
+        "value": 8080
     },
     {
         "componentName": "Load",
@@ -1517,7 +1685,7 @@
         "level": 10,
         "object": "Food",
         "subject": "Farm",
-        "value": 8424750
+        "value": 38784000
     },
     {
         "componentName": "Cost",
@@ -1525,7 +1693,7 @@
         "level": 10,
         "object": "Gold",
         "subject": "Farm",
-        "value": 581021
+        "value": 21393762
     },
     {
         "componentName": "Cost",
@@ -1533,7 +1701,7 @@
         "level": 10,
         "object": "Food",
         "subject": "Farm",
-        "value": 163108
+        "value": 6005266
     },
     {
         "componentName": "Cooldown",
@@ -1541,7 +1709,7 @@
         "level": 10,
         "object": "",
         "subject": "Farm",
-        "value": 16
+        "value": 706
     },
     {
         "componentName": "Yield",
@@ -1557,7 +1725,7 @@
         "level": 11,
         "object": "Food",
         "subject": "Farm",
-        "value": 9661
+        "value": 8348
     },
     {
         "componentName": "Load",
@@ -1573,7 +1741,7 @@
         "level": 11,
         "object": "Food",
         "subject": "Farm",
-        "value": 8695250
+        "value": 40073333
     },
     {
         "componentName": "Cost",
@@ -1581,7 +1749,7 @@
         "level": 11,
         "object": "Gold",
         "subject": "Farm",
-        "value": 721127
+        "value": 26069386
     },
     {
         "componentName": "Cost",
@@ -1589,7 +1757,7 @@
         "level": 11,
         "object": "Food",
         "subject": "Farm",
-        "value": 202435
+        "value": 7318128
     },
     {
         "componentName": "Cooldown",
@@ -1597,7 +1765,7 @@
         "level": 11,
         "object": "",
         "subject": "Farm",
-        "value": 19
+        "value": 832
     },
     {
         "componentName": "Yield",
@@ -1613,7 +1781,7 @@
         "level": 12,
         "object": "Food",
         "subject": "Farm",
-        "value": 9938
+        "value": 8597
     },
     {
         "componentName": "Load",
@@ -1629,7 +1797,7 @@
         "level": 12,
         "object": "Food",
         "subject": "Farm",
-        "value": 8945000
+        "value": 41266666
     },
     {
         "componentName": "Cost",
@@ -1637,7 +1805,7 @@
         "level": 12,
         "object": "Gold",
         "subject": "Farm",
-        "value": 886942
+        "value": 31474237
     },
     {
         "componentName": "Cost",
@@ -1645,7 +1813,7 @@
         "level": 12,
         "object": "Food",
         "subject": "Farm",
-        "value": 248994
+        "value": 8835064
     },
     {
         "componentName": "Cooldown",
@@ -1653,7 +1821,7 @@
         "level": 12,
         "object": "",
         "subject": "Farm",
-        "value": 23
+        "value": 976
     },
     {
         "componentName": "Yield",
@@ -1669,7 +1837,7 @@
         "level": 13,
         "object": "Food",
         "subject": "Farm",
-        "value": 10196
+        "value": 8828
     },
     {
         "componentName": "Load",
@@ -1685,7 +1853,7 @@
         "level": 13,
         "object": "Food",
         "subject": "Farm",
-        "value": 9177250
+        "value": 42378666
     },
     {
         "componentName": "Cost",
@@ -1693,7 +1861,7 @@
         "level": 13,
         "object": "Gold",
         "subject": "Farm",
-        "value": 1083104
+        "value": 37705104
     },
     {
         "componentName": "Cost",
@@ -1701,7 +1869,7 @@
         "level": 13,
         "object": "Food",
         "subject": "Farm",
-        "value": 304026
+        "value": 10584776
     },
     {
         "componentName": "Cooldown",
@@ -1709,7 +1877,7 @@
         "level": 13,
         "object": "",
         "subject": "Farm",
-        "value": 28
+        "value": 1138
     },
     {
         "componentName": "Yield",
@@ -1725,7 +1893,7 @@
         "level": 14,
         "object": "Food",
         "subject": "Farm",
-        "value": 10438
+        "value": 9045
     },
     {
         "componentName": "Load",
@@ -1741,7 +1909,7 @@
         "level": 14,
         "object": "Food",
         "subject": "Farm",
-        "value": 9394250
+        "value": 43418666
     },
     {
         "componentName": "Cost",
@@ -1749,7 +1917,7 @@
         "level": 14,
         "object": "Gold",
         "subject": "Farm",
-        "value": 1314351
+        "value": 44880132
     },
     {
         "componentName": "Cost",
@@ -1757,7 +1925,7 @@
         "level": 14,
         "object": "Food",
         "subject": "Farm",
-        "value": 368976
+        "value": 12599479
     },
     {
         "componentName": "Cooldown",
@@ -1765,7 +1933,7 @@
         "level": 14,
         "object": "",
         "subject": "Farm",
-        "value": 33
+        "value": 1323
     },
     {
         "componentName": "Yield",
@@ -1781,7 +1949,7 @@
         "level": 15,
         "object": "Food",
         "subject": "Farm",
-        "value": 10664
+        "value": 9248
     },
     {
         "componentName": "Load",
@@ -1797,7 +1965,175 @@
         "level": 15,
         "object": "Food",
         "subject": "Farm",
-        "value": 9597750
+        "value": 44394666
+    },
+    {
+        "componentName": "Cost",
+        "functionName": "Upgrade",
+        "level": 15,
+        "object": "Gold",
+        "subject": "Farm",
+        "value": 53138306
+    },
+    {
+        "componentName": "Cost",
+        "functionName": "Upgrade",
+        "level": 15,
+        "object": "Food",
+        "subject": "Farm",
+        "value": 14916015
+    },
+    {
+        "componentName": "Cooldown",
+        "functionName": "Upgrade",
+        "level": 15,
+        "object": "",
+        "subject": "Farm",
+        "value": 1532
+    },
+    {
+        "componentName": "Yield",
+        "functionName": "",
+        "level": 16,
+        "object": "Gold",
+        "subject": "Farm",
+        "value": 0
+    },
+    {
+        "componentName": "Yield",
+        "functionName": "",
+        "level": 16,
+        "object": "Food",
+        "subject": "Farm",
+        "value": 9440
+    },
+    {
+        "componentName": "Load",
+        "functionName": "",
+        "level": 16,
+        "object": "Gold",
+        "subject": "Farm",
+        "value": 0
+    },
+    {
+        "componentName": "Load",
+        "functionName": "",
+        "level": 16,
+        "object": "Food",
+        "subject": "Farm",
+        "value": 45316000
+    },
+    {
+        "componentName": "Cost",
+        "functionName": "Upgrade",
+        "level": 16,
+        "object": "Gold",
+        "subject": "Farm",
+        "value": 62614088
+    },
+    {
+        "componentName": "Cost",
+        "functionName": "Upgrade",
+        "level": 16,
+        "object": "Food",
+        "subject": "Farm",
+        "value": 17577436
+    },
+    {
+        "componentName": "Cooldown",
+        "functionName": "Upgrade",
+        "level": 16,
+        "object": "",
+        "subject": "Farm",
+        "value": 1768
+    },
+    {
+        "componentName": "Yield",
+        "functionName": "",
+        "level": 17,
+        "object": "Gold",
+        "subject": "Farm",
+        "value": 0
+    },
+    {
+        "componentName": "Yield",
+        "functionName": "",
+        "level": 17,
+        "object": "Food",
+        "subject": "Farm",
+        "value": 9622
+    },
+    {
+        "componentName": "Load",
+        "functionName": "",
+        "level": 17,
+        "object": "Gold",
+        "subject": "Farm",
+        "value": 0
+    },
+    {
+        "componentName": "Load",
+        "functionName": "",
+        "level": 17,
+        "object": "Food",
+        "subject": "Farm",
+        "value": 46186666
+    },
+    {
+        "componentName": "Cost",
+        "functionName": "Upgrade",
+        "level": 17,
+        "object": "Gold",
+        "subject": "Farm",
+        "value": 73499256
+    },
+    {
+        "componentName": "Cost",
+        "functionName": "Upgrade",
+        "level": 17,
+        "object": "Food",
+        "subject": "Farm",
+        "value": 20631370
+    },
+    {
+        "componentName": "Cooldown",
+        "functionName": "Upgrade",
+        "level": 17,
+        "object": "",
+        "subject": "Farm",
+        "value": 2036
+    },
+    {
+        "componentName": "Yield",
+        "functionName": "",
+        "level": 18,
+        "object": "Gold",
+        "subject": "Farm",
+        "value": 0
+    },
+    {
+        "componentName": "Yield",
+        "functionName": "",
+        "level": 18,
+        "object": "Food",
+        "subject": "Farm",
+        "value": 9794
+    },
+    {
+        "componentName": "Load",
+        "functionName": "",
+        "level": 18,
+        "object": "Gold",
+        "subject": "Farm",
+        "value": 0
+    },
+    {
+        "componentName": "Load",
+        "functionName": "",
+        "level": 18,
+        "object": "Food",
+        "subject": "Farm",
+        "value": 47013333
     },
     {
         "componentName": "Yield",
@@ -1805,7 +2141,7 @@
         "level": 0,
         "object": "Gold",
         "subject": "Capital",
-        "value": 421
+        "value": 387
     },
     {
         "componentName": "Yield",
@@ -1813,7 +2149,7 @@
         "level": 0,
         "object": "Food",
         "subject": "Capital",
-        "value": 2249
+        "value": 2066
     },
     {
         "componentName": "Load",
@@ -1821,7 +2157,7 @@
         "level": 0,
         "object": "Gold",
         "subject": "Capital",
-        "value": 379500
+        "value": 1858666
     },
     {
         "componentName": "Load",
@@ -1829,7 +2165,7 @@
         "level": 0,
         "object": "Food",
         "subject": "Capital",
-        "value": 2024750
+        "value": 9918666
     },
     {
         "componentName": "Cost",
@@ -1837,7 +2173,7 @@
         "level": 0,
         "object": "Gold",
         "subject": "Capital",
-        "value": 182568
+        "value": 7738866
     },
     {
         "componentName": "Cost",
@@ -1845,7 +2181,7 @@
         "level": 0,
         "object": "Food",
         "subject": "Capital",
-        "value": 1338
+        "value": 72482
     },
     {
         "componentName": "Cooldown",
@@ -1853,7 +2189,7 @@
         "level": 0,
         "object": "",
         "subject": "Capital",
-        "value": 1
+        "value": 97
     },
     {
         "componentName": "Cooldown",
@@ -1861,7 +2197,7 @@
         "level": 0,
         "object": "",
         "subject": "Capital",
-        "value": 1
+        "value": 97
     },
     {
         "componentName": "Load",
@@ -1893,7 +2229,7 @@
         "level": 0,
         "object": "",
         "subject": "Capital",
-        "value": 120
+        "value": 900
     },
     {
         "componentName": "Yield",
@@ -1901,7 +2237,7 @@
         "level": 1,
         "object": "Gold",
         "subject": "Capital",
-        "value": 743
+        "value": 642
     },
     {
         "componentName": "Yield",
@@ -1909,7 +2245,7 @@
         "level": 1,
         "object": "Food",
         "subject": "Capital",
-        "value": 3967
+        "value": 3427
     },
     {
         "componentName": "Load",
@@ -1917,7 +2253,7 @@
         "level": 1,
         "object": "Gold",
         "subject": "Capital",
-        "value": 669500
+        "value": 3084000
     },
     {
         "componentName": "Load",
@@ -1925,7 +2261,7 @@
         "level": 1,
         "object": "Food",
         "subject": "Capital",
-        "value": 3570500
+        "value": 16450666
     },
     {
         "componentName": "Cost",
@@ -1933,7 +2269,7 @@
         "level": 1,
         "object": "Gold",
         "subject": "Capital",
-        "value": 398483
+        "value": 16451770
     },
     {
         "componentName": "Cost",
@@ -1941,7 +2277,7 @@
         "level": 1,
         "object": "Food",
         "subject": "Capital",
-        "value": 6178
+        "value": 280304
     },
     {
         "componentName": "Cooldown",
@@ -1949,7 +2285,7 @@
         "level": 1,
         "object": "",
         "subject": "Capital",
-        "value": 11
+        "value": 542
     },
     {
         "componentName": "Cooldown",
@@ -1957,7 +2293,7 @@
         "level": 1,
         "object": "",
         "subject": "Capital",
-        "value": 11
+        "value": 542
     },
     {
         "componentName": "Load",
@@ -1989,7 +2325,7 @@
         "level": 1,
         "object": "",
         "subject": "Capital",
-        "value": 120
+        "value": 900
     },
     {
         "componentName": "Yield",
@@ -1997,7 +2333,7 @@
         "level": 2,
         "object": "Gold",
         "subject": "Capital",
-        "value": 961
+        "value": 823
     },
     {
         "componentName": "Yield",
@@ -2005,7 +2341,7 @@
         "level": 2,
         "object": "Food",
         "subject": "Capital",
-        "value": 5131
+        "value": 4392
     },
     {
         "componentName": "Load",
@@ -2013,7 +2349,7 @@
         "level": 2,
         "object": "Gold",
         "subject": "Capital",
-        "value": 865750
+        "value": 3953333
     },
     {
         "componentName": "Load",
@@ -2021,7 +2357,7 @@
         "level": 2,
         "object": "Food",
         "subject": "Capital",
-        "value": 4618000
+        "value": 21085333
     },
     {
         "componentName": "Cost",
@@ -2029,7 +2365,7 @@
         "level": 2,
         "object": "Gold",
         "subject": "Capital",
-        "value": 649431
+        "value": 26364626
     },
     {
         "componentName": "Cost",
@@ -2037,7 +2373,7 @@
         "level": 2,
         "object": "Food",
         "subject": "Capital",
-        "value": 13729
+        "value": 591784
     },
     {
         "componentName": "Cooldown",
@@ -2045,7 +2381,7 @@
         "level": 2,
         "object": "",
         "subject": "Capital",
-        "value": 26
+        "value": 1189
     },
     {
         "componentName": "Cooldown",
@@ -2053,7 +2389,7 @@
         "level": 2,
         "object": "",
         "subject": "Capital",
-        "value": 26
+        "value": 1189
     },
     {
         "componentName": "Load",
@@ -2085,7 +2421,7 @@
         "level": 2,
         "object": "",
         "subject": "Capital",
-        "value": 120
+        "value": 900
     },
     {
         "componentName": "Yield",
@@ -2093,7 +2429,7 @@
         "level": 3,
         "object": "Gold",
         "subject": "Capital",
-        "value": 1127
+        "value": 963
     },
     {
         "componentName": "Yield",
@@ -2101,7 +2437,7 @@
         "level": 3,
         "object": "Food",
         "subject": "Capital",
-        "value": 6012
+        "value": 5141
     },
     {
         "componentName": "Load",
@@ -2109,7 +2445,7 @@
         "level": 3,
         "object": "Gold",
         "subject": "Capital",
-        "value": 1014500
+        "value": 4626666
     },
     {
         "componentName": "Load",
@@ -2117,7 +2453,7 @@
         "level": 3,
         "object": "Food",
         "subject": "Capital",
-        "value": 5411000
+        "value": 24680000
     },
     {
         "componentName": "Cost",
@@ -2125,7 +2461,7 @@
         "level": 3,
         "object": "Gold",
         "subject": "Capital",
-        "value": 950055
+        "value": 37957743
     },
     {
         "componentName": "Cost",
@@ -2133,7 +2469,7 @@
         "level": 3,
         "object": "Food",
         "subject": "Capital",
-        "value": 23899
+        "value": 1001022
     },
     {
         "componentName": "Cooldown",
@@ -2141,7 +2477,7 @@
         "level": 3,
         "object": "",
         "subject": "Capital",
-        "value": 51
+        "value": 2131
     },
     {
         "componentName": "Cooldown",
@@ -2149,7 +2485,7 @@
         "level": 3,
         "object": "",
         "subject": "Capital",
-        "value": 51
+        "value": 2131
     },
     {
         "componentName": "Load",
@@ -2181,7 +2517,7 @@
         "level": 3,
         "object": "",
         "subject": "Capital",
-        "value": 120
+        "value": 900
     },
     {
         "componentName": "Yield",
@@ -2189,7 +2525,7 @@
         "level": 4,
         "object": "Gold",
         "subject": "Capital",
-        "value": 1260
+        "value": 1078
     },
     {
         "componentName": "Yield",
@@ -2197,7 +2533,7 @@
         "level": 4,
         "object": "Food",
         "subject": "Capital",
-        "value": 6721
+        "value": 5753
     },
     {
         "componentName": "Load",
@@ -2205,7 +2541,7 @@
         "level": 4,
         "object": "Gold",
         "subject": "Capital",
-        "value": 1134250
+        "value": 5177333
     },
     {
         "componentName": "Load",
@@ -2213,7 +2549,7 @@
         "level": 4,
         "object": "Food",
         "subject": "Capital",
-        "value": 6049750
+        "value": 27617333
     },
     {
         "componentName": "Cost",
@@ -2221,7 +2557,7 @@
         "level": 4,
         "object": "Gold",
         "subject": "Capital",
-        "value": 1310196
+        "value": 51514948
     },
     {
         "componentName": "Cost",
@@ -2229,7 +2565,7 @@
         "level": 4,
         "object": "Food",
         "subject": "Capital",
-        "value": 36868
+        "value": 1511174
     },
     {
         "componentName": "Cooldown",
@@ -2237,7 +2573,7 @@
         "level": 4,
         "object": "",
         "subject": "Capital",
-        "value": 88
+        "value": 3502
     },
     {
         "componentName": "Cooldown",
@@ -2245,7 +2581,7 @@
         "level": 4,
         "object": "",
         "subject": "Capital",
-        "value": 88
+        "value": 3502
     },
     {
         "componentName": "Load",
@@ -2277,7 +2613,7 @@
         "level": 4,
         "object": "",
         "subject": "Capital",
-        "value": 120
+        "value": 900
     },
     {
         "componentName": "Yield",
@@ -2285,7 +2621,7 @@
         "level": 5,
         "object": "Gold",
         "subject": "Capital",
-        "value": 1371
+        "value": 1175
     },
     {
         "componentName": "Yield",
@@ -2293,7 +2629,7 @@
         "level": 5,
         "object": "Food",
         "subject": "Capital",
-        "value": 7315
+        "value": 6270
     },
     {
         "componentName": "Load",
@@ -2301,7 +2637,7 @@
         "level": 5,
         "object": "Gold",
         "subject": "Capital",
-        "value": 1234500
+        "value": 5642666
     },
     {
         "componentName": "Load",
@@ -2309,7 +2645,39 @@
         "level": 5,
         "object": "Food",
         "subject": "Capital",
-        "value": 6584250
+        "value": 30100000
+    },
+    {
+        "componentName": "Cost",
+        "functionName": "Upgrade",
+        "level": 5,
+        "object": "Gold",
+        "subject": "Capital",
+        "value": 67325573
+    },
+    {
+        "componentName": "Cost",
+        "functionName": "Upgrade",
+        "level": 5,
+        "object": "Food",
+        "subject": "Capital",
+        "value": 2129922
+    },
+    {
+        "componentName": "Cooldown",
+        "functionName": "Upgrade",
+        "level": 5,
+        "object": "",
+        "subject": "Capital",
+        "value": 5495
+    },
+    {
+        "componentName": "Cooldown",
+        "functionName": "Move",
+        "level": 5,
+        "object": "",
+        "subject": "Capital",
+        "value": 5495
     },
     {
         "componentName": "Load",
@@ -2341,7 +2709,71 @@
         "level": 5,
         "object": "",
         "subject": "Capital",
-        "value": 120
+        "value": 900
+    },
+    {
+        "componentName": "Yield",
+        "functionName": "",
+        "level": 6,
+        "object": "Gold",
+        "subject": "Capital",
+        "value": 1259
+    },
+    {
+        "componentName": "Yield",
+        "functionName": "",
+        "level": 6,
+        "object": "Food",
+        "subject": "Capital",
+        "value": 6719
+    },
+    {
+        "componentName": "Load",
+        "functionName": "",
+        "level": 6,
+        "object": "Gold",
+        "subject": "Capital",
+        "value": 6046666
+    },
+    {
+        "componentName": "Load",
+        "functionName": "",
+        "level": 6,
+        "object": "Food",
+        "subject": "Capital",
+        "value": 32252000
+    },
+    {
+        "componentName": "Load",
+        "functionName": "",
+        "level": 6,
+        "object": "Troop",
+        "subject": "Capital",
+        "value": 999999999
+    },
+    {
+        "componentName": "Cost",
+        "functionName": "Move",
+        "level": 6,
+        "object": "Gold",
+        "subject": "Capital",
+        "value": 0
+    },
+    {
+        "componentName": "Cost",
+        "functionName": "Move",
+        "level": 6,
+        "object": "Food",
+        "subject": "Capital",
+        "value": 0
+    },
+    {
+        "componentName": "Cooldown",
+        "functionName": "Chaos",
+        "level": 6,
+        "object": "",
+        "subject": "Capital",
+        "value": 900
     },
     {
         "componentName": "Reward",
@@ -2349,7 +2781,7 @@
         "level": 1,
         "object": "Gold",
         "subject": "Barbarian",
-        "value": 84635
+        "value": 70105
     },
     {
         "componentName": "Reward",
@@ -2357,7 +2789,7 @@
         "level": 1,
         "object": "Food",
         "subject": "Barbarian",
-        "value": 119571
+        "value": 109820
     },
     {
         "componentName": "Amount",
@@ -2365,7 +2797,7 @@
         "level": 1,
         "object": "Guard",
         "subject": "Barbarian",
-        "value": 29
+        "value": 27
     },
     {
         "componentName": "Reward",
@@ -2373,7 +2805,7 @@
         "level": 2,
         "object": "Gold",
         "subject": "Barbarian",
-        "value": 209183
+        "value": 160000
     },
     {
         "componentName": "Reward",
@@ -2381,7 +2813,7 @@
         "level": 2,
         "object": "Food",
         "subject": "Barbarian",
-        "value": 181097
+        "value": 160000
     },
     {
         "componentName": "Amount",
@@ -2389,7 +2821,7 @@
         "level": 2,
         "object": "Guard",
         "subject": "Barbarian",
-        "value": 45
+        "value": 40
     },
     {
         "componentName": "Reward",
@@ -2397,7 +2829,7 @@
         "level": 3,
         "object": "Gold",
         "subject": "Barbarian",
-        "value": 411740
+        "value": 299382
     },
     {
         "componentName": "Reward",
@@ -2405,7 +2837,7 @@
         "level": 3,
         "object": "Food",
         "subject": "Barbarian",
-        "value": 248128
+        "value": 213894
     },
     {
         "componentName": "Amount",
@@ -2413,7 +2845,7 @@
         "level": 3,
         "object": "Guard",
         "subject": "Barbarian",
-        "value": 62
+        "value": 53
     },
     {
         "componentName": "Reward",
@@ -2421,7 +2853,7 @@
         "level": 4,
         "object": "Gold",
         "subject": "Barbarian",
-        "value": 715532
+        "value": 500450
     },
     {
         "componentName": "Reward",
@@ -2429,7 +2861,7 @@
         "level": 4,
         "object": "Food",
         "subject": "Barbarian",
-        "value": 321159
+        "value": 271780
     },
     {
         "componentName": "Amount",
@@ -2437,12 +2869,36 @@
         "level": 4,
         "object": "Guard",
         "subject": "Barbarian",
-        "value": 80
+        "value": 67
     },
     {
         "componentName": "Reward",
         "functionName": "",
         "level": 5,
+        "object": "Gold",
+        "subject": "Barbarian",
+        "value": 777954
+    },
+    {
+        "componentName": "Reward",
+        "functionName": "",
+        "level": 5,
+        "object": "Food",
+        "subject": "Barbarian",
+        "value": 333951
+    },
+    {
+        "componentName": "Amount",
+        "functionName": "",
+        "level": 5,
+        "object": "Guard",
+        "subject": "Barbarian",
+        "value": 83
+    },
+    {
+        "componentName": "Reward",
+        "functionName": "",
+        "level": 6,
         "object": "Gold",
         "subject": "Barbarian",
         "value": 1149700
@@ -2450,7 +2906,7 @@
     {
         "componentName": "Reward",
         "functionName": "",
-        "level": 5,
+        "level": 6,
         "object": "Food",
         "subject": "Barbarian",
         "value": 400725
@@ -2458,7 +2914,7 @@
     {
         "componentName": "Amount",
         "functionName": "",
-        "level": 5,
+        "level": 6,
         "object": "Guard",
         "subject": "Barbarian",
         "value": 100
@@ -2466,34 +2922,10 @@
     {
         "componentName": "Reward",
         "functionName": "",
-        "level": 6,
-        "object": "Gold",
-        "subject": "Barbarian",
-        "value": 1750719
-    },
-    {
-        "componentName": "Reward",
-        "functionName": "",
-        "level": 6,
-        "object": "Food",
-        "subject": "Barbarian",
-        "value": 487413
-    },
-    {
-        "componentName": "Amount",
-        "functionName": "",
-        "level": 6,
-        "object": "Guard",
-        "subject": "Barbarian",
-        "value": 121
-    },
-    {
-        "componentName": "Reward",
-        "functionName": "",
         "level": 7,
         "object": "Gold",
         "subject": "Barbarian",
-        "value": 2564151
+        "value": 1637155
     },
     {
         "componentName": "Reward",
@@ -2501,7 +2933,7 @@
         "level": 7,
         "object": "Food",
         "subject": "Barbarian",
-        "value": 581858
+        "value": 472444
     },
     {
         "componentName": "Amount",
@@ -2509,7 +2941,7 @@
         "level": 7,
         "object": "Guard",
         "subject": "Barbarian",
-        "value": 145
+        "value": 118
     },
     {
         "componentName": "Reward",
@@ -2517,7 +2949,7 @@
         "level": 8,
         "object": "Gold",
         "subject": "Barbarian",
-        "value": 3646811
+        "value": 2266157
     },
     {
         "componentName": "Reward",
@@ -2525,7 +2957,7 @@
         "level": 8,
         "object": "Food",
         "subject": "Barbarian",
-        "value": 684756
+        "value": 549473
     },
     {
         "componentName": "Amount",
@@ -2533,7 +2965,7 @@
         "level": 8,
         "object": "Guard",
         "subject": "Barbarian",
-        "value": 171
+        "value": 137
     },
     {
         "componentName": "Reward",
@@ -2541,7 +2973,7 @@
         "level": 9,
         "object": "Gold",
         "subject": "Barbarian",
-        "value": 5069433
+        "value": 3067768
     },
     {
         "componentName": "Reward",
@@ -2549,7 +2981,7 @@
         "level": 9,
         "object": "Food",
         "subject": "Barbarian",
-        "value": 796863
+        "value": 632205
     },
     {
         "componentName": "Amount",
@@ -2557,12 +2989,60 @@
         "level": 9,
         "object": "Guard",
         "subject": "Barbarian",
-        "value": 199
+        "value": 158
     },
     {
         "componentName": "Reward",
         "functionName": "",
         "level": 10,
+        "object": "Gold",
+        "subject": "Barbarian",
+        "value": 4079292
+    },
+    {
+        "componentName": "Reward",
+        "functionName": "",
+        "level": 10,
+        "object": "Food",
+        "subject": "Barbarian",
+        "value": 721062
+    },
+    {
+        "componentName": "Amount",
+        "functionName": "",
+        "level": 10,
+        "object": "Guard",
+        "subject": "Barbarian",
+        "value": 180
+    },
+    {
+        "componentName": "Reward",
+        "functionName": "",
+        "level": 11,
+        "object": "Gold",
+        "subject": "Barbarian",
+        "value": 5345477
+    },
+    {
+        "componentName": "Reward",
+        "functionName": "",
+        "level": 11,
+        "object": "Food",
+        "subject": "Barbarian",
+        "value": 816499
+    },
+    {
+        "componentName": "Amount",
+        "functionName": "",
+        "level": 11,
+        "object": "Guard",
+        "subject": "Barbarian",
+        "value": 204
+    },
+    {
+        "componentName": "Reward",
+        "functionName": "",
+        "level": 12,
         "object": "Gold",
         "subject": "Barbarian",
         "value": 6919960
@@ -2570,7 +3050,7 @@
     {
         "componentName": "Reward",
         "functionName": "",
-        "level": 10,
+        "level": 12,
         "object": "Food",
         "subject": "Barbarian",
         "value": 919002
@@ -2578,7 +3058,7 @@
     {
         "componentName": "Amount",
         "functionName": "",
-        "level": 10,
+        "level": 12,
         "object": "Guard",
         "subject": "Barbarian",
         "value": 229
@@ -2586,58 +3066,10 @@
     {
         "componentName": "Reward",
         "functionName": "",
-        "level": 11,
-        "object": "Gold",
-        "subject": "Barbarian",
-        "value": 9307598
-    },
-    {
-        "componentName": "Reward",
-        "functionName": "",
-        "level": 11,
-        "object": "Food",
-        "subject": "Barbarian",
-        "value": 1052073
-    },
-    {
-        "componentName": "Amount",
-        "functionName": "",
-        "level": 11,
-        "object": "Guard",
-        "subject": "Barbarian",
-        "value": 263
-    },
-    {
-        "componentName": "Reward",
-        "functionName": "",
-        "level": 12,
-        "object": "Gold",
-        "subject": "Barbarian",
-        "value": 12367812
-    },
-    {
-        "componentName": "Reward",
-        "functionName": "",
-        "level": 12,
-        "object": "Food",
-        "subject": "Barbarian",
-        "value": 1197053
-    },
-    {
-        "componentName": "Amount",
-        "functionName": "",
-        "level": 12,
-        "object": "Guard",
-        "subject": "Barbarian",
-        "value": 299
-    },
-    {
-        "componentName": "Reward",
-        "functionName": "",
         "level": 13,
         "object": "Gold",
         "subject": "Barbarian",
-        "value": 16268473
+        "value": 8866975
     },
     {
         "componentName": "Reward",
@@ -2645,7 +3077,7 @@
         "level": 13,
         "object": "Food",
         "subject": "Barbarian",
-        "value": 1355007
+        "value": 1029095
     },
     {
         "componentName": "Amount",
@@ -2653,7 +3085,7 @@
         "level": 13,
         "object": "Guard",
         "subject": "Barbarian",
-        "value": 338
+        "value": 257
     },
     {
         "componentName": "Reward",
@@ -2661,7 +3093,7 @@
         "level": 14,
         "object": "Gold",
         "subject": "Barbarian",
-        "value": 21217439
+        "value": 11263391
     },
     {
         "componentName": "Reward",
@@ -2669,7 +3101,7 @@
         "level": 14,
         "object": "Food",
         "subject": "Barbarian",
-        "value": 1527098
+        "value": 1147339
     },
     {
         "componentName": "Amount",
@@ -2677,12 +3109,84 @@
         "level": 14,
         "object": "Guard",
         "subject": "Barbarian",
-        "value": 381
+        "value": 286
     },
     {
         "componentName": "Reward",
         "functionName": "",
         "level": 15,
+        "object": "Gold",
+        "subject": "Barbarian",
+        "value": 14201133
+    },
+    {
+        "componentName": "Reward",
+        "functionName": "",
+        "level": 15,
+        "object": "Food",
+        "subject": "Barbarian",
+        "value": 1274338
+    },
+    {
+        "componentName": "Amount",
+        "functionName": "",
+        "level": 15,
+        "object": "Guard",
+        "subject": "Barbarian",
+        "value": 318
+    },
+    {
+        "componentName": "Reward",
+        "functionName": "",
+        "level": 16,
+        "object": "Gold",
+        "subject": "Barbarian",
+        "value": 17790065
+    },
+    {
+        "componentName": "Reward",
+        "functionName": "",
+        "level": 16,
+        "object": "Food",
+        "subject": "Barbarian",
+        "value": 1410740
+    },
+    {
+        "componentName": "Amount",
+        "functionName": "",
+        "level": 16,
+        "object": "Guard",
+        "subject": "Barbarian",
+        "value": 352
+    },
+    {
+        "componentName": "Reward",
+        "functionName": "",
+        "level": 17,
+        "object": "Gold",
+        "subject": "Barbarian",
+        "value": 22161421
+    },
+    {
+        "componentName": "Reward",
+        "functionName": "",
+        "level": 17,
+        "object": "Food",
+        "subject": "Barbarian",
+        "value": 1557241
+    },
+    {
+        "componentName": "Amount",
+        "functionName": "",
+        "level": 17,
+        "object": "Guard",
+        "subject": "Barbarian",
+        "value": 389
+    },
+    {
+        "componentName": "Reward",
+        "functionName": "",
+        "level": 18,
         "object": "Gold",
         "subject": "Barbarian",
         "value": 27471875
@@ -2690,7 +3194,7 @@
     {
         "componentName": "Reward",
         "functionName": "",
-        "level": 15,
+        "level": 18,
         "object": "Food",
         "subject": "Barbarian",
         "value": 1714590
@@ -2698,7 +3202,7 @@
     {
         "componentName": "Amount",
         "functionName": "",
-        "level": 15,
+        "level": 18,
         "object": "Guard",
         "subject": "Barbarian",
         "value": 428
@@ -2706,7 +3210,7 @@
     {
         "componentName": "LastRecovered",
         "functionName": "",
-        "level": 15,
+        "level": 18,
         "object": "",
         "subject": "SuperTile",
         "value": 0
@@ -2733,7 +3237,7 @@
         "level": 0,
         "object": "Gold",
         "subject": "Tile",
-        "value": 20307
+        "value": 16916
     },
     {
         "componentName": "Cost",
@@ -2741,7 +3245,7 @@
         "level": 0,
         "object": "Food",
         "subject": "Tile",
-        "value": 324912
+        "value": 270659
     },
     {
         "componentName": "Cooldown",
@@ -2757,7 +3261,7 @@
         "level": 1,
         "object": "Guard",
         "subject": "Tile",
-        "value": 44
+        "value": 41
     },
     {
         "componentName": "Cooldown",
@@ -2765,7 +3269,7 @@
         "level": 1,
         "object": "",
         "subject": "Tile",
-        "value": 17
+        "value": 16
     },
     {
         "componentName": "Cost",
@@ -2773,7 +3277,7 @@
         "level": 1,
         "object": "Gold",
         "subject": "Tile",
-        "value": 22124
+        "value": 18168
     },
     {
         "componentName": "Cost",
@@ -2781,7 +3285,7 @@
         "level": 1,
         "object": "Food",
         "subject": "Tile",
-        "value": 353990
+        "value": 290699
     },
     {
         "componentName": "Cooldown",
@@ -2789,7 +3293,7 @@
         "level": 1,
         "object": "",
         "subject": "Tile",
-        "value": 17
+        "value": 16
     },
     {
         "componentName": "Amount",
@@ -2797,7 +3301,7 @@
         "level": 2,
         "object": "Guard",
         "subject": "Tile",
-        "value": 67
+        "value": 60
     },
     {
         "componentName": "Cooldown",
@@ -2805,7 +3309,7 @@
         "level": 2,
         "object": "",
         "subject": "Tile",
-        "value": 27
+        "value": 24
     },
     {
         "componentName": "Cost",
@@ -2813,7 +3317,7 @@
         "level": 2,
         "object": "Gold",
         "subject": "Tile",
-        "value": 24104
+        "value": 19513
     },
     {
         "componentName": "Cost",
@@ -2821,7 +3325,7 @@
         "level": 2,
         "object": "Food",
         "subject": "Tile",
-        "value": 385671
+        "value": 312223
     },
     {
         "componentName": "Cooldown",
@@ -2829,7 +3333,7 @@
         "level": 2,
         "object": "",
         "subject": "Tile",
-        "value": 27
+        "value": 24
     },
     {
         "componentName": "Amount",
@@ -2837,7 +3341,7 @@
         "level": 3,
         "object": "Guard",
         "subject": "Tile",
-        "value": 93
+        "value": 80
     },
     {
         "componentName": "Cooldown",
@@ -2845,7 +3349,7 @@
         "level": 3,
         "object": "",
         "subject": "Tile",
-        "value": 37
+        "value": 32
     },
     {
         "componentName": "Cost",
@@ -2853,7 +3357,7 @@
         "level": 3,
         "object": "Gold",
         "subject": "Tile",
-        "value": 26261
+        "value": 20958
     },
     {
         "componentName": "Cost",
@@ -2861,7 +3365,7 @@
         "level": 3,
         "object": "Food",
         "subject": "Tile",
-        "value": 420186
+        "value": 335340
     },
     {
         "componentName": "Cooldown",
@@ -2869,7 +3373,7 @@
         "level": 3,
         "object": "",
         "subject": "Tile",
-        "value": 37
+        "value": 32
     },
     {
         "componentName": "Amount",
@@ -2877,7 +3381,7 @@
         "level": 4,
         "object": "Guard",
         "subject": "Tile",
-        "value": 120
+        "value": 101
     },
     {
         "componentName": "Cooldown",
@@ -2885,7 +3389,7 @@
         "level": 4,
         "object": "",
         "subject": "Tile",
-        "value": 48
+        "value": 40
     },
     {
         "componentName": "Cost",
@@ -2893,7 +3397,7 @@
         "level": 4,
         "object": "Gold",
         "subject": "Tile",
-        "value": 28611
+        "value": 22510
     },
     {
         "componentName": "Cost",
@@ -2901,7 +3405,7 @@
         "level": 4,
         "object": "Food",
         "subject": "Tile",
-        "value": 457791
+        "value": 360169
     },
     {
         "componentName": "Cooldown",
@@ -2909,12 +3413,52 @@
         "level": 4,
         "object": "",
         "subject": "Tile",
-        "value": 48
+        "value": 40
     },
     {
         "componentName": "Amount",
         "functionName": "",
         "level": 5,
+        "object": "Guard",
+        "subject": "Tile",
+        "value": 125
+    },
+    {
+        "componentName": "Cooldown",
+        "functionName": "Recover",
+        "level": 5,
+        "object": "",
+        "subject": "Tile",
+        "value": 50
+    },
+    {
+        "componentName": "Cost",
+        "functionName": "Upgrade",
+        "level": 5,
+        "object": "Gold",
+        "subject": "Tile",
+        "value": 24177
+    },
+    {
+        "componentName": "Cost",
+        "functionName": "Upgrade",
+        "level": 5,
+        "object": "Food",
+        "subject": "Tile",
+        "value": 386837
+    },
+    {
+        "componentName": "Cooldown",
+        "functionName": "Upgrade",
+        "level": 5,
+        "object": "",
+        "subject": "Tile",
+        "value": 50
+    },
+    {
+        "componentName": "Amount",
+        "functionName": "",
+        "level": 6,
         "object": "Guard",
         "subject": "Tile",
         "value": 150
@@ -2922,7 +3466,7 @@
     {
         "componentName": "Cooldown",
         "functionName": "Recover",
-        "level": 5,
+        "level": 6,
         "object": "",
         "subject": "Tile",
         "value": 60
@@ -2930,23 +3474,23 @@
     {
         "componentName": "Cost",
         "functionName": "Upgrade",
-        "level": 5,
+        "level": 6,
         "object": "Gold",
         "subject": "Tile",
-        "value": 31172
+        "value": 25967
     },
     {
         "componentName": "Cost",
         "functionName": "Upgrade",
-        "level": 5,
+        "level": 6,
         "object": "Food",
         "subject": "Tile",
-        "value": 498761
+        "value": 415479
     },
     {
         "componentName": "Cooldown",
         "functionName": "Upgrade",
-        "level": 5,
+        "level": 6,
         "object": "",
         "subject": "Tile",
         "value": 60
@@ -2954,50 +3498,10 @@
     {
         "componentName": "Amount",
         "functionName": "",
-        "level": 6,
-        "object": "Guard",
-        "subject": "Tile",
-        "value": 182
-    },
-    {
-        "componentName": "Cooldown",
-        "functionName": "Recover",
-        "level": 6,
-        "object": "",
-        "subject": "Tile",
-        "value": 73
-    },
-    {
-        "componentName": "Cost",
-        "functionName": "Upgrade",
-        "level": 6,
-        "object": "Gold",
-        "subject": "Tile",
-        "value": 33962
-    },
-    {
-        "componentName": "Cost",
-        "functionName": "Upgrade",
-        "level": 6,
-        "object": "Food",
-        "subject": "Tile",
-        "value": 543398
-    },
-    {
-        "componentName": "Cooldown",
-        "functionName": "Upgrade",
-        "level": 6,
-        "object": "",
-        "subject": "Tile",
-        "value": 73
-    },
-    {
-        "componentName": "Amount",
-        "functionName": "",
         "level": 7,
         "object": "Guard",
         "subject": "Tile",
-        "value": 218
+        "value": 177
     },
     {
         "componentName": "Cooldown",
@@ -3005,7 +3509,7 @@
         "level": 7,
         "object": "",
         "subject": "Tile",
-        "value": 87
+        "value": 70
     },
     {
         "componentName": "Cost",
@@ -3013,7 +3517,7 @@
         "level": 7,
         "object": "Gold",
         "subject": "Tile",
-        "value": 37001
+        "value": 27890
     },
     {
         "componentName": "Cost",
@@ -3021,7 +3525,7 @@
         "level": 7,
         "object": "Food",
         "subject": "Tile",
-        "value": 592029
+        "value": 446241
     },
     {
         "componentName": "Cooldown",
@@ -3029,7 +3533,7 @@
         "level": 7,
         "object": "",
         "subject": "Tile",
-        "value": 87
+        "value": 70
     },
     {
         "componentName": "Amount",
@@ -3037,7 +3541,7 @@
         "level": 8,
         "object": "Guard",
         "subject": "Tile",
-        "value": 256
+        "value": 206
     },
     {
         "componentName": "Cooldown",
@@ -3045,7 +3549,7 @@
         "level": 8,
         "object": "",
         "subject": "Tile",
-        "value": 102
+        "value": 82
     },
     {
         "componentName": "Cost",
@@ -3053,7 +3557,7 @@
         "level": 8,
         "object": "Gold",
         "subject": "Tile",
-        "value": 40313
+        "value": 29955
     },
     {
         "componentName": "Cost",
@@ -3061,7 +3565,7 @@
         "level": 8,
         "object": "Food",
         "subject": "Tile",
-        "value": 645013
+        "value": 479282
     },
     {
         "componentName": "Cooldown",
@@ -3069,7 +3573,7 @@
         "level": 8,
         "object": "",
         "subject": "Tile",
-        "value": 102
+        "value": 82
     },
     {
         "componentName": "Amount",
@@ -3077,7 +3581,7 @@
         "level": 9,
         "object": "Guard",
         "subject": "Tile",
-        "value": 298
+        "value": 237
     },
     {
         "componentName": "Cooldown",
@@ -3085,7 +3589,7 @@
         "level": 9,
         "object": "",
         "subject": "Tile",
-        "value": 119
+        "value": 94
     },
     {
         "componentName": "Cost",
@@ -3093,7 +3597,7 @@
         "level": 9,
         "object": "Gold",
         "subject": "Tile",
-        "value": 43921
+        "value": 32173
     },
     {
         "componentName": "Cost",
@@ -3101,7 +3605,7 @@
         "level": 9,
         "object": "Food",
         "subject": "Tile",
-        "value": 702738
+        "value": 514769
     },
     {
         "componentName": "Cooldown",
@@ -3109,12 +3613,92 @@
         "level": 9,
         "object": "",
         "subject": "Tile",
-        "value": 119
+        "value": 94
     },
     {
         "componentName": "Amount",
         "functionName": "",
         "level": 10,
+        "object": "Guard",
+        "subject": "Tile",
+        "value": 270
+    },
+    {
+        "componentName": "Cooldown",
+        "functionName": "Recover",
+        "level": 10,
+        "object": "",
+        "subject": "Tile",
+        "value": 108
+    },
+    {
+        "componentName": "Cost",
+        "functionName": "Upgrade",
+        "level": 10,
+        "object": "Gold",
+        "subject": "Tile",
+        "value": 34555
+    },
+    {
+        "componentName": "Cost",
+        "functionName": "Upgrade",
+        "level": 10,
+        "object": "Food",
+        "subject": "Tile",
+        "value": 552883
+    },
+    {
+        "componentName": "Cooldown",
+        "functionName": "Upgrade",
+        "level": 10,
+        "object": "",
+        "subject": "Tile",
+        "value": 108
+    },
+    {
+        "componentName": "Amount",
+        "functionName": "",
+        "level": 11,
+        "object": "Guard",
+        "subject": "Tile",
+        "value": 306
+    },
+    {
+        "componentName": "Cooldown",
+        "functionName": "Recover",
+        "level": 11,
+        "object": "",
+        "subject": "Tile",
+        "value": 122
+    },
+    {
+        "componentName": "Cost",
+        "functionName": "Upgrade",
+        "level": 11,
+        "object": "Gold",
+        "subject": "Tile",
+        "value": 37113
+    },
+    {
+        "componentName": "Cost",
+        "functionName": "Upgrade",
+        "level": 11,
+        "object": "Food",
+        "subject": "Tile",
+        "value": 593819
+    },
+    {
+        "componentName": "Cooldown",
+        "functionName": "Upgrade",
+        "level": 11,
+        "object": "",
+        "subject": "Tile",
+        "value": 122
+    },
+    {
+        "componentName": "Amount",
+        "functionName": "",
+        "level": 12,
         "object": "Guard",
         "subject": "Tile",
         "value": 344
@@ -3122,7 +3706,7 @@
     {
         "componentName": "Cooldown",
         "functionName": "Recover",
-        "level": 10,
+        "level": 12,
         "object": "",
         "subject": "Tile",
         "value": 137
@@ -3130,23 +3714,23 @@
     {
         "componentName": "Cost",
         "functionName": "Upgrade",
-        "level": 10,
+        "level": 12,
         "object": "Gold",
         "subject": "Tile",
-        "value": 47851
+        "value": 39861
     },
     {
         "componentName": "Cost",
         "functionName": "Upgrade",
-        "level": 10,
+        "level": 12,
         "object": "Food",
         "subject": "Tile",
-        "value": 765630
+        "value": 637786
     },
     {
         "componentName": "Cooldown",
         "functionName": "Upgrade",
-        "level": 10,
+        "level": 12,
         "object": "",
         "subject": "Tile",
         "value": 137
@@ -3154,90 +3738,10 @@
     {
         "componentName": "Amount",
         "functionName": "",
-        "level": 11,
-        "object": "Guard",
-        "subject": "Tile",
-        "value": 394
-    },
-    {
-        "componentName": "Cooldown",
-        "functionName": "Recover",
-        "level": 11,
-        "object": "",
-        "subject": "Tile",
-        "value": 157
-    },
-    {
-        "componentName": "Cost",
-        "functionName": "Upgrade",
-        "level": 11,
-        "object": "Gold",
-        "subject": "Tile",
-        "value": 52134
-    },
-    {
-        "componentName": "Cost",
-        "functionName": "Upgrade",
-        "level": 11,
-        "object": "Food",
-        "subject": "Tile",
-        "value": 834150
-    },
-    {
-        "componentName": "Cooldown",
-        "functionName": "Upgrade",
-        "level": 11,
-        "object": "",
-        "subject": "Tile",
-        "value": 157
-    },
-    {
-        "componentName": "Amount",
-        "functionName": "",
-        "level": 12,
-        "object": "Guard",
-        "subject": "Tile",
-        "value": 448
-    },
-    {
-        "componentName": "Cooldown",
-        "functionName": "Recover",
-        "level": 12,
-        "object": "",
-        "subject": "Tile",
-        "value": 179
-    },
-    {
-        "componentName": "Cost",
-        "functionName": "Upgrade",
-        "level": 12,
-        "object": "Gold",
-        "subject": "Tile",
-        "value": 56800
-    },
-    {
-        "componentName": "Cost",
-        "functionName": "Upgrade",
-        "level": 12,
-        "object": "Food",
-        "subject": "Tile",
-        "value": 908802
-    },
-    {
-        "componentName": "Cooldown",
-        "functionName": "Upgrade",
-        "level": 12,
-        "object": "",
-        "subject": "Tile",
-        "value": 179
-    },
-    {
-        "componentName": "Amount",
-        "functionName": "",
         "level": 13,
         "object": "Guard",
         "subject": "Tile",
-        "value": 508
+        "value": 385
     },
     {
         "componentName": "Cooldown",
@@ -3245,7 +3749,7 @@
         "level": 13,
         "object": "",
         "subject": "Tile",
-        "value": 203
+        "value": 154
     },
     {
         "componentName": "Cost",
@@ -3253,7 +3757,7 @@
         "level": 13,
         "object": "Gold",
         "subject": "Tile",
-        "value": 61883
+        "value": 42813
     },
     {
         "componentName": "Cost",
@@ -3261,7 +3765,7 @@
         "level": 13,
         "object": "Food",
         "subject": "Tile",
-        "value": 990136
+        "value": 685009
     },
     {
         "componentName": "Cooldown",
@@ -3269,7 +3773,7 @@
         "level": 13,
         "object": "",
         "subject": "Tile",
-        "value": 203
+        "value": 154
     },
     {
         "componentName": "Amount",
@@ -3277,7 +3781,7 @@
         "level": 14,
         "object": "Guard",
         "subject": "Tile",
-        "value": 572
+        "value": 430
     },
     {
         "componentName": "Cooldown",
@@ -3285,7 +3789,7 @@
         "level": 14,
         "object": "",
         "subject": "Tile",
-        "value": 229
+        "value": 172
     },
     {
         "componentName": "Cost",
@@ -3293,7 +3797,7 @@
         "level": 14,
         "object": "Gold",
         "subject": "Tile",
-        "value": 67421
+        "value": 45983
     },
     {
         "componentName": "Cost",
@@ -3301,7 +3805,7 @@
         "level": 14,
         "object": "Food",
         "subject": "Tile",
-        "value": 1078748
+        "value": 735728
     },
     {
         "componentName": "Cooldown",
@@ -3309,12 +3813,132 @@
         "level": 14,
         "object": "",
         "subject": "Tile",
-        "value": 229
+        "value": 172
     },
     {
         "componentName": "Amount",
         "functionName": "",
         "level": 15,
+        "object": "Guard",
+        "subject": "Tile",
+        "value": 477
+    },
+    {
+        "componentName": "Cooldown",
+        "functionName": "Recover",
+        "level": 15,
+        "object": "",
+        "subject": "Tile",
+        "value": 191
+    },
+    {
+        "componentName": "Cost",
+        "functionName": "Upgrade",
+        "level": 15,
+        "object": "Gold",
+        "subject": "Tile",
+        "value": 49387
+    },
+    {
+        "componentName": "Cost",
+        "functionName": "Upgrade",
+        "level": 15,
+        "object": "Food",
+        "subject": "Tile",
+        "value": 790202
+    },
+    {
+        "componentName": "Cooldown",
+        "functionName": "Upgrade",
+        "level": 15,
+        "object": "",
+        "subject": "Tile",
+        "value": 191
+    },
+    {
+        "componentName": "Amount",
+        "functionName": "",
+        "level": 16,
+        "object": "Guard",
+        "subject": "Tile",
+        "value": 529
+    },
+    {
+        "componentName": "Cooldown",
+        "functionName": "Recover",
+        "level": 16,
+        "object": "",
+        "subject": "Tile",
+        "value": 211
+    },
+    {
+        "componentName": "Cost",
+        "functionName": "Upgrade",
+        "level": 16,
+        "object": "Gold",
+        "subject": "Tile",
+        "value": 53044
+    },
+    {
+        "componentName": "Cost",
+        "functionName": "Upgrade",
+        "level": 16,
+        "object": "Food",
+        "subject": "Tile",
+        "value": 848710
+    },
+    {
+        "componentName": "Cooldown",
+        "functionName": "Upgrade",
+        "level": 16,
+        "object": "",
+        "subject": "Tile",
+        "value": 211
+    },
+    {
+        "componentName": "Amount",
+        "functionName": "",
+        "level": 17,
+        "object": "Guard",
+        "subject": "Tile",
+        "value": 583
+    },
+    {
+        "componentName": "Cooldown",
+        "functionName": "Recover",
+        "level": 17,
+        "object": "",
+        "subject": "Tile",
+        "value": 233
+    },
+    {
+        "componentName": "Cost",
+        "functionName": "Upgrade",
+        "level": 17,
+        "object": "Gold",
+        "subject": "Tile",
+        "value": 56971
+    },
+    {
+        "componentName": "Cost",
+        "functionName": "Upgrade",
+        "level": 17,
+        "object": "Food",
+        "subject": "Tile",
+        "value": 911550
+    },
+    {
+        "componentName": "Cooldown",
+        "functionName": "Upgrade",
+        "level": 17,
+        "object": "",
+        "subject": "Tile",
+        "value": 233
+    },
+    {
+        "componentName": "Amount",
+        "functionName": "",
+        "level": 18,
         "object": "Guard",
         "subject": "Tile",
         "value": 642
@@ -3322,7 +3946,7 @@
     {
         "componentName": "Cooldown",
         "functionName": "Recover",
-        "level": 15,
+        "level": 18,
         "object": "",
         "subject": "Tile",
         "value": 257
@@ -3333,7 +3957,7 @@
         "level": 1,
         "object": "Troop",
         "subject": "Army",
-        "value": 155
+        "value": 133
     },
     {
         "componentName": "Amount",
@@ -3349,7 +3973,7 @@
         "level": 2,
         "object": "Troop",
         "subject": "Army",
-        "value": 304
+        "value": 250
     },
     {
         "componentName": "Amount",
@@ -3365,7 +3989,7 @@
         "level": 3,
         "object": "Troop",
         "subject": "Army",
-        "value": 498
+        "value": 395
     },
     {
         "componentName": "Amount",
@@ -3381,7 +4005,7 @@
         "level": 4,
         "object": "Troop",
         "subject": "Army",
-        "value": 748
+        "value": 574
     },
     {
         "componentName": "Amount",
@@ -3397,7 +4021,7 @@
         "level": 5,
         "object": "Troop",
         "subject": "Army",
-        "value": 1071
+        "value": 796
     },
     {
         "componentName": "Amount",
@@ -3406,5 +4030,21 @@
         "object": "Tile",
         "subject": "Nation",
         "value": 41
+    },
+    {
+        "componentName": "Amount",
+        "functionName": "",
+        "level": 6,
+        "object": "Troop",
+        "subject": "Army",
+        "value": 1071
+    },
+    {
+        "componentName": "Amount",
+        "functionName": "",
+        "level": 6,
+        "object": "Tile",
+        "subject": "Nation",
+        "value": 51
     }
 ]

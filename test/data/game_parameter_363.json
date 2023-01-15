@@ -1,8 +1,8 @@
 {
-    "componentName": "Cooldown",
-    "functionName": "Upgrade",
-    "level": 4,
-    "object": "",
-    "subject": "Tile",
-    "value": 48
+    "componentName": "Reward",
+    "functionName": "",
+    "level": 6,
+    "object": "Food",
+    "subject": "Barbarian",
+    "value": 400725
 }

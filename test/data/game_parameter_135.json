@@ -1,8 +1,8 @@
 {
-    "componentName": "Cost",
-    "functionName": "Upgrade",
-    "level": 2,
-    "object": "Food",
-    "subject": "Farm",
-    "value": 11229
+    "componentName": "Load",
+    "functionName": "",
+    "level": 18,
+    "object": "Gold",
+    "subject": "Goldmine",
+    "value": 8814666
 }

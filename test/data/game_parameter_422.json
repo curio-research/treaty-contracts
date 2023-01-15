@@ -2,7 +2,7 @@
     "componentName": "Amount",
     "functionName": "",
     "level": 4,
-    "object": "Troop",
-    "subject": "Army",
-    "value": 748
+    "object": "Guard",
+    "subject": "Tile",
+    "value": 101
 }

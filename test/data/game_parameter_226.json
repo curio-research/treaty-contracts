@@ -1,8 +1,8 @@
 {
-    "componentName": "Yield",
-    "functionName": "",
-    "level": 0,
+    "componentName": "Cost",
+    "functionName": "Upgrade",
+    "level": 12,
     "object": "Food",
-    "subject": "Capital",
-    "value": 2249
+    "subject": "Farm",
+    "value": 8835064
 }

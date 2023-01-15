@@ -1,8 +1,8 @@
 {
-    "componentName": "LastRecovered",
-    "functionName": "",
-    "level": 15,
+    "componentName": "Cooldown",
+    "functionName": "Chaos",
+    "level": 5,
     "object": "",
-    "subject": "SuperTile",
-    "value": 0
+    "subject": "Capital",
+    "value": 900
 }
