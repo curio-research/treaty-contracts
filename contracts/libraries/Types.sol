@@ -5,6 +5,11 @@ import {Component} from "contracts/Component.sol";
 
 /// Data structures for game
 
+struct U256 {
+    uint256 value;
+    uint256 next;
+}
+
 enum ValueType {
     UINT,
     STRING,
@@ -21,9 +26,7 @@ enum QueryType {
     Has,
     HasNot,
     IsExactly,
-    IsNot,
-    ProxyRead,
-    ProxyExpand
+    IsNot
 }
 
 enum GameMode {
