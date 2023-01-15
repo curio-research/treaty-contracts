@@ -14,19 +14,19 @@ contract CollectiveDefenseFund is CurioTreaty {
     CurioERC20 public foodToken;
 
     // Treaty-specific data
-    uint256 public goldFee = 100;
-    uint256 public foodFee = 100;
+    uint256 public goldFee = 10000;
+    uint256 public foodFee = 10000;
     uint256 public withdrawTimeInterval = 86400;
     uint256 public depositTimeInterval = 86400;
-    uint256 public goldWithdrawQuota = 50;
-    uint256 public foodWithdrawQuota = 50;
+    uint256 public goldWithdrawQuota = 5000;
+    uint256 public foodWithdrawQuota = 5000;
     mapping(uint256 => uint256) public lastPaid; // nationID => timestamp
     mapping(uint256 => uint256) public lastWithdrawn; // nationID => timestamp
     Set public council;
 
     modifier onlyCouncilOrPact() {
         uint256 callerID = getter.getEntityByAddress(msg.sender);
-        require(council.includes(callerID) || msg.sender == address(this), "NAPact: Only council or pact can call");
+        require(council.includes(callerID) || msg.sender == address(this), "CDFund: Only council or pact can call");
         _;
     }
 
@@ -55,6 +55,7 @@ contract CollectiveDefenseFund is CurioTreaty {
     }
 
     function addToCouncil(uint256 _nationID) public onlyOwner {
+        require(getter.getNationTreatySignature(_nationID, getter.getEntityByAddress(address(this))) != 0, "CDFund: Only signed nations can join council");
         council.add(_nationID);
     }
 
@@ -95,7 +96,7 @@ contract CollectiveDefenseFund is CurioTreaty {
 
         // Check and update last withdrawn time
         uint256 nationID = getter.getEntityByAddress(msg.sender);
-        require(block.timestamp - lastWithdrawn[nationID] > withdrawTimeInterval, "CDFund: Last withdrawal was too soon");
+        require(block.timestamp > lastWithdrawn[nationID] + withdrawTimeInterval, "CDFund: Last withdrawal was too soon");
         lastWithdrawn[nationID] = block.timestamp;
 
         // Withdraw
@@ -110,7 +111,7 @@ contract CollectiveDefenseFund is CurioTreaty {
         uint256[] memory signers = getter.getTreatySigners(treatyID);
 
         for (uint256 i = 0; i < signers.length; i++) {
-            if (block.timestamp > depositTimeInterval + lastPaid[signers[i]]) {
+            if (block.timestamp > lastPaid[signers[i]] + depositTimeInterval) {
                 removeMember(signers[i]);
             }
         }
@@ -124,20 +125,20 @@ contract CollectiveDefenseFund is CurioTreaty {
     ) external onlyCouncilOrPact {
         // Check that withdrawal amount is within quota
         if (_strEq(_resourceType, "Gold")) {
-            require(_amount < goldWithdrawQuota, "CDFund: Amount exceeds quota");
+            require(_amount <= goldWithdrawQuota, "CDFund: Amount exceeds quota");
         } else if (_strEq(_resourceType, "Food")) {
-            require(_amount < foodWithdrawQuota, "CDFund: Amount exceeds quota");
+            require(_amount <= foodWithdrawQuota, "CDFund: Amount exceeds quota");
         } else {
             revert("CDFund: Invalid resource type");
         }
 
         // Check address is not null
-        address toAddr = getter.getAddress(_toID);
-        require(toAddr != address(0), "CDFund: Invalid address");
+        address to = getter.getAddress(_toID);
+        require(to != address(0), "CDFund: Invalid address");
 
         // Transfer
         CurioERC20 token = getter.getTokenContract(_resourceType);
-        token.transfer(toAddr, _amount);
+        token.transfer(to, _amount);
     }
 
     // ----------------------------------------------------------
@@ -162,7 +163,7 @@ contract CollectiveDefenseFund is CurioTreaty {
         uint256 nationID = getter.getEntityByAddress(msg.sender);
         uint256 treatyID = getter.getEntityByAddress(address(this));
         uint256 nationJoinTime = abi.decode(getter.getComponent("InitTimestamp").getBytesValue(getter.getNationTreatySignature(nationID, treatyID)), (uint256));
-        require(block.timestamp - nationJoinTime >= 10, "NAPact: Nation must stay for at least 10 seconds");
+        require(block.timestamp >= nationJoinTime + 10, "NAPact: Nation must stay for at least 10 seconds");
 
         // Remove nation from council
         council.remove(nationID);
@@ -174,10 +175,11 @@ contract CollectiveDefenseFund is CurioTreaty {
         super.treatyLeave();
     }
 
+    /// @notice Can pay between half and full deposit interval
     function payMembershipFee() external onlySigner {
         // Check last paid time
         uint256 nationID = getter.getEntityByAddress(msg.sender);
-        require(block.timestamp - lastPaid[nationID] > depositTimeInterval, "CDFund: Last payment was too soon");
+        require(block.timestamp > lastPaid[nationID] + depositTimeInterval / 2, "CDFund: Last payment was too soon");
 
         _payFeesHelper(nationID);
     }
