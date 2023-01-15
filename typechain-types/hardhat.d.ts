@@ -121,14 +121,6 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Embargo__factory>;
     getContractFactory(
-      name: "FTTERC20",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.FTTERC20__factory>;
-    getContractFactory(
-      name: "FTX",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.FTX__factory>;
-    getContractFactory(
       name: "HandshakeDeal",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.HandshakeDeal__factory>;
@@ -328,16 +320,6 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.Embargo>;
-    getContractAt(
-      name: "FTTERC20",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.FTTERC20>;
-    getContractAt(
-      name: "FTX",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.FTX>;
     getContractAt(
       name: "HandshakeDeal",
       address: string,

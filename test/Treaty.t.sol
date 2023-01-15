@@ -526,8 +526,11 @@ contract TreatyTest is Test, DiamondDeployTest {
         embargo.addToWhitelist(nation1ID);
         vm.stopPrank();
 
-        // Deployer registers embargo treaty & gives troops to p2
+        // Deployer registers embargo treaty & gives troops to p2 and resources to p1
         vm.startPrank(deployer);
+        admin.dripToken(nation1CapitalAddr, "Gold", 1000);
+        admin.dripToken(nation1CapitalAddr, "Food", 1000);
+
         admin.dripToken(nation2CapitalAddr, "Horseman", 1000);
         admin.dripToken(nation2CapitalAddr, "Warrior", 1000);
         admin.dripToken(nation2CapitalAddr, "Slinger", 1000);
@@ -573,6 +576,12 @@ contract TreatyTest is Test, DiamondDeployTest {
         CurioWallet(army21Addr).executeTx(address(goldToken), abi.encodeWithSignature("transfer(address,uint256)", nation1CapitalAddr, 10));
         vm.stopPrank();
 
+        // Player 2's capital fails to transfer food to player1's capital
+        vm.startPrank(player2);
+        vm.expectRevert();
+        CurioWallet(nation2CapitalAddr).executeTx(address(foodToken), abi.encodeWithSignature("transfer(address,uint256)", nation1CapitalAddr, 10));
+        vm.stopPrank();
+
         // Player1 removes himself from sanctionList, and then player2 can transfer
         vm.startPrank(player1);
         embargo.removeFromSanctionList(nation1ID);
@@ -580,6 +589,22 @@ contract TreatyTest is Test, DiamondDeployTest {
 
         vm.startPrank(player2);
         CurioWallet(army21Addr).executeTx(address(goldToken), abi.encodeWithSignature("transfer(address,uint256)", nation1CapitalAddr, 10));
+        vm.stopPrank();
+
+        // Player 1's capital transfers food to player 2's capital
+        vm.startPrank(player1);
+        CurioWallet(nation1CapitalAddr).executeTx(address(foodToken), abi.encodeWithSignature("transfer(address,uint256)", nation2CapitalAddr, 10));
+        vm.stopPrank();
+
+        // Player 1 sanctions player2
+        vm.startPrank(player1);
+        embargo.addToSanctionList(nation2ID);
+        vm.stopPrank();
+
+        // Player 1's capital fails to transfer food to player 2's capital
+        vm.startPrank(player1);
+        vm.expectRevert();
+        CurioWallet(nation1CapitalAddr).executeTx(address(foodToken), abi.encodeWithSignature("transfer(address,uint256)", nation2CapitalAddr, 10));
         vm.stopPrank();
     }
 
@@ -606,28 +631,28 @@ contract TreatyTest is Test, DiamondDeployTest {
         // Deployer registers NAPact treaty & assigns tokens to p1 and p2
         vm.startPrank(deployer);
         // admin.registerTreatyTemplate(address(collectiveDefenseFund), "placeholder ABI");
-        admin.dripToken(nation1CapitalAddr, "Gold", 1000);
-        admin.dripToken(nation1CapitalAddr, "Food", 1000);
+        admin.dripToken(nation1CapitalAddr, "Gold", 100000);
+        admin.dripToken(nation1CapitalAddr, "Food", 100000);
         admin.dripToken(nation2CapitalAddr, "Horseman", 1000);
         admin.dripToken(nation2CapitalAddr, "Warrior", 1000);
         admin.dripToken(nation2CapitalAddr, "Slinger", 1000);
-        admin.dripToken(nation2CapitalAddr, "Gold", 1000);
-        admin.dripToken(nation2CapitalAddr, "Food", 1000);
+        admin.dripToken(nation2CapitalAddr, "Gold", 100000);
+        admin.dripToken(nation2CapitalAddr, "Food", 100000);
 
         vm.stopPrank();
 
         // Player1 joins CDFund and whitelists player2.
         vm.startPrank(player1);
-        CurioWallet(nation1CapitalAddr).executeTx(address(goldToken), abi.encodeWithSignature("approve(address,uint256)", address(collectiveDefenseFund), 1000));
-        CurioWallet(nation1CapitalAddr).executeTx(address(foodToken), abi.encodeWithSignature("approve(address,uint256)", address(collectiveDefenseFund), 1000));
+        CurioWallet(nation1CapitalAddr).executeTx(address(goldToken), abi.encodeWithSignature("approve(address,uint256)", address(collectiveDefenseFund), 100000));
+        CurioWallet(nation1CapitalAddr).executeTx(address(foodToken), abi.encodeWithSignature("approve(address,uint256)", address(collectiveDefenseFund), 100000));
         collectiveDefenseFund.treatyJoin();
         collectiveDefenseFund.addToWhitelist(nation2ID);
         vm.stopPrank();
 
         // Player2 joins CDFund and attempts to attack Player1
         vm.startPrank(player2);
-        CurioWallet(nation2CapitalAddr).executeTx(address(goldToken), abi.encodeWithSignature("approve(address,uint256)", address(collectiveDefenseFund), 1000));
-        CurioWallet(nation2CapitalAddr).executeTx(address(foodToken), abi.encodeWithSignature("approve(address,uint256)", address(collectiveDefenseFund), 1000));
+        CurioWallet(nation2CapitalAddr).executeTx(address(goldToken), abi.encodeWithSignature("approve(address,uint256)", address(collectiveDefenseFund), 100000));
+        CurioWallet(nation2CapitalAddr).executeTx(address(foodToken), abi.encodeWithSignature("approve(address,uint256)", address(collectiveDefenseFund), 100000));
         collectiveDefenseFund.treatyJoin();
         uint256[] memory armyTemplateAmounts = new uint256[](3);
         armyTemplateAmounts[0] = 150;
@@ -670,6 +695,28 @@ contract TreatyTest is Test, DiamondDeployTest {
         // now that p2 is not in the league, he can battle p1
         vm.startPrank(player2);
         game.battle(army21ID, nation1CapitalTile);
+        vm.stopPrank();
+
+        // Check conditions
+        assertEq(goldToken.balanceOf(nation2CapitalAddr), 90000);
+        assertEq(foodToken.balanceOf(nation2CapitalAddr), 90000);
+        assertEq(goldToken.balanceOf(address(collectiveDefenseFund)), 10000 * 3 - 10);
+        assertEq(foodToken.balanceOf(address(collectiveDefenseFund)), 29990);
+
+        // p1 distributes 10 gold and 10 food to p2
+        vm.startPrank(player1);
+        collectiveDefenseFund.distributeFund(nation2CapitalID, "Gold", 10);
+        collectiveDefenseFund.distributeFund(nation2CapitalID, "Food", 10);
+        assertEq(goldToken.balanceOf(nation2CapitalAddr), 90010);
+        assertEq(foodToken.balanceOf(nation2CapitalAddr), 90010);
+        assertEq(goldToken.balanceOf(address(collectiveDefenseFund)), 29990 - 10);
+        assertEq(foodToken.balanceOf(address(collectiveDefenseFund)), 29980);
+        vm.stopPrank();
+
+        // p2 fails to distribute 10 gold to p2
+        vm.startPrank(player2);
+        vm.expectRevert("CDFund: Only council or pact can call");
+        collectiveDefenseFund.distributeFund(nation2CapitalID, "Gold", 10);
         vm.stopPrank();
     }
 
