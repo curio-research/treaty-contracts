@@ -260,6 +260,10 @@ contract GameTest is Test, DiamondDeployTest {
         admin.dripToken(nation1CapitalAddr, "Food", 1000000);
         admin.dripToken(nation1CapitalAddr, "Gold", 1000000);
 
+        admin.dripToken(nation2CapitalAddr, "Warrior", 1000);
+        admin.dripToken(nation2CapitalAddr, "Horseman", 1000);
+        admin.dripToken(nation2CapitalAddr, "Slinger", 1000);
+
         vm.stopPrank();
 
         // Nation 1 organize army
@@ -299,15 +303,20 @@ contract GameTest is Test, DiamondDeployTest {
         }
         assertEq(guardToken.balanceOf(targetTileAddress), 0);
 
-        vm.warp(time + 10);
         time += 10;
+        vm.warp(time);
         game.upgradeCapital(nation1CapitalID);
         game.claimTile(army11ID, targetTileID);
 
         assertEq(getter.getEntityLevel(nation1CapitalID), 2);
         assertEq(getter.getNation(targetTileID), nation1ID);
-
         vm.stopPrank();
+
+        // // Nation 2 organizes army and moves it to the tile
+        // vm.startPrank(player2);
+        // time += 10;
+        // vm.warp(time);
+        // uint256 army21ID = game.organizeArmy(nation2CapitalID, armyTemplateIDs, armyTemplateAmounts);
     }
 
     function testBattleCapitalChaos() public {
