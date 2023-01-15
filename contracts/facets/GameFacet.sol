@@ -245,9 +245,11 @@ contract GameFacet is UseStorage {
         // Verify that tile is next to own tile
         require(GameLib.isAdjacentToOwnTile(nationID, tilePosition), "CURIO: Can only claim contiguous tiles");
 
-        // Verify that no other movable entity is on tile
-        uint256[] memory movableEntitiesOnTile = GameLib.getArmiesAtTile(tilePosition);
-        require(movableEntitiesOnTile.length == 1 && movableEntitiesOnTile[0] == _armyID, "CURIO: Other movable entity on tile");
+        // Verify that all armies on tile belong to nation
+        uint256[] memory armiesOnTile = GameLib.getArmiesAtTile(tilePosition);
+        for (uint256 i = 0; i < armiesOnTile.length; i++) {
+            require(ECSLib.getUint("Nation", armiesOnTile[i]) == nationID, "CURIO: Cannot claim tile with enemy armies");
+        }
 
         // Transfer ownership of tile and initialize new guard
         ECSLib.setUint("Nation", _tileID, nationID);
@@ -576,6 +578,9 @@ contract GameFacet is UseStorage {
         // Capital at Chaos cannot organize an army
         GameLib.capitalSackRecoveryCheck(_capitalID);
 
+        // Check army cap
+        require(GameLib.getNationArmies(nationID).length < gs().worldConstants.maxArmyCountPerNation, "CURIO: Army cap reached");
+
         // Add army
         address armyAddress = address(new CurioWallet(address(this)));
         armyID = Templates.addArmy(2, 1, 2, gs().worldConstants.tileWidth, nationID, midPosition, tilePosition, armyAddress);
@@ -589,7 +594,7 @@ contract GameFacet is UseStorage {
 
         for (uint256 i = 0; i < _templateIDs.length; i++) {
             CurioERC20 troopToken = CurioERC20(ECSLib.getAddress("Address", _templateIDs[i]));
-            // require(tokenContract.balanceOf(msg.sender) >= _amounts[i], "CURIO: Need to produce more troops");
+            // require(tokenContract.balanceOf(msg.sender) >= _amounts[i], "CURIO: Need to produce more troops"); // FIXME: temporarily disabled this army load check
 
             load += ECSLib.getUint("Load", _templateIDs[i]) * _amounts[i];
             troopToken.transferFrom(capitalAddress, armyAddress, _amounts[i]);
