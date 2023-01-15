@@ -1,8 +1,8 @@
 {
     "componentName": "Cost",
     "functionName": "Upgrade",
-    "level": 8,
+    "level": 11,
     "object": "Food",
     "subject": "Farm",
-    "value": 3896120
+    "value": 202435
 }

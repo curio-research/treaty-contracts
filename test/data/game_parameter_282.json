@@ -1,8 +1,8 @@
 {
-    "componentName": "Load",
-    "functionName": "",
-    "level": 1,
-    "object": "Food",
+    "componentName": "Cost",
+    "functionName": "Move",
+    "level": 4,
+    "object": "Gold",
     "subject": "Capital",
-    "value": 16450666
+    "value": 1106
 }

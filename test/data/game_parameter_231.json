@@ -1,8 +1,8 @@
 {
-    "componentName": "Load",
-    "functionName": "",
-    "level": 13,
-    "object": "Food",
-    "subject": "Farm",
-    "value": 42378666
+    "componentName": "Cooldown",
+    "functionName": "Upgrade",
+    "level": 0,
+    "object": "",
+    "subject": "Capital",
+    "value": 1
 }
