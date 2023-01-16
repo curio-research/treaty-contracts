@@ -66,12 +66,12 @@ export const prepareLoadTest = async (input: LoadTestSetupInput, players: Wallet
   const numberOfCores = os.cpus().length;
   console.log(chalk.bgRed.yellow(`>>> Number of CPU cores: ${numberOfCores}`));
 
-  // Initialize each player with a city and some resources (sync, because player IDs are used for initializing armies in same order as players)
+  // Initialize each player with a city and some troops (sync, because player IDs are used for initializing armies in same order as players)
   let startTime = performance.now();
   const playerIds: number[] = [];
   const capitalIds: number[] = [];
   for (let i = 0; i < players.length; i++) {
-    console.log(chalk.bgRed.yellow.dim(`>>> Initializing player ${i} with city and resources`));
+    console.log(chalk.bgRed.yellow.dim(`>>> Initializing player ${i} with city and troops`));
     await (await diamond.connect(players[i]).joinGame({ x: i * TILE_WIDTH, y: 0 }, `Player ${i}`, { gasLimit })).wait();
     const playerId = (await diamond.getEntityByAddress(players[i].address)).toNumber();
     const capitalId = (await diamond.getCapital(playerId)).toNumber();
@@ -82,7 +82,7 @@ export const prepareLoadTest = async (input: LoadTestSetupInput, players: Wallet
   }
   console.log(chalk.bgRed.yellow(`>>> Players initialized with city after ${performance.now() - startTime} ms`));
 
-  // Create an army for each player after harvesting and log IDs (sync, because army IDs are used for sending load test txs)
+  // Create an army for each player and log IDs (sync, because army IDs are used for sending load test txs)
   startTime = performance.now();
   for (let i = 0; i < players.length; i++) {
     console.log(chalk.bgRed.yellow.dim(`>>> Creating army for player ${i}`));
