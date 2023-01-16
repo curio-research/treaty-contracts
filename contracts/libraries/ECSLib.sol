@@ -7,7 +7,6 @@ import {Set} from "contracts/Set.sol";
 import {UintBoolMapping} from "contracts/Mapping.sol";
 import {Component} from "contracts/Component.sol";
 import {AddressComponent, BoolComponent, IntComponent, PositionComponent, StringComponent, UintComponent, UintArrayComponent} from "contracts/TypedComponents.sol";
-import {QueryLib} from "contracts/libraries/QueryLib.sol";
 
 /// @title library of ECS utility functions
 
@@ -291,7 +290,46 @@ library ECSLib {
     // ----------------------------------------------------------
 
     function query(QueryCondition[] memory _queryConditions) public view returns (uint256[] memory) {
-        return QueryLib.query(_queryConditions);
+        require(_queryConditions.length > 0, "CURIO: Query must have at least one condition");
+
+        // Process the first condition
+        QueryCondition memory condition = _queryConditions[0];
+        uint256[] memory result = condition.queryType == QueryType.Has ? condition.component.getEntities() : condition.component.getEntitiesWithValue(condition.value);
+        uint256 resultLength = result.length;
+
+        // Process the rest of the conditions
+        uint256[] memory temp;
+        uint256 currIdx;
+        for (uint256 k = 1; k < _queryConditions.length; k++) {
+            condition = _queryConditions[k];
+            temp = new uint256[](result.length);
+            currIdx = 0;
+
+            for (uint256 i = 0; i < resultLength; i++) {
+                uint256 entity = result[i];
+                if (condition.queryType == QueryType.Has) {
+                    if (condition.component.has(entity)) {
+                        temp[currIdx] = entity;
+                        currIdx++;
+                    }
+                } else if (condition.queryType == QueryType.IsExactly) {
+                    if (keccak256(condition.component.getBytesValue(entity)) == keccak256(condition.value)) {
+                        temp[currIdx] = entity;
+                        currIdx++;
+                    }
+                } else {
+                    revert("CURIO: Unsupported query type");
+                }
+            }
+
+            result = new uint256[](currIdx);
+            for (uint256 i = 0; i < currIdx; i++) {
+                result[i] = temp[i];
+            }
+            resultLength = currIdx;
+        }
+
+        return result;
     }
 
     function queryChunk(

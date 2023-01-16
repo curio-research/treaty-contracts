@@ -21,9 +21,7 @@ enum QueryType {
     Has,
     HasNot,
     IsExactly,
-    IsNot,
-    ProxyRead,
-    ProxyExpand
+    IsNot
 }
 
 enum GameMode {
