@@ -31,6 +31,11 @@ export interface DeployArgs extends HardhatArguments {
   whitelist: string | undefined;
 }
 
+export interface WhitelistArgs extends HardhatArguments {
+  address: string;
+  diamond: string;
+}
+
 export interface UnlockTileArgs extends HardhatArguments {
   diamond: string;
 }
