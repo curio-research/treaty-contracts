@@ -18,7 +18,7 @@ export const MAP_INPUT: MapInput = {
 };
 
 export const TEST_MAP_INPUT: MapInput = {
-  width: 1000,
+  width: 250, // FIXME: restore to 1000 if increasing player count
   height: 2,
 };
 

@@ -1,4 +1,4 @@
-import { chainInfo, componentNameToId, Component__factory, decodeBigNumberishArr, encodePosition, encodeString, Position, Tag } from 'curio-vault';
+import { chainInfo, componentNameToId, Component__factory, encodeString, Tag, Name } from 'curio-vault';
 import { TILE_WIDTH } from './constants';
 import chalk from 'chalk';
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
@@ -56,21 +56,29 @@ export const prepareLoadTest = async (input: LoadTestSetupInput, players: Wallet
   // Create players with enough tokens
   const admin = (await hre.ethers.getSigners())[0];
 
-  // Fetch gas limit, and necessary components
+  // Fetch gas limit, components, and constants
   const gasLimit = chainInfo[hre.network.name].gasLimit;
-  const tagComponentAddr = await diamond.getComponentById(componentNameToId[Tag]);
-  const tagComponent = Component__factory.connect(tagComponentAddr, admin);
+  const tagComponent = Component__factory.connect(await diamond.getComponentById(componentNameToId[Tag]), admin);
+  const nameComponent = Component__factory.connect(await diamond.getComponentById(componentNameToId[Name]), admin);
+  const horsemanTemplateId = (await nameComponent.getEntitiesWithValue(encodeString('Horseman')))[0].toNumber();
 
+  // Log number of CPU cores
   const numberOfCores = os.cpus().length;
   console.log(chalk.bgRed.yellow(`>>> Number of CPU cores: ${numberOfCores}`));
 
-  // Initialize each player with a city (sync, because player IDs are used for initializing armies in same order as players)
+  // Initialize each player with a city and some troops (sync, because player IDs are used for initializing armies in same order as players)
   let startTime = performance.now();
   const playerIds: number[] = [];
+  const capitalIds: number[] = [];
   for (let i = 0; i < players.length; i++) {
-    console.log(chalk.bgRed.yellow.dim(`>>> Initializing player ${i} with city`));
+    console.log(chalk.bgRed.yellow.dim(`>>> Initializing player ${i} with city and troops`));
     await (await diamond.connect(players[i]).joinGame({ x: i * TILE_WIDTH, y: 0 }, `Player ${i}`, { gasLimit })).wait();
-    playerIds.push((await diamond.getEntityByAddress(players[i].address)).toNumber());
+    const playerId = (await diamond.getEntityByAddress(players[i].address)).toNumber();
+    const capitalId = (await diamond.getCapital(playerId)).toNumber();
+    const capitalAddr = await diamond['getAddress(uint256)'](capitalId);
+    await (await diamond.connect(admin).dripToken(capitalAddr, 'Horseman', 10, { gasLimit })).wait();
+    playerIds.push(playerId);
+    capitalIds.push(capitalId);
   }
   console.log(chalk.bgRed.yellow(`>>> Players initialized with city after ${performance.now() - startTime} ms`));
 
@@ -78,9 +86,12 @@ export const prepareLoadTest = async (input: LoadTestSetupInput, players: Wallet
   startTime = performance.now();
   for (let i = 0; i < players.length; i++) {
     console.log(chalk.bgRed.yellow.dim(`>>> Creating army for player ${i}`));
-    await diamond.connect(admin).organizeArmy(1, [1], [1], { gasLimit }); // FIXME: not complete
+    await (await diamond.connect(players[i]).organizeArmy(capitalIds[i], [horsemanTemplateId], [1], { gasLimit })).wait();
   }
-  const armyIds = decodeBigNumberishArr(await tagComponent.getEntitiesWithValue(encodeString('Army')));
+  const armyIds = (await tagComponent.getEntitiesWithValue(encodeString('Army'))).map((id) => id.toNumber());
+  if (armyIds.length !== players.length) {
+    throw new Error('Number of armies does not match number of players');
+  }
   console.log(chalk.bgRed.yellow(`>>> Armies created after ${performance.now() - startTime} ms`));
 
   return { playerIds, armyIds };
