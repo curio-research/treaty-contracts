@@ -32,8 +32,8 @@ contract GameFacet is UseStorage {
         // Basic checks
         GameLib.ongoingGameCheck();
         GameLib.inboundPositionCheck(_position);
-        require(gs().isWhitelistedByGame[msg.sender] || GameLib.getNationCount() < gs().worldConstants.maxNationCount, "CURIO: Not whitelisted and max nation count reached");
-        require(GameLib.getEntityByAddress(msg.sender) == NULL, "CURIO: Nation is initialized or removed");
+        require(gs().isWhitelistedByGame[msg.sender] || GameLib.getNationCount() < gs().worldConstants.maxNationCount, "CURIO: Player isn't whitelisted and max nation count has been reached");
+        require(GameLib.getEntityByAddress(msg.sender) == NULL, "CURIO: Nation is already initialized or have been removed");
 
         // Verify that capital is not on mountain
         Position memory tilePosition = GameLib.getProperTilePosition(_position);
@@ -41,18 +41,18 @@ contract GameFacet is UseStorage {
         GameLib.passableTerrainCheck(tilePosition);
 
         // Verify that tile can host capital
-        require(ECSLib.getBool("CanHostCapital", tileID), "CURIO: Tile cannot host capital");
+        require(ECSLib.getBool("CanHostCapital", tileID), "CURIO: Capital cannot be built on this tile");
 
         // Verify that tile is neutral
-        require(ECSLib.getUint("Nation", tileID) == NULL, "CURIO: Tile unavailable");
+        require(ECSLib.getUint("Nation", tileID) == NULL, "CURIO: Tile is unavailable");
 
         // Verify that no other movable entity is on tile
-        require(GameLib.getArmiesAtTile(tilePosition).length == 0, "CURIO: Other movable entity on tile");
+        require(GameLib.getArmiesAtTile(tilePosition).length == 0, "CURIO: There are other entities on this tile");
 
         // Remove resource at destination if one exists
         uint256 resourceID = GameLib.getResourceAtTile(tilePosition);
         if (resourceID != NULL) {
-            require(ECSLib.getUint("Template", resourceID) != gs().templates["Gold"], "CURIO: Cannot settle on goldmine");
+            require(ECSLib.getUint("Template", resourceID) != gs().templates["Gold"], "CURIO: Capital cannot be built on a goldmine");
             ECSLib.removeEntity(resourceID);
         }
 
@@ -101,16 +101,16 @@ contract GameFacet is UseStorage {
 
         // Check if nation has reached maxCapitalLevel
         uint256 capitalLevel = ECSLib.getUint("Level", _capitalID); // FIXME: capital level should be separated from nation level
-        require(capitalLevel < gs().worldConstants.maxCapitalLevel, "CURIO: Reached max capital level");
+        require(capitalLevel < gs().worldConstants.maxCapitalLevel, "CURIO: You've reached the max capital level");
 
         // Check sack
         GameLib.capitalSackRecoveryCheck(_capitalID);
 
         // check if capital upgrade is in process
-        require(block.timestamp >= ECSLib.getUint("LastUpgraded", _capitalID), "CURIO: Need to finish upgrading first");
+        require(block.timestamp >= ECSLib.getUint("LastUpgraded", _capitalID), "CURIO: Ongoing upgrade. Wait until it finishes");
 
         // Verify there's no ongoing troop production
-        require(GameLib.getBuildingProduction(_capitalID) == NULL, "CURIO: Need to finish production first");
+        require(GameLib.getBuildingProduction(_capitalID) == NULL, "CURIO: Harvest ongoing production first before upgrade");
 
         // Deduct costs from capital
         {
@@ -159,21 +159,21 @@ contract GameFacet is UseStorage {
 
         // TEMP: battle royale
         if (gs().worldConstants.gameMode == GameMode.BATTLE_ROYALE) {
-            require(!GameLib.coincident(_newTilePosition, GameLib.getMapCenterTilePosition()), "CURIO: Capital cannot be on supertile");
+            require(!GameLib.coincident(_newTilePosition, GameLib.getMapCenterTilePosition()), "CURIO: Capital cannot be built on the center tile");
         }
 
         // Verify that target tile can host capital
-        require(ECSLib.getBool("CanHostCapital", GameLib.getTileAt(_newTilePosition)), "CURIO: Tile cannot host capital");
+        require(ECSLib.getBool("CanHostCapital", GameLib.getTileAt(_newTilePosition)), "CURIO: This tile cannot host capital");
 
         // Capital at chaos cannot move
         GameLib.capitalSackRecoveryCheck(_capitalID);
 
         // Verify that target tile belongs to nation
-        require(ECSLib.getUint("Nation", GameLib.getTileAt(_newTilePosition)) == nationID, "CURIO: Can only move in your territory");
+        require(ECSLib.getUint("Nation", GameLib.getTileAt(_newTilePosition)) == nationID, "CURIO: You can only move within your own territory");
 
         // Verify that moveCapital cooldown has passed
         uint256 capitalLevel = ECSLib.getUint("Level", _capitalID);
-        require(block.timestamp - ECSLib.getUint("LastMoved", _capitalID) > GameLib.getConstant("Capital", "", "Cooldown", "Move", capitalLevel), "CURIO: Moved capital too recently");
+        require(block.timestamp - ECSLib.getUint("LastMoved", _capitalID) > GameLib.getConstant("Capital", "", "Cooldown", "Move", capitalLevel), "CURIO: You moved capital too recently");
 
         // Deduct costs from capital
         {
@@ -227,28 +227,28 @@ contract GameFacet is UseStorage {
 
         // Check Tile Count has not exceeded limits
         uint256 capitalID = GameLib.getCapital(nationID);
-        require(GameLib.getNationTiles(nationID).length < GameLib.getConstant("Nation", "Tile", "Amount", "", ECSLib.getUint("Level", capitalID)), "CURIO: Reached max tile count");
+        require(GameLib.getNationTiles(nationID).length < GameLib.getConstant("Nation", "Tile", "Amount", "", ECSLib.getUint("Level", capitalID)), "CURIO: You've reached max tile count. Try upgrading your capital");
 
         // Verify target tile has no owner
-        require(ECSLib.getUint("Nation", _tileID) == NULL, "CURIO: Tile has owner");
+        require(ECSLib.getUint("Nation", _tileID) == NULL, "CURIO: This tile belongs to another player");
 
         // Verify target tile is not barbarian tile
-        require(!GameLib.isBarbarian(_tileID), "CURIO: Cannot claim barbarian tiles");
+        require(!GameLib.isBarbarian(_tileID), "CURIO: This tile has a barbarian. You cannot claim it");
 
         // Verify that no guard exists on tile
-        require(ECSLib.getUint("Amount", GameLib.getInventory(_tileID, gs().templates["Guard"])) == 0, "CURIO: Tile has guard");
+        require(ECSLib.getUint("Amount", GameLib.getInventory(_tileID, gs().templates["Guard"])) == 0, "CURIO: Tile has tile defenders left");
 
         // Verify that army is on selected tile
         Position memory tilePosition = ECSLib.getPosition("StartPosition", _tileID);
         require(GameLib.coincident(GameLib.getProperTilePosition(ECSLib.getPosition("Position", _armyID)), tilePosition), "CURIO: Army must be on tile to claim");
 
         // Verify that tile is next to own tile
-        require(GameLib.isAdjacentToOwnTile(nationID, tilePosition), "CURIO: Can only claim contiguous tiles");
+        require(GameLib.isAdjacentToOwnTile(nationID, tilePosition), "CURIO: You can only claim tiles next to your other tiles");
 
         // Verify that all armies on tile belong to nation
         uint256[] memory armiesOnTile = GameLib.getArmiesAtTile(tilePosition);
         for (uint256 i = 0; i < armiesOnTile.length; i++) {
-            require(ECSLib.getUint("Nation", armiesOnTile[i]) == nationID, "CURIO: Cannot claim tile with enemy armies");
+            require(ECSLib.getUint("Nation", armiesOnTile[i]) == nationID, "CURIO: You cannot claim tiles with enemy armies");
         }
 
         // Transfer ownership of tile and initialize new guard
@@ -289,7 +289,7 @@ contract GameFacet is UseStorage {
         address tileAddress = ECSLib.getAddress("Address", _tileID);
         CurioERC20 guardToken = GameLib.getTokenContract("Guard");
         uint256 guardAmount = ECSLib.getUint("Amount", GameLib.getInventory(nationID, gs().templates["Guard"]));
-        require(GameLib.getConstant("Tile", "Guard", "Amount", "", tileLevel) == guardAmount, "CURIO: Must recover before upgrade");
+        require(GameLib.getConstant("Tile", "Guard", "Amount", "", tileLevel) == guardAmount, "CURIO: You must recover tile before upgrading");
 
         // check if upgrade is in process
         require(block.timestamp >= ECSLib.getUint("LastUpgraded", _tileID), "CURIO: Need to finish upgrading first");
@@ -488,7 +488,7 @@ contract GameFacet is UseStorage {
         require(productionID != NULL, "CURIO: No ongoing production");
 
         // Verify that enough time has passed for the given amount
-        require(block.timestamp >= (ECSLib.getUint("InitTimestamp", productionID) + ECSLib.getUint("Duration", productionID)), "CURIO: Need more time for production");
+        require(block.timestamp >= (ECSLib.getUint("InitTimestamp", productionID) + ECSLib.getUint("Duration", productionID)), "CURIO: Production needs more time to finish");
 
         // Update inventory
         CurioERC20 troopToken = CurioERC20(ECSLib.getAddress("Address", ECSLib.getUint("Template", productionID)));
@@ -542,7 +542,7 @@ contract GameFacet is UseStorage {
 
         // Calculate distance
         uint256 distance = GameLib.euclidean(ECSLib.getPosition("Position", _armyID), _targetPosition);
-        require(distance <= ECSLib.getUint("Speed", _armyID), "CURIO: Not enough movement points");
+        require(distance <= ECSLib.getUint("Speed", _armyID), "CURIO: You're trying to move too far!");
 
         // Move and update moveCooldown
         ECSLib.setPosition("Position", _armyID, _targetPosition);
@@ -579,7 +579,7 @@ contract GameFacet is UseStorage {
         GameLib.capitalSackRecoveryCheck(_capitalID);
 
         // Check army cap
-        require(GameLib.getNationArmies(nationID).length < gs().worldConstants.maxArmyCountPerNation, "CURIO: Army cap reached");
+        require(GameLib.getNationArmies(nationID).length < gs().worldConstants.maxArmyCountPerNation, "CURIO: Max number of armies reached");
 
         // Add army
         address armyAddress = address(new CurioWallet(address(this)));
@@ -590,7 +590,7 @@ contract GameFacet is UseStorage {
         address capitalAddress = ECSLib.getAddress("Address", _capitalID);
 
         require(_templateIDs.length == _amounts.length, "CURIO: Input lengths do not match");
-        require(_templateIDs.length > 0, "CURIO: Army must have at least 1 troop");
+        require(_templateIDs.length > 0, "CURIO: Your army must have at least 1 troop");
 
         for (uint256 i = 0; i < _templateIDs.length; i++) {
             CurioERC20 troopToken = CurioERC20(ECSLib.getAddress("Address", _templateIDs[i]));
@@ -626,7 +626,7 @@ contract GameFacet is UseStorage {
 
         // Verify that army is on capital tile
         uint256 capitalID = GameLib.getCapital(nationID);
-        require(GameLib.coincident(ECSLib.getPosition("StartPosition", capitalID), armyStartPosition), "CURIO: Move army to capital to disband");
+        require(GameLib.coincident(ECSLib.getPosition("StartPosition", capitalID), armyStartPosition), "CURIO: Bring army to your capital to disband");
 
         // Return carried resources to capital
         address capitalAddress = ECSLib.getAddress("Address", capitalID);
@@ -662,13 +662,13 @@ contract GameFacet is UseStorage {
 
         // Verify that army and target can battle
         require(ECSLib.getBool("CanBattle", _armyID), "CURIO: Army cannot battle");
-        require(ECSLib.getBool("CanBattle", _targetID), "CURIO: Target cannot battle");
+        require(ECSLib.getBool("CanBattle", _targetID), "CURIO: Target cannot be battled");
 
         // Verify that entities belong to different nations
-        require(ECSLib.getUint("Nation", _targetID) != nationID, "CURIO: Cannot battle your own entity");
+        require(ECSLib.getUint("Nation", _targetID) != nationID, "CURIO: You cannot battle your own entity");
 
         // Check battle cooldown and update last timestamp
-        require(block.timestamp >= ECSLib.getUint("LastAttacked", _armyID) + ECSLib.getUint("BattleCooldown", _armyID), "CURIO: Battled too recently");
+        require(block.timestamp >= ECSLib.getUint("LastAttacked", _armyID) + ECSLib.getUint("BattleCooldown", _armyID), "CURIO: Army battled too recently");
         ECSLib.setUint("LastAttacked", _armyID, block.timestamp);
 
         // End army's gather
@@ -715,7 +715,7 @@ contract GameFacet is UseStorage {
         GameLib.neutralOrOwnedTileCheck(tileID, ECSLib.getUint("Nation", _armyID));
 
         // Cannot gather twice
-        require(GameLib.getArmyGather(_armyID) == NULL, "CURIO: Must finish existing gather first");
+        require(GameLib.getArmyGather(_armyID) == NULL, "CURIO: You must finish the existing gather first");
 
         // Verify that the army's capacity isn't full
         // TODO
