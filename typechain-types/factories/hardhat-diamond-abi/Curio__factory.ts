@@ -248,35 +248,7 @@ const _abi = [
         type: "bool",
       },
     ],
-    name: "adminDelegateToPlayer",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "_nationID",
-        type: "uint256",
-      },
-      {
-        internalType: "string",
-        name: "_functionName",
-        type: "string",
-      },
-      {
-        internalType: "uint256",
-        name: "_subjectID",
-        type: "uint256",
-      },
-      {
-        internalType: "bool",
-        name: "_canCall",
-        type: "bool",
-      },
-    ],
-    name: "adminDelegateToTreaty",
+    name: "adminDelegateGameFunction",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",

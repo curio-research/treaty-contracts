@@ -12,6 +12,7 @@ import {AddressComponent, BoolComponent, IntComponent, PositionComponent, String
 import {CurioERC20} from "contracts/standards/CurioERC20.sol";
 import {CurioTreaty} from "contracts/standards/CurioTreaty.sol";
 import {Alliance} from "contracts/treaties/Alliance.sol";
+import {MercenaryLeague} from "contracts/treaties/MercenaryLeague.sol";
 import {TestTreaty} from "contracts/treaties/TestTreaty.sol";
 import {NonAggressionPact} from "contracts/treaties/NonAggressionPact.sol";
 import {Embargo} from "contracts/treaties/Embargo.sol";
@@ -464,7 +465,9 @@ library GameLib {
             treatyAddress = address(new SimpleOTC(address(this)));
         } else if (GameLib.strEq(_treatyName, "Handshake Deal")) {
             treatyAddress = address(new HandshakeDeal(address(this)));
-        } else {
+        } else if (GameLib.strEq(_treatyName, "Mercenary League")) {
+            treatyAddress = address(new MercenaryLeague(address(this)));
+        }else {
             revert("CURIO: Unsupported treaty name");
         }
 
