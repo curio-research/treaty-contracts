@@ -796,9 +796,9 @@ const _abi = [
         type: "uint8",
       },
       {
-        internalType: "bytes",
-        name: "_encodedParams",
-        type: "bytes",
+        internalType: "uint256",
+        name: "_uint256Param",
+        type: "uint256",
       },
       {
         internalType: "uint256",
@@ -806,7 +806,87 @@ const _abi = [
         type: "uint256",
       },
     ],
-    name: "proposeDeal",
+    name: "proposeDeal1",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "enum HandshakeDeal.ApprovalFunctionType",
+        name: "_functionType",
+        type: "uint8",
+      },
+      {
+        internalType: "uint256",
+        name: "_uint256Param1",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "_uint256Param2",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "_effectiveDuration",
+        type: "uint256",
+      },
+    ],
+    name: "proposeDeal2",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "enum HandshakeDeal.ApprovalFunctionType",
+        name: "_functionType",
+        type: "uint8",
+      },
+      {
+        internalType: "uint256",
+        name: "_uint256Param",
+        type: "uint256",
+      },
+      {
+        components: [
+          {
+            internalType: "uint256",
+            name: "x",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "y",
+            type: "uint256",
+          },
+        ],
+        internalType: "struct Position",
+        name: "_positionParam",
+        type: "tuple",
+      },
+      {
+        internalType: "uint256",
+        name: "_effectiveDuration",
+        type: "uint256",
+      },
+    ],
+    name: "proposeDeal3",
     outputs: [
       {
         internalType: "uint256",

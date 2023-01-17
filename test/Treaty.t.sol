@@ -4,6 +4,7 @@ pragma solidity ^0.8.13;
 import {Test} from "forge-std/Test.sol";
 import {DiamondDeployTest} from "test/DiamondDeploy.t.sol";
 import {Alliance} from "contracts/treaties/Alliance.sol";
+import {MercenaryLeague} from "contracts/treaties/MercenaryLeague.sol";
 import {NonAggressionPact} from "contracts/treaties/NonAggressionPact.sol";
 import {Embargo} from "contracts/treaties/Embargo.sol";
 import {CollectiveDefenseFund} from "contracts/treaties/CollectiveDefenseFund.sol";
@@ -375,6 +376,74 @@ contract TreatyTest is Test, DiamondDeployTest {
         vm.stopPrank();
     }
 
+    function testMercenaryLeague() public {
+        // Start time
+        uint256 time = block.timestamp + 500;
+        vm.warp(time);
+
+        // Deployer transfers gold, food, and troops to Nation 1, 2, and 3
+        vm.startPrank(deployer);
+        admin.dripToken(nation1CapitalAddr, "Gold", 1000000);
+        admin.dripToken(nation1CapitalAddr, "Food", 1000000);
+        admin.dripToken(nation1CapitalAddr, "Horseman", 1000);
+        admin.dripToken(nation1CapitalAddr, "Warrior", 1000);
+        admin.dripToken(nation1CapitalAddr, "Slinger", 1000);
+
+        admin.dripToken(nation2CapitalAddr, "Gold", 1000000);
+        admin.dripToken(nation2CapitalAddr, "Food", 1000000);
+        admin.dripToken(nation2CapitalAddr, "Horseman", 1000);
+        admin.dripToken(nation2CapitalAddr, "Warrior", 1000);
+        admin.dripToken(nation2CapitalAddr, "Slinger", 1000);
+
+        admin.dripToken(nation3CapitalAddr, "Gold", 1000000);
+        admin.dripToken(nation3CapitalAddr, "Food", 1000000);
+        admin.dripToken(nation3CapitalAddr, "Horseman", 1000);
+        admin.dripToken(nation3CapitalAddr, "Warrior", 1000);
+        admin.dripToken(nation3CapitalAddr, "Slinger", 1000);
+        vm.stopPrank();
+
+        // Nation 1 organizes army
+        vm.startPrank(player1);
+        uint256[] memory armyTemplateIDs = new uint256[](3);
+        armyTemplateIDs[0] = warriorTemplateID;
+        armyTemplateIDs[1] = horsemanTemplateID;
+        armyTemplateIDs[2] = slingerTemplateID;
+        uint256[] memory armyTemplateAmounts = new uint256[](3);
+        armyTemplateAmounts[0] = 150;
+        armyTemplateAmounts[1] = 150;
+        armyTemplateAmounts[2] = 150;
+        time += 10;
+        vm.warp(time);
+        uint256 army11ID = game.organizeArmy(nation1CapitalID, armyTemplateIDs, armyTemplateAmounts);
+        vm.stopPrank();
+
+        vm.startPrank(player2);
+
+        // Nation 2 deploys Alliance treaty
+        MercenaryLeague ml = MercenaryLeague(game.deployTreaty(nation2ID, mercenaryLeagueTemplate.name()));
+        CurioWallet(nation2CapitalAddr).executeTx(address(goldToken), abi.encodeWithSignature("approve(address,uint256)", address(ml), 1000));
+        vm.stopPrank();
+
+        // Nation 1 joins alliance after token approval
+        vm.startPrank(player1);
+        ml.treatyJoin();
+        ml.setConscriptionFee(500);
+        vm.stopPrank();
+
+        // Nation 2 conscripts armies from Nation 1
+        vm.startPrank(player2);
+        ml.addToWarCouncil(nation2ID);
+        ml.conscriptArmies(nation1ID);
+
+        // Nation 2 moves Nation 1's conscripted army from (62, 12) to (62, 29)
+        for (uint256 i = 1; i <= 9; i++) {
+            time += 1;
+            vm.warp(time);
+            game.move(army11ID, Position({x: 62, y: 11 + 2 * i}));
+        }
+        vm.stopPrank();
+    }
+
     // function testFTX() public {
     //     // Start time
     //     uint256 time = block.timestamp + 500;
@@ -523,7 +592,6 @@ contract TreatyTest is Test, DiamondDeployTest {
         // Player1 deploys embargo and whitelists self
         vm.startPrank(player1);
         Embargo embargo = Embargo(game.deployTreaty(nation1ID, embargoTemplate.name()));
-        embargo.addToWhitelist(nation1ID);
         vm.stopPrank();
 
         // Deployer registers embargo treaty & gives troops to p2 and resources to p1
@@ -539,7 +607,6 @@ contract TreatyTest is Test, DiamondDeployTest {
         // Player1 joins embargo and whitelists player2. Then he sanctions himself
         vm.startPrank(player1);
         embargo.treatyJoin();
-        embargo.addToWhitelist(nation2ID);
         embargo.addToSanctionList(nation1ID);
         vm.stopPrank();
 
@@ -786,7 +853,7 @@ contract TreatyTest is Test, DiamondDeployTest {
         vm.startPrank(player1);
         HandshakeDeal hsDeal = HandshakeDeal(game.deployTreaty(nation1ID, handshakeDealTemplate.name()));
         hsDeal.treatyJoin();
-        hsDeal.proposeDeal(HandshakeDeal.ApprovalFunctionType.approveUpgradeCapital, abi.encode(nation2CapitalID), 1000);
+        hsDeal.proposeDeal1(HandshakeDeal.ApprovalFunctionType.approveUpgradeCapital, nation2CapitalID, 1000);
         vm.stopPrank();
 
         // assigns tokens to p1 and p2

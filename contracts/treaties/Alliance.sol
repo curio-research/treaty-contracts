@@ -17,6 +17,10 @@ contract Alliance is CurioTreaty {
         description = "A treaty between two or more countries to work together towards a common goal or to defend each other in the case of external aggression";
     }
 
+    // ----------------------------------------------------------
+    // Player functions
+    // ----------------------------------------------------------
+
     function treatyJoin() public override {
         // Transfer 1000 gold from nation to treaty
         address nationCapitalAddress = getter.getAddress(getter.getCapital(getter.getEntityByAddress(msg.sender)));
@@ -73,6 +77,10 @@ contract Alliance is CurioTreaty {
             }
         }
     }
+
+    // ----------------------------------------------------------
+    // Permission Functions
+    // ----------------------------------------------------------
 
     function approveBattle(uint256 _nationID, bytes memory _encodedParams) public view override returns (bool) {
         // Disapprove if target nation is an ally

@@ -234,6 +234,11 @@ const _abi = [
       },
       {
         internalType: "uint256",
+        name: "_delegateID",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
         name: "_subjectID",
         type: "uint256",
       },
