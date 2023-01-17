@@ -18,7 +18,7 @@ contract AdminFacet is UseStorage {
     uint256 private constant NULL = 0;
 
     modifier onlyAdmin() {
-        require(msg.sender == gs().worldConstants.admin, "CURIO: Only admin can call");
+        require(msg.sender == gs().worldConstants.admin, "CURIO: Only admin can call this");
         _;
     }
 
@@ -29,7 +29,7 @@ contract AdminFacet is UseStorage {
 
     modifier onlyTreaty() {
         uint256 treatyID = GameLib.getEntityByAddress(msg.sender);
-        require(GameLib.strEq(ECSLib.getString("Tag", treatyID), "Treaty"), "CURIO: Only treaty can call");
+        require(GameLib.strEq(ECSLib.getString("Tag", treatyID), "Treaty"), "CURIO: Only treaty can call this");
         _;
     }
 
@@ -62,7 +62,7 @@ contract AdminFacet is UseStorage {
 
         uint256 treatyID = GameLib.getEntityByAddress(msg.sender);
         uint256 signatureID = GameLib.getNationTreatySignature(_nationID, treatyID);
-        require(signatureID == NULL, "CURIO: Nation is already a signatory");
+        require(signatureID == NULL, "CURIO: Nation already joined");
         return Templates.addSignature(treatyID, _nationID);
     }
 
@@ -72,7 +72,7 @@ contract AdminFacet is UseStorage {
 
         uint256 treatyID = GameLib.getEntityByAddress(msg.sender);
         uint256 signatureID = GameLib.getNationTreatySignature(_nationID, treatyID);
-        require(signatureID != NULL, "CURIO: Nation is not a signatory");
+        require(signatureID != NULL, "CURIO: Nation did not join");
         ECSLib.removeEntity(signatureID);
     }
 
