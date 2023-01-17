@@ -3,7 +3,7 @@ pragma solidity ^0.8.13;
 
 import {Set} from "contracts/Set.sol";
 
-/// Implementation of a Component in ECS architecture in Solidity
+/// @dev Implementation of a Component in ECS architecture in Solidity
 
 contract Component {
     address private gameAddr;

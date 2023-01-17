@@ -6,7 +6,6 @@ import {GetterFacet} from "contracts/facets/GetterFacet.sol";
 import {CurioERC20} from "contracts/standards/CurioERC20.sol";
 import {Position} from "contracts/libraries/Types.sol";
 import {Set} from "contracts/Set.sol";
-import {console} from "forge-std/console.sol";
 
 contract Embargo is CurioTreaty {
     Set public sanctionList;

@@ -5,7 +5,6 @@ import {ITreaty} from "contracts/interfaces/ITreaty.sol";
 import {GameFacet} from "contracts/facets/GameFacet.sol";
 import {GetterFacet} from "contracts/facets/GetterFacet.sol";
 import {AdminFacet} from "contracts/facets/AdminFacet.sol";
-import {console} from "forge-std/console.sol";
 
 abstract contract CurioTreaty is ITreaty {
     // Facets
@@ -17,10 +16,6 @@ abstract contract CurioTreaty is ITreaty {
     // Treaty data
     string public name;
     string public description;
-
-    // Cache
-    uint256 public treatyID;
-    uint256 public ownerID;
 
     constructor(address _diamond) {
         require(_diamond != address(0), "CurioTreaty: Diamond address required");
@@ -58,19 +53,30 @@ abstract contract CurioTreaty is ITreaty {
     // MEMBERSHIP FUNCTIONS (CALLED BY NATION)
     // ----------------------------------------------------------
 
+    /**
+     * @dev Join treaty. Must be called by nation.
+     */
     function treatyJoin() public virtual {
         // Add signature
         uint256 nationID = getter.getEntityByAddress(msg.sender);
         admin.addSigner(nationID);
     }
 
+    /**
+     * @dev Leave treaty. Must be called by nation.
+     */
     function treatyLeave() public virtual {
         // Remove signature
         uint256 nationID = getter.getEntityByAddress(msg.sender);
         admin.removeSigner(nationID);
     }
 
-    /// @dev Delegate or undelegate a game function to this treaty. Recommended in constructor.
+    /**
+     * @dev Delegate or undelegate a game function to this treaty. Recommended in constructor.
+     * @param _functionName name of the function to delegate
+     * @param _subjectID ID of the subject entity (nation or treaty)
+     * @param _canCall true to delegate, false to undelegate
+     */
     function treatyDelegateGameFunction(
         string memory _functionName,
         uint256 _subjectID,
@@ -84,17 +90,18 @@ abstract contract CurioTreaty is ITreaty {
     // HELPERS
     // ----------------------------------------------------------
 
+    /**
+     * @dev Check if a nation has been a treaty signer for at least a duration.
+     * @param _nationID ID of the nation
+     * @param _duration duration in seconds
+     * @return true if the nation has been a treaty signer for at least the duration
+     */
     function minimumStayCheck(uint256 _nationID, uint256 _duration) public view returns (bool) {
         uint256 treatyID = getter.getEntityByAddress(address(this));
 
         // Check if nation has been a treaty signer for at least the duration
         uint256 nationJoinTime = abi.decode(getter.getComponent("InitTimestamp").getBytesValue(getter.getNationTreatySignature(_nationID, treatyID)), (uint256));
         return block.timestamp >= nationJoinTime + _duration;
-    }
-
-    function registerTreatyAndOwnerIds() public {
-        treatyID = getter.getEntityByAddress(address(this));
-        ownerID = abi.decode(getter.getComponent("Owner").getBytesValue(treatyID), (uint256));
     }
 
     // ----------------------------------------------------------

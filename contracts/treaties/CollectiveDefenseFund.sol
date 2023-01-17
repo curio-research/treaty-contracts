@@ -6,7 +6,6 @@ import {GetterFacet} from "contracts/facets/GetterFacet.sol";
 import {CurioERC20} from "contracts/standards/CurioERC20.sol";
 import {Position} from "contracts/libraries/Types.sol";
 import {Set} from "contracts/Set.sol";
-import {console} from "forge-std/console.sol";
 
 contract CollectiveDefenseFund is CurioTreaty {
     // Game cache
@@ -37,9 +36,8 @@ contract CollectiveDefenseFund is CurioTreaty {
         goldToken = getter.getTokenContract("Gold");
         foodToken = getter.getTokenContract("Food");
 
-        // Create new council and add treaty owner to it by default
+        // Create new council
         council = new Set();
-        council.add(ownerID);
     }
 
     // ----------------------------------------------------------
@@ -106,7 +104,6 @@ contract CollectiveDefenseFund is CurioTreaty {
     }
 
     function removeAllOverdueMembers() external onlyCouncilOrPact {
-        console.log("removing overdue members");
         uint256 treatyID = getter.getEntityByAddress(address(this));
         uint256[] memory signers = getter.getTreatySigners(treatyID);
 

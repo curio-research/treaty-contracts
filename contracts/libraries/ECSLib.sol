@@ -39,7 +39,7 @@ library ECSLib {
     }
 
     function addComponent(string memory _name, ValueType _valueType) public {
-        // TODO: implement
+        // Not supported currently
     }
 
     function addEntity() public returns (uint256) {
@@ -53,7 +53,6 @@ library ECSLib {
         return newEntity;
     }
 
-    // FIXME: remove over all components, or remove over components which the entity has? One more general, the other more efficient.
     function removeEntity(uint256 _entity) public {
         Set entities = Set(gs().entities);
         entities.remove(_entity);

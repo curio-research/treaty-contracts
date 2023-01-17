@@ -3,7 +3,7 @@ pragma solidity ^0.8.13;
 
 import {Component} from "contracts/Component.sol";
 
-/// Data structures for game
+/// @dev Data structures for game
 
 enum ValueType {
     UINT,
@@ -65,7 +65,6 @@ struct WorldConstants {
     uint256 maxArmyCountPerNation;
     uint256 maxCapitalLevel;
     uint256 maxNationCount;
-    // uint256 maxTransferDistance; // FIXME: stack too deep for Foundry test
     uint256 numInitTerrainTypes; // default is 6
     uint256 secondsToTrainAThousandTroops;
     uint256 tileWidth;

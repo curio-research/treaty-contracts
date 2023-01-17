@@ -10,10 +10,9 @@ import {Templates} from "contracts/libraries/Templates.sol";
 import {CurioERC20} from "contracts/standards/CurioERC20.sol";
 import {CurioWallet} from "contracts/standards/CurioWallet.sol";
 import {CurioTreaty} from "contracts/standards/CurioTreaty.sol";
-import {console} from "forge-std/console.sol";
 
 /// @title Game facet
-/// @notice Contains national functions
+/// @notice Contains national functions callable by players
 
 contract GameFacet is UseStorage {
     uint256 private constant NULL = 0;
@@ -22,12 +21,18 @@ contract GameFacet is UseStorage {
     // NATION/CAPITAL
     // ----------------------------------------------------------
 
-    /// @dev Link a player's main account and burner account
+    /// @dev Link your main account and burner account
     function authorizeGame(address _burnerAddress) external {
         gs().mainToBurner[msg.sender] = _burnerAddress;
         gs().burnerToMain[_burnerAddress] = msg.sender;
     }
 
+    /**
+     * @dev Join the game by founding your nation and capital.
+     * @param _position position of the capital
+     * @param _name name of the nation
+     * @return nationID ID of the nation
+     */
     function joinGame(Position memory _position, string memory _name) external returns (uint256 nationID) {
         // Basic checks
         GameLib.ongoingGameCheck();
@@ -86,6 +91,10 @@ contract GameFacet is UseStorage {
         ECSLib.setUint("LastActed", nationID, block.timestamp);
     }
 
+    /**
+     * @dev Upgrade your capital.
+     * @param _capitalID ID of the capital
+     */
     function upgradeCapital(uint256 _capitalID) external {
         // Basic checks
         GameLib.ongoingGameCheck();
@@ -100,7 +109,7 @@ contract GameFacet is UseStorage {
         }
 
         // Check if nation has reached maxCapitalLevel
-        uint256 capitalLevel = ECSLib.getUint("Level", _capitalID); // FIXME: capital level should be separated from nation level
+        uint256 capitalLevel = ECSLib.getUint("Level", _capitalID);
         require(capitalLevel < gs().worldConstants.maxCapitalLevel, "CURIO: You've reached the max capital level");
 
         // Check sack
@@ -142,6 +151,11 @@ contract GameFacet is UseStorage {
         ECSLib.setUint("LastActed", nationID, block.timestamp);
     }
 
+    /**
+     * @dev Move your capital to a new tile.
+     * @param _capitalID ID of the capital
+     * @param _newTilePosition tile position of the new tile
+     */
     function moveCapital(uint256 _capitalID, Position memory _newTilePosition) external {
         // Basic checks
         GameLib.ongoingGameCheck();
@@ -157,7 +171,7 @@ contract GameFacet is UseStorage {
             GameLib.treatyApprovalCheck("MoveCapital", nationID, abi.encode(callerID, _capitalID, _newTilePosition));
         }
 
-        // TEMP: battle royale
+        // Battle royale check
         if (gs().worldConstants.gameMode == GameMode.BATTLE_ROYALE) {
             require(!GameLib.coincident(_newTilePosition, GameLib.getMapCenterTilePosition()), "CURIO: Capital cannot be built on the center tile");
         }
@@ -211,6 +225,11 @@ contract GameFacet is UseStorage {
     // TILE
     // ----------------------------------------------------------
 
+    /**
+     * @dev Claim a tile for your nation.
+     * @param _armyID ID of the army
+     * @param _tileID ID of the tile
+     */
     function claimTile(uint256 _armyID, uint256 _tileID) external {
         // Basic checks
         GameLib.ongoingGameCheck();
@@ -265,6 +284,10 @@ contract GameFacet is UseStorage {
         ECSLib.setUint("LastActed", nationID, block.timestamp);
     }
 
+    /**
+     * @dev Upgrade a tile of yours to increase its defense.
+     * @param _tileID ID of the tile
+     */
     function upgradeTile(uint256 _tileID) external {
         // Basic checks
         GameLib.ongoingGameCheck();
@@ -321,6 +344,10 @@ contract GameFacet is UseStorage {
         ECSLib.setUint("LastActed", nationID, block.timestamp);
     }
 
+    /**
+     * @dev Recover a tile of yours to its max defense.
+     * @param _tileID ID of the tile
+     */
     function recoverTile(uint256 _tileID) external {
         // Basic checks
         GameLib.ongoingGameCheck();
@@ -340,7 +367,7 @@ contract GameFacet is UseStorage {
 
         // lost tile amount = current level amount - actual amount
         address tileAddress = ECSLib.getAddress("Address", _tileID);
-        CurioERC20 guardToken = GameLib.getTokenContract("Guard"); // FIXME: getTokenContract not clear
+        CurioERC20 guardToken = GameLib.getTokenContract("Guard");
         uint256 tileLevel = ECSLib.getUint("Level", _tileID);
         uint256 lostGuardAmount = GameLib.getConstant("Tile", "Guard", "Amount", "", tileLevel) - ECSLib.getUint("Amount", GameLib.getInventory(_tileID, gs().templates["Guard"]));
 
@@ -372,6 +399,10 @@ contract GameFacet is UseStorage {
         ECSLib.setUint("LastActed", nationID, block.timestamp);
     }
 
+    /**
+     * @dev Disown a tile of yours.
+     * @param _tileID ID of the tile
+     */
     function disownTile(uint256 _tileID) external {
         // Basic checks
         GameLib.ongoingGameCheck();
@@ -413,6 +444,12 @@ contract GameFacet is UseStorage {
     // TROOP PRODUCTION
     // ----------------------------------------------------------
 
+    /**
+     * @dev Start producing troops at your capital.
+     * @param _capitalID ID of the capital
+     * @param _templateID ID of the troop template to produce
+     * @param _amount Amount of troops to produce
+     */
     function startTroopProduction(
         uint256 _capitalID,
         uint256 _templateID,
@@ -458,12 +495,16 @@ contract GameFacet is UseStorage {
         require(GameLib.getBuildingProduction(_capitalID) == NULL, "CURIO: Must end ongoing production first");
 
         // Start production
-        productionID = Templates.addTroopProduction(_capitalID, _templateID, _amount, (gs().worldConstants.secondsToTrainAThousandTroops * _amount) / 1000); // FIXME: naming
+        productionID = Templates.addTroopProduction(_capitalID, _templateID, _amount, (gs().worldConstants.secondsToTrainAThousandTroops * _amount) / 1000);
 
         // Set last action time
         ECSLib.setUint("LastActed", nationID, block.timestamp);
     }
 
+    /**
+     * @dev Finish troop production at your capital when it's ready.
+     * @param _capitalID ID of the capital
+     */
     function endTroopProduction(uint256 _capitalID) external {
         // Basic checks
         GameLib.ongoingGameCheck();
@@ -506,6 +547,11 @@ contract GameFacet is UseStorage {
     // ARMY
     // ----------------------------------------------------------
 
+    /**
+     * @dev Move an army of yours to a new position.
+     * @param _armyID ID of the army
+     * @param _targetPosition position to move to
+     */
     function move(uint256 _armyID, Position memory _targetPosition) external {
         // Basic checks
         GameLib.ongoingGameCheck();
@@ -553,6 +599,12 @@ contract GameFacet is UseStorage {
         ECSLib.setUint("LastActed", nationID, block.timestamp);
     }
 
+    /**
+     * @dev Organize an army of troops.
+     * @param _capitalID ID of the capital
+     * @param _templateIDs IDs of the troop templates to organize in the army
+     * @param _amounts amounts of each troop template
+     */
     function organizeArmy(
         uint256 _capitalID,
         uint256[] memory _templateIDs,
@@ -592,9 +644,9 @@ contract GameFacet is UseStorage {
         require(_templateIDs.length == _amounts.length, "CURIO: Input lengths do not match");
         require(_templateIDs.length > 0, "CURIO: Your army must have at least 1 troop");
 
+        // Transfer troops from capital to army
         for (uint256 i = 0; i < _templateIDs.length; i++) {
             CurioERC20 troopToken = CurioERC20(ECSLib.getAddress("Address", _templateIDs[i]));
-            // require(tokenContract.balanceOf(msg.sender) >= _amounts[i], "CURIO: Need to produce more troops"); // FIXME: temporarily disabled this army load check
 
             load += ECSLib.getUint("Load", _templateIDs[i]) * _amounts[i];
             troopToken.transferFrom(capitalAddress, armyAddress, _amounts[i]);
@@ -607,6 +659,10 @@ contract GameFacet is UseStorage {
         ECSLib.setUint("LastActed", nationID, block.timestamp);
     }
 
+    /**
+     * @dev Disband an army.
+     * @param _armyID ID of the army
+     */
     function disbandArmy(uint256 _armyID) external {
         // Basic checks
         GameLib.ongoingGameCheck();
@@ -631,7 +687,7 @@ contract GameFacet is UseStorage {
         // Return carried resources to capital
         address capitalAddress = ECSLib.getAddress("Address", capitalID);
         address armyAddress = ECSLib.getAddress("Address", _armyID);
-        GameLib.unloadResources(capitalAddress, armyAddress); // FIXME: think of how needed it is to use address instead of ID
+        GameLib.unloadResources(capitalAddress, armyAddress);
 
         // Return troops to corresponding inventories and disband army
         GameLib.disbandArmy(capitalAddress, armyAddress);
@@ -642,7 +698,7 @@ contract GameFacet is UseStorage {
     }
 
     /**
-     * @dev One round of battle against an army, a tile, or a tile with a capital.
+     * @dev Battle for one round against an enemy army, tile, or capital tile.
      * @param _armyID army entity
      * @param _targetID target entity
      */
@@ -689,6 +745,11 @@ contract GameFacet is UseStorage {
     // RESOURCE COLLECTION
     // ----------------------------------------------------------
 
+    /**
+     * @dev Start gathering a resource using an army of yours.
+     * @param _armyID ID of army
+     * @param _resourceID ID of resource to collect
+     */
     function startGather(uint256 _armyID, uint256 _resourceID) external {
         // Basic checks
         GameLib.ongoingGameCheck();
@@ -717,15 +778,16 @@ contract GameFacet is UseStorage {
         // Cannot gather twice
         require(GameLib.getArmyGather(_armyID) == NULL, "CURIO: You must finish the existing gather first");
 
-        // Verify that the army's capacity isn't full
-        // TODO
-
         Templates.addResourceGather(startPosition, _resourceID, _armyID);
 
         // Set last action time
         ECSLib.setUint("LastActed", nationID, block.timestamp);
     }
 
+    /**
+     * @dev End gathering a resource.
+     * @param _armyID ID of army
+     */
     function endGather(uint256 _armyID) external {
         // Basic checks
         GameLib.ongoingGameCheck();
@@ -746,6 +808,10 @@ contract GameFacet is UseStorage {
         ECSLib.setUint("LastActed", nationID, block.timestamp);
     }
 
+    /**
+     * @dev Unload gathered resources from your army to your capital.
+     * @param _armyID ID of army
+     */
     function unloadResources(uint256 _armyID) external {
         // Basic checks
         GameLib.validEntityCheck(_armyID);
@@ -777,6 +843,10 @@ contract GameFacet is UseStorage {
         ECSLib.setUint("LastActed", nationID, block.timestamp);
     }
 
+    /**
+     * @dev Harvest a resource of your own.
+     * @param _resourceID ID of resource
+     */
     function harvestResource(uint256 _resourceID) public {
         // Basic checks
         GameLib.ongoingGameCheck();
@@ -824,7 +894,10 @@ contract GameFacet is UseStorage {
         ECSLib.setUint("LastActed", nationID, block.timestamp);
     }
 
-    // TODO: harvest gold & food on a capital; consider merge this with the function above
+    /**
+     * @dev Harvest resources produced by your capital.
+     * @param _capitalID ID of capital
+     */
     function harvestResourcesFromCapital(uint256 _capitalID) public {
         // Basic checks
         GameLib.ongoingGameCheck();
@@ -873,6 +946,10 @@ contract GameFacet is UseStorage {
         ECSLib.setUint("LastActed", nationID, block.timestamp);
     }
 
+    /**
+     * @dev Upgrade a resource of yours.
+     * @param _resourceID ID of resource
+     */
     function upgradeResource(uint256 _resourceID) public {
         // Basic checks
         GameLib.validEntityCheck(_resourceID);
@@ -911,7 +988,8 @@ contract GameFacet is UseStorage {
             }
         }
 
-        // todo: harvest resource before upgrade
+        // Harvest resource before upgrade
+        if (resourceLevel > 0) harvestResource(_resourceID);
 
         // Set timestamp
         ECSLib.setUint("LastUpgraded", _resourceID, block.timestamp + GameLib.getConstant(subject, "", "Cooldown", "Upgrade", resourceLevel));
@@ -927,6 +1005,14 @@ contract GameFacet is UseStorage {
     // TREATY
     // ----------------------------------------------------------
 
+    /**
+     * @dev Delegate or undelegate a game function to a nation or a treaty.
+     * @param _nationID ID of delegating nation
+     * @param _functionName name of function to delegate
+     * @param _delegateID ID of delegated nation
+     * @param _subjectID ID of specific entity to delegate (0 means all)
+     * @param _canCall whether to delegate or undelegate
+     */
     function delegateGameFunction(
         uint256 _nationID,
         string memory _functionName,
@@ -954,7 +1040,12 @@ contract GameFacet is UseStorage {
         ECSLib.setUint("LastActed", _nationID, block.timestamp);
     }
 
-    // TEMP: hardcoded for this version, where treaty deployment is permissioned
+    /**
+     * @dev Deploy a treaty.
+     * @param _nationID ID of nation deploying treaty
+     * @param _treatyName name of treaty
+     * @return treatyAddress address of deployed treaty
+     */
     function deployTreaty(uint256 _nationID, string memory _treatyName) external returns (address treatyAddress) {
         // Basic check
         GameLib.ongoingGameCheck();
@@ -970,9 +1061,6 @@ contract GameFacet is UseStorage {
         // Deploy treaty
         treatyAddress = GameLib.deployTreaty(_nationID, _treatyName);
 
-        // Register treaty and owner IDs in treaty for convenience
-        CurioTreaty(treatyAddress).registerTreatyAndOwnerIds();
-
         // Set last action time
         ECSLib.setUint("LastActed", _nationID, block.timestamp);
     }
@@ -981,13 +1069,22 @@ contract GameFacet is UseStorage {
     // AGGREGATE FUNCTIONS
     // ----------------------------------------------------------
 
+    /**
+     * @dev Harvest all specified resources of yours.
+     * @param resourceIDs IDs of resources to harvest
+     */
     function harvestAllResources(uint256[] memory resourceIDs) external {
         for (uint256 i = 0; i < resourceIDs.length; i++) {
             harvestResource(resourceIDs[i]);
         }
     }
 
-    /// @dev Allows a nation to delegate or undelegate all their game functions to another nation or treaty
+    /**
+     * @dev Delegate or undelegate all their game functions to another nation or treaty.
+     * @param _nationID ID of delegating nation
+     * @param _delegateID ID of delegated nation
+     * @param _canCall whether to delegate or undelegate
+     */
     function delegateAllGameFunctions(
         uint256 _nationID,
         uint256 _delegateID,

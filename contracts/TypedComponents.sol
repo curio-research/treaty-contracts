@@ -1,8 +1,10 @@
 // SPDX-License-Identifier: Unlicense
-pragma solidity ^0.8.4;
+pragma solidity ^0.8.13;
 
 import {Component} from "contracts/Component.sol";
 import {Position} from "contracts/libraries/Types.sol";
+
+/// @dev Typed Components in Solidity for greater convenience
 
 contract AddressComponent is Component {
     constructor(address _gameAddr) Component(_gameAddr) {}

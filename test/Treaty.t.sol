@@ -444,73 +444,6 @@ contract TreatyTest is Test, DiamondDeployTest {
         vm.stopPrank();
     }
 
-    // function testFTX() public {
-    //     // Start time
-    //     uint256 time = block.timestamp + 500;
-    //     vm.warp(time);
-
-    //     // Deploy transfers gold to Player 1
-    //     vm.prank(deployer);
-    //     admin.dripToken(nation1CapitalAddr, "Gold", 8);
-
-    //     // Player 2 (SBF) starts FTX and grants it access to his wallet
-    //     vm.startPrank(player2);
-    //     FTX ftx = FTX(game.deployTreaty(nation2ID, ftxTemplate.name()));
-    //     CurioWallet(nation2CapitalAddr).executeTx(address(goldToken), abi.encodeWithSignature("approve(address,uint256)", address(ftx), 10000));
-    //     assertEq(goldToken.balanceOf(nation2CapitalAddr), 0);
-    //     vm.stopPrank();
-
-    //     // Deployer registers FTX treaty
-    //     vm.startPrank(deployer);
-    //     admin.registerTreatyTemplate(address(ftx), "placeholder ABI", "");
-    //     vm.stopPrank();
-
-    //     // Player 1 deposits to FTX
-    //     vm.startPrank(player1);
-    //     CurioWallet(nation1CapitalAddr).executeTx(address(goldToken), abi.encodeWithSignature("approve(address,uint256)", address(ftx), 2));
-    //     ftx.treatyDeposit(2);
-    //     assertEq(goldToken.balanceOf(nation1CapitalAddr), 6);
-    //     assertEq(ftx.fttToken().balanceOf(nation1CapitalAddr), 2);
-    //     assertEq(goldToken.balanceOf(nation2CapitalAddr), 2);
-
-    //     // Player 1 withdraws successfully
-    //     ftx.treatyWithdraw(1);
-    //     assertEq(goldToken.balanceOf(nation1CapitalAddr), 7);
-    //     assertEq(ftx.fttToken().balanceOf(nation1CapitalAddr), 1);
-    //     assertEq(goldToken.balanceOf(nation2CapitalAddr), 1);
-
-    //     // Player 1 gives FTX all gold
-    //     CurioWallet(nation1CapitalAddr).executeTx(address(goldToken), abi.encodeWithSignature("approve(address,uint256)", address(ftx), 7));
-    //     ftx.treatyDeposit(7);
-    //     assertEq(goldToken.balanceOf(nation1CapitalAddr), 0);
-    //     assertEq(ftx.fttToken().balanceOf(nation1CapitalAddr), 8);
-    //     assertEq(goldToken.balanceOf(nation2CapitalAddr), 8);
-    //     vm.stopPrank();
-
-    //     // Player 2 (SBF) transfers all but 1 gold to Player 3 (Caroline)
-    //     vm.startPrank(player2);
-    //     CurioWallet(nation2CapitalAddr).executeTx(address(goldToken), abi.encodeWithSignature("transfer(address,uint256)", nation3CapitalAddr, 7));
-    //     assertEq(goldToken.balanceOf(nation2CapitalAddr), 1);
-    //     vm.stopPrank();
-
-    //     // Player 1 manages to withdraw only 1 gold from FTX
-    //     vm.prank(player1);
-    //     ftx.treatyWithdraw(8);
-    //     assertEq(goldToken.balanceOf(nation1CapitalAddr), 1);
-    //     assertEq(goldToken.balanceOf(nation2CapitalAddr), 0);
-
-    //     // Player 2 (SBF) declares FTX bankrupt
-    //     vm.prank(player2);
-    //     ftx.treatyRun();
-    //     assertTrue(ftx.isBankrupt());
-
-    //     // Player 1 fails to withdraw rest of balance from FTX
-    //     vm.prank(player1);
-    //     vm.expectRevert();
-    //     ftx.treatyWithdraw(7);
-    //     assertEq(goldToken.balanceOf(nation1CapitalAddr), 1);
-    // }
-
     function testNAPact() public {
         /**
         Outline:
@@ -872,11 +805,6 @@ contract TreatyTest is Test, DiamondDeployTest {
         hsDeal.treatyJoin();
         hsDeal.signDeal(p1DealID);
         vm.expectRevert("CURIO: Treaty disapproved UpgradeCapital");
-        game.upgradeCapital(nation2CapitalID);
-
-        // todo: make sure that timelocks have passed before a player can exit
-        time += 1001;
-        vm.warp(time);
         game.upgradeCapital(nation2CapitalID);
     }
 }

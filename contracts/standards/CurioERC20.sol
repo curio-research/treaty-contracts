@@ -5,7 +5,6 @@ import {IERC20} from "contracts/interfaces/IERC20.sol";
 import {GetterFacet} from "contracts/facets/GetterFacet.sol";
 import {AdminFacet} from "contracts/facets/AdminFacet.sol";
 import {GameFacet} from "contracts/facets/GameFacet.sol";
-import {console} from "forge-std/console.sol";
 
 contract CurioERC20 is IERC20 {
     // Token metadata
@@ -21,7 +20,7 @@ contract CurioERC20 is IERC20 {
     GetterFacet public getter;
     AdminFacet public admin;
     GameFacet public game;
-    uint256 public maxTransferDistance = 20; // FIXME: move back to WorldConstants
+    uint256 public maxTransferDistance = 20; // FIXME: not currently used
 
     uint256 private NULL = 0;
 
@@ -46,7 +45,7 @@ contract CurioERC20 is IERC20 {
     }
 
     modifier onlyGame() {
-        require(msg.sender == diamond, "CURIO: Only game can call this function");
+        require(msg.sender == diamond, "CurioERC20: Only game can call this function");
         _;
     }
 
@@ -126,7 +125,6 @@ contract CurioERC20 is IERC20 {
         address _to,
         uint256 _amount
     ) public override returns (bool) {
-        // FIXME: temporarily disabled for testing
         // Transfers from diamond or owner are exempt from allowance
         if (msg.sender != diamond && getter.getEntityByAddress(msg.sender) != getter.getNation(getter.getEntityByAddress(_from))) {
             uint256 ownerID = getter.getEntityByAddress(_from);

@@ -1,7 +1,7 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.13;
 
-/// Implementation of a mathematical set in Solidity
+/// @dev Implementation of a mathematical set in Solidity
 
 contract Set {
     address private deployer;

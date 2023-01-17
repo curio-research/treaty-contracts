@@ -9,7 +9,6 @@ import {Set} from "contracts/Set.sol";
 import {GameLib} from "contracts/libraries/GameLib.sol";
 import {CurioERC20} from "contracts/standards/CurioERC20.sol";
 import {CurioTreaty} from "contracts/standards/CurioTreaty.sol";
-import {console} from "forge-std/console.sol";
 
 /// @title Admin facet
 /// @notice Contains admin functions, treaty functions, and state functions (setters which players don't call)
@@ -216,7 +215,6 @@ contract AdminFacet is UseStorage {
      * @dev Initialize all large tiles from an array of starting positions.
      * @param _positions all positions
      */
-
     function bulkInitializeTiles(Position[] memory _positions) external onlyAuthorized {
         for (uint256 i = 0; i < _positions.length; i++) {
             GameLib.initializeTile(_positions[i]);
@@ -274,6 +272,7 @@ contract AdminFacet is UseStorage {
      * @dev Register a new treaty template for the game.
      * @param _address deployed treaty address
      * @param _abiHash treaty abi hash
+     * @param _metadataLink treaty metadata link
      * @return treatyTemplateID registered treaty template entity
      * @notice This function is currently used for permissioned deployment of treaties. In the future, treaties will be
      *         deployed permissionlessly by players.

@@ -7,7 +7,6 @@ import {CurioERC20} from "contracts/standards/CurioERC20.sol";
 import {Position} from "contracts/libraries/Types.sol";
 import {Set} from "contracts/Set.sol";
 import {AdminFacet} from "contracts/facets/AdminFacet.sol";
-import {console} from "forge-std/console.sol";
 
 contract MercenaryLeague is CurioTreaty {
     CurioERC20 public goldToken;
@@ -51,7 +50,7 @@ contract MercenaryLeague is CurioTreaty {
 
     function conscriptArmies(uint256 _nationID) public onlyWarCouncil {
         require(memberToConscriptionFee[_nationID] > 0, "Alliance: Target must have a conscription fee set");
-        require(getter.getNationTreatySignature(_nationID, treatyID) != 0, "Alliance: Target nation is not part of the alliance");
+        require(getter.getNationTreatySignature(_nationID, getter.getEntityByAddress(address(this))) != 0, "Alliance: Target nation is not part of the alliance");
         require(memberConscriptionStartTime[getter.getEntityByAddress(msg.sender)] == 0, "Alliance: Target nation's armies have already been conscripted");
 
         // Conscripter gains control of all target nation's armies at the cost of the conscription fee

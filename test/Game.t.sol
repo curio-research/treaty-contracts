@@ -311,12 +311,6 @@ contract GameTest is Test, DiamondDeployTest {
         assertEq(getter.getEntityLevel(nation1CapitalID), 2);
         assertEq(getter.getNation(targetTileID), nation1ID);
         vm.stopPrank();
-
-        // // Nation 2 organizes army and moves it to the tile
-        // vm.startPrank(player2);
-        // time += 10;
-        // vm.warp(time);
-        // uint256 army21ID = game.organizeArmy(nation2CapitalID, armyTemplateIDs, armyTemplateAmounts);
     }
 
     function testBattleCapitalChaos() public {
@@ -628,10 +622,6 @@ contract GameTest is Test, DiamondDeployTest {
         vm.stopPrank();
     }
 
-    function testBattleRoyaleMode() public {
-        // TODO: implement
-    }
-
     function testIdlePlayerRemoval() public {
         // Start time
         uint256 time = block.timestamp + 500;
@@ -730,12 +720,5 @@ contract GameTest is Test, DiamondDeployTest {
         vm.expectRevert("CURIO: Not delegated to call UpgradeCapital");
         game.upgradeCapital(nation1CapitalID);
         vm.stopPrank();
-    }
-
-    function testCenterTileMountain() public {
-        // Change mode to battle royale
-        vm.startPrank(deployer);
-
-        // TODO: left here
     }
 }
