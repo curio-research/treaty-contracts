@@ -123,7 +123,7 @@ contract DiamondDeployTest is Test {
         // Prepare world constants with either `_generateNewWorldConstants()` or `fetchWorldConstants()`
         worldConstants = _fetchWorldConstants();
         console.log(">>> World constants ready");
-        
+
         // Fetch args from CLI craft payload for init deploy
         {
             bytes memory initData = abi.encodeWithSelector(_getSelectors("DiamondInit")[0], worldConstants);
@@ -223,13 +223,13 @@ contract DiamondDeployTest is Test {
         nation3CapitalID = getter.getCapital(nation3ID);
         nation3CapitalAddr = getter.getAddress(nation3CapitalID);
         console.log(">>> Nations initialized");
-        
+
         console.log("=============== INDIVIDUAL TESTS BEGIN ================");
     }
 
     function _initializeMap() private {
-        for (uint256 i = 0; i < worldConstants.worldWidth / worldConstants.tileWidth; i++) {
-            for (uint256 j = 0; j < worldConstants.worldHeight / worldConstants.tileWidth; j++) {
+        for (uint64 i = 0; i < worldConstants.worldWidth / worldConstants.tileWidth; i++) {
+            for (uint64 j = 0; j < worldConstants.worldHeight / worldConstants.tileWidth; j++) {
                 admin.adminInitializeTile(Position({x: i * worldConstants.tileWidth, y: j * worldConstants.tileWidth}));
             }
         }

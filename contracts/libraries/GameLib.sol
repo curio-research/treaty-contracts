@@ -834,9 +834,9 @@ library GameLib {
         require(isProperTilePosition(_startPosition), "CURIO: Intended for tile neighbor");
 
         Position[] memory temp = new Position[](4);
-        uint256 x = _startPosition.x;
-        uint256 y = _startPosition.y;
-        uint256 tileWidth = gs().worldConstants.tileWidth;
+        uint64 x = _startPosition.x;
+        uint64 y = _startPosition.y;
+        uint64 tileWidth = gs().worldConstants.tileWidth;
         uint256 neighborCount = 0;
 
         if (x > 0) {
@@ -869,16 +869,16 @@ library GameLib {
         require(isProperTilePosition(_startPosition), "CURIO: Intended for tile region");
 
         Position[] memory temp = new Position[](9);
-        uint256 x;
-        uint256 y;
-        uint256 tileWidth = gs().worldConstants.tileWidth;
+        uint64 x;
+        uint64 y;
+        uint64 tileWidth = gs().worldConstants.tileWidth;
         uint256 neighborCount = 0;
 
-        for (uint256 i; i < 3; i++) {
+        for (uint64 i; i < 3; i++) {
             x = _startPosition.x + i * tileWidth - tileWidth;
             if (x < 0 || x >= gs().worldConstants.worldWidth) continue;
 
-            for (uint256 j; j < 3; j++) {
+            for (uint64 j; j < 3; j++) {
                 y = _startPosition.y + j * tileWidth - tileWidth;
                 if (y < 0 || y >= gs().worldConstants.worldHeight) continue;
 
@@ -888,7 +888,7 @@ library GameLib {
         }
 
         Position[] memory result = new Position[](neighborCount);
-        for (uint256 i = 0; i < neighborCount; i++) {
+        for (uint64 i = 0; i < neighborCount; i++) {
             result[i] = temp[i];
         }
 
@@ -913,7 +913,7 @@ library GameLib {
     }
 
     function getMapCenterTilePosition() internal view returns (Position memory) {
-        uint256 tileWidth = gs().worldConstants.tileWidth;
+        uint64 tileWidth = gs().worldConstants.tileWidth;
         return Position({x: (gs().worldConstants.worldWidth / tileWidth / 2) * tileWidth, y: (gs().worldConstants.worldHeight / tileWidth / 2) * tileWidth});
     }
 
@@ -1025,7 +1025,7 @@ library GameLib {
      * @dev From any position, get its proper tile position.
      */
     function getProperTilePosition(Position memory _p) internal view returns (Position memory) {
-        uint256 _tileWidth = gs().worldConstants.tileWidth;
+        uint64 _tileWidth = gs().worldConstants.tileWidth;
         return Position({x: _p.x - (_p.x % _tileWidth), y: _p.y - (_p.y % _tileWidth)});
     }
 
@@ -1033,7 +1033,7 @@ library GameLib {
      * @dev From any proper tile position, get the midpoint position of that tile. Often used for spawning units.
      */
     function getMidPositionFromTilePosition(Position memory _tilePosition) internal view returns (Position memory) {
-        uint256 tileWidth = gs().worldConstants.tileWidth;
+        uint64 tileWidth = gs().worldConstants.tileWidth;
         return Position({x: _tilePosition.x + tileWidth / 2, y: _tilePosition.y + tileWidth / 2});
     }
 

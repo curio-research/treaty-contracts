@@ -5,7 +5,5 @@ libs = ['lib']
 solc_version = '0.8.13'
 cache_path  = 'forge-cache'
 fs_permissions = [{ access = "read", path = "./"}]
+ffi = true
 gas_reports = ["*"]
-
-
-# See more config options https://github.com/foundry-rs/foundry/tree/master/config

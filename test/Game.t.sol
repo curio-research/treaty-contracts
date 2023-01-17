@@ -355,7 +355,7 @@ contract GameTest is Test, DiamondDeployTest {
         uint256 army11ID = game.organizeArmy(nation1CapitalID, armyTemplateIDs, armyTemplateAmounts);
 
         // Nation 1 moves army to (62, 29)
-        for (uint256 i = 1; i <= 9; i++) {
+        for (uint64 i = 1; i <= 9; i++) {
             time += 1;
             vm.warp(time);
             game.move(army11ID, Position({x: 62, y: 11 + 2 * i}));

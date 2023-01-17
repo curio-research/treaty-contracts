@@ -52,8 +52,8 @@ struct GameParamSpec {
 }
 
 struct Position {
-    uint256 x;
-    uint256 y;
+    uint64 x;
+    uint64 y;
 }
 
 struct WorldConstants {
@@ -68,9 +68,10 @@ struct WorldConstants {
     // uint256 maxTransferDistance; // FIXME: stack too deep for Foundry test
     uint256 numInitTerrainTypes; // default is 6
     uint256 secondsToTrainAThousandTroops;
-    uint256 tileWidth;
-    uint256 worldHeight;
-    uint256 worldWidth;
+
+    uint64 tileWidth;
+    uint64 worldHeight;
+    uint64 worldWidth;
 }
 
 struct GameState {

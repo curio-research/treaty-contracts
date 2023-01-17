@@ -246,7 +246,7 @@ contract TreatyTest is Test, DiamondDeployTest {
         assertTrue(getter.getNationTreatySignature(nation1ID, allianceID) > 0);
 
         // Nation 1 moves army from (62, 12) to (62, 29)
-        for (uint256 i = 1; i <= 9; i++) {
+        for (uint64 i = 1; i <= 9; i++) {
             time += 1;
             vm.warp(time);
             game.move(army11ID, Position({x: 62, y: 11 + 2 * i}));
@@ -488,7 +488,7 @@ contract TreatyTest is Test, DiamondDeployTest {
         uint256 army21ID = game.organizeArmy(nation2CapitalID, armyTemplateIDs, armyTemplateAmounts);
 
         // Player2 moves army from (62, 32) to (62, 14)
-        for (uint256 i = 34; i > 14; i -= 2) {
+        for (uint64 i = 34; i > 14; i -= 2) {
             time += 1;
             vm.warp(time);
             game.move(army21ID, Position({x: 62, y: i}));
@@ -509,7 +509,7 @@ contract TreatyTest is Test, DiamondDeployTest {
     }
 
     function testEmbargo() public {
-        /** 
+        /**
         Outline:
         - Player1 deploys sanctionLeague Treaty and whitelists player2
         - Player1 sanctions himself (for simplicity reason; same as sanctioning p3)
@@ -565,7 +565,7 @@ contract TreatyTest is Test, DiamondDeployTest {
 
         // Player2 moves army from (62, 32) to (62, 14)
         vm.startPrank(player2);
-        for (uint256 i = 34; i > 14; i -= 2) {
+        for (uint64 i = 34; i > 14; i -= 2) {
             time += 1;
             vm.warp(time);
             game.move(army21ID, Position({x: 62, y: i}));
@@ -665,7 +665,7 @@ contract TreatyTest is Test, DiamondDeployTest {
         uint256 army21ID = game.organizeArmy(nation2CapitalID, armyTemplateIDs, armyTemplateAmounts);
 
         // Player2 moves army from (62, 32) to (62, 14)
-        for (uint256 i = 34; i > 14; i -= 2) {
+        for (uint64 i = 34; i > 14; i -= 2) {
             time += 1;
             vm.warp(time);
             game.move(army21ID, Position({x: 62, y: i}));
