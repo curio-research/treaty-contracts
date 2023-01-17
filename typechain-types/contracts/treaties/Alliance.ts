@@ -25,6 +25,7 @@ import type {
 
 export interface AllianceInterface extends utils.Interface {
   functions: {
+    "addToWarCouncil(uint256)": FunctionFragment;
     "admin()": FunctionFragment;
     "approveBattle(uint256,bytes)": FunctionFragment;
     "approveClaimTile(uint256,bytes)": FunctionFragment;
@@ -49,24 +50,33 @@ export interface AllianceInterface extends utils.Interface {
     "approveUpgradeCapital(uint256,bytes)": FunctionFragment;
     "approveUpgradeResource(uint256,bytes)": FunctionFragment;
     "approveUpgradeTile(uint256,bytes)": FunctionFragment;
+    "conscriptArmies(uint256)": FunctionFragment;
+    "conscriptionDuration()": FunctionFragment;
     "description()": FunctionFragment;
     "diamond()": FunctionFragment;
     "game()": FunctionFragment;
     "getter()": FunctionFragment;
     "goldToken()": FunctionFragment;
+    "memberConscriptionStartTime(uint256)": FunctionFragment;
+    "memberToConscriptionFee(uint256)": FunctionFragment;
     "minimumStayCheck(uint256,uint256)": FunctionFragment;
     "name()": FunctionFragment;
     "ownerID()": FunctionFragment;
     "registerTreatyAndOwnerIds()": FunctionFragment;
-    "treatyBesiege(uint256)": FunctionFragment;
+    "removeFromWarCouncil(uint256)": FunctionFragment;
+    "revokeArmies()": FunctionFragment;
+    "setConscriptionDuration(uint256)": FunctionFragment;
+    "setConscriptionFee(uint256)": FunctionFragment;
     "treatyDelegateGameFunction(string,uint256,bool)": FunctionFragment;
     "treatyID()": FunctionFragment;
     "treatyJoin()": FunctionFragment;
     "treatyLeave()": FunctionFragment;
+    "warCouncil()": FunctionFragment;
   };
 
   getFunction(
     nameOrSignatureOrTopic:
+      | "addToWarCouncil"
       | "admin"
       | "approveBattle"
       | "approveClaimTile"
@@ -91,22 +101,34 @@ export interface AllianceInterface extends utils.Interface {
       | "approveUpgradeCapital"
       | "approveUpgradeResource"
       | "approveUpgradeTile"
+      | "conscriptArmies"
+      | "conscriptionDuration"
       | "description"
       | "diamond"
       | "game"
       | "getter"
       | "goldToken"
+      | "memberConscriptionStartTime"
+      | "memberToConscriptionFee"
       | "minimumStayCheck"
       | "name"
       | "ownerID"
       | "registerTreatyAndOwnerIds"
-      | "treatyBesiege"
+      | "removeFromWarCouncil"
+      | "revokeArmies"
+      | "setConscriptionDuration"
+      | "setConscriptionFee"
       | "treatyDelegateGameFunction"
       | "treatyID"
       | "treatyJoin"
       | "treatyLeave"
+      | "warCouncil"
   ): FunctionFragment;
 
+  encodeFunctionData(
+    functionFragment: "addToWarCouncil",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
   encodeFunctionData(functionFragment: "admin", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "approveBattle",
@@ -201,6 +223,14 @@ export interface AllianceInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
+    functionFragment: "conscriptArmies",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "conscriptionDuration",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "description",
     values?: undefined
   ): string;
@@ -208,6 +238,14 @@ export interface AllianceInterface extends utils.Interface {
   encodeFunctionData(functionFragment: "game", values?: undefined): string;
   encodeFunctionData(functionFragment: "getter", values?: undefined): string;
   encodeFunctionData(functionFragment: "goldToken", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "memberConscriptionStartTime",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "memberToConscriptionFee",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
   encodeFunctionData(
     functionFragment: "minimumStayCheck",
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
@@ -219,7 +257,19 @@ export interface AllianceInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "treatyBesiege",
+    functionFragment: "removeFromWarCouncil",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "revokeArmies",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setConscriptionDuration",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setConscriptionFee",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
@@ -239,7 +289,15 @@ export interface AllianceInterface extends utils.Interface {
     functionFragment: "treatyLeave",
     values?: undefined
   ): string;
+  encodeFunctionData(
+    functionFragment: "warCouncil",
+    values?: undefined
+  ): string;
 
+  decodeFunctionResult(
+    functionFragment: "addToWarCouncil",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "admin", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "approveBattle",
@@ -334,6 +392,14 @@ export interface AllianceInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "conscriptArmies",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "conscriptionDuration",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "description",
     data: BytesLike
   ): Result;
@@ -341,6 +407,14 @@ export interface AllianceInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "game", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "getter", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "goldToken", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "memberConscriptionStartTime",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "memberToConscriptionFee",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "minimumStayCheck",
     data: BytesLike
@@ -352,7 +426,19 @@ export interface AllianceInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "treatyBesiege",
+    functionFragment: "removeFromWarCouncil",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "revokeArmies",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setConscriptionDuration",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setConscriptionFee",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -365,6 +451,7 @@ export interface AllianceInterface extends utils.Interface {
     functionFragment: "treatyLeave",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "warCouncil", data: BytesLike): Result;
 
   events: {};
 }
@@ -396,6 +483,11 @@ export interface Alliance extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    addToWarCouncil(
+      _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     admin(overrides?: CallOverrides): Promise<[string]>;
 
     approveBattle(
@@ -536,6 +628,13 @@ export interface Alliance extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
+    conscriptArmies(
+      _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    conscriptionDuration(overrides?: CallOverrides): Promise<[BigNumber]>;
+
     description(overrides?: CallOverrides): Promise<[string]>;
 
     diamond(overrides?: CallOverrides): Promise<[string]>;
@@ -545,6 +644,16 @@ export interface Alliance extends BaseContract {
     getter(overrides?: CallOverrides): Promise<[string]>;
 
     goldToken(overrides?: CallOverrides): Promise<[string]>;
+
+    memberConscriptionStartTime(
+      arg0: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    memberToConscriptionFee(
+      arg0: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
 
     minimumStayCheck(
       _nationID: PromiseOrValue<BigNumberish>,
@@ -560,8 +669,22 @@ export interface Alliance extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    treatyBesiege(
-      _targetArmyID: PromiseOrValue<BigNumberish>,
+    removeFromWarCouncil(
+      _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    revokeArmies(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    setConscriptionDuration(
+      _duration: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    setConscriptionFee(
+      _fee: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -581,7 +704,14 @@ export interface Alliance extends BaseContract {
     treatyLeave(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
+
+    warCouncil(overrides?: CallOverrides): Promise<[string]>;
   };
+
+  addToWarCouncil(
+    _nationID: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
 
   admin(overrides?: CallOverrides): Promise<string>;
 
@@ -723,6 +853,13 @@ export interface Alliance extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
+  conscriptArmies(
+    _nationID: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  conscriptionDuration(overrides?: CallOverrides): Promise<BigNumber>;
+
   description(overrides?: CallOverrides): Promise<string>;
 
   diamond(overrides?: CallOverrides): Promise<string>;
@@ -732,6 +869,16 @@ export interface Alliance extends BaseContract {
   getter(overrides?: CallOverrides): Promise<string>;
 
   goldToken(overrides?: CallOverrides): Promise<string>;
+
+  memberConscriptionStartTime(
+    arg0: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  memberToConscriptionFee(
+    arg0: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
 
   minimumStayCheck(
     _nationID: PromiseOrValue<BigNumberish>,
@@ -747,8 +894,22 @@ export interface Alliance extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  treatyBesiege(
-    _targetArmyID: PromiseOrValue<BigNumberish>,
+  removeFromWarCouncil(
+    _nationID: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  revokeArmies(
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  setConscriptionDuration(
+    _duration: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  setConscriptionFee(
+    _fee: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -769,7 +930,14 @@ export interface Alliance extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  warCouncil(overrides?: CallOverrides): Promise<string>;
+
   callStatic: {
+    addToWarCouncil(
+      _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     admin(overrides?: CallOverrides): Promise<string>;
 
     approveBattle(
@@ -910,6 +1078,13 @@ export interface Alliance extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
+    conscriptArmies(
+      _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    conscriptionDuration(overrides?: CallOverrides): Promise<BigNumber>;
+
     description(overrides?: CallOverrides): Promise<string>;
 
     diamond(overrides?: CallOverrides): Promise<string>;
@@ -919,6 +1094,16 @@ export interface Alliance extends BaseContract {
     getter(overrides?: CallOverrides): Promise<string>;
 
     goldToken(overrides?: CallOverrides): Promise<string>;
+
+    memberConscriptionStartTime(
+      arg0: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    memberToConscriptionFee(
+      arg0: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     minimumStayCheck(
       _nationID: PromiseOrValue<BigNumberish>,
@@ -932,8 +1117,20 @@ export interface Alliance extends BaseContract {
 
     registerTreatyAndOwnerIds(overrides?: CallOverrides): Promise<void>;
 
-    treatyBesiege(
-      _targetArmyID: PromiseOrValue<BigNumberish>,
+    removeFromWarCouncil(
+      _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    revokeArmies(overrides?: CallOverrides): Promise<void>;
+
+    setConscriptionDuration(
+      _duration: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setConscriptionFee(
+      _fee: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -949,11 +1146,18 @@ export interface Alliance extends BaseContract {
     treatyJoin(overrides?: CallOverrides): Promise<void>;
 
     treatyLeave(overrides?: CallOverrides): Promise<void>;
+
+    warCouncil(overrides?: CallOverrides): Promise<string>;
   };
 
   filters: {};
 
   estimateGas: {
+    addToWarCouncil(
+      _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     admin(overrides?: CallOverrides): Promise<BigNumber>;
 
     approveBattle(
@@ -1094,6 +1298,13 @@ export interface Alliance extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    conscriptArmies(
+      _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    conscriptionDuration(overrides?: CallOverrides): Promise<BigNumber>;
+
     description(overrides?: CallOverrides): Promise<BigNumber>;
 
     diamond(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1103,6 +1314,16 @@ export interface Alliance extends BaseContract {
     getter(overrides?: CallOverrides): Promise<BigNumber>;
 
     goldToken(overrides?: CallOverrides): Promise<BigNumber>;
+
+    memberConscriptionStartTime(
+      arg0: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    memberToConscriptionFee(
+      arg0: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     minimumStayCheck(
       _nationID: PromiseOrValue<BigNumberish>,
@@ -1118,8 +1339,22 @@ export interface Alliance extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    treatyBesiege(
-      _targetArmyID: PromiseOrValue<BigNumberish>,
+    removeFromWarCouncil(
+      _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    revokeArmies(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    setConscriptionDuration(
+      _duration: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    setConscriptionFee(
+      _fee: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -1139,9 +1374,16 @@ export interface Alliance extends BaseContract {
     treatyLeave(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
+
+    warCouncil(overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   populateTransaction: {
+    addToWarCouncil(
+      _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
     admin(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     approveBattle(
@@ -1282,6 +1524,15 @@ export interface Alliance extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    conscriptArmies(
+      _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    conscriptionDuration(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     description(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     diamond(overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -1291,6 +1542,16 @@ export interface Alliance extends BaseContract {
     getter(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     goldToken(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    memberConscriptionStartTime(
+      arg0: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    memberToConscriptionFee(
+      arg0: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     minimumStayCheck(
       _nationID: PromiseOrValue<BigNumberish>,
@@ -1306,8 +1567,22 @@ export interface Alliance extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    treatyBesiege(
-      _targetArmyID: PromiseOrValue<BigNumberish>,
+    removeFromWarCouncil(
+      _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    revokeArmies(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setConscriptionDuration(
+      _duration: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setConscriptionFee(
+      _fee: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1327,5 +1602,7 @@ export interface Alliance extends BaseContract {
     treatyLeave(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
+
+    warCouncil(overrides?: CallOverrides): Promise<PopulatedTransaction>;
   };
 }

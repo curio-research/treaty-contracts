@@ -141,7 +141,8 @@ export interface CurioInterface extends utils.Interface {
     "addToGameWhitelist(address)": FunctionFragment;
     "addToTreatyWhitelist(uint256)": FunctionFragment;
     "addTroopTemplate(uint256,uint256,uint256,uint256,address)": FunctionFragment;
-    "adminDelegateGameFunction(uint256,string,uint256,bool)": FunctionFragment;
+    "adminDelegateToPlayer(uint256,string,uint256,uint256,bool)": FunctionFragment;
+    "adminDelegateToTreaty(uint256,string,uint256,bool)": FunctionFragment;
     "adminInitializeTile((uint256,uint256))": FunctionFragment;
     "bulkAddGameParameters(string[],uint256[])": FunctionFragment;
     "bulkInitializeTiles((uint256,uint256)[])": FunctionFragment;
@@ -276,7 +277,8 @@ export interface CurioInterface extends utils.Interface {
       | "addToGameWhitelist"
       | "addToTreatyWhitelist"
       | "addTroopTemplate"
-      | "adminDelegateGameFunction"
+      | "adminDelegateToPlayer"
+      | "adminDelegateToTreaty"
       | "adminInitializeTile"
       | "bulkAddGameParameters"
       | "bulkInitializeTiles"
@@ -447,7 +449,17 @@ export interface CurioInterface extends utils.Interface {
     ]
   ): string;
   encodeFunctionData(
-    functionFragment: "adminDelegateGameFunction",
+    functionFragment: "adminDelegateToPlayer",
+    values: [
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<boolean>
+    ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "adminDelegateToTreaty",
     values: [
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<string>,
@@ -1012,7 +1024,11 @@ export interface CurioInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "adminDelegateGameFunction",
+    functionFragment: "adminDelegateToPlayer",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "adminDelegateToTreaty",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -1595,7 +1611,16 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    adminDelegateGameFunction(
+    adminDelegateToPlayer(
+      _nationID: PromiseOrValue<BigNumberish>,
+      _functionName: PromiseOrValue<string>,
+      _delegateID: PromiseOrValue<BigNumberish>,
+      _subjectID: PromiseOrValue<BigNumberish>,
+      _canCall: PromiseOrValue<boolean>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    adminDelegateToTreaty(
       _nationID: PromiseOrValue<BigNumberish>,
       _functionName: PromiseOrValue<string>,
       _subjectID: PromiseOrValue<BigNumberish>,
@@ -2303,7 +2328,16 @@ export interface Curio extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  adminDelegateGameFunction(
+  adminDelegateToPlayer(
+    _nationID: PromiseOrValue<BigNumberish>,
+    _functionName: PromiseOrValue<string>,
+    _delegateID: PromiseOrValue<BigNumberish>,
+    _subjectID: PromiseOrValue<BigNumberish>,
+    _canCall: PromiseOrValue<boolean>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  adminDelegateToTreaty(
     _nationID: PromiseOrValue<BigNumberish>,
     _functionName: PromiseOrValue<string>,
     _subjectID: PromiseOrValue<BigNumberish>,
@@ -2999,7 +3033,16 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    adminDelegateGameFunction(
+    adminDelegateToPlayer(
+      _nationID: PromiseOrValue<BigNumberish>,
+      _functionName: PromiseOrValue<string>,
+      _delegateID: PromiseOrValue<BigNumberish>,
+      _subjectID: PromiseOrValue<BigNumberish>,
+      _canCall: PromiseOrValue<boolean>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    adminDelegateToTreaty(
       _nationID: PromiseOrValue<BigNumberish>,
       _functionName: PromiseOrValue<string>,
       _subjectID: PromiseOrValue<BigNumberish>,
@@ -3750,7 +3793,16 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    adminDelegateGameFunction(
+    adminDelegateToPlayer(
+      _nationID: PromiseOrValue<BigNumberish>,
+      _functionName: PromiseOrValue<string>,
+      _delegateID: PromiseOrValue<BigNumberish>,
+      _subjectID: PromiseOrValue<BigNumberish>,
+      _canCall: PromiseOrValue<boolean>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    adminDelegateToTreaty(
       _nationID: PromiseOrValue<BigNumberish>,
       _functionName: PromiseOrValue<string>,
       _subjectID: PromiseOrValue<BigNumberish>,
@@ -4449,7 +4501,16 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    adminDelegateGameFunction(
+    adminDelegateToPlayer(
+      _nationID: PromiseOrValue<BigNumberish>,
+      _functionName: PromiseOrValue<string>,
+      _delegateID: PromiseOrValue<BigNumberish>,
+      _subjectID: PromiseOrValue<BigNumberish>,
+      _canCall: PromiseOrValue<boolean>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    adminDelegateToTreaty(
       _nationID: PromiseOrValue<BigNumberish>,
       _functionName: PromiseOrValue<string>,
       _subjectID: PromiseOrValue<BigNumberish>,

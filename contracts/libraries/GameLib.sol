@@ -962,7 +962,6 @@ library GameLib {
         uint256 _subjectID
     ) internal view {
         uint256[] memory delegationIDs = getDelegations(_functionName, _ownerID, _callerID);
-
         for (uint256 i = 0; i < delegationIDs.length; i++) {
             uint256 subjectID = ECSLib.getUint("Subject", delegationIDs[i]);
             if (subjectID == 0 || subjectID == _subjectID) return;

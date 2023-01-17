@@ -97,7 +97,7 @@ contract AdminFacet is UseStorage {
     }
 
     /// @notice Set _subjectID to 0 to delegate to all subjects
-    function adminDelegateGameFunction(
+    function adminDelegateToTreaty(
         uint256 _nationID,
         string memory _functionName,
         uint256 _subjectID,
@@ -111,6 +111,22 @@ contract AdminFacet is UseStorage {
         // Delegate function
         uint256 treatyID = GameLib.getEntityByAddress(msg.sender);
         GameLib.delegateGameFunction(_nationID, _functionName, treatyID, _subjectID, _canCall);
+    }
+
+    function adminDelegateToPlayer(
+        uint256 _nationID,
+        string memory _functionName,
+        uint256 _delegateID,
+        uint256 _subjectID,
+        bool _canCall
+    ) external onlyTreaty {
+        // Basic checks
+        GameLib.ongoingGameCheck();
+        GameLib.validEntityCheck(_nationID);
+        GameLib.validFunctionNameCheck(_functionName);
+
+        // Delegate function
+        GameLib.delegateGameFunction(_nationID, _functionName, _delegateID, _subjectID, _canCall);
     }
 
     // ----------------------------------------------------------------------

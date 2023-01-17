@@ -26,7 +26,6 @@ import type {
 export interface EmbargoInterface extends utils.Interface {
   functions: {
     "addToSanctionList(uint256)": FunctionFragment;
-    "addToWhitelist(uint256)": FunctionFragment;
     "admin()": FunctionFragment;
     "approveBattle(uint256,bytes)": FunctionFragment;
     "approveClaimTile(uint256,bytes)": FunctionFragment;
@@ -60,7 +59,6 @@ export interface EmbargoInterface extends utils.Interface {
     "ownerID()": FunctionFragment;
     "registerTreatyAndOwnerIds()": FunctionFragment;
     "removeFromSanctionList(uint256)": FunctionFragment;
-    "removeFromWhitelist(uint256)": FunctionFragment;
     "removeMember(uint256)": FunctionFragment;
     "sanctionList()": FunctionFragment;
     "treatyDelegateGameFunction(string,uint256,bool)": FunctionFragment;
@@ -72,7 +70,6 @@ export interface EmbargoInterface extends utils.Interface {
   getFunction(
     nameOrSignatureOrTopic:
       | "addToSanctionList"
-      | "addToWhitelist"
       | "admin"
       | "approveBattle"
       | "approveClaimTile"
@@ -106,7 +103,6 @@ export interface EmbargoInterface extends utils.Interface {
       | "ownerID"
       | "registerTreatyAndOwnerIds"
       | "removeFromSanctionList"
-      | "removeFromWhitelist"
       | "removeMember"
       | "sanctionList"
       | "treatyDelegateGameFunction"
@@ -117,10 +113,6 @@ export interface EmbargoInterface extends utils.Interface {
 
   encodeFunctionData(
     functionFragment: "addToSanctionList",
-    values: [PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "addToWhitelist",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(functionFragment: "admin", values?: undefined): string;
@@ -238,10 +230,6 @@ export interface EmbargoInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
-    functionFragment: "removeFromWhitelist",
-    values: [PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
     functionFragment: "removeMember",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
@@ -269,10 +257,6 @@ export interface EmbargoInterface extends utils.Interface {
 
   decodeFunctionResult(
     functionFragment: "addToSanctionList",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "addToWhitelist",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "admin", data: BytesLike): Result;
@@ -390,10 +374,6 @@ export interface EmbargoInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "removeFromWhitelist",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "removeMember",
     data: BytesLike
   ): Result;
@@ -443,11 +423,6 @@ export interface Embargo extends BaseContract {
 
   functions: {
     addToSanctionList(
-      _nationID: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    addToWhitelist(
       _nationID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
@@ -619,11 +594,6 @@ export interface Embargo extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    removeFromWhitelist(
-      _nationID: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
     removeMember(
       _nationID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -650,11 +620,6 @@ export interface Embargo extends BaseContract {
   };
 
   addToSanctionList(
-    _nationID: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  addToWhitelist(
     _nationID: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
@@ -826,11 +791,6 @@ export interface Embargo extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  removeFromWhitelist(
-    _nationID: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
   removeMember(
     _nationID: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -857,11 +817,6 @@ export interface Embargo extends BaseContract {
 
   callStatic: {
     addToSanctionList(
-      _nationID: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    addToWhitelist(
       _nationID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
@@ -1031,11 +986,6 @@ export interface Embargo extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    removeFromWhitelist(
-      _nationID: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     removeMember(
       _nationID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -1061,11 +1011,6 @@ export interface Embargo extends BaseContract {
 
   estimateGas: {
     addToSanctionList(
-      _nationID: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    addToWhitelist(
       _nationID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
@@ -1237,11 +1182,6 @@ export interface Embargo extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    removeFromWhitelist(
-      _nationID: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
     removeMember(
       _nationID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -1269,11 +1209,6 @@ export interface Embargo extends BaseContract {
 
   populateTransaction: {
     addToSanctionList(
-      _nationID: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    addToWhitelist(
       _nationID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
@@ -1441,11 +1376,6 @@ export interface Embargo extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     removeFromSanctionList(
-      _nationID: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    removeFromWhitelist(
       _nationID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
