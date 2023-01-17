@@ -75,8 +75,6 @@ struct WorldConstants {
 
 struct GameState {
     // Basic
-    bool isPaused;
-    uint256 lastPaused;
     uint256 gameInitTimestamp;
     WorldConstants worldConstants;
     uint256[][] encodedColumnBatches;

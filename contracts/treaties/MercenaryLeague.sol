@@ -108,10 +108,9 @@ contract MercenaryLeague is CurioTreaty {
         (, , string memory functionName, , , bool canCall) = abi.decode(_encodedParams, (uint256, uint256, string, uint256, uint256, bool));
         // Alliance member cannot arbitrarily revoke delegation of Battle and Move functions
         if (_strEq(functionName, "Battle") || _strEq(functionName, "Move")) {
-            if (!canCall) {
-                return false;
-            }
+            if (!canCall) return false;
         }
-        return true;
+
+        return super.approveDelegateGameFunction(_nationID, _encodedParams);
     }
 }

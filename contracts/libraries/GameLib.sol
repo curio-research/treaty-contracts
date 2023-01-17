@@ -467,7 +467,7 @@ library GameLib {
             treatyAddress = address(new HandshakeDeal(address(this)));
         } else if (GameLib.strEq(_treatyName, "Mercenary League")) {
             treatyAddress = address(new MercenaryLeague(address(this)));
-        }else {
+        } else {
             revert("CURIO: Unsupported treaty name");
         }
 
@@ -925,8 +925,6 @@ library GameLib {
     // ----------------------------------------------------------
 
     function ongoingGameCheck() internal view {
-        require(!gs().isPaused, "CURIO: Game is paused");
-
         uint256 gameLengthInSeconds = gs().worldConstants.gameLengthInSeconds;
         require(gameLengthInSeconds == 0 || (block.timestamp - gs().gameInitTimestamp) <= gameLengthInSeconds, "CURIO: Game has ended");
     }
