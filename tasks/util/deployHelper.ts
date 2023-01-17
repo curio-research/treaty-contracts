@@ -8,7 +8,7 @@ import { chainInfo, COMPONENT_SPECS, GameMode, position, TILE_TYPE } from 'curio
 import { ECSLib } from '../../typechain-types/contracts/libraries/ECSLib';
 import { GameLib } from '../../typechain-types/contracts/libraries/GameLib';
 import { CurioERC20 } from '../../typechain-types/contracts/standards/CurioERC20';
-import { createTemplates, INNER_REGION_WIDTH_BY_TILE_COUNT, treatyDescriptions } from './constants';
+import { createTemplates, INNER_REGION_RADIUS_BY_TILE_COUNT, treatyDescriptions } from './constants';
 import { deployDiamond, getDiamond, deployFacets } from './diamondDeploy';
 import { encodeTileMap } from './mapHelper';
 import GAME_PARAMETERS from '../game_parameters.json';
@@ -243,7 +243,7 @@ export const initializeGame = async (hre: HardhatRuntimeEnvironment, worldConsta
   // Battle royale setup
   if (worldConstants.gameMode === GameMode.BATTLE_ROYALE) {
     startTime = performance.now();
-    const regionWidth = INNER_REGION_WIDTH_BY_TILE_COUNT * worldConstants.tileWidth;
+    const regionWidth = INNER_REGION_RADIUS_BY_TILE_COUNT * worldConstants.tileWidth;
     const centerTilePos = { x: Math.floor(tileMap.length / 2) * worldConstants.tileWidth, y: Math.floor(tileMap[0].length / 2) * worldConstants.tileWidth };
     const region = { xMin: centerTilePos.x - regionWidth, xMax: centerTilePos.x + regionWidth, yMin: centerTilePos.y - regionWidth, yMax: centerTilePos.y + regionWidth };
     const regionTiles = allTilePositions.filter((pos) => pos.x >= region.xMin && pos.x <= region.xMax && pos.y >= region.yMin && pos.y <= region.yMax);

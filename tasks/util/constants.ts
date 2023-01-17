@@ -13,13 +13,13 @@ export const LOCALHOST_WS_RPC_URL = 'ws://localhost:8545';
 // ----------------------------------------------------------
 
 export const TILE_WIDTH = 5;
-export const INNER_REGION_WIDTH_BY_TILE_COUNT = 4;
+export const INNER_REGION_RADIUS_BY_TILE_COUNT = 4;
 export const NUM_INIT_TERRAIN_TYPES = Math.floor((Object.keys(TILE_TYPE).length + 1) / 2);
 
 export const MAP_INPUT: MapInput = {
   width: 15,
   height: 15,
-  innerWidthByTileCount: INNER_REGION_WIDTH_BY_TILE_COUNT,
+  innerRadiusByTileCount: INNER_REGION_RADIUS_BY_TILE_COUNT,
 };
 
 export const TEST_MAP_INPUT: MapInput = {
