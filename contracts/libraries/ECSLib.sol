@@ -4,7 +4,6 @@ pragma solidity ^0.8.13;
 import {LibStorage} from "contracts/libraries/Storage.sol";
 import {GameState, Position, QueryCondition, QueryType, ValueType} from "contracts/libraries/Types.sol";
 import {Set} from "contracts/Set.sol";
-import {UintBoolMapping} from "contracts/Mapping.sol";
 import {Component} from "contracts/Component.sol";
 import {AddressComponent, BoolComponent, IntComponent, PositionComponent, StringComponent, UintComponent, UintArrayComponent} from "contracts/TypedComponents.sol";
 
@@ -72,7 +71,6 @@ library ECSLib {
         return _getComponent(_componentName).getBytesValue(_entity);
     }
 
-    // Question: At the moment, all events regarding component set and removal are emitted in game contracts. Is this good?
     function setComponentValue(
         string memory _componentName,
         uint256 _entity,

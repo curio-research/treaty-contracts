@@ -1,22 +1,22 @@
 // SPDX-License-Identifier: Unlicense
-pragma solidity ^0.8.4;
+pragma solidity ^0.8.13;
 
 import {Set} from "contracts/Set.sol";
 
 /// Implementation of a Component in ECS architecture in Solidity
 
 contract Component {
-    /**
-     * TODO: Permission management for value modification
-     */
-
-    address private gameAddr; // game diamond
-    Set immutable emptySet = new Set();
+    address private gameAddr;
+    Set private immutable emptySet = new Set();
     Set private entities = new Set();
     mapping(uint256 => bytes) private entityToValueMap; // entity => value of entity component
     mapping(uint256 => address) private valueToEntitySetAddrMap; // value => address of set of entities with this component equal to this value
-
     address private NULL_ADDR = address(0);
+
+    modifier onlyGameOrSelf() {
+        require(msg.sender == gameAddr || msg.sender == address(this), "Component: Only game or self can modify values");
+        _;
+    }
 
     constructor(address _gameAddr) {
         gameAddr = _gameAddr;
@@ -66,7 +66,7 @@ contract Component {
 
     /**
      * @dev Get all entities with this component and all their values in the form of two arrays.
-     * TODO: GAS: Expensive
+     * @notice High gas expense
      */
     function getAllEntitiesAndValues() public view returns (uint256[] memory, bytes[] memory) {
         uint256[] memory entityArray = entities.getAll();
@@ -92,7 +92,7 @@ contract Component {
      * @param _entity entity ID
      * @param _value component value in bytes
      */
-    function set(uint256 _entity, bytes memory _value) public {
+    function set(uint256 _entity, bytes memory _value) public onlyGameOrSelf {
         entities.add(_entity);
 
         address setAddr = valueToEntitySetAddrMap[uint256(keccak256(entityToValueMap[_entity]))];
@@ -109,7 +109,7 @@ contract Component {
      * @dev Remove this component for a specified entity.
      * @param _entity entity ID
      */
-    function remove(uint256 _entity) public {
+    function remove(uint256 _entity) public onlyGameOrSelf {
         entities.remove(_entity);
 
         address setAddr = valueToEntitySetAddrMap[uint256(keccak256(entityToValueMap[_entity]))];
