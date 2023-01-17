@@ -9,6 +9,7 @@ import {console} from "forge-std/console.sol";
 
 contract Alliance is CurioTreaty {
     CurioERC20 public goldToken;
+    
 
     constructor(address _diamond) CurioTreaty(_diamond) {
         goldToken = getter.getTokenContract("Gold");

@@ -373,6 +373,9 @@ contract TreatyTest is Test, DiamondDeployTest {
         assertEq(getter.getNation(army11ID), nation1ID);
         assertEq(getter.getNation(army31ID), nation3ID);
         vm.stopPrank();
+
+        // addition of new tests @ 2023-1-16
+
     }
 
     // function testFTX() public {
@@ -777,7 +780,7 @@ contract TreatyTest is Test, DiamondDeployTest {
         vm.startPrank(player1);
         HandshakeDeal hsDeal = HandshakeDeal(game.deployTreaty(nation1ID, handshakeDealTemplate.name()));
         hsDeal.treatyJoin();
-        hsDeal.proposeDeal(HandshakeDeal.ApprovalFunctionType.approveUpgradeCapital, abi.encode(nation2CapitalID), 1000);
+        hsDeal.proposeDeal1(HandshakeDeal.ApprovalFunctionType.approveUpgradeCapital, nation2CapitalID, 1000);
         vm.stopPrank();
 
         // assigns tokens to p1 and p2

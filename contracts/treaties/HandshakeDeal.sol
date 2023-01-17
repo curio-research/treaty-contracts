@@ -46,11 +46,36 @@ contract HandshakeDeal is CurioTreaty {
     // ----------------------------------------------------------
     // Articles of Treaty
     // ----------------------------------------------------------
+    /**
+    Note: Frontend for now won't work with encoded params, so we split up ProposeDeal into 3 functions: 
+    
+    ProposeDeal1 Works for:
+    upgradeCapital(uint256 _capitalID)
+    upgradeTile(uint256 _tileID)
+    recoverTile(uint256 _tileID)
+    disownTile(uint256 _tileID)
+    endGather(uint256 _troopID)
+    unloadResources(uint256 _troopID)
+    harvestResourcesFromCapital(uint256 _capitalID)
+    upgradeResource(uint256 _resourceID)
 
-    // Note: If approveStartTroopProduction, _encodedParams should only contain troopTemplateID
-    function proposeDeal(
+
+    ProposeDeal2 Works for:
+    startTroopProduction(uint256 _capitalID, uint256 _troopTemplateID)
+    startGather(uint256 _troopID, uint256 _resourceID)
+    harvestResource(uint256 _troopID, uint256 _resourceID)
+    battle(uint256 _troopID, uint256 _targetID)
+
+    ProposeDeal3 Works for:
+    moveCapital(uint256 _capitalID, Position _position)
+    claimTile(uint256 _capitalID, Position _position)
+    move(uint256 _troopID, Position _position)
+
+     */
+
+    function proposeDeal1(
         ApprovalFunctionType _functionType,
-        bytes memory _encodedParams,
+        uint256 _uint256Param,
         uint256 _effectiveDuration
     ) public onlySigner returns (uint256) {
         uint256 proposerID = getter.getEntityByAddress(msg.sender);
@@ -60,7 +85,51 @@ contract HandshakeDeal is CurioTreaty {
             dealID: dealCount, // FORMATTING: DO NOT REMOVE THIS COMMENT,
             proposerID: proposerID,
             functionOfAgreement: _functionType,
-            encodedParams: _encodedParams,
+            encodedParams: abi.encode(_uint256Param),
+            signedAt: block.timestamp,
+            effectiveDuration: _effectiveDuration
+        });
+        nationIDToDealIDs[proposerID].push(dealCount);
+
+        return dealCount;
+    }
+
+    function proposeDeal2(
+        ApprovalFunctionType _functionType,
+        uint256 _uint256Param1,
+        uint256 _uint256Param2,
+        uint256 _effectiveDuration
+    ) public onlySigner returns (uint256) {
+        uint256 proposerID = getter.getEntityByAddress(msg.sender);
+        dealCount++;
+
+        idToDeal[dealCount] = Deal({
+            dealID: dealCount, // FORMATTING: DO NOT REMOVE THIS COMMENT,
+            proposerID: proposerID,
+            functionOfAgreement: _functionType,
+            encodedParams: abi.encode(_uint256Param1, _uint256Param2),
+            signedAt: block.timestamp,
+            effectiveDuration: _effectiveDuration
+        });
+        nationIDToDealIDs[proposerID].push(dealCount);
+
+        return dealCount;
+    }
+
+    function proposeDeal3(
+        ApprovalFunctionType _functionType,
+        uint256 _uint256Param,
+        Position memory _positionParam,
+        uint256 _effectiveDuration
+    ) public onlySigner returns (uint256) {
+        uint256 proposerID = getter.getEntityByAddress(msg.sender);
+        dealCount++;
+
+        idToDeal[dealCount] = Deal({
+            dealID: dealCount, // FORMATTING: DO NOT REMOVE THIS COMMENT,
+            proposerID: proposerID,
+            functionOfAgreement: _functionType,
+            encodedParams: abi.encode(_uint256Param, _position),
             signedAt: block.timestamp,
             effectiveDuration: _effectiveDuration
         });
