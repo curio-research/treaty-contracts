@@ -23,6 +23,16 @@ import type {
   PromiseOrValue,
 } from "../../common";
 
+export type PositionStruct = {
+  x: PromiseOrValue<BigNumberish>;
+  y: PromiseOrValue<BigNumberish>;
+};
+
+export type PositionStructOutput = [BigNumber, BigNumber] & {
+  x: BigNumber;
+  y: BigNumber;
+};
+
 export interface HandshakeDealInterface extends utils.Interface {
   functions: {
     "admin()": FunctionFragment;
@@ -60,7 +70,9 @@ export interface HandshakeDealInterface extends utils.Interface {
     "name()": FunctionFragment;
     "nationIDToDealIDs(uint256,uint256)": FunctionFragment;
     "ownerID()": FunctionFragment;
-    "proposeDeal(uint8,bytes,uint256)": FunctionFragment;
+    "proposeDeal1(uint8,uint256,uint256)": FunctionFragment;
+    "proposeDeal2(uint8,uint256,uint256,uint256)": FunctionFragment;
+    "proposeDeal3(uint8,uint256,(uint256,uint256),uint256)": FunctionFragment;
     "registerTreatyAndOwnerIds()": FunctionFragment;
     "signDeal(uint256)": FunctionFragment;
     "treatyDelegateGameFunction(string,uint256,bool)": FunctionFragment;
@@ -106,7 +118,9 @@ export interface HandshakeDealInterface extends utils.Interface {
       | "name"
       | "nationIDToDealIDs"
       | "ownerID"
-      | "proposeDeal"
+      | "proposeDeal1"
+      | "proposeDeal2"
+      | "proposeDeal3"
       | "registerTreatyAndOwnerIds"
       | "signDeal"
       | "treatyDelegateGameFunction"
@@ -235,10 +249,28 @@ export interface HandshakeDealInterface extends utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "ownerID", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "proposeDeal",
+    functionFragment: "proposeDeal1",
     values: [
       PromiseOrValue<BigNumberish>,
-      PromiseOrValue<BytesLike>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>
+    ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "proposeDeal2",
+    values: [
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>
+    ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "proposeDeal3",
+    values: [
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PositionStruct,
       PromiseOrValue<BigNumberish>
     ]
   ): string;
@@ -385,7 +417,15 @@ export interface HandshakeDealInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "ownerID", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "proposeDeal",
+    functionFragment: "proposeDeal1",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "proposeDeal2",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "proposeDeal3",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -619,9 +659,25 @@ export interface HandshakeDeal extends BaseContract {
 
     ownerID(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    proposeDeal(
+    proposeDeal1(
       _functionType: PromiseOrValue<BigNumberish>,
-      _encodedParams: PromiseOrValue<BytesLike>,
+      _uint256Param: PromiseOrValue<BigNumberish>,
+      _effectiveDuration: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    proposeDeal2(
+      _functionType: PromiseOrValue<BigNumberish>,
+      _uint256Param1: PromiseOrValue<BigNumberish>,
+      _uint256Param2: PromiseOrValue<BigNumberish>,
+      _effectiveDuration: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    proposeDeal3(
+      _functionType: PromiseOrValue<BigNumberish>,
+      _uint256Param: PromiseOrValue<BigNumberish>,
+      _positionParam: PositionStruct,
       _effectiveDuration: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
@@ -838,9 +894,25 @@ export interface HandshakeDeal extends BaseContract {
 
   ownerID(overrides?: CallOverrides): Promise<BigNumber>;
 
-  proposeDeal(
+  proposeDeal1(
     _functionType: PromiseOrValue<BigNumberish>,
-    _encodedParams: PromiseOrValue<BytesLike>,
+    _uint256Param: PromiseOrValue<BigNumberish>,
+    _effectiveDuration: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  proposeDeal2(
+    _functionType: PromiseOrValue<BigNumberish>,
+    _uint256Param1: PromiseOrValue<BigNumberish>,
+    _uint256Param2: PromiseOrValue<BigNumberish>,
+    _effectiveDuration: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  proposeDeal3(
+    _functionType: PromiseOrValue<BigNumberish>,
+    _uint256Param: PromiseOrValue<BigNumberish>,
+    _positionParam: PositionStruct,
     _effectiveDuration: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
@@ -1057,9 +1129,25 @@ export interface HandshakeDeal extends BaseContract {
 
     ownerID(overrides?: CallOverrides): Promise<BigNumber>;
 
-    proposeDeal(
+    proposeDeal1(
       _functionType: PromiseOrValue<BigNumberish>,
-      _encodedParams: PromiseOrValue<BytesLike>,
+      _uint256Param: PromiseOrValue<BigNumberish>,
+      _effectiveDuration: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    proposeDeal2(
+      _functionType: PromiseOrValue<BigNumberish>,
+      _uint256Param1: PromiseOrValue<BigNumberish>,
+      _uint256Param2: PromiseOrValue<BigNumberish>,
+      _effectiveDuration: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    proposeDeal3(
+      _functionType: PromiseOrValue<BigNumberish>,
+      _uint256Param: PromiseOrValue<BigNumberish>,
+      _positionParam: PositionStruct,
       _effectiveDuration: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -1264,9 +1352,25 @@ export interface HandshakeDeal extends BaseContract {
 
     ownerID(overrides?: CallOverrides): Promise<BigNumber>;
 
-    proposeDeal(
+    proposeDeal1(
       _functionType: PromiseOrValue<BigNumberish>,
-      _encodedParams: PromiseOrValue<BytesLike>,
+      _uint256Param: PromiseOrValue<BigNumberish>,
+      _effectiveDuration: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    proposeDeal2(
+      _functionType: PromiseOrValue<BigNumberish>,
+      _uint256Param1: PromiseOrValue<BigNumberish>,
+      _uint256Param2: PromiseOrValue<BigNumberish>,
+      _effectiveDuration: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    proposeDeal3(
+      _functionType: PromiseOrValue<BigNumberish>,
+      _uint256Param: PromiseOrValue<BigNumberish>,
+      _positionParam: PositionStruct,
       _effectiveDuration: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
@@ -1475,9 +1579,25 @@ export interface HandshakeDeal extends BaseContract {
 
     ownerID(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    proposeDeal(
+    proposeDeal1(
       _functionType: PromiseOrValue<BigNumberish>,
-      _encodedParams: PromiseOrValue<BytesLike>,
+      _uint256Param: PromiseOrValue<BigNumberish>,
+      _effectiveDuration: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    proposeDeal2(
+      _functionType: PromiseOrValue<BigNumberish>,
+      _uint256Param1: PromiseOrValue<BigNumberish>,
+      _uint256Param2: PromiseOrValue<BigNumberish>,
+      _effectiveDuration: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    proposeDeal3(
+      _functionType: PromiseOrValue<BigNumberish>,
+      _uint256Param: PromiseOrValue<BigNumberish>,
+      _positionParam: PositionStruct,
       _effectiveDuration: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;

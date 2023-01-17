@@ -100,6 +100,7 @@ contract AdminFacet is UseStorage {
     function adminDelegateGameFunction(
         uint256 _nationID,
         string memory _functionName,
+        uint256 _delegateID,
         uint256 _subjectID,
         bool _canCall
     ) external onlyTreaty {
@@ -109,8 +110,7 @@ contract AdminFacet is UseStorage {
         GameLib.validFunctionNameCheck(_functionName);
 
         // Delegate function
-        uint256 treatyID = GameLib.getEntityByAddress(msg.sender);
-        GameLib.delegateGameFunction(_nationID, _functionName, treatyID, _subjectID, _canCall);
+        GameLib.delegateGameFunction(_nationID, _functionName, _delegateID, _subjectID, _canCall);
     }
 
     // ----------------------------------------------------------------------

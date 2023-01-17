@@ -15,6 +15,7 @@ import {AdminFacet} from "contracts/facets/AdminFacet.sol";
 import {Strings} from "openzeppelin-contracts/contracts/utils/Strings.sol";
 import {ComponentSpec, GameMode, GameParamSpec, Position, WorldConstants} from "contracts/libraries/Types.sol";
 import {Alliance} from "contracts/treaties/Alliance.sol";
+import {MercenaryLeague} from "contracts/treaties/MercenaryLeague.sol";
 import {TestTreaty} from "contracts/treaties/TestTreaty.sol";
 import {NonAggressionPact} from "contracts/treaties/NonAggressionPact.sol";
 import {Embargo} from "contracts/treaties/Embargo.sol";
@@ -52,6 +53,7 @@ contract DiamondDeployTest is Test {
     NonAggressionPact public nonAggressionPactTemplate;
     SimpleOTC public otcContractTemplate;
     HandshakeDeal public handshakeDealTemplate;
+    MercenaryLeague public mercenaryLeagueTemplate;
 
     uint256 public allianceTemplateID;
     uint256 public testTreatyTemplateID;
@@ -60,6 +62,7 @@ contract DiamondDeployTest is Test {
     uint256 public nonAggressionPactTemplateID;
     uint256 public otcContractTemplateID;
     uint256 public handshakeDealTemplateID;
+    uint256 public mercenaryLeagueTemplateID;
 
     // Players (nations)
     address public deployer = address(0);
@@ -200,6 +203,8 @@ contract DiamondDeployTest is Test {
         otcContractTemplateID = admin.registerTreatyTemplate(address(otcContractTemplate), "sample ABI", "sample metadata");
         handshakeDealTemplate = new HandshakeDeal(diamond);
         handshakeDealTemplateID = admin.registerTreatyTemplate(address(handshakeDealTemplate), "sample ABI", "sample metadata");
+        mercenaryLeagueTemplate = new MercenaryLeague(diamond);
+        mercenaryLeagueTemplateID = admin.registerTreatyTemplate(address(mercenaryLeagueTemplate), "sample ABI", "sample metadata");
         console.log(">>> Treaties initialized");
 
         // Whitelist all players

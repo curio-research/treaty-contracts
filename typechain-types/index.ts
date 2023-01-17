@@ -62,6 +62,8 @@ export type { Embargo } from "./contracts/treaties/Embargo";
 export { Embargo__factory } from "./factories/contracts/treaties/Embargo__factory";
 export type { HandshakeDeal } from "./contracts/treaties/HandshakeDeal";
 export { HandshakeDeal__factory } from "./factories/contracts/treaties/HandshakeDeal__factory";
+export type { MercenaryLeague } from "./contracts/treaties/MercenaryLeague";
+export { MercenaryLeague__factory } from "./factories/contracts/treaties/MercenaryLeague__factory";
 export type { NonAggressionPact } from "./contracts/treaties/NonAggressionPact";
 export { NonAggressionPact__factory } from "./factories/contracts/treaties/NonAggressionPact__factory";
 export type { SimpleOTC } from "./contracts/treaties/SimpleOTC";

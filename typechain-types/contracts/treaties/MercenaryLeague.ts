@@ -23,9 +23,9 @@ import type {
   PromiseOrValue,
 } from "../../common";
 
-export interface EmbargoInterface extends utils.Interface {
+export interface MercenaryLeagueInterface extends utils.Interface {
   functions: {
-    "addToSanctionList(uint256)": FunctionFragment;
+    "addToWarCouncil(uint256)": FunctionFragment;
     "admin()": FunctionFragment;
     "approveBattle(uint256,bytes)": FunctionFragment;
     "approveClaimTile(uint256,bytes)": FunctionFragment;
@@ -50,26 +50,33 @@ export interface EmbargoInterface extends utils.Interface {
     "approveUpgradeCapital(uint256,bytes)": FunctionFragment;
     "approveUpgradeResource(uint256,bytes)": FunctionFragment;
     "approveUpgradeTile(uint256,bytes)": FunctionFragment;
+    "conscriptArmies(uint256)": FunctionFragment;
+    "conscriptionDuration()": FunctionFragment;
     "description()": FunctionFragment;
     "diamond()": FunctionFragment;
     "game()": FunctionFragment;
     "getter()": FunctionFragment;
+    "goldToken()": FunctionFragment;
+    "memberConscriptionStartTime(uint256)": FunctionFragment;
+    "memberToConscriptionFee(uint256)": FunctionFragment;
     "minimumStayCheck(uint256,uint256)": FunctionFragment;
     "name()": FunctionFragment;
     "ownerID()": FunctionFragment;
     "registerTreatyAndOwnerIds()": FunctionFragment;
-    "removeFromSanctionList(uint256)": FunctionFragment;
-    "removeMember(uint256)": FunctionFragment;
-    "sanctionList()": FunctionFragment;
+    "removeFromWarCouncil(uint256)": FunctionFragment;
+    "revokeArmies()": FunctionFragment;
+    "setConscriptionDuration(uint256)": FunctionFragment;
+    "setConscriptionFee(uint256)": FunctionFragment;
     "treatyDelegateGameFunction(string,uint256,bool)": FunctionFragment;
     "treatyID()": FunctionFragment;
     "treatyJoin()": FunctionFragment;
     "treatyLeave()": FunctionFragment;
+    "warCouncil()": FunctionFragment;
   };
 
   getFunction(
     nameOrSignatureOrTopic:
-      | "addToSanctionList"
+      | "addToWarCouncil"
       | "admin"
       | "approveBattle"
       | "approveClaimTile"
@@ -94,25 +101,32 @@ export interface EmbargoInterface extends utils.Interface {
       | "approveUpgradeCapital"
       | "approveUpgradeResource"
       | "approveUpgradeTile"
+      | "conscriptArmies"
+      | "conscriptionDuration"
       | "description"
       | "diamond"
       | "game"
       | "getter"
+      | "goldToken"
+      | "memberConscriptionStartTime"
+      | "memberToConscriptionFee"
       | "minimumStayCheck"
       | "name"
       | "ownerID"
       | "registerTreatyAndOwnerIds"
-      | "removeFromSanctionList"
-      | "removeMember"
-      | "sanctionList"
+      | "removeFromWarCouncil"
+      | "revokeArmies"
+      | "setConscriptionDuration"
+      | "setConscriptionFee"
       | "treatyDelegateGameFunction"
       | "treatyID"
       | "treatyJoin"
       | "treatyLeave"
+      | "warCouncil"
   ): FunctionFragment;
 
   encodeFunctionData(
-    functionFragment: "addToSanctionList",
+    functionFragment: "addToWarCouncil",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(functionFragment: "admin", values?: undefined): string;
@@ -209,12 +223,29 @@ export interface EmbargoInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
+    functionFragment: "conscriptArmies",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "conscriptionDuration",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "description",
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "diamond", values?: undefined): string;
   encodeFunctionData(functionFragment: "game", values?: undefined): string;
   encodeFunctionData(functionFragment: "getter", values?: undefined): string;
+  encodeFunctionData(functionFragment: "goldToken", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "memberConscriptionStartTime",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "memberToConscriptionFee",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
   encodeFunctionData(
     functionFragment: "minimumStayCheck",
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
@@ -226,16 +257,20 @@ export interface EmbargoInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "removeFromSanctionList",
+    functionFragment: "removeFromWarCouncil",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
-    functionFragment: "removeMember",
-    values: [PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "sanctionList",
+    functionFragment: "revokeArmies",
     values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setConscriptionDuration",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setConscriptionFee",
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "treatyDelegateGameFunction",
@@ -254,9 +289,13 @@ export interface EmbargoInterface extends utils.Interface {
     functionFragment: "treatyLeave",
     values?: undefined
   ): string;
+  encodeFunctionData(
+    functionFragment: "warCouncil",
+    values?: undefined
+  ): string;
 
   decodeFunctionResult(
-    functionFragment: "addToSanctionList",
+    functionFragment: "addToWarCouncil",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "admin", data: BytesLike): Result;
@@ -353,12 +392,29 @@ export interface EmbargoInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "conscriptArmies",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "conscriptionDuration",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "description",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "diamond", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "game", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "getter", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "goldToken", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "memberConscriptionStartTime",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "memberToConscriptionFee",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "minimumStayCheck",
     data: BytesLike
@@ -370,15 +426,19 @@ export interface EmbargoInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "removeFromSanctionList",
+    functionFragment: "removeFromWarCouncil",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "removeMember",
+    functionFragment: "revokeArmies",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "sanctionList",
+    functionFragment: "setConscriptionDuration",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setConscriptionFee",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -391,16 +451,17 @@ export interface EmbargoInterface extends utils.Interface {
     functionFragment: "treatyLeave",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "warCouncil", data: BytesLike): Result;
 
   events: {};
 }
 
-export interface Embargo extends BaseContract {
+export interface MercenaryLeague extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: EmbargoInterface;
+  interface: MercenaryLeagueInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
@@ -422,7 +483,7 @@ export interface Embargo extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    addToSanctionList(
+    addToWarCouncil(
       _nationID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
@@ -567,6 +628,13 @@ export interface Embargo extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
+    conscriptArmies(
+      _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    conscriptionDuration(overrides?: CallOverrides): Promise<[BigNumber]>;
+
     description(overrides?: CallOverrides): Promise<[string]>;
 
     diamond(overrides?: CallOverrides): Promise<[string]>;
@@ -574,6 +642,18 @@ export interface Embargo extends BaseContract {
     game(overrides?: CallOverrides): Promise<[string]>;
 
     getter(overrides?: CallOverrides): Promise<[string]>;
+
+    goldToken(overrides?: CallOverrides): Promise<[string]>;
+
+    memberConscriptionStartTime(
+      arg0: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    memberToConscriptionFee(
+      arg0: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
 
     minimumStayCheck(
       _nationID: PromiseOrValue<BigNumberish>,
@@ -589,17 +669,24 @@ export interface Embargo extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    removeFromSanctionList(
+    removeFromWarCouncil(
       _nationID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    removeMember(
-      _nationID: PromiseOrValue<BigNumberish>,
+    revokeArmies(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    sanctionList(overrides?: CallOverrides): Promise<[string]>;
+    setConscriptionDuration(
+      _duration: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    setConscriptionFee(
+      _fee: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
 
     treatyDelegateGameFunction(
       _functionName: PromiseOrValue<string>,
@@ -617,9 +704,11 @@ export interface Embargo extends BaseContract {
     treatyLeave(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
+
+    warCouncil(overrides?: CallOverrides): Promise<[string]>;
   };
 
-  addToSanctionList(
+  addToWarCouncil(
     _nationID: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
@@ -764,6 +853,13 @@ export interface Embargo extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
+  conscriptArmies(
+    _nationID: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  conscriptionDuration(overrides?: CallOverrides): Promise<BigNumber>;
+
   description(overrides?: CallOverrides): Promise<string>;
 
   diamond(overrides?: CallOverrides): Promise<string>;
@@ -771,6 +867,18 @@ export interface Embargo extends BaseContract {
   game(overrides?: CallOverrides): Promise<string>;
 
   getter(overrides?: CallOverrides): Promise<string>;
+
+  goldToken(overrides?: CallOverrides): Promise<string>;
+
+  memberConscriptionStartTime(
+    arg0: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  memberToConscriptionFee(
+    arg0: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
 
   minimumStayCheck(
     _nationID: PromiseOrValue<BigNumberish>,
@@ -786,17 +894,24 @@ export interface Embargo extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  removeFromSanctionList(
+  removeFromWarCouncil(
     _nationID: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  removeMember(
-    _nationID: PromiseOrValue<BigNumberish>,
+  revokeArmies(
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  sanctionList(overrides?: CallOverrides): Promise<string>;
+  setConscriptionDuration(
+    _duration: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  setConscriptionFee(
+    _fee: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
 
   treatyDelegateGameFunction(
     _functionName: PromiseOrValue<string>,
@@ -815,8 +930,10 @@ export interface Embargo extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  warCouncil(overrides?: CallOverrides): Promise<string>;
+
   callStatic: {
-    addToSanctionList(
+    addToWarCouncil(
       _nationID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
@@ -961,6 +1078,13 @@ export interface Embargo extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
+    conscriptArmies(
+      _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    conscriptionDuration(overrides?: CallOverrides): Promise<BigNumber>;
+
     description(overrides?: CallOverrides): Promise<string>;
 
     diamond(overrides?: CallOverrides): Promise<string>;
@@ -968,6 +1092,18 @@ export interface Embargo extends BaseContract {
     game(overrides?: CallOverrides): Promise<string>;
 
     getter(overrides?: CallOverrides): Promise<string>;
+
+    goldToken(overrides?: CallOverrides): Promise<string>;
+
+    memberConscriptionStartTime(
+      arg0: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    memberToConscriptionFee(
+      arg0: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     minimumStayCheck(
       _nationID: PromiseOrValue<BigNumberish>,
@@ -981,17 +1117,22 @@ export interface Embargo extends BaseContract {
 
     registerTreatyAndOwnerIds(overrides?: CallOverrides): Promise<void>;
 
-    removeFromSanctionList(
+    removeFromWarCouncil(
       _nationID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    removeMember(
-      _nationID: PromiseOrValue<BigNumberish>,
+    revokeArmies(overrides?: CallOverrides): Promise<void>;
+
+    setConscriptionDuration(
+      _duration: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    sanctionList(overrides?: CallOverrides): Promise<string>;
+    setConscriptionFee(
+      _fee: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     treatyDelegateGameFunction(
       _functionName: PromiseOrValue<string>,
@@ -1005,12 +1146,14 @@ export interface Embargo extends BaseContract {
     treatyJoin(overrides?: CallOverrides): Promise<void>;
 
     treatyLeave(overrides?: CallOverrides): Promise<void>;
+
+    warCouncil(overrides?: CallOverrides): Promise<string>;
   };
 
   filters: {};
 
   estimateGas: {
-    addToSanctionList(
+    addToWarCouncil(
       _nationID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
@@ -1155,6 +1298,13 @@ export interface Embargo extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    conscriptArmies(
+      _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    conscriptionDuration(overrides?: CallOverrides): Promise<BigNumber>;
+
     description(overrides?: CallOverrides): Promise<BigNumber>;
 
     diamond(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1162,6 +1312,18 @@ export interface Embargo extends BaseContract {
     game(overrides?: CallOverrides): Promise<BigNumber>;
 
     getter(overrides?: CallOverrides): Promise<BigNumber>;
+
+    goldToken(overrides?: CallOverrides): Promise<BigNumber>;
+
+    memberConscriptionStartTime(
+      arg0: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    memberToConscriptionFee(
+      arg0: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     minimumStayCheck(
       _nationID: PromiseOrValue<BigNumberish>,
@@ -1177,17 +1339,24 @@ export interface Embargo extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    removeFromSanctionList(
+    removeFromWarCouncil(
       _nationID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    removeMember(
-      _nationID: PromiseOrValue<BigNumberish>,
+    revokeArmies(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    sanctionList(overrides?: CallOverrides): Promise<BigNumber>;
+    setConscriptionDuration(
+      _duration: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    setConscriptionFee(
+      _fee: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
 
     treatyDelegateGameFunction(
       _functionName: PromiseOrValue<string>,
@@ -1205,10 +1374,12 @@ export interface Embargo extends BaseContract {
     treatyLeave(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
+
+    warCouncil(overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   populateTransaction: {
-    addToSanctionList(
+    addToWarCouncil(
       _nationID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
@@ -1353,6 +1524,15 @@ export interface Embargo extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    conscriptArmies(
+      _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    conscriptionDuration(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     description(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     diamond(overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -1360,6 +1540,18 @@ export interface Embargo extends BaseContract {
     game(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getter(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    goldToken(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    memberConscriptionStartTime(
+      arg0: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    memberToConscriptionFee(
+      arg0: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     minimumStayCheck(
       _nationID: PromiseOrValue<BigNumberish>,
@@ -1375,17 +1567,24 @@ export interface Embargo extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    removeFromSanctionList(
+    removeFromWarCouncil(
       _nationID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    removeMember(
-      _nationID: PromiseOrValue<BigNumberish>,
+    revokeArmies(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    sanctionList(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    setConscriptionDuration(
+      _duration: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setConscriptionFee(
+      _fee: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
 
     treatyDelegateGameFunction(
       _functionName: PromiseOrValue<string>,
@@ -1403,5 +1602,7 @@ export interface Embargo extends BaseContract {
     treatyLeave(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
+
+    warCouncil(overrides?: CallOverrides): Promise<PopulatedTransaction>;
   };
 }

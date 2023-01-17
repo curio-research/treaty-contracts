@@ -77,7 +77,7 @@ abstract contract CurioTreaty is ITreaty {
         bool _canCall
     ) public virtual {
         uint256 nationID = getter.getEntityByAddress(msg.sender);
-        admin.adminDelegateGameFunction(nationID, _functionName, _subjectID, _canCall);
+        admin.adminDelegateGameFunction(nationID, _functionName, getter.getEntityByAddress(address(this)), _subjectID, _canCall);
     }
 
     // ----------------------------------------------------------

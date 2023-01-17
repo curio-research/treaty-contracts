@@ -20,15 +20,6 @@ contract Embargo is CurioTreaty {
     // ----------------------------------------------------------
     // Owner functions
     // ----------------------------------------------------------
-
-    function addToWhitelist(uint256 _nationID) public onlyOwner {
-        admin.addToTreatyWhitelist(_nationID);
-    }
-
-    function removeFromWhitelist(uint256 _nationID) public onlyOwner {
-        admin.removeFromTreatyWhitelist(_nationID);
-    }
-
     function addToSanctionList(uint256 _nationID) public onlyOwner {
         sanctionList.add(_nationID);
     }
@@ -45,11 +36,6 @@ contract Embargo is CurioTreaty {
     // ----------------------------------------------------------
     // Player functions
     // ----------------------------------------------------------
-
-    function treatyJoin() public override onlyWhitelist {
-        super.treatyJoin();
-    }
-
     function treatyLeave() public override {
         // Check if nation has stayed in pact for at least 30 seconds
         uint256 nationID = getter.getEntityByAddress(msg.sender);
