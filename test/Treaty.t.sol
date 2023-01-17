@@ -526,7 +526,6 @@ contract TreatyTest is Test, DiamondDeployTest {
         // Player1 deploys embargo and whitelists self
         vm.startPrank(player1);
         Embargo embargo = Embargo(game.deployTreaty(nation1ID, embargoTemplate.name()));
-        embargo.addToWhitelist(nation1ID);
         vm.stopPrank();
 
         // Deployer registers embargo treaty & gives troops to p2 and resources to p1
@@ -542,7 +541,6 @@ contract TreatyTest is Test, DiamondDeployTest {
         // Player1 joins embargo and whitelists player2. Then he sanctions himself
         vm.startPrank(player1);
         embargo.treatyJoin();
-        embargo.addToWhitelist(nation2ID);
         embargo.addToSanctionList(nation1ID);
         vm.stopPrank();
 

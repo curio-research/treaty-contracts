@@ -46,38 +46,23 @@ contract HandshakeDeal is CurioTreaty {
     // ----------------------------------------------------------
     // Articles of Treaty
     // ----------------------------------------------------------
-    /**
-    Note: Frontend for now won't work with encoded params, so we split up ProposeDeal into 3 functions: 
-    
-    ProposeDeal1 Works for:
-    upgradeCapital(uint256 _capitalID)
-    upgradeTile(uint256 _tileID)
-    recoverTile(uint256 _tileID)
-    disownTile(uint256 _tileID)
-    endGather(uint256 _troopID)
-    unloadResources(uint256 _troopID)
-    harvestResourcesFromCapital(uint256 _capitalID)
-    upgradeResource(uint256 _resourceID)
-
-
-    ProposeDeal2 Works for:
-    startTroopProduction(uint256 _capitalID, uint256 _troopTemplateID)
-    startGather(uint256 _troopID, uint256 _resourceID)
-    harvestResource(uint256 _troopID, uint256 _resourceID)
-    battle(uint256 _troopID, uint256 _targetID)
-
-    ProposeDeal3 Works for:
-    moveCapital(uint256 _capitalID, Position _position)
-    claimTile(uint256 _capitalID, Position _position)
-    move(uint256 _troopID, Position _position)
-
-     */
+    //Note: Frontend for now doesn't work with encodedParams, so we split proposeDeal into 3 functions: 
 
     function proposeDeal1(
         ApprovalFunctionType _functionType,
         uint256 _uint256Param,
         uint256 _effectiveDuration
     ) public onlySigner returns (uint256) {
+        require(
+        _functionType == ApprovalFunctionType.approveUpgradeCapital
+        || _functionType == ApprovalFunctionType.approveUpgradeTile
+        || _functionType == ApprovalFunctionType.approveRecoverTile
+        || _functionType == ApprovalFunctionType.approveDisownTile
+        || _functionType == ApprovalFunctionType.approveEndGather
+        || _functionType == ApprovalFunctionType.approveUnloadResources
+        || _functionType == ApprovalFunctionType.approveHarvestResourcesFromCapital
+        || _functionType == ApprovalFunctionType.approveUpgradeResource, "Handshake: Invalid function type"
+        );
         uint256 proposerID = getter.getEntityByAddress(msg.sender);
         dealCount++;
 
@@ -100,6 +85,11 @@ contract HandshakeDeal is CurioTreaty {
         uint256 _uint256Param2,
         uint256 _effectiveDuration
     ) public onlySigner returns (uint256) {
+        require(_functionType == ApprovalFunctionType.approveStartTroopProduction
+        || _functionType == ApprovalFunctionType.approveStartGather
+        || _functionType == ApprovalFunctionType.approveHarvestResource
+        || _functionType == ApprovalFunctionType.approveBattle, "Handshake: Invalid function type"
+        );
         uint256 proposerID = getter.getEntityByAddress(msg.sender);
         dealCount++;
 
@@ -122,6 +112,11 @@ contract HandshakeDeal is CurioTreaty {
         Position memory _positionParam,
         uint256 _effectiveDuration
     ) public onlySigner returns (uint256) {
+        require(
+        _functionType == ApprovalFunctionType.approveMoveCapital
+        || _functionType == ApprovalFunctionType.approveClaimTile
+        || _functionType == ApprovalFunctionType.approveMove, "Handshake: Invalid function type"
+        );
         uint256 proposerID = getter.getEntityByAddress(msg.sender);
         dealCount++;
 
@@ -129,7 +124,7 @@ contract HandshakeDeal is CurioTreaty {
             dealID: dealCount, // FORMATTING: DO NOT REMOVE THIS COMMENT,
             proposerID: proposerID,
             functionOfAgreement: _functionType,
-            encodedParams: abi.encode(_uint256Param, _position),
+            encodedParams: abi.encode(_uint256Param, _positionParam),
             signedAt: block.timestamp,
             effectiveDuration: _effectiveDuration
         });
