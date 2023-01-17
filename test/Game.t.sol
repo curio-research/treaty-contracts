@@ -503,7 +503,7 @@ contract GameTest is Test, DiamondDeployTest {
         // Nation 1 fails to end troop production
         time += worldConstants.secondsToTrainAThousandTroops / 2;
         vm.warp(time);
-        vm.expectRevert("CURIO: Need more time for production");
+        vm.expectRevert("CURIO: Production needs more time to finish");
         game.endTroopProduction(nation1CapitalID);
         assertEq(horsemanToken.balanceOf(nation1CapitalAddr), 0);
 

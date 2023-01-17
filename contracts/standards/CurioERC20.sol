@@ -126,17 +126,17 @@ contract CurioERC20 is IERC20 {
         address _to,
         uint256 _amount
     ) public override returns (bool) {
-        // // FIXME: temporarily disabled for testing
-        // // Transfers from diamond or owner are exempt from allowance
-        // if (msg.sender != diamond && getter.getEntityByAddress(msg.sender) != getter.getNation(getter.getEntityByAddress(_from))) {
-        //     uint256 ownerID = getter.getEntityByAddress(_from);
-        //     uint256 spenderID = getter.getEntityByAddress(msg.sender);
+        // FIXME: temporarily disabled for testing
+        // Transfers from diamond or owner are exempt from allowance
+        if (msg.sender != diamond && getter.getEntityByAddress(msg.sender) != getter.getNation(getter.getEntityByAddress(_from))) {
+            uint256 ownerID = getter.getEntityByAddress(_from);
+            uint256 spenderID = getter.getEntityByAddress(msg.sender);
 
-        //     uint256 allowanceID = getter.getAllowance(name, ownerID, spenderID);
-        //     uint256 allowed = abi.decode(getter.getComponent("Amount").getBytesValue(allowanceID), (uint256));
-        //     require(allowed >= _amount, "CurioERC20: Insufficient allowance");
-        //     if (allowed != type(uint256).max) admin.setComponentValue("Amount", allowanceID, abi.encode(allowed - _amount));
-        // }
+            uint256 allowanceID = getter.getAllowance(name, ownerID, spenderID);
+            uint256 allowed = abi.decode(getter.getComponent("Amount").getBytesValue(allowanceID), (uint256));
+            require(allowed >= _amount, "CurioERC20: Insufficient allowance");
+            if (allowed != type(uint256).max) admin.setComponentValue("Amount", allowanceID, abi.encode(allowed - _amount));
+        }
 
         _transferHelper(_from, _to, _amount);
 

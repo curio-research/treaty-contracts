@@ -729,12 +729,12 @@ contract TreatyTest is Test, DiamondDeployTest {
         uint256 time = block.timestamp + 500;
         vm.warp(time);
 
-        // Player1 deploys NAPact
+        // Player1 deploys Simple OTC
         vm.startPrank(player1);
         SimpleOTC otcContract = SimpleOTC(game.deployTreaty(nation1ID, otcContractTemplate.name()));
         vm.stopPrank();
 
-        // Deployer registers NAPact treaty & assigns tokens to p1 and p2
+        // Deployer registers Simple OTC treaty & assigns tokens to p1 and p2
         vm.startPrank(deployer);
         admin.dripToken(nation1CapitalAddr, "Gold", 1000);
         admin.dripToken(nation1CapitalAddr, "Food", 1000);
@@ -743,11 +743,20 @@ contract TreatyTest is Test, DiamondDeployTest {
         admin.dripToken(nation2CapitalAddr, "Food", 1000);
         vm.stopPrank();
 
+        // Player1 approves tokens
         vm.startPrank(player1);
         CurioWallet(nation1CapitalAddr).executeTx(address(goldToken), abi.encodeWithSignature("approve(address,uint256)", address(otcContract), 1000));
         CurioWallet(nation1CapitalAddr).executeTx(address(foodToken), abi.encodeWithSignature("approve(address,uint256)", address(otcContract), 1000));
+        vm.stopPrank();
+
+        // Player 2 approves tokens
+        vm.startPrank(player2);
+        CurioWallet(nation2CapitalAddr).executeTx(address(goldToken), abi.encodeWithSignature("approve(address,uint256)", address(otcContract), 1000));
+        CurioWallet(nation2CapitalAddr).executeTx(address(foodToken), abi.encodeWithSignature("approve(address,uint256)", address(otcContract), 1000));
+        vm.stopPrank();
 
         // When order is created, no tokens are transferred
+        vm.startPrank(player1);
         otcContract.createOrder("Gold", 2, "Food", 200);
         assertEq(goldToken.balanceOf(nation1CapitalAddr), 1000);
         assertEq(foodToken.balanceOf(nation1CapitalAddr), 1000);
