@@ -160,12 +160,12 @@ library GameLib {
 
         // Initialize gold mine
         if (terrain == 1 && getResourceAtTile(_startPosition) == 0) {
-            Templates.addResource(gs().templates["Gold"], _startPosition);
+            Templates.addResource(gs().templates["Gold"], _startPosition, 0);
         }
 
         // All empty tiles are farms
         if ((terrain == 0 || terrain == 2) && getResourceAtTile(_startPosition) == 0) {
-            Templates.addResource(gs().templates["Food"], _startPosition);
+            Templates.addResource(gs().templates["Food"], _startPosition, 0);
         }
 
         return tileID;

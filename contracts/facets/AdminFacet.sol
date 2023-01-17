@@ -145,7 +145,7 @@ contract AdminFacet is UseStorage {
     }
 
     function spawnResource(Position memory _startPosition, string memory _templateName) external onlyAuthorized {
-        Templates.addResource(gs().templates[_templateName], _startPosition);
+        Templates.addResource(gs().templates[_templateName], _startPosition, 0);
     }
 
     function dripToken(

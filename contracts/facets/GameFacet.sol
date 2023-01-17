@@ -204,9 +204,6 @@ contract GameFacet is UseStorage {
             }
         }
 
-        // Set timestamp
-        ECSLib.setUint("LastMoved", _capitalID, block.timestamp);
-
         // Remove resource at target tile and restore Level 0 farm at current tile
         {
             uint256 resourceID = GameLib.getResourceAtTile(_newTilePosition);
@@ -214,15 +211,21 @@ contract GameFacet is UseStorage {
                 require(ECSLib.getUint("Template", resourceID) != gs().templates["Gold"], "CURIO: Cannot settle on goldmine");
                 ECSLib.removeEntity(resourceID);
             }
-            Templates.addResource(gs().templates["Food"], ECSLib.getPosition("StartPosition", _capitalID));
+            uint256 tileID = GameLib.getTileAt(_newTilePosition);
+            ECSLib.setUint("Terrain", tileID, 0);
+
+            Templates.addResource(gs().templates["Food"], ECSLib.getPosition("StartPosition", _capitalID), nationID);
         }
 
-        // Set last action time
-        ECSLib.setUint("LastActed", nationID, block.timestamp);
+        // Set timestamp
+        ECSLib.setUint("LastMoved", _capitalID, block.timestamp);
 
         // Move capital
         ECSLib.setPosition("StartPosition", _capitalID, _newTilePosition);
         ECSLib.setPosition("Position", _capitalID, GameLib.getMidPositionFromTilePosition(_newTilePosition));
+
+        // Set last action time
+        ECSLib.setUint("LastActed", nationID, block.timestamp);
     }
 
     // ----------------------------------------------------------
@@ -971,13 +974,12 @@ contract GameFacet is UseStorage {
         uint256 capitalID = GameLib.getCapital(nationID);
         require(ECSLib.getUint("Level", _resourceID) < ECSLib.getUint("Level", capitalID) * gs().worldConstants.capitalLevelToEntityLevelRatio, "CURIO: Need to upgrade nation first");
 
-        uint256 resourceLevel = ECSLib.getUint("Level", _resourceID);
-
         // check if upgrade is in process
         string memory subject = ECSLib.getUint("Template", _resourceID) == gs().templates["Gold"] ? "Goldmine" : "Farm";
         require(block.timestamp >= ECSLib.getUint("LastUpgraded", _resourceID), "CURIO: Need to finish upgrading first");
 
         // Deduct costs from capital
+        uint256 resourceLevel = ECSLib.getUint("Level", _resourceID);
         {
             address capitalAddress = ECSLib.getAddress("Address", capitalID);
             uint256[] memory resourceTemplateIDs = ECSLib.getStringComponent("Tag").getEntitiesWithValue(string("ResourceTemplate"));

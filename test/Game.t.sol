@@ -18,7 +18,7 @@ contract GameTest is Test, DiamondDeployTest {
     // - [x] joinGame
     // Capital:
     // - [x] upgradeCapital
-    // - [ ] moveCapital
+    // - [x] moveCapital
     // Tile:
     // - [x] claimTile
     // - [ ] upgradeTile
@@ -248,7 +248,7 @@ contract GameTest is Test, DiamondDeployTest {
         assertEq(foodToken.balanceOf(army21Addr), 1000);
     }
 
-    function testUpgradeCapitalBattleClaimTile() public {
+    function testUpgradeCapitalBattleClaimTileMoveCapital() public {
         // bug: lastChaos time is 0. This is wrong.
         uint256 time = block.timestamp + 600;
         // Deployer transfer enough gold & food to nation 1 & 2
@@ -310,6 +310,20 @@ contract GameTest is Test, DiamondDeployTest {
 
         assertEq(getter.getEntityLevel(nation1CapitalID), 2);
         assertEq(getter.getNation(targetTileID), nation1ID);
+
+        // Nation 1 move capital to new tile
+        time += 10;
+        vm.warp(time);
+        assertTrue(getter.getResourceAtTile(targetTilePos) > 0);
+        game.moveCapital(nation1CapitalID, targetTilePos);
+        assertEq(getter.getResourceAtTile(targetTilePos), 0);
+
+        // Nation 1 upgrades farm at old capital position
+        time += 10;
+        vm.warp(time);
+        uint256 farmID = getter.getResourceAtTile(nation1Pos);
+        assertEq(abi.decode(getter.getComponent("Nation").getBytesValue(farmID), (uint256)), nation1ID);
+        game.upgradeResource(farmID);
         vm.stopPrank();
     }
 
