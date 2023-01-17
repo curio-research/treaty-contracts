@@ -69,14 +69,11 @@ export interface HandshakeDealInterface extends utils.Interface {
     "minimumStayCheck(uint256,uint256)": FunctionFragment;
     "name()": FunctionFragment;
     "nationIDToDealIDs(uint256,uint256)": FunctionFragment;
-    "ownerID()": FunctionFragment;
     "proposeDeal1(uint8,uint256,uint256)": FunctionFragment;
     "proposeDeal2(uint8,uint256,uint256,uint256)": FunctionFragment;
     "proposeDeal3(uint8,uint256,(uint256,uint256),uint256)": FunctionFragment;
-    "registerTreatyAndOwnerIds()": FunctionFragment;
     "signDeal(uint256)": FunctionFragment;
     "treatyDelegateGameFunction(string,uint256,bool)": FunctionFragment;
-    "treatyID()": FunctionFragment;
     "treatyJoin()": FunctionFragment;
     "treatyLeave()": FunctionFragment;
   };
@@ -117,14 +114,11 @@ export interface HandshakeDealInterface extends utils.Interface {
       | "minimumStayCheck"
       | "name"
       | "nationIDToDealIDs"
-      | "ownerID"
       | "proposeDeal1"
       | "proposeDeal2"
       | "proposeDeal3"
-      | "registerTreatyAndOwnerIds"
       | "signDeal"
       | "treatyDelegateGameFunction"
-      | "treatyID"
       | "treatyJoin"
       | "treatyLeave"
   ): FunctionFragment;
@@ -247,7 +241,6 @@ export interface HandshakeDealInterface extends utils.Interface {
     functionFragment: "nationIDToDealIDs",
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
   ): string;
-  encodeFunctionData(functionFragment: "ownerID", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "proposeDeal1",
     values: [
@@ -275,10 +268,6 @@ export interface HandshakeDealInterface extends utils.Interface {
     ]
   ): string;
   encodeFunctionData(
-    functionFragment: "registerTreatyAndOwnerIds",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
     functionFragment: "signDeal",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
@@ -290,7 +279,6 @@ export interface HandshakeDealInterface extends utils.Interface {
       PromiseOrValue<boolean>
     ]
   ): string;
-  encodeFunctionData(functionFragment: "treatyID", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "treatyJoin",
     values?: undefined
@@ -415,7 +403,6 @@ export interface HandshakeDealInterface extends utils.Interface {
     functionFragment: "nationIDToDealIDs",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "ownerID", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "proposeDeal1",
     data: BytesLike
@@ -428,16 +415,11 @@ export interface HandshakeDealInterface extends utils.Interface {
     functionFragment: "proposeDeal3",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "registerTreatyAndOwnerIds",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "signDeal", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "treatyDelegateGameFunction",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "treatyID", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "treatyJoin", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "treatyLeave",
@@ -657,8 +639,6 @@ export interface HandshakeDeal extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
-    ownerID(overrides?: CallOverrides): Promise<[BigNumber]>;
-
     proposeDeal1(
       _functionType: PromiseOrValue<BigNumberish>,
       _uint256Param: PromiseOrValue<BigNumberish>,
@@ -682,10 +662,6 @@ export interface HandshakeDeal extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    registerTreatyAndOwnerIds(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
     signDeal(
       _dealID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -697,8 +673,6 @@ export interface HandshakeDeal extends BaseContract {
       _canCall: PromiseOrValue<boolean>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
-
-    treatyID(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     treatyJoin(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -892,8 +866,6 @@ export interface HandshakeDeal extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  ownerID(overrides?: CallOverrides): Promise<BigNumber>;
-
   proposeDeal1(
     _functionType: PromiseOrValue<BigNumberish>,
     _uint256Param: PromiseOrValue<BigNumberish>,
@@ -917,10 +889,6 @@ export interface HandshakeDeal extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  registerTreatyAndOwnerIds(
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
   signDeal(
     _dealID: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -932,8 +900,6 @@ export interface HandshakeDeal extends BaseContract {
     _canCall: PromiseOrValue<boolean>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
-
-  treatyID(overrides?: CallOverrides): Promise<BigNumber>;
 
   treatyJoin(
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -1127,8 +1093,6 @@ export interface HandshakeDeal extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    ownerID(overrides?: CallOverrides): Promise<BigNumber>;
-
     proposeDeal1(
       _functionType: PromiseOrValue<BigNumberish>,
       _uint256Param: PromiseOrValue<BigNumberish>,
@@ -1152,8 +1116,6 @@ export interface HandshakeDeal extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    registerTreatyAndOwnerIds(overrides?: CallOverrides): Promise<void>;
-
     signDeal(
       _dealID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -1165,8 +1127,6 @@ export interface HandshakeDeal extends BaseContract {
       _canCall: PromiseOrValue<boolean>,
       overrides?: CallOverrides
     ): Promise<void>;
-
-    treatyID(overrides?: CallOverrides): Promise<BigNumber>;
 
     treatyJoin(overrides?: CallOverrides): Promise<void>;
 
@@ -1350,8 +1310,6 @@ export interface HandshakeDeal extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    ownerID(overrides?: CallOverrides): Promise<BigNumber>;
-
     proposeDeal1(
       _functionType: PromiseOrValue<BigNumberish>,
       _uint256Param: PromiseOrValue<BigNumberish>,
@@ -1375,10 +1333,6 @@ export interface HandshakeDeal extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    registerTreatyAndOwnerIds(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
     signDeal(
       _dealID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -1390,8 +1344,6 @@ export interface HandshakeDeal extends BaseContract {
       _canCall: PromiseOrValue<boolean>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
-
-    treatyID(overrides?: CallOverrides): Promise<BigNumber>;
 
     treatyJoin(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -1577,8 +1529,6 @@ export interface HandshakeDeal extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    ownerID(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
     proposeDeal1(
       _functionType: PromiseOrValue<BigNumberish>,
       _uint256Param: PromiseOrValue<BigNumberish>,
@@ -1602,10 +1552,6 @@ export interface HandshakeDeal extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    registerTreatyAndOwnerIds(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
     signDeal(
       _dealID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -1617,8 +1563,6 @@ export interface HandshakeDeal extends BaseContract {
       _canCall: PromiseOrValue<boolean>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
-
-    treatyID(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     treatyJoin(
       overrides?: Overrides & { from?: PromiseOrValue<string> }

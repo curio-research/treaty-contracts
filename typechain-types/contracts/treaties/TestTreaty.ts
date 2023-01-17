@@ -55,10 +55,7 @@ export interface TestTreatyInterface extends utils.Interface {
     "getter()": FunctionFragment;
     "minimumStayCheck(uint256,uint256)": FunctionFragment;
     "name()": FunctionFragment;
-    "ownerID()": FunctionFragment;
-    "registerTreatyAndOwnerIds()": FunctionFragment;
     "treatyDelegateGameFunction(string,uint256,bool)": FunctionFragment;
-    "treatyID()": FunctionFragment;
     "treatyJoin()": FunctionFragment;
     "treatyLeave()": FunctionFragment;
     "treatyUpgradeCapital(uint256)": FunctionFragment;
@@ -96,10 +93,7 @@ export interface TestTreatyInterface extends utils.Interface {
       | "getter"
       | "minimumStayCheck"
       | "name"
-      | "ownerID"
-      | "registerTreatyAndOwnerIds"
       | "treatyDelegateGameFunction"
-      | "treatyID"
       | "treatyJoin"
       | "treatyLeave"
       | "treatyUpgradeCapital"
@@ -210,11 +204,6 @@ export interface TestTreatyInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(functionFragment: "name", values?: undefined): string;
-  encodeFunctionData(functionFragment: "ownerID", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "registerTreatyAndOwnerIds",
-    values?: undefined
-  ): string;
   encodeFunctionData(
     functionFragment: "treatyDelegateGameFunction",
     values: [
@@ -223,7 +212,6 @@ export interface TestTreatyInterface extends utils.Interface {
       PromiseOrValue<boolean>
     ]
   ): string;
-  encodeFunctionData(functionFragment: "treatyID", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "treatyJoin",
     values?: undefined
@@ -342,16 +330,10 @@ export interface TestTreatyInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "ownerID", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "registerTreatyAndOwnerIds",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(
     functionFragment: "treatyDelegateGameFunction",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "treatyID", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "treatyJoin", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "treatyLeave",
@@ -548,20 +530,12 @@ export interface TestTreaty extends BaseContract {
 
     name(overrides?: CallOverrides): Promise<[string]>;
 
-    ownerID(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    registerTreatyAndOwnerIds(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
     treatyDelegateGameFunction(
       _functionName: PromiseOrValue<string>,
       _subjectID: PromiseOrValue<BigNumberish>,
       _canCall: PromiseOrValue<boolean>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
-
-    treatyID(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     treatyJoin(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -733,20 +707,12 @@ export interface TestTreaty extends BaseContract {
 
   name(overrides?: CallOverrides): Promise<string>;
 
-  ownerID(overrides?: CallOverrides): Promise<BigNumber>;
-
-  registerTreatyAndOwnerIds(
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
   treatyDelegateGameFunction(
     _functionName: PromiseOrValue<string>,
     _subjectID: PromiseOrValue<BigNumberish>,
     _canCall: PromiseOrValue<boolean>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
-
-  treatyID(overrides?: CallOverrides): Promise<BigNumber>;
 
   treatyJoin(
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -918,18 +884,12 @@ export interface TestTreaty extends BaseContract {
 
     name(overrides?: CallOverrides): Promise<string>;
 
-    ownerID(overrides?: CallOverrides): Promise<BigNumber>;
-
-    registerTreatyAndOwnerIds(overrides?: CallOverrides): Promise<void>;
-
     treatyDelegateGameFunction(
       _functionName: PromiseOrValue<string>,
       _subjectID: PromiseOrValue<BigNumberish>,
       _canCall: PromiseOrValue<boolean>,
       overrides?: CallOverrides
     ): Promise<void>;
-
-    treatyID(overrides?: CallOverrides): Promise<BigNumber>;
 
     treatyJoin(overrides?: CallOverrides): Promise<void>;
 
@@ -1100,20 +1060,12 @@ export interface TestTreaty extends BaseContract {
 
     name(overrides?: CallOverrides): Promise<BigNumber>;
 
-    ownerID(overrides?: CallOverrides): Promise<BigNumber>;
-
-    registerTreatyAndOwnerIds(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
     treatyDelegateGameFunction(
       _functionName: PromiseOrValue<string>,
       _subjectID: PromiseOrValue<BigNumberish>,
       _canCall: PromiseOrValue<boolean>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
-
-    treatyID(overrides?: CallOverrides): Promise<BigNumber>;
 
     treatyJoin(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -1286,20 +1238,12 @@ export interface TestTreaty extends BaseContract {
 
     name(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    ownerID(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    registerTreatyAndOwnerIds(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
     treatyDelegateGameFunction(
       _functionName: PromiseOrValue<string>,
       _subjectID: PromiseOrValue<BigNumberish>,
       _canCall: PromiseOrValue<boolean>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
-
-    treatyID(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     treatyJoin(
       overrides?: Overrides & { from?: PromiseOrValue<string> }

@@ -219,6 +219,10 @@ contract GameFacet is UseStorage {
 
         // Set last action time
         ECSLib.setUint("LastActed", nationID, block.timestamp);
+
+        // Move capital
+        ECSLib.setPosition("StartPosition", _capitalID, _newTilePosition);
+        ECSLib.setPosition("Position", _capitalID, GameLib.getMidPositionFromTilePosition(_newTilePosition));
     }
 
     // ----------------------------------------------------------

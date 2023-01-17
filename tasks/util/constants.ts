@@ -23,7 +23,7 @@ export const MAP_INPUT: MapInput = {
 };
 
 export const TEST_MAP_INPUT: MapInput = {
-  width: 250, // FIXME: restore to 1000 if increasing player count
+  width: 250, // restore to 1000 if increasing player count
   height: 2,
 };
 
@@ -41,7 +41,6 @@ export const generateWorldConstants = (adminAddr: string, mapInput: MapInput): a
     maxNationCount: 1000,
     gameMode: GameMode.BATTLE_ROYALE,
     gameLengthInSeconds: 2000000000,
-    // maxTransferDistance: 100,
     // generated constants
     ...worldConstants,
   };

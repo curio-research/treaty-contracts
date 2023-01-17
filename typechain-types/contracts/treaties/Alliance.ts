@@ -56,11 +56,8 @@ export interface AllianceInterface extends utils.Interface {
     "goldToken()": FunctionFragment;
     "minimumStayCheck(uint256,uint256)": FunctionFragment;
     "name()": FunctionFragment;
-    "ownerID()": FunctionFragment;
-    "registerTreatyAndOwnerIds()": FunctionFragment;
     "treatyBesiege(uint256)": FunctionFragment;
     "treatyDelegateGameFunction(string,uint256,bool)": FunctionFragment;
-    "treatyID()": FunctionFragment;
     "treatyJoin()": FunctionFragment;
     "treatyLeave()": FunctionFragment;
   };
@@ -98,11 +95,8 @@ export interface AllianceInterface extends utils.Interface {
       | "goldToken"
       | "minimumStayCheck"
       | "name"
-      | "ownerID"
-      | "registerTreatyAndOwnerIds"
       | "treatyBesiege"
       | "treatyDelegateGameFunction"
-      | "treatyID"
       | "treatyJoin"
       | "treatyLeave"
   ): FunctionFragment;
@@ -213,11 +207,6 @@ export interface AllianceInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(functionFragment: "name", values?: undefined): string;
-  encodeFunctionData(functionFragment: "ownerID", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "registerTreatyAndOwnerIds",
-    values?: undefined
-  ): string;
   encodeFunctionData(
     functionFragment: "treatyBesiege",
     values: [PromiseOrValue<BigNumberish>]
@@ -230,7 +219,6 @@ export interface AllianceInterface extends utils.Interface {
       PromiseOrValue<boolean>
     ]
   ): string;
-  encodeFunctionData(functionFragment: "treatyID", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "treatyJoin",
     values?: undefined
@@ -346,11 +334,6 @@ export interface AllianceInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "ownerID", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "registerTreatyAndOwnerIds",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(
     functionFragment: "treatyBesiege",
     data: BytesLike
@@ -359,7 +342,6 @@ export interface AllianceInterface extends utils.Interface {
     functionFragment: "treatyDelegateGameFunction",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "treatyID", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "treatyJoin", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "treatyLeave",
@@ -554,12 +536,6 @@ export interface Alliance extends BaseContract {
 
     name(overrides?: CallOverrides): Promise<[string]>;
 
-    ownerID(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    registerTreatyAndOwnerIds(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
     treatyBesiege(
       _targetArmyID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -571,8 +547,6 @@ export interface Alliance extends BaseContract {
       _canCall: PromiseOrValue<boolean>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
-
-    treatyID(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     treatyJoin(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -741,12 +715,6 @@ export interface Alliance extends BaseContract {
 
   name(overrides?: CallOverrides): Promise<string>;
 
-  ownerID(overrides?: CallOverrides): Promise<BigNumber>;
-
-  registerTreatyAndOwnerIds(
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
   treatyBesiege(
     _targetArmyID: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -758,8 +726,6 @@ export interface Alliance extends BaseContract {
     _canCall: PromiseOrValue<boolean>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
-
-  treatyID(overrides?: CallOverrides): Promise<BigNumber>;
 
   treatyJoin(
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -928,10 +894,6 @@ export interface Alliance extends BaseContract {
 
     name(overrides?: CallOverrides): Promise<string>;
 
-    ownerID(overrides?: CallOverrides): Promise<BigNumber>;
-
-    registerTreatyAndOwnerIds(overrides?: CallOverrides): Promise<void>;
-
     treatyBesiege(
       _targetArmyID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -943,8 +905,6 @@ export interface Alliance extends BaseContract {
       _canCall: PromiseOrValue<boolean>,
       overrides?: CallOverrides
     ): Promise<void>;
-
-    treatyID(overrides?: CallOverrides): Promise<BigNumber>;
 
     treatyJoin(overrides?: CallOverrides): Promise<void>;
 
@@ -1112,12 +1072,6 @@ export interface Alliance extends BaseContract {
 
     name(overrides?: CallOverrides): Promise<BigNumber>;
 
-    ownerID(overrides?: CallOverrides): Promise<BigNumber>;
-
-    registerTreatyAndOwnerIds(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
     treatyBesiege(
       _targetArmyID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -1129,8 +1083,6 @@ export interface Alliance extends BaseContract {
       _canCall: PromiseOrValue<boolean>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
-
-    treatyID(overrides?: CallOverrides): Promise<BigNumber>;
 
     treatyJoin(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -1300,12 +1252,6 @@ export interface Alliance extends BaseContract {
 
     name(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    ownerID(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    registerTreatyAndOwnerIds(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
     treatyBesiege(
       _targetArmyID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -1317,8 +1263,6 @@ export interface Alliance extends BaseContract {
       _canCall: PromiseOrValue<boolean>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
-
-    treatyID(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     treatyJoin(
       overrides?: Overrides & { from?: PromiseOrValue<string> }

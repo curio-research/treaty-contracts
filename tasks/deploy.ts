@@ -92,7 +92,7 @@ task('deploy', 'deploy contracts')
 
       await publishDeployment(configFile);
 
-      // TODO: for now, only sync game state with middleware in dev mode
+      // For now, only sync game state with middleware in dev mode
       if (isDev || hre.network.name === 'constellation') {
         await startGameSync(configFile);
       }

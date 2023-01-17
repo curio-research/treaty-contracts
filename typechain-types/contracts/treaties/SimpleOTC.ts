@@ -59,11 +59,8 @@ export interface SimpleOTCInterface extends utils.Interface {
     "getter()": FunctionFragment;
     "minimumStayCheck(uint256,uint256)": FunctionFragment;
     "name()": FunctionFragment;
-    "ownerID()": FunctionFragment;
-    "registerTreatyAndOwnerIds()": FunctionFragment;
     "takeOrder(address)": FunctionFragment;
     "treatyDelegateGameFunction(string,uint256,bool)": FunctionFragment;
-    "treatyID()": FunctionFragment;
     "treatyJoin()": FunctionFragment;
     "treatyLeave()": FunctionFragment;
   };
@@ -104,11 +101,8 @@ export interface SimpleOTCInterface extends utils.Interface {
       | "getter"
       | "minimumStayCheck"
       | "name"
-      | "ownerID"
-      | "registerTreatyAndOwnerIds"
       | "takeOrder"
       | "treatyDelegateGameFunction"
-      | "treatyID"
       | "treatyJoin"
       | "treatyLeave"
   ): FunctionFragment;
@@ -239,11 +233,6 @@ export interface SimpleOTCInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(functionFragment: "name", values?: undefined): string;
-  encodeFunctionData(functionFragment: "ownerID", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "registerTreatyAndOwnerIds",
-    values?: undefined
-  ): string;
   encodeFunctionData(
     functionFragment: "takeOrder",
     values: [PromiseOrValue<string>]
@@ -256,7 +245,6 @@ export interface SimpleOTCInterface extends utils.Interface {
       PromiseOrValue<boolean>
     ]
   ): string;
-  encodeFunctionData(functionFragment: "treatyID", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "treatyJoin",
     values?: undefined
@@ -384,17 +372,11 @@ export interface SimpleOTCInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "ownerID", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "registerTreatyAndOwnerIds",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "takeOrder", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "treatyDelegateGameFunction",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "treatyID", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "treatyJoin", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "treatyLeave",
@@ -624,12 +606,6 @@ export interface SimpleOTC extends BaseContract {
 
     name(overrides?: CallOverrides): Promise<[string]>;
 
-    ownerID(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    registerTreatyAndOwnerIds(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
     takeOrder(
       _seller: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -641,8 +617,6 @@ export interface SimpleOTC extends BaseContract {
       _canCall: PromiseOrValue<boolean>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
-
-    treatyID(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     treatyJoin(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -846,12 +820,6 @@ export interface SimpleOTC extends BaseContract {
 
   name(overrides?: CallOverrides): Promise<string>;
 
-  ownerID(overrides?: CallOverrides): Promise<BigNumber>;
-
-  registerTreatyAndOwnerIds(
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
   takeOrder(
     _seller: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -863,8 +831,6 @@ export interface SimpleOTC extends BaseContract {
     _canCall: PromiseOrValue<boolean>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
-
-  treatyID(overrides?: CallOverrides): Promise<BigNumber>;
 
   treatyJoin(
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -1066,10 +1032,6 @@ export interface SimpleOTC extends BaseContract {
 
     name(overrides?: CallOverrides): Promise<string>;
 
-    ownerID(overrides?: CallOverrides): Promise<BigNumber>;
-
-    registerTreatyAndOwnerIds(overrides?: CallOverrides): Promise<void>;
-
     takeOrder(
       _seller: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -1081,8 +1043,6 @@ export interface SimpleOTC extends BaseContract {
       _canCall: PromiseOrValue<boolean>,
       overrides?: CallOverrides
     ): Promise<void>;
-
-    treatyID(overrides?: CallOverrides): Promise<BigNumber>;
 
     treatyJoin(overrides?: CallOverrides): Promise<void>;
 
@@ -1267,12 +1227,6 @@ export interface SimpleOTC extends BaseContract {
 
     name(overrides?: CallOverrides): Promise<BigNumber>;
 
-    ownerID(overrides?: CallOverrides): Promise<BigNumber>;
-
-    registerTreatyAndOwnerIds(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
     takeOrder(
       _seller: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -1284,8 +1238,6 @@ export interface SimpleOTC extends BaseContract {
       _canCall: PromiseOrValue<boolean>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
-
-    treatyID(overrides?: CallOverrides): Promise<BigNumber>;
 
     treatyJoin(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -1472,12 +1424,6 @@ export interface SimpleOTC extends BaseContract {
 
     name(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    ownerID(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    registerTreatyAndOwnerIds(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
     takeOrder(
       _seller: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -1489,8 +1435,6 @@ export interface SimpleOTC extends BaseContract {
       _canCall: PromiseOrValue<boolean>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
-
-    treatyID(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     treatyJoin(
       overrides?: Overrides & { from?: PromiseOrValue<string> }

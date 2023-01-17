@@ -42,8 +42,6 @@ export type { GameLib } from "./contracts/libraries/GameLib";
 export { GameLib__factory } from "./factories/contracts/libraries/GameLib__factory";
 export type { LibDiamond } from "./contracts/libraries/LibDiamond";
 export { LibDiamond__factory } from "./factories/contracts/libraries/LibDiamond__factory";
-export type { UintBoolMapping } from "./contracts/Mapping.sol/UintBoolMapping";
-export { UintBoolMapping__factory } from "./factories/contracts/Mapping.sol/UintBoolMapping__factory";
 export type { Set } from "./contracts/Set";
 export { Set__factory } from "./factories/contracts/Set__factory";
 export type { CurioERC20 } from "./contracts/standards/CurioERC20";
