@@ -4,6 +4,7 @@ import { HardhatArguments, HardhatRuntimeEnvironment } from 'hardhat/types';
 export interface MapInput {
   width: number;
   height: number;
+  innerWidthByTileCount?: number;
 }
 
 export interface LoadTestSetupInput {

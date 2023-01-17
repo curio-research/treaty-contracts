@@ -12,7 +12,7 @@ import {CurioTreaty} from "contracts/standards/CurioTreaty.sol";
 import {console} from "forge-std/console.sol";
 
 /// @title Admin facet
-/// @notice Contains admin functions and state functions, both of which should be out of scope for nations
+/// @notice Contains admin functions, treaty functions, and state functions (setters which players don't call)
 
 contract AdminFacet is UseStorage {
     uint256 private constant NULL = 0;
@@ -37,8 +37,6 @@ contract AdminFacet is UseStorage {
         gs().authorizedTokens.push(_tokenAddress);
         gs().isAuthorizedToken[_tokenAddress] = true;
     }
-
-    // Question: How to reuse functions from Util so that they can be directly called by external parties?
 
     // ----------------------------------------------------------------------
     // DEBUG FUNCTIONS
