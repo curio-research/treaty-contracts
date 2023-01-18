@@ -2,11 +2,9 @@
 pragma solidity ^0.8.13;
 
 import {CurioTreaty} from "contracts/standards/CurioTreaty.sol";
-import {GetterFacet} from "contracts/facets/GetterFacet.sol";
 import {CurioERC20} from "contracts/standards/CurioERC20.sol";
 import {Position} from "contracts/libraries/Types.sol";
 import {Set} from "contracts/Set.sol";
-import {AdminFacet} from "contracts/facets/AdminFacet.sol";
 
 contract MercenaryLeague is CurioTreaty {
     CurioERC20 public goldToken;
@@ -20,7 +18,6 @@ contract MercenaryLeague is CurioTreaty {
         description = "A Military Alliance that allows drafting of armies.";
 
         goldToken = getter.getTokenContract("Gold");
-        admin = AdminFacet(diamond);
         warCouncil = new Set();
         conscriptionDuration = 3600;
     }
