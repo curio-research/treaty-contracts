@@ -22,7 +22,9 @@ To use, first follow the following steps:
 
 2. Clone this codebase.
 
-3. Run `yarn install` first to install dependencies. Make sure that all the submodules are installed.
+3. Run `yarn install` to install dependencies.
+
+4. Run `git submodule update --init --recursive` to install all submodules.
 
 ### Local deployment and test
 

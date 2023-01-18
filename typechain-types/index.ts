@@ -86,8 +86,6 @@ export type { DiamondInit } from "./contracts/upgradeInitializers/DiamondInit";
 export { DiamondInit__factory } from "./factories/contracts/upgradeInitializers/DiamondInit__factory";
 export type { Curio } from "./hardhat-diamond-abi/Curio";
 export { Curio__factory } from "./factories/hardhat-diamond-abi/Curio__factory";
-export type { ERC20 } from "./lib/solmate/src/tokens/ERC20";
-export { ERC20__factory } from "./factories/lib/solmate/src/tokens/ERC20__factory";
 export type { ERC721 } from "./lib/solmate/src/tokens/ERC721.sol/ERC721";
 export { ERC721__factory } from "./factories/lib/solmate/src/tokens/ERC721.sol/ERC721__factory";
 export type { ERC721TokenReceiver } from "./lib/solmate/src/tokens/ERC721.sol/ERC721TokenReceiver";
