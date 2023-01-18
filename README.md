@@ -1,6 +1,8 @@
-# Treaty V0
+# Treaty V0 Contracts
 
-Treaty is a fully on-chain 4X strategy game. In Treaty, players are able to express and enforce social contracts (i.e. treaties) through code. This repository contains the core smart contracts and tests for game.
+Treaty is a fully on-chain 4X strategy game. In Treaty, players are able to express and enforce social contracts (i.e. treaties) through code.
+
+This repository contains the core smart contracts, tests, and deployment code for the game.
 
 For more details, see [Treaty Technical Overview](https://blog.curio.gg/how-we-built-this-treaty-technical-overview/) from our blog.
 
@@ -25,6 +27,8 @@ To use, first follow the following steps:
 3. Run `yarn install` to install dependencies.
 
 4. Run `git submodule update --init --recursive` to install all submodules.
+
+5. Run `yarn link curio-vault` to link the vault repo needed for some data structures.
 
 ### Local deployment and test
 

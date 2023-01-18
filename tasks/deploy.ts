@@ -17,7 +17,7 @@ import { DeployArgs } from './util/types';
  * Examples:
  * `yarn deploy:anvil`: starts Anvil instance + deploys a single game
  * `npx hardhat deploy`: deploys game on localhost
- * `npx hardhat deploy --network constellationNew`: deploy game on constellationNew network
+ * `npx hardhat deploy --network <network-name>`: deploy game on a specific non-localhost network
  */
 task('deploy', 'deploy contracts')
   .addOptionalParam('port', 'Port contract abis and game info to Vault') // default is to call port
@@ -36,7 +36,7 @@ task('deploy', 'deploy contracts')
       const { port, release, fixmap, indexer, name, whitelist } = args;
 
       // Read variables from run flags
-      const isDev = hre.network.name === 'localhost' || hre.network.name === 'hardhat' || hre.network.name === 'altlayer' || hre.network.name === 'tailscale';
+      const isDev = hre.network.name === 'localhost' || hre.network.name === 'hardhat' || hre.network.name === 'altlayer';
       console.log('Network:', hre.network.name);
 
       if (fixmap) console.log(chalk.bgRed.black('Using deterministic map'));
@@ -93,7 +93,7 @@ task('deploy', 'deploy contracts')
       await publishDeployment(configFile);
 
       // For now, only sync game state with middleware in dev mode
-      if (isDev || hre.network.name === 'constellation') {
+      if (isDev || hre.network.name === 'constellation' || hre.network.name === 'constellationFast') {
         await startGameSync(configFile);
       }
 

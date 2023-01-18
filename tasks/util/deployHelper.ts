@@ -35,7 +35,7 @@ export const printDivider = () => {
 
 export const confirmTx = async (contractTx: ContractTransaction, hre: HardhatRuntimeEnvironment): Promise<ContractReceipt | undefined> => {
   // we assume that localhost anvil has automine / instant block confirmation
-  if (hre.network.name === 'localhost' || hre.network.name === 'tailscale') return;
+  if (hre.network.name === 'localhost') return;
 
   const receipt = await contractTx.wait();
   return receipt;
@@ -44,9 +44,6 @@ export const confirmTx = async (contractTx: ContractTransaction, hre: HardhatRun
 export const indexerUrlSelector = (hre: HardhatRuntimeEnvironment): string => {
   if (hre.network.name === 'localhost') {
     return process.env.BACKEND_URL || '';
-  }
-  if (hre.network.name === 'tailscale') {
-    return `${process.env.TAILSCALE_MAIN}:8080`;
   }
 
   return '';

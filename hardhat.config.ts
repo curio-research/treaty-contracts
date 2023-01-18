@@ -18,7 +18,7 @@ import './tasks/whitelistPlayer';
 // to get the file size of each smart contract, run:
 // yarn run hardhat size-contracts
 
-const { USER1_PK, USER2_PK, LOCALHOST_USER1_PK, LOCALHOST_USER2_PK, CONSTELLATION_RPC_URL, CONSTELLATION_FAST_RPC_URL, TAILSCALE_MAIN, ALTLAYER_RPC_URL, EXFAC_RPC_URL } = process.env;
+const { USER1_PK, USER2_PK, LOCALHOST_USER1_PK, LOCALHOST_USER2_PK, CONSTELLATION_RPC_URL, CONSTELLATION_FAST_RPC_URL, ALTLAYER_RPC_URL, EXFAC_RPC_URL } = process.env;
 
 export default {
   defaultNetwork: 'localhost',
@@ -39,11 +39,6 @@ export default {
   },
 
   networks: {
-    tailscale: {
-      url: `${TAILSCALE_MAIN}:8545`,
-      accounts: [LOCALHOST_USER1_PK, LOCALHOST_USER2_PK],
-      chainId: 31337,
-    },
     constellation: {
       url: CONSTELLATION_RPC_URL,
       accounts: [USER1_PK, USER2_PK],
