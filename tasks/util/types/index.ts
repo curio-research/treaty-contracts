@@ -4,6 +4,7 @@ import { HardhatArguments, HardhatRuntimeEnvironment } from 'hardhat/types';
 export interface MapInput {
   width: number;
   height: number;
+  innerRadiusByTileCount?: number;
 }
 
 export interface LoadTestSetupInput {
@@ -29,6 +30,11 @@ export interface DeployArgs extends HardhatArguments {
   indexer: boolean;
   name: string | undefined;
   whitelist: string | undefined;
+}
+
+export interface WhitelistArgs extends HardhatArguments {
+  address: string;
+  diamond: string;
 }
 
 export interface UnlockTileArgs extends HardhatArguments {

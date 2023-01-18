@@ -4,7 +4,6 @@ pragma solidity ^0.8.13;
 import {Position} from "contracts/libraries/Types.sol";
 import {Strings} from "openzeppelin-contracts/contracts/utils/Strings.sol";
 import {ECSLib} from "contracts/libraries/ECSLib.sol";
-import {console} from "forge-std/console.sol";
 
 library Templates {
     function addTile(
@@ -53,7 +52,11 @@ library Templates {
         return capitalID;
     }
 
-    function addResource(uint256 _templateID, Position memory _startPosition) public returns (uint256) {
+    function addResource(
+        uint256 _templateID,
+        Position memory _startPosition,
+        uint256 _nationID
+    ) public returns (uint256) {
         uint256 resourceID = ECSLib.addEntity();
 
         ECSLib.setString("Tag", resourceID, "Resource");
@@ -63,7 +66,7 @@ library Templates {
         ECSLib.setUint("LastHarvested", resourceID, block.timestamp);
         ECSLib.setUint("LastUpgraded", resourceID, 0);
         ECSLib.setUint("Load", resourceID, 0);
-        ECSLib.setUint("Nation", resourceID, 0);
+        ECSLib.setUint("Nation", resourceID, _nationID);
 
         return resourceID;
     }

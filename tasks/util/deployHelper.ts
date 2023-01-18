@@ -8,7 +8,7 @@ import { chainInfo, COMPONENT_SPECS, GameMode, position, TILE_TYPE } from 'curio
 import { ECSLib } from '../../typechain-types/contracts/libraries/ECSLib';
 import { GameLib } from '../../typechain-types/contracts/libraries/GameLib';
 import { CurioERC20 } from '../../typechain-types/contracts/standards/CurioERC20';
-import { createTemplates, treatyDescriptions } from './constants';
+import { createTemplates, INNER_REGION_RADIUS_BY_TILE_COUNT, treatyDescriptions } from './constants';
 import { deployDiamond, getDiamond, deployFacets } from './diamondDeploy';
 import { encodeTileMap } from './mapHelper';
 import GAME_PARAMETERS from '../game_parameters.json';
@@ -49,11 +49,6 @@ export const indexerUrlSelector = (hre: HardhatRuntimeEnvironment): string => {
     return `${process.env.TAILSCALE_MAIN}:8080`;
   }
 
-  if (hre.network.name === 'constellationNew') {
-    return process.env.INDEXER_URL || '';
-  }
-
-  // TODO: add production indexer url cases
   return '';
 };
 
@@ -129,7 +124,7 @@ export const initializeGame = async (hre: HardhatRuntimeEnvironment, worldConsta
   // Deploy diamond
   let startTime = performance.now();
   const ecsLib = await deployProxy<ECSLib>('ECSLib', admin, hre, []);
-  const templates = await deployProxy<any>('Templates', admin, hre, [], { ECSLib: ecsLib.address }); // FIXME: type
+  const templates = await deployProxy<any>('Templates', admin, hre, [], { ECSLib: ecsLib.address });
   const gameLib = await deployProxy<GameLib>('GameLib', admin, hre, [], { ECSLib: ecsLib.address, Templates: templates.address });
   const diamondAddr = await deployDiamond(hre, admin, [worldConstants]);
   const diamond = await getDiamond(hre, diamondAddr);
@@ -137,7 +132,7 @@ export const initializeGame = async (hre: HardhatRuntimeEnvironment, worldConsta
     { name: 'GameFacet', libraries: { ECSLib: ecsLib.address, Templates: templates.address } },
     { name: 'GetterFacet', libraries: { ECSLib: ecsLib.address, Templates: templates.address } },
     { name: 'AdminFacet', libraries: { ECSLib: ecsLib.address, GameLib: gameLib.address, Templates: templates.address } },
-  ]; // FIXME: GameFacet for some reason does not like to be linked to GameLib, and neither does GetterFacet
+  ];
   await deployFacets(hre, diamondAddr, facets, admin);
   console.log(`✦ Diamond deployment took ${Math.floor(performance.now() - startTime)} ms`);
 
@@ -243,7 +238,7 @@ export const initializeGame = async (hre: HardhatRuntimeEnvironment, worldConsta
   // Battle royale setup
   if (worldConstants.gameMode === GameMode.BATTLE_ROYALE) {
     startTime = performance.now();
-    const regionWidth = 5 * worldConstants.tileWidth;
+    const regionWidth = INNER_REGION_RADIUS_BY_TILE_COUNT * worldConstants.tileWidth;
     const centerTilePos = { x: Math.floor(tileMap.length / 2) * worldConstants.tileWidth, y: Math.floor(tileMap[0].length / 2) * worldConstants.tileWidth };
     const region = { xMin: centerTilePos.x - regionWidth, xMax: centerTilePos.x + regionWidth, yMin: centerTilePos.y - regionWidth, yMax: centerTilePos.y + regionWidth };
     const regionTiles = allTilePositions.filter((pos) => pos.x >= region.xMin && pos.x <= region.xMax && pos.y >= region.yMin && pos.y <= region.yMax);

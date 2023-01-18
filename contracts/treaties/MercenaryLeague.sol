@@ -2,12 +2,9 @@
 pragma solidity ^0.8.13;
 
 import {CurioTreaty} from "contracts/standards/CurioTreaty.sol";
-import {GetterFacet} from "contracts/facets/GetterFacet.sol";
 import {CurioERC20} from "contracts/standards/CurioERC20.sol";
 import {Position} from "contracts/libraries/Types.sol";
 import {Set} from "contracts/Set.sol";
-import {AdminFacet} from "contracts/facets/AdminFacet.sol";
-import {console} from "forge-std/console.sol";
 
 contract MercenaryLeague is CurioTreaty {
     CurioERC20 public goldToken;
@@ -21,7 +18,6 @@ contract MercenaryLeague is CurioTreaty {
         description = "A Military Alliance that allows drafting of armies.";
 
         goldToken = getter.getTokenContract("Gold");
-        admin = AdminFacet(diamond);
         warCouncil = new Set();
         conscriptionDuration = 3600;
     }
@@ -51,7 +47,7 @@ contract MercenaryLeague is CurioTreaty {
 
     function conscriptArmies(uint256 _nationID) public onlyWarCouncil {
         require(memberToConscriptionFee[_nationID] > 0, "Alliance: Target must have a conscription fee set");
-        require(getter.getNationTreatySignature(_nationID, treatyID) != 0, "Alliance: Target nation is not part of the alliance");
+        require(getter.getNationTreatySignature(_nationID, getter.getEntityByAddress(address(this))) != 0, "Alliance: Target nation is not part of the alliance");
         require(memberConscriptionStartTime[getter.getEntityByAddress(msg.sender)] == 0, "Alliance: Target nation's armies have already been conscripted");
 
         // Conscripter gains control of all target nation's armies at the cost of the conscription fee
@@ -108,10 +104,9 @@ contract MercenaryLeague is CurioTreaty {
         (, , string memory functionName, , , bool canCall) = abi.decode(_encodedParams, (uint256, uint256, string, uint256, uint256, bool));
         // Alliance member cannot arbitrarily revoke delegation of Battle and Move functions
         if (_strEq(functionName, "Battle") || _strEq(functionName, "Move")) {
-            if (!canCall) {
-                return false;
-            }
+            if (!canCall) return false;
         }
-        return true;
+
+        return super.approveDelegateGameFunction(_nationID, _encodedParams);
     }
 }

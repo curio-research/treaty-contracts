@@ -12,18 +12,20 @@ export const LOCALHOST_WS_RPC_URL = 'ws://localhost:8545';
 // WORLD CONSTANTS
 // ----------------------------------------------------------
 
+export const TILE_WIDTH = 5;
+export const INNER_REGION_RADIUS_BY_TILE_COUNT = 4;
+export const NUM_INIT_TERRAIN_TYPES = Math.floor((Object.keys(TILE_TYPE).length + 1) / 2);
+
 export const MAP_INPUT: MapInput = {
   width: 15,
   height: 15,
+  innerRadiusByTileCount: INNER_REGION_RADIUS_BY_TILE_COUNT,
 };
 
 export const TEST_MAP_INPUT: MapInput = {
-  width: 250, // FIXME: restore to 1000 if increasing player count
+  width: 250, // restore to 1000 if increasing player count
   height: 2,
 };
-
-export const TILE_WIDTH = 5;
-export const NUM_INIT_TERRAIN_TYPES = Math.floor((Object.keys(TILE_TYPE).length + 1) / 2);
 
 export const generateWorldConstants = (adminAddr: string, mapInput: MapInput): any => {
   return {
@@ -39,7 +41,6 @@ export const generateWorldConstants = (adminAddr: string, mapInput: MapInput): a
     maxNationCount: 1000,
     gameMode: GameMode.BATTLE_ROYALE,
     gameLengthInSeconds: 2000000000,
-    // maxTransferDistance: 100,
     // generated constants
     ...worldConstants,
   };

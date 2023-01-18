@@ -4,7 +4,6 @@ pragma solidity ^0.8.13;
 import {CurioTreaty} from "contracts/standards/CurioTreaty.sol";
 import {CurioERC20} from "contracts/standards/CurioERC20.sol";
 import {Position} from "contracts/libraries/Types.sol";
-import {console} from "forge-std/console.sol";
 
 contract HandshakeDeal is CurioTreaty {
     enum ApprovalFunctionType {
@@ -46,7 +45,6 @@ contract HandshakeDeal is CurioTreaty {
     // ----------------------------------------------------------
     // Articles of Treaty
     // ----------------------------------------------------------
-    //Note: Frontend for now doesn't work with encodedParams, so we split proposeDeal into 3 functions: 
 
     function proposeDeal1(
         ApprovalFunctionType _functionType,
@@ -54,14 +52,15 @@ contract HandshakeDeal is CurioTreaty {
         uint256 _effectiveDuration
     ) public onlySigner returns (uint256) {
         require(
-        _functionType == ApprovalFunctionType.approveUpgradeCapital
-        || _functionType == ApprovalFunctionType.approveUpgradeTile
-        || _functionType == ApprovalFunctionType.approveRecoverTile
-        || _functionType == ApprovalFunctionType.approveDisownTile
-        || _functionType == ApprovalFunctionType.approveEndGather
-        || _functionType == ApprovalFunctionType.approveUnloadResources
-        || _functionType == ApprovalFunctionType.approveHarvestResourcesFromCapital
-        || _functionType == ApprovalFunctionType.approveUpgradeResource, "Handshake: Invalid function type"
+            _functionType == ApprovalFunctionType.approveUpgradeCapital ||
+                _functionType == ApprovalFunctionType.approveUpgradeTile ||
+                _functionType == ApprovalFunctionType.approveRecoverTile ||
+                _functionType == ApprovalFunctionType.approveDisownTile ||
+                _functionType == ApprovalFunctionType.approveEndGather ||
+                _functionType == ApprovalFunctionType.approveUnloadResources ||
+                _functionType == ApprovalFunctionType.approveHarvestResourcesFromCapital ||
+                _functionType == ApprovalFunctionType.approveUpgradeResource,
+            "Handshake: Invalid function type"
         );
         uint256 proposerID = getter.getEntityByAddress(msg.sender);
         dealCount++;
@@ -85,10 +84,12 @@ contract HandshakeDeal is CurioTreaty {
         uint256 _uint256Param2,
         uint256 _effectiveDuration
     ) public onlySigner returns (uint256) {
-        require(_functionType == ApprovalFunctionType.approveStartTroopProduction
-        || _functionType == ApprovalFunctionType.approveStartGather
-        || _functionType == ApprovalFunctionType.approveHarvestResource
-        || _functionType == ApprovalFunctionType.approveBattle, "Handshake: Invalid function type"
+        require(
+            _functionType == ApprovalFunctionType.approveStartTroopProduction || // FORMATTING: DO NOT REMOVE THIS COMMENT
+                _functionType == ApprovalFunctionType.approveStartGather ||
+                _functionType == ApprovalFunctionType.approveHarvestResource ||
+                _functionType == ApprovalFunctionType.approveBattle,
+            "Handshake: Invalid function type"
         );
         uint256 proposerID = getter.getEntityByAddress(msg.sender);
         dealCount++;
@@ -113,9 +114,10 @@ contract HandshakeDeal is CurioTreaty {
         uint256 _effectiveDuration
     ) public onlySigner returns (uint256) {
         require(
-        _functionType == ApprovalFunctionType.approveMoveCapital
-        || _functionType == ApprovalFunctionType.approveClaimTile
-        || _functionType == ApprovalFunctionType.approveMove, "Handshake: Invalid function type"
+            _functionType == ApprovalFunctionType.approveMoveCapital || // FORMATTING: DO NOT REMOVE THIS COMMENT
+                _functionType == ApprovalFunctionType.approveClaimTile ||
+                _functionType == ApprovalFunctionType.approveMove,
+            "Handshake: Invalid function type"
         );
         uint256 proposerID = getter.getEntityByAddress(msg.sender);
         dealCount++;
@@ -145,8 +147,8 @@ contract HandshakeDeal is CurioTreaty {
     // Permission Functions
     // ----------------------------------------------------------
 
-    // note: a player can exit only after all time locks pass
     function treatyLeave() public override {
+        // Can exit only after all time locks pass
         uint256[] memory signedDealIDs = nationIDToDealIDs[getter.getEntityByAddress(msg.sender)];
         for (uint256 i = 0; i < signedDealIDs.length; i++) {
             Deal memory deal = idToDeal[signedDealIDs[i]];

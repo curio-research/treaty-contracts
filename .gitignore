@@ -12,6 +12,6 @@ out
 #local dev help
 tasks/maps
 tasks/signers
-tasks/whitelist.json
+*whitelist.json
 
 .env

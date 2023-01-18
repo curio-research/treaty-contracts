@@ -18,7 +18,7 @@ contract GameTest is Test, DiamondDeployTest {
     // - [x] joinGame
     // Capital:
     // - [x] upgradeCapital
-    // - [ ] moveCapital
+    // - [x] moveCapital
     // Tile:
     // - [x] claimTile
     // - [ ] upgradeTile
@@ -248,7 +248,7 @@ contract GameTest is Test, DiamondDeployTest {
         assertEq(foodToken.balanceOf(army21Addr), 1000);
     }
 
-    function testUpgradeCapitalBattleClaimTile() public {
+    function testUpgradeCapitalBattleClaimTileMoveCapital() public {
         // bug: lastChaos time is 0. This is wrong.
         uint256 time = block.timestamp + 600;
         // Deployer transfer enough gold & food to nation 1 & 2
@@ -310,13 +310,21 @@ contract GameTest is Test, DiamondDeployTest {
 
         assertEq(getter.getEntityLevel(nation1CapitalID), 2);
         assertEq(getter.getNation(targetTileID), nation1ID);
-        vm.stopPrank();
 
-        // // Nation 2 organizes army and moves it to the tile
-        // vm.startPrank(player2);
-        // time += 10;
-        // vm.warp(time);
-        // uint256 army21ID = game.organizeArmy(nation2CapitalID, armyTemplateIDs, armyTemplateAmounts);
+        // Nation 1 move capital to new tile
+        time += 10;
+        vm.warp(time);
+        assertTrue(getter.getResourceAtTile(targetTilePos) > 0);
+        game.moveCapital(nation1CapitalID, targetTilePos);
+        assertEq(getter.getResourceAtTile(targetTilePos), 0);
+
+        // Nation 1 upgrades farm at old capital position
+        time += 10;
+        vm.warp(time);
+        uint256 farmID = getter.getResourceAtTile(nation1Pos);
+        assertEq(abi.decode(getter.getComponent("Nation").getBytesValue(farmID), (uint256)), nation1ID);
+        game.upgradeResource(farmID);
+        vm.stopPrank();
     }
 
     function testBattleCapitalChaos() public {
@@ -503,7 +511,7 @@ contract GameTest is Test, DiamondDeployTest {
         // Nation 1 fails to end troop production
         time += worldConstants.secondsToTrainAThousandTroops / 2;
         vm.warp(time);
-        vm.expectRevert("CURIO: Need more time for production");
+        vm.expectRevert("CURIO: Production needs more time to finish");
         game.endTroopProduction(nation1CapitalID);
         assertEq(horsemanToken.balanceOf(nation1CapitalAddr), 0);
 
@@ -628,10 +636,6 @@ contract GameTest is Test, DiamondDeployTest {
         vm.stopPrank();
     }
 
-    function testBattleRoyaleMode() public {
-        // TODO: implement
-    }
-
     function testIdlePlayerRemoval() public {
         // Start time
         uint256 time = block.timestamp + 500;
@@ -730,12 +734,5 @@ contract GameTest is Test, DiamondDeployTest {
         vm.expectRevert("CURIO: Not delegated to call UpgradeCapital");
         game.upgradeCapital(nation1CapitalID);
         vm.stopPrank();
-    }
-
-    function testCenterTileMountain() public {
-        // Change mode to battle royale
-        vm.startPrank(deployer);
-
-        // TODO: left here
     }
 }

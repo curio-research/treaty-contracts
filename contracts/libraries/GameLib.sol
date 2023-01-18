@@ -20,8 +20,6 @@ import {CollectiveDefenseFund} from "contracts/treaties/CollectiveDefenseFund.so
 import {SimpleOTC} from "contracts/treaties/SimpleOTC.sol";
 import {HandshakeDeal} from "contracts/treaties/HandshakeDeal.sol";
 
-import {console} from "forge-std/console.sol";
-
 /// @title Util library
 /// @notice Contains all events as well as lower-level setters and getters
 /// Util functions generally do not verify correctness of conditions. Make sure to verify in higher-level functions such as those in Engine.
@@ -162,12 +160,12 @@ library GameLib {
 
         // Initialize gold mine
         if (terrain == 1 && getResourceAtTile(_startPosition) == 0) {
-            Templates.addResource(gs().templates["Gold"], _startPosition);
+            Templates.addResource(gs().templates["Gold"], _startPosition, 0);
         }
 
         // All empty tiles are farms
         if ((terrain == 0 || terrain == 2) && getResourceAtTile(_startPosition) == 0) {
-            Templates.addResource(gs().templates["Food"], _startPosition);
+            Templates.addResource(gs().templates["Food"], _startPosition, 0);
         }
 
         return tileID;
@@ -216,27 +214,6 @@ library GameLib {
         ECSLib.removeEntity(gatherID);
     }
 
-    // FIXME: Hardcoded triangular relations
-    function getAttackBonus(uint256 _offenderTemplateID, uint256 _defenderTemplateID) internal view returns (uint256) {
-        uint256 horsemanTemplateId = gs().templates["Horseman"];
-        uint256 warriorTemplateId = gs().templates["Warrior"];
-        uint256 slingerTemplateId = gs().templates["Slinger"];
-
-        if (_offenderTemplateID == horsemanTemplateId) {
-            if (_defenderTemplateID == warriorTemplateId) return 60;
-            if (_defenderTemplateID == slingerTemplateId) return 140;
-            else return 100;
-        } else if (_offenderTemplateID == warriorTemplateId) {
-            if (_defenderTemplateID == slingerTemplateId) return 60;
-            if (_defenderTemplateID == horsemanTemplateId) return 140;
-            else return 100;
-        } else if (_offenderTemplateID == slingerTemplateId) {
-            if (_defenderTemplateID == horsemanTemplateId) return 60;
-            if (_defenderTemplateID == warriorTemplateId) return 140;
-            else return 100;
-        } else return 100;
-    }
-
     function battleArmy(uint256 _armyID, uint256 _targetArmyID) internal {
         // Verify that army and tar army are adjacent
         require(euclidean(ECSLib.getPosition("Position", _armyID), ECSLib.getPosition("Position", _targetArmyID)) <= ECSLib.getUint("AttackRange", _armyID), "CURIO: Attack out of range");
@@ -266,7 +243,6 @@ library GameLib {
 
         // if it is the super tile, check that it's active
         if (coincident(ECSLib.getPosition("StartPosition", _tileID), getMapCenterTilePosition())) {
-            // todo: end game when nations occupy it for a certain period of time
             require(block.timestamp >= ECSLib.getUint("LastRecovered", _tileID), "Curio: Supertile is not active yet");
         }
 
@@ -308,7 +284,6 @@ library GameLib {
                 }
             }
         } else {
-            // todo: if tile wins against army, army's resource goes to tile's nation
             attack(_tileID, _armyID, false, true);
         }
     }
@@ -380,7 +355,7 @@ library GameLib {
         uint256[] memory resourceTemplateIDs = ECSLib.getStringComponent("Tag").getEntitiesWithValue(string("ResourceTemplate"));
 
         for (uint256 i = 0; i < resourceTemplateIDs.length; i++) {
-            uint256 rewardAmount = getConstant("Barbarian", ECSLib.getString("Name", resourceTemplateIDs[i]), "Reward", "", barbarianLevel * 4); // FIXME: 4
+            uint256 rewardAmount = getConstant("Barbarian", ECSLib.getString("Name", resourceTemplateIDs[i]), "Reward", "", barbarianLevel * 4); // FIXME: hardcoded
 
             CurioERC20 resourceToken = CurioERC20(ECSLib.getAddress("Address", resourceTemplateIDs[i]));
             resourceToken.dripToken(ECSLib.getAddress("Address", _armyID), rewardAmount);
@@ -467,7 +442,7 @@ library GameLib {
             treatyAddress = address(new HandshakeDeal(address(this)));
         } else if (GameLib.strEq(_treatyName, "Mercenary League")) {
             treatyAddress = address(new MercenaryLeague(address(this)));
-        }else {
+        } else {
             revert("CURIO: Unsupported treaty name");
         }
 
@@ -486,6 +461,27 @@ library GameLib {
     // ----------------------------------------------------------
     // LOGIC GETTERS
     // ----------------------------------------------------------
+
+    /// @dev Hardcoded triangular relations for troop attack bonuses
+    function getAttackBonus(uint256 _offenderTemplateID, uint256 _defenderTemplateID) internal view returns (uint256) {
+        uint256 horsemanTemplateId = gs().templates["Horseman"];
+        uint256 warriorTemplateId = gs().templates["Warrior"];
+        uint256 slingerTemplateId = gs().templates["Slinger"];
+
+        if (_offenderTemplateID == horsemanTemplateId) {
+            if (_defenderTemplateID == warriorTemplateId) return 60;
+            if (_defenderTemplateID == slingerTemplateId) return 140;
+            else return 100;
+        } else if (_offenderTemplateID == warriorTemplateId) {
+            if (_defenderTemplateID == slingerTemplateId) return 60;
+            if (_defenderTemplateID == horsemanTemplateId) return 140;
+            else return 100;
+        } else if (_offenderTemplateID == slingerTemplateId) {
+            if (_defenderTemplateID == horsemanTemplateId) return 60;
+            if (_defenderTemplateID == warriorTemplateId) return 140;
+            else return 100;
+        } else return 100;
+    }
 
     function getTokenContract(string memory _tokenName) internal view returns (CurioERC20) {
         uint256 tokenTemplateID = gs().templates[_tokenName];
@@ -514,7 +510,6 @@ library GameLib {
         string memory entityTag = ECSLib.getString("Tag", entityID);
 
         // Fetch load for given template
-        // FIXME: troop load
         uint256 load;
         if (strEq(entityTag, "Army")) {
             uint256 capitalID = getCapital(ECSLib.getUint("Nation", entityID));
@@ -739,32 +734,6 @@ library GameLib {
         return res.length == 1 ? res[0] : 0;
     }
 
-    // FIXME: this function kinda crazy
-    function getAllResourceIDsByNation(uint256 _nationID) internal view returns (uint256[] memory) {
-        // get all tiles
-        QueryCondition[] memory query1 = new QueryCondition[](2);
-        query1[0] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Nation"]), abi.encode(_nationID));
-        query1[1] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Tag"]), abi.encode("Tile"));
-        uint256[] memory res1 = ECSLib.query(query1);
-
-        // get all of their positions, and then find the resources
-        Position[] memory allTilePositions;
-        for (uint256 i = 0; i < res1.length; i++) {
-            allTilePositions[i] = ECSLib.getPosition("StartPosition", res1[i]);
-        }
-
-        // use the position to find resourceIDs
-        uint256[] memory resourceIDs;
-        for (uint256 i = 0; i < allTilePositions.length; i++) {
-            QueryCondition[] memory query2 = new QueryCondition[](2);
-            query2[0] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["StartPosition"]), abi.encode(allTilePositions[i]));
-            query2[1] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Tag"]), abi.encode("Tile"));
-            uint256[] memory res2 = ECSLib.query(query2);
-            resourceIDs[resourceIDs.length] = (res2.length == 1 ? res2[0] : 0);
-        }
-        return resourceIDs;
-    }
-
     function getInventory(uint256 _keeperID, uint256 _templateID) internal view returns (uint256) {
         QueryCondition[] memory query = new QueryCondition[](3);
         query[0] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Tag"]), abi.encode("Inventory"));
@@ -925,8 +894,6 @@ library GameLib {
     // ----------------------------------------------------------
 
     function ongoingGameCheck() internal view {
-        require(!gs().isPaused, "CURIO: Game is paused");
-
         uint256 gameLengthInSeconds = gs().worldConstants.gameLengthInSeconds;
         require(gameLengthInSeconds == 0 || (block.timestamp - gs().gameInitTimestamp) <= gameLengthInSeconds, "CURIO: Game has ended");
     }

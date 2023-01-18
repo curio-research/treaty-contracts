@@ -3,7 +3,6 @@ pragma solidity ^0.8.13;
 
 import {CurioTreaty} from "contracts/standards/CurioTreaty.sol";
 import {CurioERC20} from "contracts/standards/CurioERC20.sol";
-import {console} from "forge-std/console.sol";
 
 struct Order {
     string sellTokenName;
@@ -13,15 +12,8 @@ struct Order {
     uint256 createdAt;
 }
 
+/// @notice Each player has one active sell order at most
 contract SimpleOTC is CurioTreaty {
-    /** 
-    Outline:
-    - User puts on the sell order, specifying tokens to buy and price
-    - Buyer inputs seller address and traded the token
-    Storage:
-    - Each player has one active sell order at most
-    */
-
     mapping(address => Order) public addressToOrder;
     Order public emptyOrder;
 
@@ -32,6 +24,13 @@ contract SimpleOTC is CurioTreaty {
         emptyOrder = Order({sellTokenName: "", sellAmount: 0, buyTokenName: "", buyAmount: 0, createdAt: 0});
     }
 
+    /**
+     * @dev Create an order. Must be called by a nation.
+     * @param _sellTokenName name of the token to sell
+     * @param _sellAmount amount of the token to sell
+     * @param _buyTokenName name of the token to buy
+     * @param _buyAmount amount of the token to buy
+     */
     function createOrder(
         string memory _sellTokenName,
         uint256 _sellAmount,
@@ -50,6 +49,9 @@ contract SimpleOTC is CurioTreaty {
         });
     }
 
+    /**
+     * @dev Cancel an order. Must be called by a nation.
+     */
     function cancelOrder() public {
         require(addressToOrder[msg.sender].sellAmount > 0, "OTC: You have no existing order");
         require(block.timestamp > addressToOrder[msg.sender].createdAt + 120, "OTC: Can only cancel after 2 minutes");
@@ -58,6 +60,10 @@ contract SimpleOTC is CurioTreaty {
         addressToOrder[msg.sender] = emptyOrder;
     }
 
+    /**
+     * @dev Take an order and complete the transfers. Must be called by a nation.
+     * @param _seller address of the seller
+     */
     function takeOrder(address _seller) public {
         require(addressToOrder[_seller].sellAmount > 0, "OTC: Seller has no existing order");
 

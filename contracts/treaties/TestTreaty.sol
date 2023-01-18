@@ -2,7 +2,6 @@
 pragma solidity ^0.8.13;
 
 import {CurioTreaty} from "contracts/standards/CurioTreaty.sol";
-import {console} from "forge-std/console.sol";
 
 contract TestTreaty is CurioTreaty {
     constructor(address _diamond) CurioTreaty(_diamond) {

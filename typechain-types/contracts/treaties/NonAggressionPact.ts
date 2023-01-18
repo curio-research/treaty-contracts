@@ -56,12 +56,9 @@ export interface NonAggressionPactInterface extends utils.Interface {
     "getter()": FunctionFragment;
     "minimumStayCheck(uint256,uint256)": FunctionFragment;
     "name()": FunctionFragment;
-    "ownerID()": FunctionFragment;
-    "registerTreatyAndOwnerIds()": FunctionFragment;
     "removeFromWhitelist(uint256)": FunctionFragment;
     "removeMember(uint256)": FunctionFragment;
     "treatyDelegateGameFunction(string,uint256,bool)": FunctionFragment;
-    "treatyID()": FunctionFragment;
     "treatyJoin()": FunctionFragment;
     "treatyLeave()": FunctionFragment;
   };
@@ -99,12 +96,9 @@ export interface NonAggressionPactInterface extends utils.Interface {
       | "getter"
       | "minimumStayCheck"
       | "name"
-      | "ownerID"
-      | "registerTreatyAndOwnerIds"
       | "removeFromWhitelist"
       | "removeMember"
       | "treatyDelegateGameFunction"
-      | "treatyID"
       | "treatyJoin"
       | "treatyLeave"
   ): FunctionFragment;
@@ -218,11 +212,6 @@ export interface NonAggressionPactInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(functionFragment: "name", values?: undefined): string;
-  encodeFunctionData(functionFragment: "ownerID", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "registerTreatyAndOwnerIds",
-    values?: undefined
-  ): string;
   encodeFunctionData(
     functionFragment: "removeFromWhitelist",
     values: [PromiseOrValue<BigNumberish>]
@@ -239,7 +228,6 @@ export interface NonAggressionPactInterface extends utils.Interface {
       PromiseOrValue<boolean>
     ]
   ): string;
-  encodeFunctionData(functionFragment: "treatyID", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "treatyJoin",
     values?: undefined
@@ -358,11 +346,6 @@ export interface NonAggressionPactInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "ownerID", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "registerTreatyAndOwnerIds",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(
     functionFragment: "removeFromWhitelist",
     data: BytesLike
@@ -375,7 +358,6 @@ export interface NonAggressionPactInterface extends utils.Interface {
     functionFragment: "treatyDelegateGameFunction",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "treatyID", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "treatyJoin", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "treatyLeave",
@@ -573,12 +555,6 @@ export interface NonAggressionPact extends BaseContract {
 
     name(overrides?: CallOverrides): Promise<[string]>;
 
-    ownerID(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    registerTreatyAndOwnerIds(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
     removeFromWhitelist(
       _nationID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -595,8 +571,6 @@ export interface NonAggressionPact extends BaseContract {
       _canCall: PromiseOrValue<boolean>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
-
-    treatyID(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     treatyJoin(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -768,12 +742,6 @@ export interface NonAggressionPact extends BaseContract {
 
   name(overrides?: CallOverrides): Promise<string>;
 
-  ownerID(overrides?: CallOverrides): Promise<BigNumber>;
-
-  registerTreatyAndOwnerIds(
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
   removeFromWhitelist(
     _nationID: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -790,8 +758,6 @@ export interface NonAggressionPact extends BaseContract {
     _canCall: PromiseOrValue<boolean>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
-
-  treatyID(overrides?: CallOverrides): Promise<BigNumber>;
 
   treatyJoin(
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -963,10 +929,6 @@ export interface NonAggressionPact extends BaseContract {
 
     name(overrides?: CallOverrides): Promise<string>;
 
-    ownerID(overrides?: CallOverrides): Promise<BigNumber>;
-
-    registerTreatyAndOwnerIds(overrides?: CallOverrides): Promise<void>;
-
     removeFromWhitelist(
       _nationID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -983,8 +945,6 @@ export interface NonAggressionPact extends BaseContract {
       _canCall: PromiseOrValue<boolean>,
       overrides?: CallOverrides
     ): Promise<void>;
-
-    treatyID(overrides?: CallOverrides): Promise<BigNumber>;
 
     treatyJoin(overrides?: CallOverrides): Promise<void>;
 
@@ -1155,12 +1115,6 @@ export interface NonAggressionPact extends BaseContract {
 
     name(overrides?: CallOverrides): Promise<BigNumber>;
 
-    ownerID(overrides?: CallOverrides): Promise<BigNumber>;
-
-    registerTreatyAndOwnerIds(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
     removeFromWhitelist(
       _nationID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -1177,8 +1131,6 @@ export interface NonAggressionPact extends BaseContract {
       _canCall: PromiseOrValue<boolean>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
-
-    treatyID(overrides?: CallOverrides): Promise<BigNumber>;
 
     treatyJoin(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -1351,12 +1303,6 @@ export interface NonAggressionPact extends BaseContract {
 
     name(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    ownerID(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    registerTreatyAndOwnerIds(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
     removeFromWhitelist(
       _nationID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -1373,8 +1319,6 @@ export interface NonAggressionPact extends BaseContract {
       _canCall: PromiseOrValue<boolean>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
-
-    treatyID(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     treatyJoin(
       overrides?: Overrides & { from?: PromiseOrValue<string> }

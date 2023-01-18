@@ -41,7 +41,7 @@ task('deploy', 'deploy contracts')
 
       if (fixmap) console.log(chalk.bgRed.black('Using deterministic map'));
 
-      // await isConnectionLive(); // FIXME: restore later
+      await isConnectionLive();
 
       // Set up deployer and some local variables
       let [player1] = await hre.ethers.getSigners();
@@ -92,7 +92,7 @@ task('deploy', 'deploy contracts')
 
       await publishDeployment(configFile);
 
-      // TODO: for now, only sync game state with middleware in dev mode
+      // For now, only sync game state with middleware in dev mode
       if (isDev || hre.network.name === 'constellation') {
         await startGameSync(configFile);
       }

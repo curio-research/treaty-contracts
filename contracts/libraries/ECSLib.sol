@@ -4,7 +4,6 @@ pragma solidity ^0.8.13;
 import {LibStorage} from "contracts/libraries/Storage.sol";
 import {GameState, Position, QueryCondition, QueryType, ValueType} from "contracts/libraries/Types.sol";
 import {Set} from "contracts/Set.sol";
-import {UintBoolMapping} from "contracts/Mapping.sol";
 import {Component} from "contracts/Component.sol";
 import {AddressComponent, BoolComponent, IntComponent, PositionComponent, StringComponent, UintComponent, UintArrayComponent} from "contracts/TypedComponents.sol";
 
@@ -40,7 +39,7 @@ library ECSLib {
     }
 
     function addComponent(string memory _name, ValueType _valueType) public {
-        // TODO: implement
+        // Not supported currently
     }
 
     function addEntity() public returns (uint256) {
@@ -54,7 +53,6 @@ library ECSLib {
         return newEntity;
     }
 
-    // FIXME: remove over all components, or remove over components which the entity has? One more general, the other more efficient.
     function removeEntity(uint256 _entity) public {
         Set entities = Set(gs().entities);
         entities.remove(_entity);
@@ -72,7 +70,6 @@ library ECSLib {
         return _getComponent(_componentName).getBytesValue(_entity);
     }
 
-    // Question: At the moment, all events regarding component set and removal are emitted in game contracts. Is this good?
     function setComponentValue(
         string memory _componentName,
         uint256 _entity,

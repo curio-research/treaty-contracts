@@ -13,7 +13,6 @@ import { chainInfo } from 'curio-vault';
 
 /**
  * @notice Before load testing, make sure the admin wallet has plenty of tokens for the corresponding number of concurrent players.
- * @notice FIXME: This task may need to be updated with the latest changes to the contracts such as smart contract wallets.
  */
 task('load-test', 'perform load testing')
   .addOptionalParam('playercount', 'Number of players')

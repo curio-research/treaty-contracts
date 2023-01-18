@@ -7,7 +7,6 @@ import {GameLib} from "contracts/libraries/GameLib.sol";
 import {ECSLib} from "contracts/libraries/ECSLib.sol";
 import {Position, QueryCondition, WorldConstants} from "contracts/libraries/Types.sol";
 import {Component} from "contracts/Component.sol";
-import {console} from "forge-std/console.sol";
 import {CurioERC20} from "contracts/standards/CurioERC20.sol";
 
 /// @title Bulk getters
@@ -193,7 +192,7 @@ contract GetterFacet is UseStorage {
         Position memory pos1 = ECSLib.getPosition("Position", GameLib.getEntityByAddress(_addr1));
         Position memory pos2 = ECSLib.getPosition("Position", GameLib.getEntityByAddress(_addr2));
 
-        // TEMP FIXME: Treaty contracts without positions are still allowed to transfer
+        // TEMP: Treaty contracts without positions are still allowed to transfer
         Position memory nullPos = Position({x: 0, y: 0});
         if (GameLib.coincident(pos1, nullPos) || GameLib.coincident(pos2, nullPos)) return 0;
 
