@@ -1,7 +1,8 @@
 import { ethers } from 'ethers';
+const { CONSTELLATION_RPC_URL } = process.env;
 
 const main = async () => {
-  const provider = new ethers.providers.JsonRpcProvider('https://curiov3.constellationchain.xyz/http');
+  const provider = new ethers.providers.JsonRpcProvider(CONSTELLATION_RPC_URL);
 
   console.log(
     await provider.call({

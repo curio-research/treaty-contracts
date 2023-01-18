@@ -13,7 +13,6 @@ export const DRIP_AMOUNT_BY_NETWORK: Record<string, number> = {
   constellationFast: 100,
   localhost: 1,
   optimismKovan: 0.01,
-  tailscale: 100,
 };
 
 // ----------------------------------------------------------
