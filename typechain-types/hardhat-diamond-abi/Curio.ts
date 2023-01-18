@@ -162,6 +162,7 @@ export interface CurioInterface extends utils.Interface {
     "removeIdleNations(uint256)": FunctionFragment;
     "removeSigner(uint256)": FunctionFragment;
     "setComponentValue(string,uint256,bytes)": FunctionFragment;
+    "setGameParameter(string,uint256)": FunctionFragment;
     "spawnResource((uint256,uint256),string)": FunctionFragment;
     "stopGame()": FunctionFragment;
     "storeEncodedColumnBatches(uint256[][])": FunctionFragment;
@@ -208,7 +209,6 @@ export interface CurioInterface extends utils.Interface {
     "getCapital(uint256)": FunctionFragment;
     "getComponent(string)": FunctionFragment;
     "getComponentById(uint256)": FunctionFragment;
-    "getConstant(string,string,string,string,uint256)": FunctionFragment;
     "getDelegations(string,uint256,uint256)": FunctionFragment;
     "getDistanceByAddresses(address,address)": FunctionFragment;
     "getEntities()": FunctionFragment;
@@ -216,6 +216,7 @@ export interface CurioInterface extends utils.Interface {
     "getEntity()": FunctionFragment;
     "getEntityByAddress(address)": FunctionFragment;
     "getEntityLevel(uint256)": FunctionFragment;
+    "getGameParameter(string,string,string,string,uint256)": FunctionFragment;
     "getInventory(address,string)": FunctionFragment;
     "getInventoryBalance(address,string)": FunctionFragment;
     "getInventoryIDLoadAndBalance(address,string)": FunctionFragment;
@@ -297,6 +298,7 @@ export interface CurioInterface extends utils.Interface {
       | "removeIdleNations"
       | "removeSigner"
       | "setComponentValue"
+      | "setGameParameter"
       | "spawnResource"
       | "stopGame"
       | "storeEncodedColumnBatches"
@@ -343,7 +345,6 @@ export interface CurioInterface extends utils.Interface {
       | "getCapital"
       | "getComponent"
       | "getComponentById"
-      | "getConstant"
       | "getDelegations"
       | "getDistanceByAddresses"
       | "getEntities"
@@ -351,6 +352,7 @@ export interface CurioInterface extends utils.Interface {
       | "getEntity"
       | "getEntityByAddress"
       | "getEntityLevel"
+      | "getGameParameter"
       | "getInventory"
       | "getInventoryBalance"
       | "getInventoryIDLoadAndBalance"
@@ -547,6 +549,10 @@ export interface CurioInterface extends utils.Interface {
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<BytesLike>
     ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setGameParameter",
+    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "spawnResource",
@@ -753,16 +759,6 @@ export interface CurioInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
-    functionFragment: "getConstant",
-    values: [
-      PromiseOrValue<string>,
-      PromiseOrValue<string>,
-      PromiseOrValue<string>,
-      PromiseOrValue<string>,
-      PromiseOrValue<BigNumberish>
-    ]
-  ): string;
-  encodeFunctionData(
     functionFragment: "getDelegations",
     values: [
       PromiseOrValue<string>,
@@ -790,6 +786,16 @@ export interface CurioInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "getEntityLevel",
     values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getGameParameter",
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "getInventory",
@@ -1085,6 +1091,10 @@ export interface CurioInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "setGameParameter",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "spawnResource",
     data: BytesLike
   ): Result;
@@ -1230,10 +1240,6 @@ export interface CurioInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "getConstant",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "getDelegations",
     data: BytesLike
   ): Result;
@@ -1256,6 +1262,10 @@ export interface CurioInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "getEntityLevel",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getGameParameter",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -1715,6 +1725,12 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    setGameParameter(
+      _identifier: PromiseOrValue<string>,
+      _value: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     spawnResource(
       _startPosition: PositionStruct,
       _templateName: PromiseOrValue<string>,
@@ -1969,15 +1985,6 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[string]>;
 
-    getConstant(
-      _subject: PromiseOrValue<string>,
-      _object: PromiseOrValue<string>,
-      _componentName: PromiseOrValue<string>,
-      _functionName: PromiseOrValue<string>,
-      _level: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
     getDelegations(
       _functionName: PromiseOrValue<string>,
       _ownerID: PromiseOrValue<BigNumberish>,
@@ -2004,6 +2011,15 @@ export interface Curio extends BaseContract {
 
     getEntityLevel(
       _entity: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    getGameParameter(
+      _subject: PromiseOrValue<string>,
+      _object: PromiseOrValue<string>,
+      _componentName: PromiseOrValue<string>,
+      _functionName: PromiseOrValue<string>,
+      _level: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
@@ -2424,6 +2440,12 @@ export interface Curio extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  setGameParameter(
+    _identifier: PromiseOrValue<string>,
+    _value: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   spawnResource(
     _startPosition: PositionStruct,
     _templateName: PromiseOrValue<string>,
@@ -2670,15 +2692,6 @@ export interface Curio extends BaseContract {
     overrides?: CallOverrides
   ): Promise<string>;
 
-  getConstant(
-    _subject: PromiseOrValue<string>,
-    _object: PromiseOrValue<string>,
-    _componentName: PromiseOrValue<string>,
-    _functionName: PromiseOrValue<string>,
-    _level: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
   getDelegations(
     _functionName: PromiseOrValue<string>,
     _ownerID: PromiseOrValue<BigNumberish>,
@@ -2705,6 +2718,15 @@ export interface Curio extends BaseContract {
 
   getEntityLevel(
     _entity: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  getGameParameter(
+    _subject: PromiseOrValue<string>,
+    _object: PromiseOrValue<string>,
+    _componentName: PromiseOrValue<string>,
+    _functionName: PromiseOrValue<string>,
+    _level: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
@@ -3119,6 +3141,12 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    setGameParameter(
+      _identifier: PromiseOrValue<string>,
+      _value: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     spawnResource(
       _startPosition: PositionStruct,
       _templateName: PromiseOrValue<string>,
@@ -3363,15 +3391,6 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<string>;
 
-    getConstant(
-      _subject: PromiseOrValue<string>,
-      _object: PromiseOrValue<string>,
-      _componentName: PromiseOrValue<string>,
-      _functionName: PromiseOrValue<string>,
-      _level: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     getDelegations(
       _functionName: PromiseOrValue<string>,
       _ownerID: PromiseOrValue<BigNumberish>,
@@ -3398,6 +3417,15 @@ export interface Curio extends BaseContract {
 
     getEntityLevel(
       _entity: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getGameParameter(
+      _subject: PromiseOrValue<string>,
+      _object: PromiseOrValue<string>,
+      _componentName: PromiseOrValue<string>,
+      _functionName: PromiseOrValue<string>,
+      _level: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -3873,6 +3901,12 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    setGameParameter(
+      _identifier: PromiseOrValue<string>,
+      _value: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     spawnResource(
       _startPosition: PositionStruct,
       _templateName: PromiseOrValue<string>,
@@ -4119,15 +4153,6 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    getConstant(
-      _subject: PromiseOrValue<string>,
-      _object: PromiseOrValue<string>,
-      _componentName: PromiseOrValue<string>,
-      _functionName: PromiseOrValue<string>,
-      _level: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     getDelegations(
       _functionName: PromiseOrValue<string>,
       _ownerID: PromiseOrValue<BigNumberish>,
@@ -4154,6 +4179,15 @@ export interface Curio extends BaseContract {
 
     getEntityLevel(
       _entity: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getGameParameter(
+      _subject: PromiseOrValue<string>,
+      _object: PromiseOrValue<string>,
+      _componentName: PromiseOrValue<string>,
+      _functionName: PromiseOrValue<string>,
+      _level: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -4573,6 +4607,12 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
+    setGameParameter(
+      _identifier: PromiseOrValue<string>,
+      _value: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
     spawnResource(
       _startPosition: PositionStruct,
       _templateName: PromiseOrValue<string>,
@@ -4819,15 +4859,6 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    getConstant(
-      _subject: PromiseOrValue<string>,
-      _object: PromiseOrValue<string>,
-      _componentName: PromiseOrValue<string>,
-      _functionName: PromiseOrValue<string>,
-      _level: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     getDelegations(
       _functionName: PromiseOrValue<string>,
       _ownerID: PromiseOrValue<BigNumberish>,
@@ -4854,6 +4885,15 @@ export interface Curio extends BaseContract {
 
     getEntityLevel(
       _entity: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getGameParameter(
+      _subject: PromiseOrValue<string>,
+      _object: PromiseOrValue<string>,
+      _componentName: PromiseOrValue<string>,
+      _functionName: PromiseOrValue<string>,
+      _level: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

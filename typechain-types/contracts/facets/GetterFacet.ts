@@ -99,7 +99,6 @@ export interface GetterFacetInterface extends utils.Interface {
     "getCapital(uint256)": FunctionFragment;
     "getComponent(string)": FunctionFragment;
     "getComponentById(uint256)": FunctionFragment;
-    "getConstant(string,string,string,string,uint256)": FunctionFragment;
     "getDelegations(string,uint256,uint256)": FunctionFragment;
     "getDistanceByAddresses(address,address)": FunctionFragment;
     "getEntities()": FunctionFragment;
@@ -107,6 +106,7 @@ export interface GetterFacetInterface extends utils.Interface {
     "getEntity()": FunctionFragment;
     "getEntityByAddress(address)": FunctionFragment;
     "getEntityLevel(uint256)": FunctionFragment;
+    "getGameParameter(string,string,string,string,uint256)": FunctionFragment;
     "getInventory(address,string)": FunctionFragment;
     "getInventoryBalance(address,string)": FunctionFragment;
     "getInventoryIDLoadAndBalance(address,string)": FunctionFragment;
@@ -144,7 +144,6 @@ export interface GetterFacetInterface extends utils.Interface {
       | "getCapital"
       | "getComponent"
       | "getComponentById"
-      | "getConstant"
       | "getDelegations"
       | "getDistanceByAddresses"
       | "getEntities"
@@ -152,6 +151,7 @@ export interface GetterFacetInterface extends utils.Interface {
       | "getEntity"
       | "getEntityByAddress"
       | "getEntityLevel"
+      | "getGameParameter"
       | "getInventory"
       | "getInventoryBalance"
       | "getInventoryIDLoadAndBalance"
@@ -219,16 +219,6 @@ export interface GetterFacetInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
-    functionFragment: "getConstant",
-    values: [
-      PromiseOrValue<string>,
-      PromiseOrValue<string>,
-      PromiseOrValue<string>,
-      PromiseOrValue<string>,
-      PromiseOrValue<BigNumberish>
-    ]
-  ): string;
-  encodeFunctionData(
     functionFragment: "getDelegations",
     values: [
       PromiseOrValue<string>,
@@ -256,6 +246,16 @@ export interface GetterFacetInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "getEntityLevel",
     values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getGameParameter",
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "getInventory",
@@ -380,10 +380,6 @@ export interface GetterFacetInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "getConstant",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "getDelegations",
     data: BytesLike
   ): Result;
@@ -406,6 +402,10 @@ export interface GetterFacetInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "getEntityLevel",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getGameParameter",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -570,15 +570,6 @@ export interface GetterFacet extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[string]>;
 
-    getConstant(
-      _subject: PromiseOrValue<string>,
-      _object: PromiseOrValue<string>,
-      _componentName: PromiseOrValue<string>,
-      _functionName: PromiseOrValue<string>,
-      _level: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
     getDelegations(
       _functionName: PromiseOrValue<string>,
       _ownerID: PromiseOrValue<BigNumberish>,
@@ -605,6 +596,15 @@ export interface GetterFacet extends BaseContract {
 
     getEntityLevel(
       _entity: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    getGameParameter(
+      _subject: PromiseOrValue<string>,
+      _object: PromiseOrValue<string>,
+      _componentName: PromiseOrValue<string>,
+      _functionName: PromiseOrValue<string>,
+      _level: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
@@ -780,15 +780,6 @@ export interface GetterFacet extends BaseContract {
     overrides?: CallOverrides
   ): Promise<string>;
 
-  getConstant(
-    _subject: PromiseOrValue<string>,
-    _object: PromiseOrValue<string>,
-    _componentName: PromiseOrValue<string>,
-    _functionName: PromiseOrValue<string>,
-    _level: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
   getDelegations(
     _functionName: PromiseOrValue<string>,
     _ownerID: PromiseOrValue<BigNumberish>,
@@ -815,6 +806,15 @@ export interface GetterFacet extends BaseContract {
 
   getEntityLevel(
     _entity: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  getGameParameter(
+    _subject: PromiseOrValue<string>,
+    _object: PromiseOrValue<string>,
+    _componentName: PromiseOrValue<string>,
+    _functionName: PromiseOrValue<string>,
+    _level: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
@@ -990,15 +990,6 @@ export interface GetterFacet extends BaseContract {
       overrides?: CallOverrides
     ): Promise<string>;
 
-    getConstant(
-      _subject: PromiseOrValue<string>,
-      _object: PromiseOrValue<string>,
-      _componentName: PromiseOrValue<string>,
-      _functionName: PromiseOrValue<string>,
-      _level: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     getDelegations(
       _functionName: PromiseOrValue<string>,
       _ownerID: PromiseOrValue<BigNumberish>,
@@ -1025,6 +1016,15 @@ export interface GetterFacet extends BaseContract {
 
     getEntityLevel(
       _entity: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getGameParameter(
+      _subject: PromiseOrValue<string>,
+      _object: PromiseOrValue<string>,
+      _componentName: PromiseOrValue<string>,
+      _functionName: PromiseOrValue<string>,
+      _level: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1203,15 +1203,6 @@ export interface GetterFacet extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    getConstant(
-      _subject: PromiseOrValue<string>,
-      _object: PromiseOrValue<string>,
-      _componentName: PromiseOrValue<string>,
-      _functionName: PromiseOrValue<string>,
-      _level: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     getDelegations(
       _functionName: PromiseOrValue<string>,
       _ownerID: PromiseOrValue<BigNumberish>,
@@ -1238,6 +1229,15 @@ export interface GetterFacet extends BaseContract {
 
     getEntityLevel(
       _entity: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getGameParameter(
+      _subject: PromiseOrValue<string>,
+      _object: PromiseOrValue<string>,
+      _componentName: PromiseOrValue<string>,
+      _functionName: PromiseOrValue<string>,
+      _level: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1412,15 +1412,6 @@ export interface GetterFacet extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    getConstant(
-      _subject: PromiseOrValue<string>,
-      _object: PromiseOrValue<string>,
-      _componentName: PromiseOrValue<string>,
-      _functionName: PromiseOrValue<string>,
-      _level: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     getDelegations(
       _functionName: PromiseOrValue<string>,
       _ownerID: PromiseOrValue<BigNumberish>,
@@ -1447,6 +1438,15 @@ export interface GetterFacet extends BaseContract {
 
     getEntityLevel(
       _entity: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getGameParameter(
+      _subject: PromiseOrValue<string>,
+      _object: PromiseOrValue<string>,
+      _componentName: PromiseOrValue<string>,
+      _functionName: PromiseOrValue<string>,
+      _level: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

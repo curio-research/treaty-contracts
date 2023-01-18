@@ -10,6 +10,7 @@ import {Set} from "contracts/Set.sol";
 import {CurioWallet} from "contracts/standards/CurioWallet.sol";
 import {CurioTreaty} from "contracts/standards/CurioTreaty.sol";
 import {console} from "forge-std/console.sol";
+import {Strings} from "openzeppelin-contracts/contracts/utils/Strings.sol";
 
 contract GameTest is Test, DiamondDeployTest {
     // GameFacet Coverage Overview
@@ -63,7 +64,7 @@ contract GameTest is Test, DiamondDeployTest {
         assertEq(getter.getNation(nation1CapitalTile), nation1ID);
 
         // Verify that TileGuard tokens are dripped to tile wallet
-        uint256 correctTileGuardAmount = getter.getConstant("Tile", "Guard", "Amount", "", getter.getEntityLevel(nation1CapitalTile));
+        uint256 correctTileGuardAmount = getter.getGameParameter("Tile", "Guard", "Amount", "", getter.getEntityLevel(nation1CapitalTile));
         assertEq(guardToken.balanceOf(getter.getAddress(nation1CapitalTile)), correctTileGuardAmount);
 
         uint256 nation2CapitalTile = getter.getTileAt(nation2CapitalPosition);
@@ -72,6 +73,23 @@ contract GameTest is Test, DiamondDeployTest {
         // Verify that no armies are initialized
         uint256[] memory nation1ArmyIDs = getter.getNationArmies(nation1ID);
         assertEq(nation1ArmyIDs.length, 0);
+    }
+
+    function testGameParameter() public {
+        string memory identifier = "Goldmine-Gold-Yield--1";
+        uint256 oldValue = 743;
+        uint256 newValue = 1000;
+
+        // Verify original state
+        uint256 parameterID = getter.getComponent("Tag").getEntitiesWithValue(abi.encode(identifier))[0];
+        assertEq(abi.decode(getter.getComponent("Amount").getBytesValue(parameterID), (uint256)), oldValue);
+
+        // Set new value
+        vm.prank(deployer);
+        admin.setGameParameter(identifier, newValue);
+
+        // Verify new state
+        assertEq(abi.decode(getter.getComponent("Amount").getBytesValue(parameterID), (uint256)), newValue);
     }
 
     function testOrganizeDisbandMoveArmy() public {

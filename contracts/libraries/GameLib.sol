@@ -136,7 +136,7 @@ library GameLib {
                 ECSLib.setUint("Level", tileID, maxTileLevel);
 
                 // Drip Guard tokens
-                uint256 supertileGuardAmount = getConstant("Tile", "Guard", "Amount", "", maxTileLevel);
+                uint256 supertileGuardAmount = getGameParameter("Tile", "Guard", "Amount", "", maxTileLevel);
                 guardToken.dripToken(tileAddress, supertileGuardAmount);
 
                 return tileID;
@@ -145,14 +145,14 @@ library GameLib {
 
         if (terrain < 3) {
             // Normal tile
-            uint256 tileGuardAmount = getConstant("Tile", "Guard", "Amount", "", ECSLib.getUint("Level", tileID));
+            uint256 tileGuardAmount = getGameParameter("Tile", "Guard", "Amount", "", ECSLib.getUint("Level", tileID));
             guardToken.dripToken(tileAddress, tileGuardAmount);
         } else if (terrain == 3 || terrain == 4) {
             // Barbarian tile
             uint256 barbarianLevel = terrain - 2;
             ECSLib.setUint("Level", tileID, barbarianLevel);
 
-            uint256 barbarianGuardAmount = getConstant("Barbarian", "Guard", "Amount", "", barbarianLevel);
+            uint256 barbarianGuardAmount = getGameParameter("Barbarian", "Guard", "Amount", "", barbarianLevel);
             guardToken.dripToken(tileAddress, barbarianGuardAmount);
         } else {
             // Mountain tile, do nothing
@@ -206,8 +206,8 @@ library GameLib {
         address armyAddress = ECSLib.getAddress("Address", _armyID);
 
         // Gather
-        uint256 gatherAmount = (block.timestamp - ECSLib.getUint("InitTimestamp", gatherID)) * getConstant("Army", ECSLib.getString("Name", templateID), "Rate", "gather", 0);
-        uint256 gatherLoad = (getConstant("Troop", "Resource", "Load", "", 0) * getArmyTroopCount(_armyID)) / 1000;
+        uint256 gatherAmount = (block.timestamp - ECSLib.getUint("InitTimestamp", gatherID)) * getGameParameter("Army", ECSLib.getString("Name", templateID), "Rate", "gather", 0);
+        uint256 gatherLoad = (getGameParameter("Troop", "Resource", "Load", "", 0) * getArmyTroopCount(_armyID)) / 1000;
         uint256 armyInventoryBalance = resourceToken.balanceOf(armyAddress);
         resourceToken.dripToken(armyAddress, min(gatherAmount, gatherLoad - armyInventoryBalance));
 
@@ -256,7 +256,7 @@ library GameLib {
         if (victory) {
             if (coincident(ECSLib.getPosition("StartPosition", capitalID), ECSLib.getPosition("StartPosition", _tileID))) {
                 // Victorious against capital, add back some guards for the loser
-                guardToken.dripToken(tileAddress, getConstant("Tile", "Guard", "Amount", "", ECSLib.getUint("Level", capitalID)));
+                guardToken.dripToken(tileAddress, getGameParameter("Tile", "Guard", "Amount", "", ECSLib.getUint("Level", capitalID)));
 
                 // Descend capital into chaos mode
                 // 1. Terminate troop production
@@ -265,7 +265,7 @@ library GameLib {
                 uint256 productionID = getBuildingProduction(capitalID);
                 if (productionID != 0) ECSLib.removeEntity(productionID);
 
-                uint256 chaosDuration = getConstant("Capital", "", "Cooldown", "Chaos", ECSLib.getUint("Level", capitalID));
+                uint256 chaosDuration = getGameParameter("Capital", "", "Cooldown", "Chaos", ECSLib.getUint("Level", capitalID));
                 ECSLib.setUint("LastHarvested", capitalID, block.timestamp + chaosDuration);
 
                 ECSLib.setUint("LastSacked", capitalID, block.timestamp);
@@ -273,8 +273,8 @@ library GameLib {
                 if (isBarbarian(_tileID)) {
                     // Reset barbarian
                     distributeBarbarianReward(_armyID, _tileID);
-                    uint256 barbarianGuardAmount = getConstant("Barbarian", "Guard", "Amount", "", ECSLib.getUint("Terrain", _tileID) - 2); // FIXME: hardcoded
-                    ECSLib.setUint("LastRecovered", _tileID, block.timestamp + getConstant("Barbarian", "", "Cooldown", "", 0));
+                    uint256 barbarianGuardAmount = getGameParameter("Barbarian", "Guard", "Amount", "", ECSLib.getUint("Terrain", _tileID) - 2); // FIXME: hardcoded
+                    ECSLib.setUint("LastRecovered", _tileID, block.timestamp + getGameParameter("Barbarian", "", "Cooldown", "", 0));
                     guardToken.dripToken(tileAddress, barbarianGuardAmount);
                 } else {
                     // Neutralize tile & resource
@@ -355,7 +355,7 @@ library GameLib {
         uint256[] memory resourceTemplateIDs = ECSLib.getStringComponent("Tag").getEntitiesWithValue(string("ResourceTemplate"));
 
         for (uint256 i = 0; i < resourceTemplateIDs.length; i++) {
-            uint256 rewardAmount = getConstant("Barbarian", ECSLib.getString("Name", resourceTemplateIDs[i]), "Reward", "", barbarianLevel * 4); // FIXME: hardcoded
+            uint256 rewardAmount = getGameParameter("Barbarian", ECSLib.getString("Name", resourceTemplateIDs[i]), "Reward", "", barbarianLevel * 4); // FIXME: hardcoded
 
             CurioERC20 resourceToken = CurioERC20(ECSLib.getAddress("Address", resourceTemplateIDs[i]));
             resourceToken.dripToken(ECSLib.getAddress("Address", _armyID), rewardAmount);
@@ -458,6 +458,14 @@ library GameLib {
         );
     }
 
+    function setGameParameter(string memory _identifier, uint256 _value) internal {
+        uint256[] memory res = ECSLib.getStringComponent("Tag").getEntitiesWithValue(_identifier);
+        require(res.length > 0, "CURIO: You must add game parameter first");
+        uint256 parameterID = res[0];
+
+        ECSLib.setUint("Amount", parameterID, _value);
+    }
+
     // ----------------------------------------------------------
     // LOGIC GETTERS
     // ----------------------------------------------------------
@@ -514,7 +522,7 @@ library GameLib {
         if (strEq(entityTag, "Army")) {
             uint256 capitalID = getCapital(ECSLib.getUint("Nation", entityID));
             if (templateID == gs().templates["Horseman"] || templateID == gs().templates["Warrior"] || templateID == gs().templates["Slinger"]) {
-                load = getConstant(ECSLib.getString("Tag", entityID), "Troop", "Amount", "", ECSLib.getUint("Level", capitalID));
+                load = getGameParameter(ECSLib.getString("Tag", entityID), "Troop", "Amount", "", ECSLib.getUint("Level", capitalID));
             } else if (templateID == gs().templates["Food"] || templateID == gs().templates["Gold"]) {
                 load = ECSLib.getUint("Load", entityID);
             } else if (templateID == gs().templates["Guard"]) {
@@ -526,7 +534,7 @@ library GameLib {
             // Set to max uint256
             load = 2**256 - 1;
         } else if (strEq(entityTag, "Tile")) {
-            load = getConstant("Tile", "Guard", "Amount", "", ECSLib.getUint("Level", entityID));
+            load = getGameParameter("Tile", "Guard", "Amount", "", ECSLib.getUint("Level", entityID));
         } else if (strEq(entityTag, "Treaty")) {
             load = 2**256 - 1;
         } else {
@@ -647,7 +655,7 @@ library GameLib {
         return count;
     }
 
-    function getConstant(
+    function getGameParameter(
         string memory _subject,
         string memory _object,
         string memory _componentName,
@@ -917,7 +925,7 @@ library GameLib {
 
     function capitalSackRecoveryCheck(uint256 _capitalID) internal view {
         uint256 capitalLevel = ECSLib.getUint("Level", _capitalID);
-        uint256 chaosDuration = getConstant("Capital", "", "Cooldown", "Chaos", capitalLevel);
+        uint256 chaosDuration = getGameParameter("Capital", "", "Cooldown", "Chaos", capitalLevel);
         require(block.timestamp - ECSLib.getUint("LastSacked", _capitalID) > chaosDuration, "CURIO: Capital in chaos");
     }
 

@@ -1,5 +1,4 @@
-import fs from 'fs-extra';
-import { HardhatArguments, HardhatRuntimeEnvironment } from 'hardhat/types';
+import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { task } from 'hardhat/config';
 import { WhitelistArgs } from './util/types';
 import { getDiamond } from './util/diamondDeploy';

@@ -174,14 +174,14 @@ contract GetterFacet is UseStorage {
         return gs().worldConstants;
     }
 
-    function getConstant(
+    function getGameParameter(
         string memory _subject,
         string memory _object,
         string memory _componentName,
         string memory _functionName,
         uint256 _level
     ) external view returns (uint256) {
-        return GameLib.getConstant(_subject, _object, _componentName, _functionName, _level);
+        return GameLib.getGameParameter(_subject, _object, _componentName, _functionName, _level);
     }
 
     function getPlayerCount() external view returns (uint256) {
