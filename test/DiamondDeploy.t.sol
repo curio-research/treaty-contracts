@@ -442,7 +442,7 @@ contract DiamondDeployTest is Test {
     }
 
     /// @dev First way to get map: fetch them from last deployment
-    function _fetchLastDeployedMap() private returns (uint256[][] memory) {
+    function _fetchLastDeployedMap() private view returns (uint256[][] memory) {
         string memory root = vm.projectRoot();
         string memory path = string(abi.encodePacked(root, "/test/data/map.json"));
         bytes memory rawJson = vm.parseJson(vm.readFile(path));

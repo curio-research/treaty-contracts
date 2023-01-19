@@ -667,6 +667,24 @@ const _abi = [
   {
     inputs: [
       {
+        internalType: "string",
+        name: "_identifier",
+        type: "string",
+      },
+      {
+        internalType: "uint256",
+        name: "_value",
+        type: "uint256",
+      },
+    ],
+    name: "setGameParameter",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
         components: [
           {
             internalType: "uint256",
@@ -1607,45 +1625,6 @@ const _abi = [
     inputs: [
       {
         internalType: "string",
-        name: "_subject",
-        type: "string",
-      },
-      {
-        internalType: "string",
-        name: "_object",
-        type: "string",
-      },
-      {
-        internalType: "string",
-        name: "_componentName",
-        type: "string",
-      },
-      {
-        internalType: "string",
-        name: "_functionName",
-        type: "string",
-      },
-      {
-        internalType: "uint256",
-        name: "_level",
-        type: "uint256",
-      },
-    ],
-    name: "getConstant",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "string",
         name: "_functionName",
         type: "string",
       },
@@ -1762,6 +1741,45 @@ const _abi = [
       },
     ],
     name: "getEntityLevel",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "string",
+        name: "_subject",
+        type: "string",
+      },
+      {
+        internalType: "string",
+        name: "_object",
+        type: "string",
+      },
+      {
+        internalType: "string",
+        name: "_componentName",
+        type: "string",
+      },
+      {
+        internalType: "string",
+        name: "_functionName",
+        type: "string",
+      },
+      {
+        internalType: "uint256",
+        name: "_level",
+        type: "uint256",
+      },
+    ],
+    name: "getGameParameter",
     outputs: [
       {
         internalType: "uint256",

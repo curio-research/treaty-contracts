@@ -40,3 +40,9 @@ export interface WhitelistArgs extends HardhatArguments {
 export interface UnlockTileArgs extends HardhatArguments {
   diamond: string;
 }
+
+export interface SetGameParameterArgs extends HardhatArguments {
+  diamond: string;
+  identifier: string;
+  value: string;
+}

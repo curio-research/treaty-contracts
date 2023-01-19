@@ -254,6 +254,10 @@ contract AdminFacet is UseStorage {
         return Templates.addGameParameter(_identifier, _value);
     }
 
+    function setGameParameter(string memory _identifier, uint256 _value) external onlyAuthorized {
+        GameLib.setGameParameter(_identifier, _value);
+    }
+
     function addGame() external onlyAuthorized {
         uint256 entity = ECSLib.addEntity();
 
