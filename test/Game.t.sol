@@ -27,7 +27,7 @@ contract GameTest is Test, DiamondDeployTest {
     // - [ ] disownTile
     // Production:
     // - [x] startTroopProduction
-    // - [ ] stopTroopProduction
+    // - [x] stopTroopProduction
     // - [x] endTroopProduction
     // Army:
     // - [x] move
