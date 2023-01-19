@@ -699,9 +699,9 @@ class Game:
                     game_parameters.append({"subject": "Capital", "componentName": "Load", "object": "Troop",
                                            "level": curr_level, "functionName": "", "value": 999999999})  # FIXME: hardcoded
                     game_parameters.append({"subject": "Capital", "componentName": "Cost", "object": "Gold",
-                                           "level": curr_level, "functionName": "Move", "value": 0})  # FIXME: hardcoded, attention @Modeo
+                                           "level": curr_level, "functionName": "Move", "value": gold_upgrade_cost / 4})  # FIXME: hardcoded, attention @Modeo
                     game_parameters.append({"subject": "Capital", "componentName": "Cost", "object": "Food",
-                                           "level": curr_level, "functionName": "Move", "value": 0})  # FIXME: hardcoded, attention @Modeo
+                                           "level": curr_level, "functionName": "Move", "value": gold_upgrade_cost / 4})  # FIXME: hardcoded, attention @Modeo
                     game_parameters.append({"subject": "Capital", "componentName": "Cooldown", "object": "",
                                            "level": curr_level, "functionName": "Chaos", "value": self.chaos_period_in_seconds})  # FIXME: hardcoded, attention @Modeo
 
