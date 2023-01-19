@@ -136,6 +136,10 @@ abstract contract CurioTreaty is ITreaty {
         return true;
     }
 
+    function approveStopTroopProduction(uint256 _nationID, bytes memory _encodedParams) public view virtual onlyGame returns (bool) {
+        return true;
+    }
+
     function approveEndTroopProduction(uint256 _nationID, bytes memory _encodedParams) public view virtual onlyGame returns (bool) {
         return true;
     }

@@ -145,6 +145,7 @@ export const initializeGame = async (hre: HardhatRuntimeEnvironment, worldConsta
     'RecoverTile',
     'DisownTile',
     'StartTroopProduction',
+    'StopTroopProduction',
     'EndTroopProduction',
     'Move',
     'OrganizeArmy',

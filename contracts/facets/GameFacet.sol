@@ -508,6 +508,30 @@ contract GameFacet is UseStorage {
         ECSLib.setUint("LastActed", nationID, block.timestamp);
     }
 
+    function stopTroopProduction(uint256 _capitalID) external {
+        // Basic checks
+        GameLib.ongoingGameCheck();
+        GameLib.validEntityCheck(_capitalID);
+        uint256 nationID = ECSLib.getUint("Nation", _capitalID);
+
+        // Permission checks
+        if (msg.sender != address(this)) {
+            uint256 callerID = GameLib.getEntityByAddress(msg.sender);
+            GameLib.nationDelegationCheck("StopTroopProduction", nationID, callerID, _capitalID);
+            GameLib.treatyApprovalCheck("StopTroopProduction", nationID, abi.encode(callerID, _capitalID));
+        }
+
+        // Find production
+        uint256 productionID = GameLib.getBuildingProduction(_capitalID);
+        require(productionID != NULL, "CURIO: No ongoing production");
+
+        // Delete production
+        ECSLib.removeEntity(productionID);
+
+        // Set last action time
+        ECSLib.setUint("LastActed", nationID, block.timestamp);
+    }
+
     /**
      * @dev Finish troop production at your capital when it's ready.
      * @param _capitalID ID of the capital
