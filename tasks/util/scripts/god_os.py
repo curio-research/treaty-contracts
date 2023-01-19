@@ -174,8 +174,9 @@ def get_barbarian_reward(level: int) -> np.array:
     barbarian_count = get_barbarian_count_by_level(level)
     goldcost_per_troop = game_instance.resource_weight_light
     foodcost_per_troop = game_instance.resource_weight_heavy
-    total_goldcost = barbarian_count * goldcost_per_troop
-    total_foodcost = barbarian_count * foodcost_per_troop
+    # Increase cost bc barbarians are strengthened
+    total_goldcost = barbarian_count * goldcost_per_troop * 7
+    total_foodcost = barbarian_count * foodcost_per_troop * 7
     # actual reward = base reward * exponential curve (level as x)
     gold_reward = total_goldcost * game_instance.barbarian_reward_to_cost_coefficient * fast_exponential_curve(
         game_instance.max_capital_level * game_instance.capital_level_to_building_level)(level) / fast_exponential_curve(9)(1)

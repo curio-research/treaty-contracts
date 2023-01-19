@@ -87,7 +87,7 @@ export const createTemplates = async (diamond: Curio, tokenAddrs: string[], gasL
   templateIDs.push(entity++);
 
   // Guard
-  await confirmTx(await diamond.addTroopTemplate(260, 120, 260, 0, tokenAddrIter.next().value, { gasLimit }), hre);
+  await confirmTx(await diamond.addTroopTemplate(220, 100, 220, 0, tokenAddrIter.next().value, { gasLimit }), hre);
   templateNames.push(InventoryTypeOptions.Guard);
   templateIDs.push(entity++);
 
