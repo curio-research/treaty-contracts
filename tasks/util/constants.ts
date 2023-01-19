@@ -13,12 +13,12 @@ export const LOCALHOST_WS_RPC_URL = 'ws://localhost:8545';
 // ----------------------------------------------------------
 
 export const TILE_WIDTH = 5;
-export const INNER_REGION_RADIUS_BY_TILE_COUNT = 4;
+export const INNER_REGION_RADIUS_BY_TILE_COUNT = 3;
 export const NUM_INIT_TERRAIN_TYPES = Math.floor((Object.keys(TILE_TYPE).length + 1) / 2);
 
 export const MAP_INPUT: MapInput = {
-  width: 15,
-  height: 15,
+  width: 19,
+  height: 19,
   innerRadiusByTileCount: INNER_REGION_RADIUS_BY_TILE_COUNT,
 };
 
@@ -87,7 +87,7 @@ export const createTemplates = async (diamond: Curio, tokenAddrs: string[], gasL
   templateIDs.push(entity++);
 
   // Guard
-  await confirmTx(await diamond.addTroopTemplate(120, 60, 120, 0, tokenAddrIter.next().value, { gasLimit }), hre);
+  await confirmTx(await diamond.addTroopTemplate(260, 120, 260, 0, tokenAddrIter.next().value, { gasLimit }), hre);
   templateNames.push(InventoryTypeOptions.Guard);
   templateIDs.push(entity++);
 

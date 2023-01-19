@@ -1,8 +1,8 @@
 {
-    "componentName": "Cooldown",
-    "functionName": "Chaos",
-    "level": 2,
-    "object": "",
-    "subject": "Capital",
-    "value": 120
+    "componentName": "Cost",
+    "functionName": "Upgrade",
+    "level": 17,
+    "object": "Gold",
+    "subject": "Farm",
+    "value": 114831979
 }

@@ -19,9 +19,12 @@ class GameMode(str, Enum):
     THREE_PLAYER_SHORT_TEST = "THREE_PLAYER_SHORT_TEST"
     TEN_PLAYER_SHORT_TEST = "TEN_PLAYER_SHORT_TEST"
     FIVE_PLAYER_SHORT_TEST = "FIVE_PLAYER_SHORT_TEST"
+    SIX_PLAYER_SHORT_TEST = "SIX_PLAYER_SHORT_TEST"
+    SIX_PLAYER_LONG_TEST = "SIX_PLAYER_LONG_TEST"
     THREE_PLAYER_LONG_TEST = "THREE_PLAYER_LONG_TEST"
     TEN_PLAYER_LONG_TEST = "TEN_PLAYER_LONG_TEST"
     FIVE_PLAYER_LONG_TEST = "FIVE_PLAYER_LONG_TEST"
+    INTERNAL_PLAYTEST = "INTERNAL_PLAYTEST"
 
 class Building(str, Enum):
     GOLDMINE = "Goldmine"
@@ -71,12 +74,13 @@ def resource_cap_per_troop() -> int:
     # should take the middle of the interval => if ccl = 2, ccltbl = 3, then it corresponds to (6 + 3) / 2 = 4.5
     corresponding_building_level = building_level_based_on_center_level(
         (game_instance.max_capital_level + 1) / 2)
-    (building_gold_cap, building_food_cap) = get_building_resource_cap(corresponding_building_level,
+    # 1000 bc of units
+    (building_gold_cap, building_food_cap) = 1000 * get_building_resource_cap(corresponding_building_level,
                                                                        Building.GOLDMINE) + get_building_resource_cap(corresponding_building_level, Building.FARM)
     median_army_size = get_troop_size_by_center_level(
         math.ceil((game_instance.max_capital_level + 1) / 2))
     # no difference btw resources, so take the avg
-    return (building_gold_cap + building_food_cap) / 2 / median_army_size
+    return (building_gold_cap + building_food_cap) / 2 / (median_army_size)
 
 
 def get_troop_size_by_center_level(level: int) -> int:
@@ -100,7 +104,8 @@ def get_capital_tiles_interval() -> int:
     Growth: Constant
     Gist: 9 tiles - avg tiles - max tiles => calculate with (avg - init) / (intervals/2)
     """
-    return math.floor(((game_instance.total_tile_count/game_instance.expected_player_count) - game_instance.init_player_tile_count) / ((game_instance.max_capital_level - 1) / 2))
+    # divided by 2 to enhance tile restriction
+    return math.floor(((game_instance.total_tile_count/game_instance.expected_player_count) - game_instance.init_player_tile_count) / ((game_instance.max_capital_level - 1) / 2)) / 2
 
 
 def get_building_base_hourly_yield(building_type: Building) -> np.array:
@@ -282,7 +287,7 @@ def get_tile_upgrade_cooldown_in_second(level: int) -> int:
 
 
 def expected_gold_density() -> float:
-    return 0.1
+    return 0.2
 
 
 def expected_farm_density() -> float:
@@ -484,7 +489,7 @@ class Game:
             self.barbarian_reward_to_cost_coefficient = 4
             self.tile_to_barbarian_strength_ratio = 1.5
             self.tile_troop_discount = 0.5
-            self.barbarian_to_army_difficulty_constant = 40
+            self.barbarian_to_army_difficulty_constant = 60
             self.gather_rate_to_resource_rate = 50
             self.capital_migration_cooldown_ratio = 15
             self.building_upgrade_cooldown_ratio = 10
@@ -587,6 +592,30 @@ class Game:
             (self.resource_weight_light, self.resource_weight_low, self.resource_weight_medium,
              self.resource_weight_high, self.resource_weight_heavy) = (1, 3, 4, 5, 16)
             self.chaos_period_in_seconds = 120
+            self.super_tile_init_time_in_hour = 0
+        if mode == GameMode.INTERNAL_PLAYTEST:
+            self.total_tile_count = 19*19
+            self.expected_player_count = 12
+            self.init_player_tile_count = 1
+            self.expected_play_time_in_hour = 60
+            self.upgrade_time_to_expected_play_time_ratio = 1/2
+            self.init_player_goldmine_count = 1
+            self.init_player_farm_count = 1
+            self.player_login_interval_in_minutes = 60
+            self.max_capital_level = 6
+            self.capital_level_to_building_level = 3
+            self.new_player_action_in_seconds = 100
+            self.base_troop_training_in_seconds = 0.5
+            self.barbarian_reward_to_cost_coefficient = 4
+            self.tile_to_barbarian_strength_ratio = 1.5
+            self.tile_troop_discount = 4
+            self.barbarian_to_army_difficulty_constant = 40
+            self.gather_rate_to_resource_rate = 80
+            self.capital_migration_cooldown_ratio = 15
+            self.building_upgrade_cooldown_ratio = 15
+            (self.resource_weight_light, self.resource_weight_low, self.resource_weight_medium,
+             self.resource_weight_high, self.resource_weight_heavy) = (1, 3, 4, 5, 25)
+            self.chaos_period_in_seconds = 900
             self.super_tile_init_time_in_hour = 0
 
     """
@@ -721,7 +750,12 @@ class Game:
         while curr_level <= max_building_level:
             game_parameters.append({"subject": "Army", "componentName": "Amount", "object": "Troop",
                                    "level": curr_level, "functionName": "", "value": get_troop_size_by_center_level(curr_level)})
-            game_parameters.append({"subject": "Nation", "componentName": "Amount", "object": "Tile", "level": curr_level,
+            # todo: refactor; tile count too low for beginner (lv1 capital upgrade too expensive)
+            if (curr_level == 1):
+                game_parameters.append({"subject": "Nation", "componentName": "Amount", "object": "Tile", "level": curr_level,
+                                   "functionName": "", "value": 3})
+            else:
+                game_parameters.append({"subject": "Nation", "componentName": "Amount", "object": "Tile", "level": curr_level,
                                    "functionName": "", "value": self.init_player_tile_count + (curr_level - 1) * int(get_capital_tiles_interval())})
             curr_level += 1
 
@@ -750,5 +784,5 @@ class Game:
 
 
 # change here when switching game mode
-game_instance = Game(GameMode.TEN_PLAYER_SHORT_TEST)
+game_instance = Game(GameMode.INTERNAL_PLAYTEST)
 game_instance.export_json_parameters()
