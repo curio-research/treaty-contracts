@@ -175,8 +175,8 @@ def get_barbarian_reward(level: int) -> np.array:
     goldcost_per_troop = game_instance.resource_weight_light
     foodcost_per_troop = game_instance.resource_weight_heavy
     # Increase cost bc barbarians are strengthened
-    total_goldcost = barbarian_count * goldcost_per_troop * 7
-    total_foodcost = barbarian_count * foodcost_per_troop * 7
+    total_goldcost = barbarian_count * goldcost_per_troop * 10
+    total_foodcost = barbarian_count * foodcost_per_troop * 10
     # actual reward = base reward * exponential curve (level as x)
     gold_reward = total_goldcost * game_instance.barbarian_reward_to_cost_coefficient * fast_exponential_curve(
         game_instance.max_capital_level * game_instance.capital_level_to_building_level)(level) / fast_exponential_curve(9)(1)
@@ -598,7 +598,7 @@ class Game:
             self.total_tile_count = 19*19
             self.expected_player_count = 12
             self.init_player_tile_count = 1
-            self.expected_play_time_in_hour = 60
+            self.expected_play_time_in_hour = 120
             self.upgrade_time_to_expected_play_time_ratio = 1/2
             self.init_player_goldmine_count = 1
             self.init_player_farm_count = 1
@@ -611,7 +611,7 @@ class Game:
             self.tile_to_barbarian_strength_ratio = 1.5
             self.tile_troop_discount = 4
             self.barbarian_to_army_difficulty_constant = 40
-            self.gather_rate_to_resource_rate = 80
+            self.gather_rate_to_resource_rate = 10
             self.capital_migration_cooldown_ratio = 15
             self.building_upgrade_cooldown_ratio = 15
             (self.resource_weight_light, self.resource_weight_low, self.resource_weight_medium,
