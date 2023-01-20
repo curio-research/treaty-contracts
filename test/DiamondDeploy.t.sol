@@ -12,6 +12,7 @@ import {GameLib} from "contracts/libraries/GameLib.sol";
 import {GetterFacet} from "contracts/facets/GetterFacet.sol";
 import {GameFacet} from "contracts/facets/GameFacet.sol";
 import {AdminFacet} from "contracts/facets/AdminFacet.sol";
+import {UselessFacet} from "contracts/facets/UselessFacet.sol";
 import {Strings} from "openzeppelin-contracts/contracts/utils/Strings.sol";
 import {ComponentSpec, GameMode, GameParamSpec, Position, WorldConstants} from "contracts/libraries/Types.sol";
 import {Alliance} from "contracts/treaties/Alliance.sol";
@@ -38,12 +39,14 @@ contract DiamondDeployTest is Test {
     GameFacet public gameFacet;
     GetterFacet public getterFacet;
     AdminFacet public adminFacet;
+    UselessFacet public uselessFacet;
 
     // Diamond facets
     GameFacet public game;
     GetterFacet public getter;
     AdminFacet public admin;
     OwnershipFacet public ownership;
+    UselessFacet public useless;
 
     // Treaties
     Alliance public allianceTemplate;
@@ -122,6 +125,7 @@ contract DiamondDeployTest is Test {
         gameFacet = new GameFacet();
         getterFacet = new GetterFacet();
         adminFacet = new AdminFacet();
+        uselessFacet = new UselessFacet();
 
         // Prepare world constants with either `_generateNewWorldConstants()` or `fetchWorldConstants()`
         worldConstants = _fetchWorldConstants();
@@ -471,7 +475,7 @@ contract DiamondDeployTest is Test {
         return _map;
     }
 
-    function _getSelectors(string memory _facetName) private returns (bytes4[] memory selectors) {
+    function _getSelectors(string memory _facetName) internal returns (bytes4[] memory selectors) {
         string[] memory cmd = new string[](5);
         cmd[0] = "yarn";
         cmd[1] = "--silent";

@@ -46,3 +46,8 @@ export interface SetGameParameterArgs extends HardhatArguments {
   identifier: string;
   value: string;
 }
+
+export interface ReplaceDiamondFacetArgs extends HardhatArguments {
+  diamond: string;
+  facetname: string;
+}
