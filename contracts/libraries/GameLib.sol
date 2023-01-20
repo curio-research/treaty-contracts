@@ -11,6 +11,7 @@ import {Component} from "contracts/Component.sol";
 import {AddressComponent, BoolComponent, IntComponent, PositionComponent, StringComponent, UintComponent, UintArrayComponent} from "contracts/TypedComponents.sol";
 import {CurioERC20} from "contracts/standards/CurioERC20.sol";
 import {CurioTreaty} from "contracts/standards/CurioTreaty.sol";
+import {Clones} from "contracts/libraries/Clones.sol";
 import {Alliance} from "contracts/treaties/Alliance.sol";
 import {MercenaryLeague} from "contracts/treaties/MercenaryLeague.sol";
 import {TestTreaty} from "contracts/treaties/TestTreaty.sol";
@@ -426,25 +427,7 @@ library GameLib {
 
     function deployTreaty(uint256 _nationID, string memory _treatyName) internal returns (address treatyAddress) {
         // Deploy treaty
-        if (GameLib.strEq(_treatyName, "Alliance")) {
-            treatyAddress = address(new Alliance(address(this)));
-        } else if (GameLib.strEq(_treatyName, "Test Treaty")) {
-            treatyAddress = address(new TestTreaty(address(this)));
-        } else if (GameLib.strEq(_treatyName, "Non-Aggression Pact")) {
-            treatyAddress = address(new NonAggressionPact(address(this)));
-        } else if (GameLib.strEq(_treatyName, "Embargo")) {
-            treatyAddress = address(new Embargo(address(this)));
-        } else if (GameLib.strEq(_treatyName, "Collective Defense Fund")) {
-            treatyAddress = address(new CollectiveDefenseFund(address(this)));
-        } else if (GameLib.strEq(_treatyName, "Simple OTC Trading Agreement")) {
-            treatyAddress = address(new SimpleOTC(address(this)));
-        } else if (GameLib.strEq(_treatyName, "Handshake Deal")) {
-            treatyAddress = address(new HandshakeDeal(address(this)));
-        } else if (GameLib.strEq(_treatyName, "Mercenary League")) {
-            treatyAddress = address(new MercenaryLeague(address(this)));
-        } else {
-            revert("CURIO: Unsupported treaty name");
-        }
+        treatyAddress = Clones.clone(ECSLib.getAddress("Address", gs().templates[_treatyName]));
 
         // Register treaty
         uint256 treatyTemplateID = gs().templates[_treatyName];

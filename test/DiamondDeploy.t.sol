@@ -190,21 +190,21 @@ contract DiamondDeployTest is Test {
 
         // Initialize treaties
         allianceTemplate = new Alliance(diamond);
-        allianceTemplateID = admin.registerTreatyTemplate(address(allianceTemplate), "sample ABI", "sample metadata");
+        allianceTemplateID = game.registerTreatyTemplate(address(allianceTemplate), "sample ABI", "sample metadata");
         testTreatyTemplate = new TestTreaty(diamond);
-        testTreatyTemplateID = admin.registerTreatyTemplate(address(testTreatyTemplate), "sample ABI", "sample metadata");
+        testTreatyTemplateID = game.registerTreatyTemplate(address(testTreatyTemplate), "sample ABI", "sample metadata");
         collectiveDefenseFundTemplate = new CollectiveDefenseFund(diamond);
-        collectiveDefenseFundTemplateID = admin.registerTreatyTemplate(address(collectiveDefenseFundTemplate), "sample ABI", "sample metadata");
+        collectiveDefenseFundTemplateID = game.registerTreatyTemplate(address(collectiveDefenseFundTemplate), "sample ABI", "sample metadata");
         embargoTemplate = new Embargo(diamond);
-        embargoTemplateID = admin.registerTreatyTemplate(address(embargoTemplate), "sample ABI", "sample metadata");
+        embargoTemplateID = game.registerTreatyTemplate(address(embargoTemplate), "sample ABI", "sample metadata");
         nonAggressionPactTemplate = new NonAggressionPact(diamond);
-        nonAggressionPactTemplateID = admin.registerTreatyTemplate(address(nonAggressionPactTemplate), "sample ABI", "sample metadata");
+        nonAggressionPactTemplateID = game.registerTreatyTemplate(address(nonAggressionPactTemplate), "sample ABI", "sample metadata");
         otcContractTemplate = new SimpleOTC(diamond);
-        otcContractTemplateID = admin.registerTreatyTemplate(address(otcContractTemplate), "sample ABI", "sample metadata");
+        otcContractTemplateID = game.registerTreatyTemplate(address(otcContractTemplate), "sample ABI", "sample metadata");
         handshakeDealTemplate = new HandshakeDeal(diamond);
-        handshakeDealTemplateID = admin.registerTreatyTemplate(address(handshakeDealTemplate), "sample ABI", "sample metadata");
+        handshakeDealTemplateID = game.registerTreatyTemplate(address(handshakeDealTemplate), "sample ABI", "sample metadata");
         mercenaryLeagueTemplate = new MercenaryLeague(diamond);
-        mercenaryLeagueTemplateID = admin.registerTreatyTemplate(address(mercenaryLeagueTemplate), "sample ABI", "sample metadata");
+        mercenaryLeagueTemplateID = game.registerTreatyTemplate(address(mercenaryLeagueTemplate), "sample ABI", "sample metadata");
         console.log(">>> Treaties initialized");
 
         // Whitelist all players

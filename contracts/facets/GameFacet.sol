@@ -18,7 +18,7 @@ contract GameFacet is UseStorage {
     uint256 private constant NULL = 0;
 
     // ----------------------------------------------------------
-    // NATION/CAPITAL
+    // GLOBAL FUNCTIONS (CAN BE CALLED BY ANY ADDRESS)
     // ----------------------------------------------------------
 
     /// @dev Link your main account and burner account
@@ -90,6 +90,39 @@ contract GameFacet is UseStorage {
         // Set last action time
         ECSLib.setUint("LastActed", nationID, block.timestamp);
     }
+
+    /**
+     * @dev Register a new treaty template for the game.
+     * @param _address deployed treaty address
+     * @param _abiHash treaty abi hash
+     * @param _metadataLink treaty metadata link
+     * @return treatyTemplateID registered treaty template entity
+     * @notice Both admin and players can call this function.
+     *         There is currently no notion of "creator" for treaty templates.
+     */
+    function registerTreatyTemplate(
+        address _address,
+        string memory _abiHash,
+        string memory _metadataLink
+    ) external returns (uint256 treatyTemplateID) {
+        // Basic checks
+        GameLib.ongoingGameCheck();
+
+        // Fetch treaty name and description
+        CurioTreaty treaty = CurioTreaty(_address);
+        string memory _name = treaty.name();
+        string memory _description = treaty.description();
+        require(!GameLib.strEq(_name, ""), "CURIO: Treaty name cannot be empty");
+        require(gs().templates[_name] == 0, "CURIO: A treaty with this name already exists, try renaming");
+
+        // Register treaty template
+        treatyTemplateID = Templates.addTreatyTemplate(_address, _name, _description, _abiHash, _metadataLink);
+        gs().templates[_name] = treatyTemplateID;
+    }
+
+    // ----------------------------------------------------------
+    // CAPITAL
+    // ----------------------------------------------------------
 
     /**
      * @dev Upgrade your capital.
