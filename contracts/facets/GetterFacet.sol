@@ -1,59 +1,219 @@
 //SPDX-License-Identifier: MIT
-pragma solidity ^0.8.4;
+pragma solidity ^0.8.13;
 
 import {Set} from "contracts/Set.sol";
-import "contracts/libraries/Storage.sol";
+import {UseStorage} from "contracts/libraries/Storage.sol";
 import {GameLib} from "contracts/libraries/GameLib.sol";
 import {ECSLib} from "contracts/libraries/ECSLib.sol";
-import {Position, Tile, WorldConstants} from "contracts/libraries/Types.sol";
-import "openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
+import {Position, QueryCondition, WorldConstants} from "contracts/libraries/Types.sol";
 import {Component} from "contracts/Component.sol";
+import {CurioERC20} from "contracts/standards/CurioERC20.sol";
 
 /// @title Bulk getters
 /// @notice Getters provide bulk functions useful for fetching data from the frontend
 
 contract GetterFacet is UseStorage {
-    using SafeMath for uint256;
     uint256 private NULL = 0;
 
-    // Debug Helpers
+    // ----------------------------------------------------------
+    // TOKEN-RELATED GETTERS
+    // ----------------------------------------------------------
+
+    function getInventoryIDLoadAndBalance(address _entityAddress, string memory _resourceType)
+        external
+        returns (
+            uint256,
+            uint256,
+            uint256
+        )
+    {
+        return GameLib.getInventoryIDLoadAndBalance(_entityAddress, _resourceType);
+    }
+
+    function getTokenContract(string memory _tokenName) external view returns (CurioERC20) {
+        return GameLib.getTokenContract(_tokenName);
+    }
+
+    function getAllowance(
+        string memory _templateName,
+        uint256 _ownerID,
+        uint256 _spenderID
+    ) external view returns (uint256) {
+        return GameLib.getAllowance(gs().templates[_templateName], _ownerID, _spenderID);
+    }
+
+    // ----------------------------------------------------------
+    // TREATY-RELATED GETTERS
+    // ----------------------------------------------------------
+
+    // Can be used for nations, capitals, tiles, resources, and treaties
+    function getAddress(uint256 _entity) external view returns (address) {
+        return ECSLib.getAddress("Address", _entity);
+    }
+
+    function getAmount(uint256 _entity) external view returns (uint256) {
+        return ECSLib.getUint("Amount", _entity);
+    }
+
+    function getTag(uint256 _entityID) external view returns (string memory) {
+        return ECSLib.getString("Tag", _entityID);
+    }
+
+    // Used for fetching all treaties a player has signed
+    function getSignedTreaties(uint256 _nationID) external view returns (uint256[] memory) {
+        return GameLib.getSignedTreaties(_nationID);
+    }
+
+    function getTreatyByName(string memory _treatyName) external view returns (uint256) {
+        return GameLib.getTreatyByName(_treatyName);
+    }
+
+    function getEntityByAddress(address _entityAddress) external view returns (uint256) {
+        return ECSLib.getAddressComponent("Address").getEntitiesWithValue(_entityAddress)[0];
+    }
+
+    function getABIHash(uint256 _treatyID) external view returns (string memory) {
+        return ECSLib.getString("ABIHash", _treatyID);
+    }
+
+    function getTreatySigners(uint256 _treatyID) external view returns (uint256[] memory) {
+        return GameLib.getTreatySigners(_treatyID);
+    }
+
+    function getNationTreatySignature(uint256 _nationID, uint256 _treatyID) external view returns (uint256) {
+        return GameLib.getNationTreatySignature(_nationID, _treatyID);
+    }
+
+    function isWhitelistedByTreaty(uint256 _nationID, uint256 _treatyID) external view returns (bool) {
+        return GameLib.getTreatyWhitelisted(_nationID, _treatyID) != NULL;
+    }
+
+    // ----------------------------------------------------------
+    // LOGIC GETTERS
+    // ----------------------------------------------------------
+
+    function isPlayerWhitelistedByGame(address _player) external view returns (bool) {
+        return gs().isWhitelistedByGame[_player];
+    }
+
+    function isPlayerInitialized(address _player) external view returns (bool) {
+        return GameLib.getEntityByAddress(_player) != NULL;
+    }
+
+    function getNation(uint256 _entityID) external view returns (uint256) {
+        return ECSLib.getUint("Nation", _entityID);
+    }
+
+    function getNationArmies(uint256 _nationID) external view returns (uint256[] memory) {
+        return GameLib.getArmiesFromNation(_nationID);
+    }
+
+    function treatyApprovalCheck(
+        string memory _functionName,
+        uint256 _nationID,
+        bytes memory _encodedParams
+    ) external {
+        return GameLib.treatyApprovalCheck(_functionName, _nationID, _encodedParams);
+    }
+
+    function getInventoryBalance(address _keeperAddress, string memory _resourceType) external view returns (uint256) {
+        uint256 entityID = GameLib.getEntityByAddress(_keeperAddress);
+        uint256 templateID = gs().templates[_resourceType];
+        uint256 inventoryID = GameLib.getInventory(entityID, templateID);
+        return inventoryID == NULL ? 0 : ECSLib.getUint("Amount", inventoryID);
+    }
+
+    function getTotalSupply(string memory _resourceType) external view returns (uint256) {
+        uint256 templateID = gs().templates[_resourceType];
+        return CurioERC20(ECSLib.getAddress("Address", templateID)).totalSupply();
+    }
+
     function getEntitiesAddr() external view returns (address) {
         return gs().entities;
     }
 
-    function getInventoryByCityAndType(uint256 _cityID, string memory _inventoryType) external returns (uint256) {
-        uint256 _templateID = GameLib.getTemplateByInventoryType(_inventoryType);
-        return GameLib.getInventory(_cityID, _templateID);
+    function getDelegations(
+        string memory _functionName,
+        uint256 _ownerID,
+        uint256 _callerID
+    ) external view returns (uint256[] memory) {
+        return GameLib.getDelegations(_functionName, _ownerID, _callerID);
     }
 
-    function getTemplateByInventoryType(string memory _inventoryType) external returns (uint256) {
-        return GameLib.getTemplateByInventoryType(_inventoryType);
-    }
-
-    function getConstituents(uint256 _armyID) external returns (uint256[] memory) {
-        return GameLib.getConstituents(_armyID);
-    }
-
-    function getConstituentAtTile(uint256 _tileID) external returns (uint256) {
-        return GameLib.getConstituentAtTile(_tileID);
-    }
-
-    function getArmyAt(Position memory _position) external returns (uint256) {
+    function getArmyAt(Position memory _position) external view returns (uint256) {
         return GameLib.getArmyAt(_position);
     }
 
-    function getMainBurnerAccount(address _primaryAddress) external view returns (address) {
-        return gs().accounts[_primaryAddress];
+    function getArmiesAtTile(Position memory _startPosition) external view returns (uint256[] memory) {
+        return GameLib.getArmiesAtTile(_startPosition);
     }
 
+    function getMainBurnerAccount(address _primaryAddress) external view returns (address) {
+        return gs().mainToBurner[_primaryAddress];
+    }
+
+    function getCapital(uint256 _nationID) external view returns (uint256) {
+        return GameLib.getCapital(_nationID);
+    }
+
+    function getTileAt(Position memory _position) external view returns (uint256) {
+        return GameLib.getTileAt(_position);
+    }
+
+    function getInventory(address _inventoryAddress, string memory _templateName) external view returns (uint256) {
+        uint256 templateID = gs().templates[_templateName];
+        uint256 entityID = GameLib.getEntityByAddress(_inventoryAddress);
+        return GameLib.getInventory(entityID, templateID);
+    }
+
+    function getResourceAtTile(Position memory _startPosition) external view returns (uint256) {
+        return GameLib.getResourceAtTile(_startPosition);
+    }
+
+    function getWorldConstants() external view returns (WorldConstants memory) {
+        return gs().worldConstants;
+    }
+
+    function getGameParameter(
+        string memory _subject,
+        string memory _object,
+        string memory _componentName,
+        string memory _functionName,
+        uint256 _level
+    ) external view returns (uint256) {
+        return GameLib.getGameParameter(_subject, _object, _componentName, _functionName, _level);
+    }
+
+    function getPlayerCount() external view returns (uint256) {
+        return GameLib.getNationCount();
+    }
+
+    function getDistanceByAddresses(address _addr1, address _addr2) external view returns (uint256) {
+        Position memory pos1 = ECSLib.getPosition("Position", GameLib.getEntityByAddress(_addr1));
+        Position memory pos2 = ECSLib.getPosition("Position", GameLib.getEntityByAddress(_addr2));
+
+        // TEMP: Treaty contracts without positions are still allowed to transfer
+        Position memory nullPos = Position({x: 0, y: 0});
+        if (GameLib.coincident(pos1, nullPos) || GameLib.coincident(pos2, nullPos)) return 0;
+
+        return GameLib.euclidean(pos1, pos2);
+    }
+
+    function getTileRegionTilePositions(Position memory _startPosition) external view returns (Position[] memory) {
+        return GameLib.getTileRegionTilePositions(_startPosition);
+    }
+
+    // ----------------------------------------------------------
+    // ECS GETTERS
+    // ----------------------------------------------------------
+
+    // FIXME: Only called "external" because calling it without causes hardhat-diamond-abi compilation error, specifically function appearing twice
     function getPositionExternal(string memory _componentName, uint256 _entity) external view returns (Position memory) {
         return ECSLib.getPosition(_componentName, _entity);
     }
 
-    ////////////
-
-    function getResourceLevel(uint256 _resourceID) external view returns (uint256) {
-        return ECSLib.getUint("Level", _resourceID);
+    function getEntityLevel(uint256 _entity) external view returns (uint256) {
+        return ECSLib.getUint("Level", _entity);
     }
 
     function getComponent(string memory _name) external view returns (Component) {
@@ -64,61 +224,15 @@ contract GetterFacet is UseStorage {
         return ECSLib.getComponentByEntity(_entity);
     }
 
-    function getWorldConstants() external view returns (WorldConstants memory) {
-        return gs().worldConstants;
-    }
-
-    function isPlayerInitialized(address _player) external view returns (bool) {
-        return gs().playerEntityMap[_player] != NULL;
-    }
-
-    function getPlayerCount() external view returns (uint256) {
-        return gs().players.length;
-    }
-
-    function getPlayerId(address _player) external view returns (uint256) {
-        return gs().playerEntityMap[_player];
-    }
-
     function getEntity() external view returns (uint256) {
-        Set _entities = Set(gs().entities);
-        return _entities.size();
+        return Set(gs().entities).size();
     }
 
     function getEntities() external view returns (uint256[] memory) {
         return Set(gs().entities).getAll();
     }
 
-    function getCityAtTile(Position memory _startPosition) external returns (uint256) {
-        return GameLib.getCityAtTile(_startPosition);
-    }
-
-    function getCityCenter(uint256 _cityID) external returns (uint256) {
-        return GameLib.getCityCenter(_cityID);
-    }
-
-    function getSettlerAt(Position memory _position) external returns (uint256) {
-        return GameLib.getSettlerAt(_position);
-    }
-
-    function getTileAt(Position memory _position) external returns (uint256) {
-        return GameLib.getTileAt(_position);
-    }
-
-    function getCityFood(uint256 _cityID) external returns (uint256) {
-        return GameLib.getCityFood(_cityID);
-    }
-
-    function getCityGold(uint256 _cityID) external returns (uint256) {
-        return GameLib.getCityGold(_cityID);
-    }
-
-    function getArmyFood(uint256 _armyID) external returns (uint256) {
-        uint256 foodInventoryID = GameLib.getArmyInventory(_armyID, gs().templates["Food"]);
-        return ECSLib.getUint("Amount", foodInventoryID);
-    }
-
-    function getResourceAtTile(Position memory _startPosition) external returns (uint256) {
-        return GameLib.getResourceAtTile(_startPosition);
+    function query(QueryCondition[] memory _queryConditions) external view returns (uint256[] memory) {
+        return ECSLib.query(_queryConditions);
     }
 }

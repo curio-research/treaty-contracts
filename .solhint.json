@@ -10,7 +10,7 @@
     "reason-string": [
       "warn",
       {
-        "maxLength": 40
+        "maxLength": 50
       }
     ],
     "quotes": ["error", "double"],
@@ -31,7 +31,7 @@
     "imports-on-top": "warn",
     "visibility-modifier-order": "error",
     "avoid-call-value": "error",
-    "avoid-low-level-calls": "error",
+    "avoid-low-level-calls": "warn",
     "avoid-sha3": "error",
     "avoid-suicide": "error",
     "avoid-throw": "error",
@@ -39,7 +39,7 @@
     "check-send-result": "error",
     "compiler-version": ["error", "^0.8.0"],
     "func-visibility": [
-      "error",
+      "warn",
       {
         "ignoreConstructors": true
       }

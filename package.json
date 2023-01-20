@@ -40,6 +40,7 @@
     "bignumber.js": "^9.0.1",
     "chalk": "4.1.0",
     "dotenv": "^16.0.0",
+    "eth-heap": "^2.2.0",
     "ethers": "^5.7.1",
     "fs-extra": "^10.1.0",
     "hardhat": "^2.11.2",
@@ -48,6 +49,7 @@
     "lodash": "^4.17.21",
     "prettier": "^2.4.1",
     "prettier-plugin-solidity": "^1.0.0-beta.18",
+    "random-words": "^1.2.0",
     "rot-js": "^2.2.0",
     "simplex-noise": "^3.0.1",
     "typechain": "^8.1.0"

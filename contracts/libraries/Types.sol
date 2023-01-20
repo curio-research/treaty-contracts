@@ -1,11 +1,9 @@
 //SPDX-License-Identifier: MIT
-pragma solidity ^0.8.4;
+pragma solidity ^0.8.13;
 
-/// Data structures for game
+import {Component} from "contracts/Component.sol";
 
-enum Terrain {
-    LAND
-}
+/// @dev Data structures for game
 
 enum ValueType {
     UINT,
@@ -21,18 +19,36 @@ enum ValueType {
 
 enum QueryType {
     Has,
-    HasVal
+    HasNot,
+    IsExactly,
+    IsNot
+}
+
+enum GameMode {
+    REGULAR,
+    BATTLE_ROYALE
 }
 
 struct QueryCondition {
     QueryType queryType;
+    Component component;
     bytes value;
-    string componentName;
 }
 
 struct ComponentSpec {
+    /// Note: Keys of this spec must be in alphabetical order for Foundry testing purposes.
     string name;
     ValueType valueType;
+}
+
+struct GameParamSpec {
+    /// Note: Keys of this spec must be in alphabetical order for Foundry testing purposes.
+    string componentName;
+    string functionName;
+    uint256 level;
+    string object;
+    string subject;
+    uint256 value;
 }
 
 struct Position {
@@ -40,50 +56,46 @@ struct Position {
     uint256 y;
 }
 
-struct Tile {
-    bool isInitialized;
-    Terrain terrain;
-}
-
 struct WorldConstants {
+    /// Note: Keys of this spec must be in alphabetical order for Foundry testing purposes.
     address admin;
-    uint256 worldWidth;
-    uint256 worldHeight;
+    uint256 capitalLevelToEntityLevelRatio; // 3 => lv1 capital unlocks lv3 resources
+    uint256 gameLengthInSeconds; // 0 means not used
+    GameMode gameMode;
+    uint256 maxArmyCountPerNation;
+    uint256 maxCapitalLevel;
+    uint256 maxNationCount;
     uint256 numInitTerrainTypes; // default is 6
-    uint256 initBatchSize; // default is 50 if numInitTerrainTypes = 6
-    uint256 maxCityCountPerPlayer;
-    uint256 maxArmyCountPerPlayer;
-    uint256 maxPlayerCount;
-    uint256 tileUpgradeGoldCost;
-    uint256 buildingUpgradeGoldCost;
-    uint256 cityUpgradeGoldCost; // constant for now but realistically not ?
-    uint256 initCityCenterGoldLoad;
-    uint256 initCityCenterFoodLoad;
-    uint256 initCityCenterTroopLoad;
-    uint256 cityPackCost;
-    uint256 initCityGold;
-    uint256 cityGuardAmount;
-    uint256 tileGuardAmount;
+    uint256 secondsToTrainAThousandTroops;
     uint256 tileWidth;
-    uint256 barbarianCooldown;
+    uint256 worldHeight;
+    uint256 worldWidth;
 }
 
 struct GameState {
-    bool isPaused;
-    uint256 lastPaused;
+    // Basic
+    uint256 gameInitTimestamp;
     WorldConstants worldConstants;
-    address[] players;
-    // Tile[5000][5000] map;
     uint256[][] encodedColumnBatches;
-    address[] treaties;
+    // Functions
+    string[] gameFunctionNames;
+    mapping(string => bool) isGameFunction;
+    // Entities
     address entities;
-    uint256 entityNonce;
+    uint256 entityNonce; // tracks the biggest entity ever created to avoid collisions
+    // Components
     string[] componentNames;
-    mapping(string => address) components; // component name to contract address
+    mapping(string => address) components; // component name -> component address
+    // Templates (resource, troop, or treaty)
     string[] templateNames;
-    mapping(string => uint256) templates; // template name to id
-    mapping(uint256 => address) componentEntityToAddress; // component id to contract address
-    mapping(address => uint256) playerEntityMap;
-    mapping(address => address) accounts; // main address -> burner address
-    mapping(address => address) burnerAccounts; // burner address -> main address
+    mapping(string => uint256) templates; // template name -> template id
+    // Tokens
+    address[] authorizedTokens;
+    mapping(address => bool) isAuthorizedToken;
+    // Accounts
+    mapping(address => address) mainToBurner; // main address -> burner address
+    mapping(address => address) burnerToMain; // burner address -> main address
+    mapping(address => bool) isWhitelistedByGame;
+    // Other
+    uint256 addressNonce; // used for generating tile addresses
 }

@@ -1,30 +1,34 @@
 //SPDX-License-Identifier: MIT
-pragma solidity ^0.8.4;
+pragma solidity ^0.8.13;
 
-/// Implementation of a mathematical set in Solidity
+/// @dev Implementation of a mathematical set in Solidity
 
 contract Set {
+    address private deployer;
     uint256[] private elements;
     mapping(uint256 => uint256) private elementIndexMap;
+
+    modifier onlyDeployer() {
+        require(msg.sender == deployer, "Set: Only deployer can modify values");
+        _;
+    }
+
+    constructor() {
+        deployer = msg.sender;
+    }
 
     function getAll() public view returns (uint256[] memory) {
         return elements;
     }
 
-    function add(uint256 _element) public {
+    function add(uint256 _element) public onlyDeployer {
         if (includes(_element)) return;
 
         elements.push(_element);
         elementIndexMap[_element] = size() - 1;
     }
 
-    function addArray(uint256[] memory _elements) public {
-        for (uint256 i = 0; i < _elements.length; i++) {
-            add(_elements[i]);
-        }
-    }
-
-    function remove(uint256 _element) public {
+    function remove(uint256 _element) public onlyDeployer {
         if (!includes(_element)) return;
 
         // Copy last element to override element to be removed

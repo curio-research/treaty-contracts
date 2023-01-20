@@ -25,40 +25,24 @@ import type {
 
 export type WorldConstantsStruct = {
   admin: PromiseOrValue<string>;
-  worldWidth: PromiseOrValue<BigNumberish>;
-  worldHeight: PromiseOrValue<BigNumberish>;
+  capitalLevelToEntityLevelRatio: PromiseOrValue<BigNumberish>;
+  gameLengthInSeconds: PromiseOrValue<BigNumberish>;
+  gameMode: PromiseOrValue<BigNumberish>;
+  maxArmyCountPerNation: PromiseOrValue<BigNumberish>;
+  maxCapitalLevel: PromiseOrValue<BigNumberish>;
+  maxNationCount: PromiseOrValue<BigNumberish>;
   numInitTerrainTypes: PromiseOrValue<BigNumberish>;
-  initBatchSize: PromiseOrValue<BigNumberish>;
-  maxCityCountPerPlayer: PromiseOrValue<BigNumberish>;
-  maxArmyCountPerPlayer: PromiseOrValue<BigNumberish>;
-  maxPlayerCount: PromiseOrValue<BigNumberish>;
-  tileUpgradeGoldCost: PromiseOrValue<BigNumberish>;
-  buildingUpgradeGoldCost: PromiseOrValue<BigNumberish>;
-  cityUpgradeGoldCost: PromiseOrValue<BigNumberish>;
-  initCityCenterGoldLoad: PromiseOrValue<BigNumberish>;
-  initCityCenterFoodLoad: PromiseOrValue<BigNumberish>;
-  initCityCenterTroopLoad: PromiseOrValue<BigNumberish>;
-  cityPackCost: PromiseOrValue<BigNumberish>;
-  initCityGold: PromiseOrValue<BigNumberish>;
-  cityGuardAmount: PromiseOrValue<BigNumberish>;
-  tileGuardAmount: PromiseOrValue<BigNumberish>;
+  secondsToTrainAThousandTroops: PromiseOrValue<BigNumberish>;
   tileWidth: PromiseOrValue<BigNumberish>;
-  barbarianCooldown: PromiseOrValue<BigNumberish>;
+  worldHeight: PromiseOrValue<BigNumberish>;
+  worldWidth: PromiseOrValue<BigNumberish>;
 };
 
 export type WorldConstantsStructOutput = [
   string,
   BigNumber,
   BigNumber,
-  BigNumber,
-  BigNumber,
-  BigNumber,
-  BigNumber,
-  BigNumber,
-  BigNumber,
-  BigNumber,
-  BigNumber,
-  BigNumber,
+  number,
   BigNumber,
   BigNumber,
   BigNumber,
@@ -69,30 +53,22 @@ export type WorldConstantsStructOutput = [
   BigNumber
 ] & {
   admin: string;
-  worldWidth: BigNumber;
-  worldHeight: BigNumber;
+  capitalLevelToEntityLevelRatio: BigNumber;
+  gameLengthInSeconds: BigNumber;
+  gameMode: number;
+  maxArmyCountPerNation: BigNumber;
+  maxCapitalLevel: BigNumber;
+  maxNationCount: BigNumber;
   numInitTerrainTypes: BigNumber;
-  initBatchSize: BigNumber;
-  maxCityCountPerPlayer: BigNumber;
-  maxArmyCountPerPlayer: BigNumber;
-  maxPlayerCount: BigNumber;
-  tileUpgradeGoldCost: BigNumber;
-  buildingUpgradeGoldCost: BigNumber;
-  cityUpgradeGoldCost: BigNumber;
-  initCityCenterGoldLoad: BigNumber;
-  initCityCenterFoodLoad: BigNumber;
-  initCityCenterTroopLoad: BigNumber;
-  cityPackCost: BigNumber;
-  initCityGold: BigNumber;
-  cityGuardAmount: BigNumber;
-  tileGuardAmount: BigNumber;
+  secondsToTrainAThousandTroops: BigNumber;
   tileWidth: BigNumber;
-  barbarianCooldown: BigNumber;
+  worldHeight: BigNumber;
+  worldWidth: BigNumber;
 };
 
 export interface DiamondInitInterface extends utils.Interface {
   functions: {
-    "init((address,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))": FunctionFragment;
+    "init((address,uint256,uint256,uint8,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))": FunctionFragment;
   };
 
   getFunction(nameOrSignatureOrTopic: "init"): FunctionFragment;

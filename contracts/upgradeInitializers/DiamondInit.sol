@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.13;
 
 /******************************************************************************\
 * Author: Nick Mudge <nick@perfectabstractions.com> (https://twitter.com/mudgen)
@@ -8,14 +8,14 @@ pragma solidity ^0.8.0;
 * Implementation of a diamond.
 /******************************************************************************/
 
-import {Tile, WorldConstants} from "contracts/libraries/Types.sol";
+import {WorldConstants} from "contracts/libraries/Types.sol";
 import {LibDiamond} from "contracts/libraries/LibDiamond.sol";
 import {IDiamondLoupe} from "contracts/interfaces/IDiamondLoupe.sol";
 import {IDiamondCut} from "contracts/interfaces/IDiamondCut.sol";
 import {IERC173} from "contracts/interfaces/IERC173.sol";
 import {IERC165} from "contracts/interfaces/IERC165.sol";
 import {Set} from "contracts/Set.sol";
-import "contracts/libraries/Storage.sol";
+import {UseStorage} from "contracts/libraries/Storage.sol";
 
 // It is expected that this contract is customized if you want to deploy your diamond
 // with data from a deployment script. Use the init function to initialize state variables
@@ -40,11 +40,10 @@ contract DiamondInit is UseStorage {
         // in order to set state variables in the diamond during deployment or an upgrade
         // More info here: https://eips.ethereum.org/EIPS/eip-2535#diamond-interface
 
-        // set world constants
         gs().worldConstants = _worldConstants;
-
-        // initialize entities
         gs().entities = address(new Set());
         gs().entityNonce = 1;
+        gs().addressNonce = 1;
+        gs().gameInitTimestamp = block.timestamp;
     }
 }

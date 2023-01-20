@@ -1,19 +1,15 @@
 //SPDX-License-Identifier: MIT
-pragma solidity ^0.8.4;
+pragma solidity ^0.8.13;
 
-import "contracts/libraries/Storage.sol";
-import "openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
-import {Position, ValueType, QueryCondition, QueryType} from "contracts/libraries/Types.sol";
+import {LibStorage} from "contracts/libraries/Storage.sol";
+import {GameState, Position, QueryCondition, QueryType, ValueType} from "contracts/libraries/Types.sol";
 import {Set} from "contracts/Set.sol";
-import {UintBoolMapping} from "contracts/Mapping.sol";
 import {Component} from "contracts/Component.sol";
 import {AddressComponent, BoolComponent, IntComponent, PositionComponent, StringComponent, UintComponent, UintArrayComponent} from "contracts/TypedComponents.sol";
 
 /// @title library of ECS utility functions
 
 library ECSLib {
-    using SafeMath for uint256;
-
     function gs() internal pure returns (GameState storage) {
         return LibStorage.gameStorage();
     }
@@ -29,53 +25,51 @@ library ECSLib {
     // ----------------------------------------------------------
 
     function _getComponent(string memory _name) public view returns (Component) {
-        address _componentAddr = gs().components[_name];
-        require(_componentAddr != address(0), string(abi.encodePacked("CURIO: Component ", _name, " not found")));
+        address componentAddr = gs().components[_name];
+        require(componentAddr != address(0), string(abi.encodePacked("CURIO: Component ", _name, " not found")));
 
-        return Component(_componentAddr);
+        return Component(componentAddr);
     }
 
     function getComponentByEntity(uint256 _entity) public view returns (Component) {
-        address _componentAddr = gs().componentEntityToAddress[_entity];
-        require(_componentAddr != address(0), string(abi.encodePacked("CURIO: Component with id ", _entity, " not found")));
+        address componentAddr = getAddress("Address", _entity);
+        require(componentAddr != address(0), string(abi.encodePacked("CURIO: Component with id ", _entity, " not found")));
 
-        return Component(_componentAddr);
+        return Component(componentAddr);
     }
 
     function addComponent(string memory _name, ValueType _valueType) public {
-        // TODO: implement
+        // Not supported currently
     }
 
     function addEntity() public returns (uint256) {
-        Set _entities = Set(gs().entities);
-        uint256 _newEntity = gs().entityNonce;
-        _entities.add(_newEntity);
+        Set entities = Set(gs().entities);
+        uint256 newEntity = gs().entityNonce;
+        entities.add(newEntity);
 
         gs().entityNonce++;
 
-        emit NewEntity(_newEntity);
-        return _newEntity;
+        emit NewEntity(newEntity);
+        return newEntity;
     }
 
-    // FIXME: remove over all components, or remove over components which the entity has? One more general, the other more efficient.
     function removeEntity(uint256 _entity) public {
-        Set _entities = Set(gs().entities);
-        _entities.remove(_entity);
+        Set entities = Set(gs().entities);
+        entities.remove(_entity);
 
-        string[] memory _componentNames = gs().componentNames;
-        for (uint256 i = 0; i < _componentNames.length; i++) {
-            Component _component = _getComponent(gs().componentNames[i]);
-            _component.remove(_entity);
+        string[] memory componentNames = gs().componentNames;
+        for (uint256 i = 0; i < componentNames.length; i++) {
+            Component component = _getComponent(gs().componentNames[i]);
+            component.remove(_entity);
         }
 
         emit EntityRemoved(_entity);
     }
 
-    function _getComponentValue(string memory _componentName, uint256 _entity) public view returns (bytes memory) {
+    function getComponentValue(string memory _componentName, uint256 _entity) public view returns (bytes memory) {
         return _getComponent(_componentName).getBytesValue(_entity);
     }
 
-    // Question: At the moment, all events regarding component set and removal are emitted in game contracts. Is this good?
     function setComponentValue(
         string memory _componentName,
         uint256 _entity,
@@ -292,106 +286,55 @@ library ECSLib {
     // HELPERS
     // ----------------------------------------------------------
 
-    function queryAsSet(QueryCondition[] memory _queryCondition) public returns (Set) {
-        Set res = Set(gs().entities);
+    function query(QueryCondition[] memory _queryConditions) public view returns (uint256[] memory) {
+        require(_queryConditions.length > 0, "CURIO: Query must have at least one condition");
 
-        for (uint256 i = 0; i < _queryCondition.length; i++) {
-            QueryCondition memory _queryChunkCondition = _queryCondition[i];
-            Component component = _getComponent(_queryChunkCondition.componentName);
+        // Process the first condition
+        QueryCondition memory condition = _queryConditions[0];
+        uint256[] memory result = condition.queryType == QueryType.Has ? condition.component.getEntities() : condition.component.getEntitiesWithValue(condition.value);
+        uint256 resultLength = result.length;
 
-            if (_queryChunkCondition.queryType == QueryType.Has) {
-                res = intersectionAsSet(res, component.getEntitiesAsSet());
-            } else if (_queryChunkCondition.queryType == QueryType.HasVal) {
-                // Exact value
-                res = intersectionAsSet(res, component.getEntitiesWithValueAsSet(_queryChunkCondition.value));
-            } else {
-                revert("CURIO: Query type not supported");
+        // Process the rest of the conditions
+        uint256[] memory temp;
+        uint256 currIdx;
+        for (uint256 k = 1; k < _queryConditions.length; k++) {
+            condition = _queryConditions[k];
+            temp = new uint256[](result.length);
+            currIdx = 0;
+
+            for (uint256 i = 0; i < resultLength; i++) {
+                uint256 entity = result[i];
+                if (condition.queryType == QueryType.Has) {
+                    if (condition.component.has(entity)) {
+                        temp[currIdx] = entity;
+                        currIdx++;
+                    }
+                } else if (condition.queryType == QueryType.IsExactly) {
+                    if (keccak256(condition.component.getBytesValue(entity)) == keccak256(condition.value)) {
+                        temp[currIdx] = entity;
+                        currIdx++;
+                    }
+                } else {
+                    revert("CURIO: Unsupported query type");
+                }
             }
+
+            result = new uint256[](currIdx);
+            for (uint256 i = 0; i < currIdx; i++) {
+                result[i] = temp[i];
+            }
+            resultLength = currIdx;
         }
 
-        return res;
-    }
-
-    function query(QueryCondition[] memory _queryCondition) public returns (uint256[] memory) {
-        return queryAsSet(_queryCondition).getAll();
+        return result;
     }
 
     function queryChunk(
         QueryType _queryType,
-        string memory _componentName,
+        Component _component,
         bytes memory _value
     ) public pure returns (QueryCondition memory) {
-        return QueryCondition({queryType: _queryType, componentName: _componentName, value: _value});
-    }
-
-    function intersectionAsSet(Set _set1, Set _set2) public returns (Set) {
-        UintBoolMapping searchedElements = new UintBoolMapping();
-        Set intersections = new Set();
-
-        // Loop through first set
-        uint256[] memory set1elements = _set1.getAll();
-        uint256 element;
-        for (uint256 i = 0; i < _set1.size(); i++) {
-            element = set1elements[i];
-
-            // Check if element is in second set
-            if (!searchedElements.val(element)) {
-                if (_set2.includes(element)) {
-                    intersections.add(element);
-                }
-                searchedElements.set(element, true);
-            }
-        }
-
-        // Loop through second set
-        uint256[] memory set2elements = _set2.getAll();
-        for (uint256 i = 0; i < _set2.size(); i++) {
-            element = set2elements[i];
-
-            // Check if element is in first set
-            if (!searchedElements.val(element)) {
-                if (_set1.includes(element)) {
-                    intersections.add(element);
-                }
-                searchedElements.set(element, true);
-            }
-        }
-
-        return intersections;
-    }
-
-    // Set-theoretic intersection
-    function intersection(Set _set1, Set _set2) public returns (uint256[] memory) {
-        return intersectionAsSet(_set1, _set2).getAll();
-    }
-
-    // Set-theoretic difference
-    function difference(Set _set1, Set _set2) public returns (uint256[] memory) {
-        return differenceAsSet(_set1, _set2).getAll();
-    }
-
-    function differenceAsSet(Set set1, Set set2) public returns (Set) {
-        Set res = new Set();
-
-        for (uint256 i = 0; i < set1.size(); i++) {
-            uint256 _element = set1.getAll()[i];
-
-            // Check if element is in second set
-            if (!set2.includes(_element)) {
-                res.add(_element);
-            }
-        }
-
-        return res;
-    }
-
-    // Set-theoretic union
-    function union(Set _set1, Set _set2) public returns (uint256[] memory) {
-        uint256[] memory arr1 = difference(_set1, _set2);
-        uint256[] memory arr2 = intersection(_set1, _set2);
-        uint256[] memory arr3 = difference(_set2, _set1);
-
-        return concatenate(concatenate(arr1, arr2), arr3);
+        return QueryCondition({queryType: _queryType, component: _component, value: _value});
     }
 
     function concatenate(uint256[] memory _arr1, uint256[] memory _arr2) public pure returns (uint256[] memory) {
@@ -407,24 +350,14 @@ library ECSLib {
         return _result;
     }
 
-    // inclusive on both ends
-    function filterByComponentRange(
-        uint256[] memory _entities,
-        string memory _componentName,
-        uint256 _lb,
-        uint256 _ub
-    ) public returns (uint256[] memory) {
-        Set _set1 = new Set();
-        _set1.addArray(_entities);
+    // ----------------------------------------------------------
+    // ECS CONVENIENCE FNS
+    // ----------------------------------------------------------
 
-        uint256[] memory _result = new uint256[](0);
-        Set _set2;
-        for (uint256 _value = _lb; _value <= _ub; _value++) {
-            _set2 = new Set();
-            _set2.addArray(UintComponent(gs().components[_componentName]).getEntitiesWithValue(_value));
-            _result = concatenate(_result, intersection(_set1, _set2));
+    function removeComponentFromAll(string memory _componentName) public {
+        uint256[] memory entitiesWithComponent = Component(gs().components[_componentName]).getEntities();
+        for (uint256 i; i < entitiesWithComponent.length; i++) {
+            removeComponentValue(_componentName, entitiesWithComponent[i]);
         }
-
-        return _result;
     }
 }

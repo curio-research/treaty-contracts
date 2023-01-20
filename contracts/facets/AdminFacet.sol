@@ -1,85 +1,213 @@
 //SPDX-License-Identifier: MIT
-pragma solidity ^0.8.4;
+pragma solidity ^0.8.13;
 
-import "contracts/libraries/Storage.sol";
+import {UseStorage} from "contracts/libraries/Storage.sol";
 import {ECSLib} from "contracts/libraries/ECSLib.sol";
-import {ComponentSpec, Position, Tile, ValueType, WorldConstants} from "contracts/libraries/Types.sol";
-import "openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
-import "contracts/libraries/Templates.sol";
+import {ComponentSpec, Position, ValueType, WorldConstants} from "contracts/libraries/Types.sol";
+import {Templates} from "contracts/libraries/Templates.sol";
 import {Set} from "contracts/Set.sol";
 import {GameLib} from "contracts/libraries/GameLib.sol";
-import "forge-std/console.sol";
+import {CurioERC20} from "contracts/standards/CurioERC20.sol";
+import {CurioTreaty} from "contracts/standards/CurioTreaty.sol";
 
 /// @title Admin facet
-/// @notice Contains admin functions and state functions, both of which should be out of scope for players
+/// @notice Contains admin functions, treaty functions, and state functions (setters which players don't call)
 
 contract AdminFacet is UseStorage {
-    using SafeMath for uint256;
     uint256 private constant NULL = 0;
 
-    // TODO: Question: How to reuse functions from Util so that they can be directly called by external parties?
+    modifier onlyAdmin() {
+        require(msg.sender == gs().worldConstants.admin, "CURIO: Only admin can call this");
+        _;
+    }
+
+    modifier onlyAuthorized() {
+        require(msg.sender == gs().worldConstants.admin || gs().isAuthorizedToken[msg.sender] == true, "CURIO: Only admin or authorized token can call");
+        _;
+    }
+
+    modifier onlyTreaty() {
+        uint256 treatyID = GameLib.getEntityByAddress(msg.sender);
+        require(GameLib.strEq(ECSLib.getString("Tag", treatyID), "Treaty"), "CURIO: Only treaty can call this");
+        _;
+    }
+
+    function addAuthorized(address _tokenAddress) external onlyAdmin {
+        gs().authorizedTokens.push(_tokenAddress);
+        gs().isAuthorizedToken[_tokenAddress] = true;
+    }
 
     // ----------------------------------------------------------------------
     // DEBUG FUNCTIONS
     // ----------------------------------------------------------------------
 
-    function removeEntity(uint256 _entity) external onlyAdmin {
+    function onlySet(uint256 _entity, uint256 _value) external {
+        ECSLib.setUint("Health", _entity, _value);
+    }
+
+    function onlyQuery(Position memory _startPosition) external view returns (uint256[] memory) {
+        return GameLib.getArmiesAtTile(_startPosition);
+    }
+
+    // ----------------------------------------------------------------------
+    // TREATY FUNCTIONS
+    // ----------------------------------------------------------------------
+
+    function addSigner(uint256 _nationID) external onlyTreaty returns (uint256) {
+        GameLib.ongoingGameCheck();
+        GameLib.validEntityCheck(_nationID);
+
+        uint256 treatyID = GameLib.getEntityByAddress(msg.sender);
+        uint256 signatureID = GameLib.getNationTreatySignature(_nationID, treatyID);
+        require(signatureID == NULL, "CURIO: Nation already joined");
+        return Templates.addSignature(treatyID, _nationID);
+    }
+
+    function removeSigner(uint256 _nationID) external onlyTreaty {
+        GameLib.ongoingGameCheck();
+        GameLib.validEntityCheck(_nationID);
+
+        uint256 treatyID = GameLib.getEntityByAddress(msg.sender);
+        uint256 signatureID = GameLib.getNationTreatySignature(_nationID, treatyID);
+        require(signatureID != NULL, "CURIO: Nation did not join");
+        ECSLib.removeEntity(signatureID);
+    }
+
+    function addToTreatyWhitelist(uint256 _nationID) external onlyTreaty {
+        GameLib.ongoingGameCheck();
+        GameLib.validEntityCheck(_nationID);
+
+        uint256 treatyID = GameLib.getEntityByAddress(msg.sender);
+        uint256 whitelisted = GameLib.getTreatyWhitelisted(_nationID, treatyID);
+        require(whitelisted == 0, "CURIO: Nation is already whitelisted");
+        Templates.addTreatyWhitelisted(treatyID, _nationID);
+    }
+
+    function removeFromTreatyWhitelist(uint256 _nationID) external onlyTreaty {
+        GameLib.ongoingGameCheck();
+        GameLib.validEntityCheck(_nationID);
+
+        uint256 treatyID = GameLib.getEntityByAddress(msg.sender);
+        uint256 whitelisted = GameLib.getTreatyWhitelisted(_nationID, treatyID);
+        require(whitelisted != NULL, "CURIO: Nation is not whitelisted");
+        ECSLib.removeEntity(whitelisted);
+    }
+
+    /// @notice Set _subjectID to 0 to delegate to all subjects
+    function adminDelegateGameFunction(
+        uint256 _nationID,
+        string memory _functionName,
+        uint256 _delegateID,
+        uint256 _subjectID,
+        bool _canCall
+    ) external onlyTreaty {
+        // Basic checks
+        GameLib.ongoingGameCheck();
+        GameLib.validEntityCheck(_nationID);
+        GameLib.validFunctionNameCheck(_functionName);
+
+        // Delegate function
+        GameLib.delegateGameFunction(_nationID, _functionName, _delegateID, _subjectID, _canCall);
+    }
+
+    // ----------------------------------------------------------------------
+    // ADMIN FUNCTIONS (LIVEOPS)
+    // ----------------------------------------------------------------------
+
+    function lockTiles(Position[] memory _tilePositions) external onlyAuthorized {
+        for (uint256 i = 0; i < _tilePositions.length; i++) {
+            ECSLib.setBool("IsLocked", GameLib.getTileAt(_tilePositions[i]));
+        }
+    }
+
+    function unlockTiles(Position[] memory _tilePositions) external onlyAuthorized {
+        for (uint256 i = 0; i < _tilePositions.length; i++) {
+            ECSLib.removeBool("IsLocked", GameLib.getTileAt(_tilePositions[i]));
+        }
+    }
+
+    function unlockAllTiles() external onlyAuthorized {
+        ECSLib.removeComponentFromAll("IsLocked");
+    }
+
+    function removeIdleNations(uint256 _maxIdleDuration) external onlyAuthorized {
+        uint256[] memory nationIDs = ECSLib.getStringComponent("Tag").getEntitiesWithValue(string("Nation"));
+        for (uint256 i = 0; i < nationIDs.length; i++) {
+            uint256 lastActed = ECSLib.getUint("LastActed", nationIDs[i]);
+            if (lastActed != NULL && block.timestamp > lastActed + _maxIdleDuration) {
+                GameLib.removeNation(nationIDs[i]);
+            }
+        }
+    }
+
+    function stopGame() external onlyAuthorized {
+        gs().worldConstants.gameLengthInSeconds = block.timestamp - gs().gameInitTimestamp;
+    }
+
+    function spawnResource(Position memory _startPosition, string memory _templateName) external onlyAuthorized {
+        Templates.addResource(gs().templates[_templateName], _startPosition, 0);
+    }
+
+    function dripToken(
+        address _address,
+        string memory _tokenName,
+        uint256 _amount
+    ) external onlyAuthorized {
+        CurioERC20 token = GameLib.getTokenContract(_tokenName);
+        token.dripToken(_address, _amount);
+    }
+
+    function giftTileAndResourceAt(Position memory _startPosition, uint256 _nationID) external onlyAuthorized {
+        uint256 tileID = GameLib.getTileAt(_startPosition);
+        uint256 resourceID = GameLib.getResourceAt(_startPosition);
+        ECSLib.setUint("Nation", tileID, _nationID);
+        ECSLib.setUint("Nation", resourceID, _nationID);
+    }
+
+    function removeEntity(uint256 _entity) external onlyAuthorized {
         ECSLib.removeEntity(_entity);
     }
 
-    function createArmy(uint256 _playerID, Position memory _position) external onlyAdmin {
-        Templates.addArmy(_playerID, _position, 0, 1, 1, 2, 5);
+    function updateInventoryAmount(uint256 _inventoryID, uint256 _newAmount) external onlyAuthorized {
+        ECSLib.setUint("Amount", _inventoryID, _newAmount);
     }
 
-    function adminInitializeTile(Position memory _startPosition) external onlyAdmin {
-        GameLib.initializeTile(_startPosition);
-    }
-
-    function assignResource(uint256 _cityID, string memory _inventoryType, uint256 _amount) external onlyAdmin {
-        uint256 templateID = gs().templates[_inventoryType];
-        uint256 cityInventoryID = GameLib.getInventory(_cityID, templateID);
-        uint256 existingCityResource = ECSLib.getUint("Amount", cityInventoryID);
-        uint256 totalAmount = GameLib.min(ECSLib.getUint("Load", cityInventoryID), _amount + existingCityResource);
-        ECSLib.setUint("Amount", cityInventoryID, totalAmount);
-    }
-
-    function spawnResource(Position memory _startPosition, string memory _inventoryType) external onlyAdmin {
-        GameLib.initializeTile(_startPosition);
-        Templates.addResource(gs().templates[_inventoryType], _startPosition, 0);
-    }
-
-    function spawnBarbarian(Position memory _startPosition, uint256 _level) external onlyAdmin {
-        require(_level == 1 || _level == 2, "CURIO: Function not used correctly");
-        uint256 tileID = GameLib.initializeTile(_startPosition);
-        ECSLib.setUint("Level", tileID, _level);
+    function setComponentValue(
+        string memory _componentName,
+        uint256 _entity,
+        bytes memory _value
+    ) external {
+        ECSLib.setComponentValue(_componentName, _entity, _value);
     }
 
     // ----------------------------------------------------------------------
-    // ADMIN FUNCTIONS
+    // ADMIN FUNCTIONS (GAME SETUP)
     // ----------------------------------------------------------------------
 
-    modifier onlyAdmin() {
-        require(msg.sender == gs().worldConstants.admin, "CURIO: Unauthorized");
-        _;
+    function addToGameWhitelist(address _playerAddress) external onlyAuthorized {
+        gs().isWhitelistedByGame[_playerAddress] = true;
     }
 
-    /**
-     * @dev Reactivate an inactive player.
-     * @param _address player address
-     */
-    function reactivatePlayer(address _address) external onlyAdmin {
-        uint256 _playerID = gs().playerEntityMap[_address];
-        require(_playerID != NULL, "CURIO: Player already initialized");
-        require(!ECSLib.getBoolComponent("IsActive").has(_playerID), "CURIO: Player is active");
+    function removeFromGameWhitelist(address _playerAddress) external onlyAuthorized {
+        gs().isWhitelistedByGame[_playerAddress] = false;
+    }
 
-        ECSLib.setBool("IsActive", _playerID);
+    function adminInitializeTile(Position memory _startPosition) external onlyAuthorized {
+        GameLib.initializeTile(_startPosition);
+    }
+
+    function disallowHostCapital(Position[] memory _tilePositions) external onlyAuthorized {
+        for (uint256 i = 0; i < _tilePositions.length; i++) {
+            uint256 tileID = GameLib.getTileAt(_tilePositions[i]);
+            ECSLib.removeBool("CanHostCapital", tileID);
+        }
     }
 
     /**
      * @dev Store an array of encoded raw map columns containing information of all tiles, for efficient storage.
      * @param _colBatches map columns in batches, encoded with N-ary arithmetic
      */
-    function storeEncodedColumnBatches(uint256[][] memory _colBatches) external onlyAdmin {
+    function storeEncodedColumnBatches(uint256[][] memory _colBatches) external onlyAuthorized {
         gs().encodedColumnBatches = _colBatches;
     }
 
@@ -87,98 +215,103 @@ contract AdminFacet is UseStorage {
      * @dev Initialize all large tiles from an array of starting positions.
      * @param _positions all positions
      */
-    function bulkInitializeTiles(Position[] memory _positions) external onlyAdmin {
+    function bulkInitializeTiles(Position[] memory _positions) external onlyAuthorized {
         for (uint256 i = 0; i < _positions.length; i++) {
             GameLib.initializeTile(_positions[i]);
         }
     }
 
+    function addInventory(uint256 _keeperID, string memory _templateName) external onlyAuthorized returns (uint256) {
+        uint256 templateID = gs().templates[_templateName];
+        return Templates.addInventory(_keeperID, templateID);
+    }
+
     function addTroopTemplate(
-        string memory _inventoryType,
         uint256 _health,
-        uint256 _speed,
-        uint256 _moveCooldown,
-        uint256 _battleCooldown,
         uint256 _attack,
         uint256 _defense,
-        uint256 _duration,
         uint256 _load,
-        uint256 _cost
-    ) public returns (uint256) {
-        return Templates.addTroopTemplate(_inventoryType, _health, _speed, _moveCooldown, _battleCooldown, _attack, _defense, _duration, _load, _cost);
+        address _tokenContract
+    ) external onlyAuthorized returns (uint256) {
+        CurioERC20 token = CurioERC20(_tokenContract);
+        return Templates.addTroopTemplate(token.name(), _health, _attack, _defense, _load, _tokenContract);
     }
 
-    // ----------------------------------------------------------------------
-    // STATE FUNCTIONS
-    // ----------------------------------------------------------------------
-
-    // /**
-    //  * Update player's balances to the latest state.
-    //  * @param _player player address
-    //  */
-    // function updatePlayerBalances(address _player) external {
-    //     GameLib._updatePlayerBalances(gs().playerEntityMap[_player]);
-    // }
-
-    // ----------------------------------------------------------------------
-    // ECS HELPERS
-    // ----------------------------------------------------------------------
-
-    function registerComponents(address _gameAddr, ComponentSpec[] memory _componentSpecs) external onlyAdmin {
-        GameLib.registerComponents(_gameAddr, _componentSpecs);
+    function addResourceTemplate(address _tokenContract) external onlyAuthorized returns (uint256) {
+        CurioERC20 token = CurioERC20(_tokenContract);
+        return Templates.addResourceTemplate(token.name(), _tokenContract);
     }
 
-    // FIXME: be able to sync with vault
-    function registerDefaultComponents(address _gameAddr) external onlyAdmin {
-        ComponentSpec[] memory _componentSpecs = new ComponentSpec[](39);
+    function addAllowance(
+        string memory _templateName,
+        uint256 _ownerID,
+        uint256 _spenderID
+    ) external onlyAuthorized returns (uint256) {
+        return Templates.addAllowance(gs().templates[_templateName], _ownerID, _spenderID);
+    }
 
-        _componentSpecs[0] = ComponentSpec({name: "IsComponent", valueType: ValueType.BOOL});
-        _componentSpecs[1] = ComponentSpec({name: "Tag", valueType: ValueType.STRING});
-        _componentSpecs[2] = ComponentSpec({name: "IsActive", valueType: ValueType.BOOL});
-        _componentSpecs[3] = ComponentSpec({name: "InitTimestamp", valueType: ValueType.UINT});
-        _componentSpecs[4] = ComponentSpec({name: "Position", valueType: ValueType.POSITION});
-        _componentSpecs[5] = ComponentSpec({name: "Owner", valueType: ValueType.UINT});
-        _componentSpecs[6] = ComponentSpec({name: "Level", valueType: ValueType.UINT});
-        _componentSpecs[7] = ComponentSpec({name: "Name", valueType: ValueType.STRING});
-        _componentSpecs[8] = ComponentSpec({name: "CanSettle", valueType: ValueType.BOOL});
-        _componentSpecs[9] = ComponentSpec({name: "ResourceType", valueType: ValueType.STRING});
-        _componentSpecs[10] = ComponentSpec({name: "BuildingType", valueType: ValueType.STRING});
-        _componentSpecs[11] = ComponentSpec({name: "Template", valueType: ValueType.UINT});
-        _componentSpecs[12] = ComponentSpec({name: "CanProduce", valueType: ValueType.BOOL});
-        _componentSpecs[13] = ComponentSpec({name: "Duration", valueType: ValueType.UINT});
-        _componentSpecs[14] = ComponentSpec({name: "BalanceLastUpdated", valueType: ValueType.UINT});
-        _componentSpecs[15] = ComponentSpec({name: "MaxHealth", valueType: ValueType.UINT});
-        _componentSpecs[16] = ComponentSpec({name: "Health", valueType: ValueType.UINT});
-        _componentSpecs[17] = ComponentSpec({name: "Attack", valueType: ValueType.UINT});
-        _componentSpecs[18] = ComponentSpec({name: "Defense", valueType: ValueType.UINT});
-        _componentSpecs[19] = ComponentSpec({name: "Speed", valueType: ValueType.UINT});
-        _componentSpecs[20] = ComponentSpec({name: "Load", valueType: ValueType.UINT});
-        _componentSpecs[21] = ComponentSpec({name: "City", valueType: ValueType.UINT});
-        _componentSpecs[22] = ComponentSpec({name: "Keeper", valueType: ValueType.UINT});
-        _componentSpecs[23] = ComponentSpec({name: "Amount", valueType: ValueType.UINT});
-        _componentSpecs[24] = ComponentSpec({name: "InventoryType", valueType: ValueType.STRING});
-        _componentSpecs[25] = ComponentSpec({name: "LastTimestamp", valueType: ValueType.UINT});
-        _componentSpecs[26] = ComponentSpec({name: "Source", valueType: ValueType.UINT});
-        _componentSpecs[27] = ComponentSpec({name: "Target", valueType: ValueType.UINT});
-        _componentSpecs[28] = ComponentSpec({name: "Inventory", valueType: ValueType.UINT});
-        _componentSpecs[29] = ComponentSpec({name: "Address", valueType: ValueType.ADDRESS});
-        _componentSpecs[30] = ComponentSpec({name: "Treaty", valueType: ValueType.ADDRESS});
-        _componentSpecs[31] = ComponentSpec({name: "Cost", valueType: ValueType.UINT});
-        _componentSpecs[32] = ComponentSpec({name: "Army", valueType: ValueType.UINT});
-        _componentSpecs[33] = ComponentSpec({name: "StartPosition", valueType: ValueType.POSITION});
-        _componentSpecs[34] = ComponentSpec({name: "MoveCooldown", valueType: ValueType.UINT});
-        _componentSpecs[35] = ComponentSpec({name: "BattleCooldown", valueType: ValueType.UINT});
-        _componentSpecs[36] = ComponentSpec({name: "Terrain", valueType: ValueType.UINT});
-        _componentSpecs[37] = ComponentSpec({name: "CanBattle", valueType: ValueType.BOOL});
-        _componentSpecs[38] = ComponentSpec({name: "AttackRange", valueType: ValueType.UINT});
+    function addGameParameter(string memory _identifier, uint256 _value) external onlyAuthorized returns (uint256) {
+        return Templates.addGameParameter(_identifier, _value);
+    }
 
+    function setGameParameter(string memory _identifier, uint256 _value) external onlyAuthorized {
+        GameLib.setGameParameter(_identifier, _value);
+    }
+
+    function addGame() external onlyAuthorized {
+        uint256 entity = ECSLib.addEntity();
+
+        ECSLib.setString("Tag", entity, "Game");
+        ECSLib.setUint("Level", entity, 2); // 1: inactive. 2: active
+    }
+
+    function bulkAddGameParameters(string[] memory _identifiers, uint256[] memory _values) external onlyAuthorized {
+        require(_identifiers.length == _values.length, "CURIO: Input length mismatch");
+        for (uint256 i = 0; i < _values.length; i++) {
+            Templates.addGameParameter(_identifiers[i], _values[i]);
+        }
+    }
+
+    /**
+     * @dev Register a new treaty template for the game.
+     * @param _address deployed treaty address
+     * @param _abiHash treaty abi hash
+     * @param _metadataLink treaty metadata link
+     * @return treatyTemplateID registered treaty template entity
+     * @notice This function is currently used for permissioned deployment of treaties. In the future, treaties will be
+     *         deployed permissionlessly by players.
+     */
+    function registerTreatyTemplate(
+        address _address,
+        string memory _abiHash,
+        string memory _metadataLink
+    ) external onlyAuthorized returns (uint256 treatyTemplateID) {
+        CurioTreaty treaty = CurioTreaty(_address);
+        string memory _name = treaty.name();
+        string memory _description = treaty.description();
+        treatyTemplateID = Templates.addTreatyTemplate(_address, _name, _description, _abiHash, _metadataLink);
+        gs().templates[_name] = treatyTemplateID;
+    }
+
+    function generateNewAddress() external onlyAuthorized returns (address) {
+        return GameLib.generateNewAddress();
+    }
+
+    function registerFunctionNames(string[] memory _functionNames) external onlyAuthorized {
+        gs().gameFunctionNames = _functionNames;
+        for (uint256 i; i < _functionNames.length; i++) {
+            gs().isGameFunction[_functionNames[i]] = true;
+        }
+    }
+
+    function registerComponents(address _gameAddr, ComponentSpec[] memory _componentSpecs) external onlyAuthorized {
         GameLib.registerComponents(_gameAddr, _componentSpecs);
     }
 
     /**
      * @dev Register template name to ID map for common templates.
      */
-    function registerTemplateShortcuts(string[] memory _names, uint256[] memory _IDs) external onlyAdmin {
+    function registerTemplateShortcuts(string[] memory _names, uint256[] memory _IDs) external onlyAuthorized {
         require(_names.length == _IDs.length, "CURIO: Input lengths don't match");
 
         for (uint256 i = 0; i < _names.length; i++) {
@@ -188,15 +321,7 @@ contract AdminFacet is UseStorage {
         gs().templateNames = _names;
     }
 
-    function addEntity() external onlyAdmin returns (uint256) {
+    function addEntity() external onlyAuthorized returns (uint256) {
         return ECSLib.addEntity();
-    }
-
-    function setComponentValue(
-        string memory _componentName,
-        uint256 _entity,
-        bytes memory _value
-    ) external onlyAdmin {
-        ECSLib.setComponentValue(_componentName, _entity, _value);
     }
 }

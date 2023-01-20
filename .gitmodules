@@ -1,6 +1,15 @@
-[submodule "lib/pnm-contracts"]
-	path = lib/pnm-contracts
-	url = https://github.com/pwnednomore/pnm-contracts
 [submodule "lib/forge-std"]
 	path = lib/forge-std
 	url = https://github.com/foundry-rs/forge-std
+
+[submodule "lib/openzeppelin-contracts"]
+	path = lib/openzeppelin-contracts
+	url = https://github.com/OpenZeppelin/openzeppelin-contracts/
+
+[submodule "lib/pnm-contracts"]
+	path = lib/pnm-contracts
+	url = https://github.com/PwnedNoMore/pnm-contracts
+
+[submodule "lib/solmate"]
+	path = lib/solmate
+	url = https://github.com/transmissions11/solmate
