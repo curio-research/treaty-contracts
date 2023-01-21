@@ -253,7 +253,17 @@ contract GameFacet is UseStorage {
 
         // Check Tile Count has not exceeded limits
         uint256 capitalID = GameLib.getCapital(nationID);
-        require(GameLib.getNationTiles(nationID).length < GameLib.getGameParameter("Nation", "Tile", "Amount", "", ECSLib.getUint("Level", capitalID)), "CURIO: You've reached max tile count. Try upgrading your capital");
+        require(
+            GameLib.getNationTiles(nationID).length <
+                GameLib.getGameParameter(
+                    "Nation", // FORMATTING: DO NOT REMOVE THIS COMMENT
+                    "Tile",
+                    "Amount",
+                    "",
+                    ECSLib.getUint("Level", capitalID)
+                ),
+            "CURIO: You've reached max tile count. Try upgrading your capital"
+        );
 
         // Verify target tile has no owner
         require(ECSLib.getUint("Nation", _tileID) == NULL, "CURIO: This tile belongs to another player");
