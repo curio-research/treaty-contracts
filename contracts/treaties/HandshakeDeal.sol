@@ -3,6 +3,7 @@ pragma solidity ^0.8.13;
 
 import {CurioTreaty} from "contracts/standards/CurioTreaty.sol";
 import {CurioERC20} from "contracts/standards/CurioERC20.sol";
+import {GetterFacet} from "contracts/facets/GetterFacet.sol";
 import {Position} from "contracts/libraries/Types.sol";
 
 contract HandshakeDeal is CurioTreaty {
@@ -37,9 +38,14 @@ contract HandshakeDeal is CurioTreaty {
     mapping(uint256 => uint256[]) public nationIDToDealIDs;
     mapping(uint256 => Deal) public idToDeal;
 
-    constructor(address _diamond) CurioTreaty(_diamond) {
-        name = "Handshake Deal";
-        description = "Flexible handshake agreement between nations";
+    constructor(address _diamond) CurioTreaty(_diamond) {}
+
+    function name() external view override returns (string memory) {
+        return "Handshake Deal";
+    }
+
+    function description() external view override returns (string memory) {
+        return "Flexible handshake agreement between nations";
     }
 
     // ----------------------------------------------------------
@@ -62,6 +68,7 @@ contract HandshakeDeal is CurioTreaty {
                 _functionType == ApprovalFunctionType.approveUpgradeResource,
             "Handshake: Invalid function type"
         );
+        GetterFacet getter = GetterFacet(diamond);
         uint256 proposerID = getter.getEntityByAddress(msg.sender);
         dealCount++;
 
@@ -91,6 +98,7 @@ contract HandshakeDeal is CurioTreaty {
                 _functionType == ApprovalFunctionType.approveBattle,
             "Handshake: Invalid function type"
         );
+        GetterFacet getter = GetterFacet(diamond);
         uint256 proposerID = getter.getEntityByAddress(msg.sender);
         dealCount++;
 
@@ -119,6 +127,7 @@ contract HandshakeDeal is CurioTreaty {
                 _functionType == ApprovalFunctionType.approveMove,
             "Handshake: Invalid function type"
         );
+        GetterFacet getter = GetterFacet(diamond);
         uint256 proposerID = getter.getEntityByAddress(msg.sender);
         dealCount++;
 
@@ -136,6 +145,7 @@ contract HandshakeDeal is CurioTreaty {
     }
 
     function signDeal(uint256 _dealID) public onlySigner {
+        GetterFacet getter = GetterFacet(diamond);
         nationIDToDealIDs[getter.getEntityByAddress(msg.sender)].push(_dealID);
     }
 
@@ -149,6 +159,7 @@ contract HandshakeDeal is CurioTreaty {
 
     function treatyLeave() public override {
         // Can exit only after all time locks pass
+        GetterFacet getter = GetterFacet(diamond);
         uint256[] memory signedDealIDs = nationIDToDealIDs[getter.getEntityByAddress(msg.sender)];
         for (uint256 i = 0; i < signedDealIDs.length; i++) {
             Deal memory deal = idToDeal[signedDealIDs[i]];

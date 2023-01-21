@@ -2,11 +2,18 @@
 pragma solidity ^0.8.13;
 
 import {CurioTreaty} from "contracts/standards/CurioTreaty.sol";
+import {GameFacet} from "contracts/facets/GameFacet.sol";
+import {GetterFacet} from "contracts/facets/GetterFacet.sol";
 
 contract TestTreaty is CurioTreaty {
-    constructor(address _diamond) CurioTreaty(_diamond) {
-        name = "Test Treaty";
-        description = "Treaty for testing";
+    constructor(address _diamond) CurioTreaty(_diamond) {}
+
+    function name() external view override returns (string memory) {
+        return "Test Treaty";
+    }
+
+    function description() external view override returns (string memory) {
+        return "Treaty for testing";
     }
 
     function treatyJoin() public override {
@@ -24,7 +31,10 @@ contract TestTreaty is CurioTreaty {
     }
 
     function treatyUpgradeCapital(uint256 _capitalID) public onlySigner {
+        GetterFacet getter = GetterFacet(diamond);
         uint256 nationID = getter.getEntityByAddress(msg.sender);
+
+        GameFacet game = GameFacet(diamond);
 
         game.delegateGameFunction(nationID, "UpgradeCapital", getter.getEntityByAddress(address(this)), _capitalID, true);
         game.delegateGameFunction(nationID, "HarvestResourcesFromCapital", getter.getEntityByAddress(address(this)), _capitalID, true);

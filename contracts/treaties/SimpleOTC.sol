@@ -3,6 +3,7 @@ pragma solidity ^0.8.13;
 
 import {CurioTreaty} from "contracts/standards/CurioTreaty.sol";
 import {CurioERC20} from "contracts/standards/CurioERC20.sol";
+import {GetterFacet} from "contracts/facets/GetterFacet.sol";
 
 struct Order {
     string sellTokenName;
@@ -18,10 +19,15 @@ contract SimpleOTC is CurioTreaty {
     Order public emptyOrder;
 
     constructor(address _diamond) CurioTreaty(_diamond) {
-        name = "Simple OTC Trading Agreement";
-        description = "OTC Trading between players";
-
         emptyOrder = Order({sellTokenName: "", sellAmount: 0, buyTokenName: "", buyAmount: 0, createdAt: 0});
+    }
+
+    function name() external view override returns (string memory) {
+        return "Simple OTC Trading Agreement";
+    }
+
+    function description() external view override returns (string memory) {
+        return "OTC Trading between players";
     }
 
     /**
@@ -65,6 +71,7 @@ contract SimpleOTC is CurioTreaty {
      * @param _seller address of the seller
      */
     function takeOrder(address _seller) public {
+        GetterFacet getter = GetterFacet(diamond);
         require(addressToOrder[_seller].sellAmount > 0, "OTC: Seller has no existing order");
 
         // Fetch token pair
