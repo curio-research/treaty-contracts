@@ -22,16 +22,27 @@ import type {
 
 export interface UselessFacetInterface extends utils.Interface {
   functions: {
+    "getAddressNonce()": FunctionFragment;
     "uselessFunction()": FunctionFragment;
   };
 
-  getFunction(nameOrSignatureOrTopic: "uselessFunction"): FunctionFragment;
+  getFunction(
+    nameOrSignatureOrTopic: "getAddressNonce" | "uselessFunction"
+  ): FunctionFragment;
 
+  encodeFunctionData(
+    functionFragment: "getAddressNonce",
+    values?: undefined
+  ): string;
   encodeFunctionData(
     functionFragment: "uselessFunction",
     values?: undefined
   ): string;
 
+  decodeFunctionResult(
+    functionFragment: "getAddressNonce",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "uselessFunction",
     data: BytesLike
@@ -67,22 +78,32 @@ export interface UselessFacet extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    getAddressNonce(overrides?: CallOverrides): Promise<[BigNumber]>;
+
     uselessFunction(overrides?: CallOverrides): Promise<[string]>;
   };
+
+  getAddressNonce(overrides?: CallOverrides): Promise<BigNumber>;
 
   uselessFunction(overrides?: CallOverrides): Promise<string>;
 
   callStatic: {
+    getAddressNonce(overrides?: CallOverrides): Promise<BigNumber>;
+
     uselessFunction(overrides?: CallOverrides): Promise<string>;
   };
 
   filters: {};
 
   estimateGas: {
+    getAddressNonce(overrides?: CallOverrides): Promise<BigNumber>;
+
     uselessFunction(overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   populateTransaction: {
+    getAddressNonce(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     uselessFunction(overrides?: CallOverrides): Promise<PopulatedTransaction>;
   };
 }
