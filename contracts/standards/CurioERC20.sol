@@ -80,15 +80,18 @@ contract CurioERC20 is IERC20 {
         require(senderBalance >= _amount, "CurioERC20: Sender insufficent balance");
         // require(getter.getDistanceByAddresses(_from, _to) <= maxTransferDistance, "CurioERC20: Too far from recipient to transfer");
 
-        uint256 transferAmount;
-        if (recipientBalance + _amount <= recipientLoad) {
-            transferAmount = _amount;
-        } else {
-            transferAmount = recipientLoad - recipientBalance;
-        }
+        // Set transfer amount to be minimum of the amount requested and the recipient's remaining load
+        uint256 transferAmount = recipientBalance + _amount <= recipientLoad ? _amount : recipientLoad - recipientBalance;
 
+        // Update sender balance
         admin.updateInventoryAmount(senderInventoryID, senderBalance - transferAmount);
+
+        // Re-fetch recipient balance after update
+        recipientBalance = abi.decode(getter.getComponent("Amount").getBytesValue(recipientInventoryID), (uint256));
+
+        // Update recipient balance
         admin.updateInventoryAmount(recipientInventoryID, recipientBalance + transferAmount);
+
         emit Transfer(_from, _to, transferAmount);
     }
 

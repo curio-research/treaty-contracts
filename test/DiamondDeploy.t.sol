@@ -181,7 +181,7 @@ contract DiamondDeployTest is Test {
         // Initialize map either with either `_generateNewMap()` or `_fetchLastDeployedMap()`
         // Note: if fetching deployed map, check for map size
         {
-            uint256[][] memory map = _generateNewMap(worldConstants.worldWidth, worldConstants.worldHeight);
+            uint256[][] memory map = _generateNewMap(worldConstants.worldWidth, worldConstants.worldHeight, worldConstants.tileWidth);
             uint256[][] memory encodedColumnBatches = _encodeTileMap(map, worldConstants.numInitTerrainTypes, 200 / worldConstants.numInitTerrainTypes);
             admin.storeEncodedColumnBatches(encodedColumnBatches);
             _initializeMap();
@@ -452,21 +452,21 @@ contract DiamondDeployTest is Test {
     }
 
     /// @dev Second way to get map: initialize a new one
-    function _generateNewMap(uint256 _width, uint256 _height) private view returns (uint256[][] memory) {
-        uint256[] memory _plainCol = new uint256[](_height);
+    function _generateNewMap(uint256 _width, uint256 _height, uint256 _tileWidth) private view returns (uint256[][] memory) {
+        uint256[] memory _plainCol = new uint256[](_height / _tileWidth);
 
         // set individual columns
-        for (uint256 y = 0; y < _height; y++) {
+        for (uint256 y = 0; y < _height / _tileWidth; y++) {
             _plainCol[y] = 0;
         }
 
         // set whole map
-        uint256[][] memory _map = new uint256[][](_width);
-        for (uint256 x = 0; x < _width; x += 1) {
+        uint256[][] memory _map = new uint256[][](_width / _tileWidth);
+        for (uint256 x = 0; x < _width / _tileWidth; x += 1) {
             _map[x] = _plainCol;
         }
 
-        _map[barbarinaTilePos.x][barbarinaTilePos.y] = 4;
+        _map[barbarinaTilePos.x / _tileWidth][barbarinaTilePos.y / _tileWidth] = 4;
 
         return _map;
     }

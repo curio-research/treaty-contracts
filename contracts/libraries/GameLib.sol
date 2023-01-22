@@ -149,7 +149,7 @@ library GameLib {
             guardToken.dripToken(tileAddress, tileGuardAmount);
         } else if (terrain == 3 || terrain == 4) {
             // Barbarian tile
-            uint256 barbarianLevel = terrain - 2;
+            uint256 barbarianLevel = (terrain - 2) * 4;
             ECSLib.setUint("Level", tileID, barbarianLevel);
 
             uint256 barbarianGuardAmount = getGameParameter("Barbarian", "Guard", "Amount", "", barbarianLevel);
@@ -238,8 +238,8 @@ library GameLib {
         require(ECSLib.getUint("Amount", getInventory(_tileID, gs().templates["Guard"])) > 0, "CURIO: defender subjugated, claim tile instead");
 
         // Others cannot attack cities at chaos
-        uint256 capitalID = getCapital(ECSLib.getUint("Nation", _tileID));
-        capitalSackRecoveryCheck(capitalID);
+        uint256 targetCapitalID = getCapital(ECSLib.getUint("Nation", _tileID));
+        capitalSackRecoveryCheck(targetCapitalID);
 
         // if it is the super tile, check that it's active
         if (coincident(ECSLib.getPosition("StartPosition", _tileID), getMapCenterTilePosition())) {
@@ -254,26 +254,26 @@ library GameLib {
         // Execute one round of battle
         bool victory = attack(_armyID, _tileID, false, false);
         if (victory) {
-            if (coincident(ECSLib.getPosition("StartPosition", capitalID), ECSLib.getPosition("StartPosition", _tileID))) {
+            if (coincident(ECSLib.getPosition("StartPosition", targetCapitalID), ECSLib.getPosition("StartPosition", _tileID))) {
                 // Victorious against capital, add back some guards for the loser
-                guardToken.dripToken(tileAddress, getGameParameter("Tile", "Guard", "Amount", "", ECSLib.getUint("Level", capitalID)));
+                guardToken.dripToken(tileAddress, getGameParameter("Tile", "Guard", "Amount", "", ECSLib.getUint("Level", targetCapitalID)));
 
                 // Descend capital into chaos mode
                 // 1. Terminate troop production
                 // 2. Harvest resources and disable harvest
                 // 3. Update `LastSacked` to current timestamp
-                uint256 productionID = getBuildingProduction(capitalID);
+                uint256 productionID = getBuildingProduction(targetCapitalID);
                 if (productionID != 0) ECSLib.removeEntity(productionID);
 
-                uint256 chaosDuration = getGameParameter("Capital", "", "Cooldown", "Chaos", ECSLib.getUint("Level", capitalID));
-                ECSLib.setUint("LastHarvested", capitalID, block.timestamp + chaosDuration);
+                uint256 chaosDuration = getGameParameter("Capital", "", "Cooldown", "Chaos", ECSLib.getUint("Level", targetCapitalID));
+                ECSLib.setUint("LastHarvested", targetCapitalID, block.timestamp + chaosDuration);
 
-                ECSLib.setUint("LastSacked", capitalID, block.timestamp);
+                ECSLib.setUint("LastSacked", targetCapitalID, block.timestamp);
             } else {
                 if (isBarbarian(_tileID)) {
                     // Reset barbarian
-                    distributeBarbarianReward(_armyID, _tileID);
-                    uint256 barbarianGuardAmount = getGameParameter("Barbarian", "Guard", "Amount", "", ECSLib.getUint("Terrain", _tileID) - 2); // FIXME: hardcoded
+                    distributeBarbarianReward(GameLib.getCapital(ECSLib.getUint("Nation", _armyID)), _tileID);
+                    uint256 barbarianGuardAmount = getGameParameter("Barbarian", "Guard", "Amount", "", ECSLib.getUint("Level", _tileID));
                     ECSLib.setUint("LastRecovered", _tileID, block.timestamp + getGameParameter("Barbarian", "", "Cooldown", "", 0));
                     guardToken.dripToken(tileAddress, barbarianGuardAmount);
                 } else {
@@ -350,15 +350,15 @@ library GameLib {
         if (!victory) attack(_keeperIdB, _keeperIdA, _transferResourcesUponVictory, _removeUponVictory);
     }
 
-    function distributeBarbarianReward(uint256 _armyID, uint256 _barbarianTileID) internal {
+    function distributeBarbarianReward(uint256 _capitalID, uint256 _barbarianTileID) internal {
         uint256 barbarianLevel = ECSLib.getUint("Level", _barbarianTileID);
         uint256[] memory resourceTemplateIDs = ECSLib.getStringComponent("Tag").getEntitiesWithValue(string("ResourceTemplate"));
 
         for (uint256 i = 0; i < resourceTemplateIDs.length; i++) {
-            uint256 rewardAmount = getGameParameter("Barbarian", ECSLib.getString("Name", resourceTemplateIDs[i]), "Reward", "", barbarianLevel * 4); // FIXME: hardcoded
+            uint256 rewardAmount = getGameParameter("Barbarian", ECSLib.getString("Name", resourceTemplateIDs[i]), "Reward", "", barbarianLevel);
 
             CurioERC20 resourceToken = CurioERC20(ECSLib.getAddress("Address", resourceTemplateIDs[i]));
-            resourceToken.dripToken(ECSLib.getAddress("Address", _armyID), rewardAmount);
+            resourceToken.dripToken(ECSLib.getAddress("Address", _capitalID), rewardAmount);
         }
     }
 
