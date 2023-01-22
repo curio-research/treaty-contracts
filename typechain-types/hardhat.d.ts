@@ -45,10 +45,6 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.OwnershipFacet__factory>;
     getContractFactory(
-      name: "UselessFacet",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.UselessFacet__factory>;
-    getContractFactory(
       name: "IDiamondCut",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IDiamondCut__factory>;
@@ -84,10 +80,6 @@ declare module "hardhat/types/runtime" {
       name: "LibDiamond",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.LibDiamond__factory>;
-    getContractFactory(
-      name: "UintBoolMapping",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.UintBoolMapping__factory>;
     getContractFactory(
       name: "Set",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -177,10 +169,6 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Curio__factory>;
     getContractFactory(
-      name: "ERC20",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.ERC20__factory>;
-    getContractFactory(
       name: "ERC721",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ERC721__factory>;
@@ -230,11 +218,6 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.OwnershipFacet>;
     getContractAt(
-      name: "UselessFacet",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.UselessFacet>;
-    getContractAt(
       name: "IDiamondCut",
       address: string,
       signer?: ethers.Signer
@@ -279,11 +262,6 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.LibDiamond>;
-    getContractAt(
-      name: "UintBoolMapping",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.UintBoolMapping>;
     getContractAt(
       name: "Set",
       address: string,
@@ -394,11 +372,6 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.Curio>;
-    getContractAt(
-      name: "ERC20",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.ERC20>;
     getContractAt(
       name: "ERC721",
       address: string,

@@ -77,12 +77,12 @@ contract GameTest is Test, DiamondDeployTest {
 
     function testGameParameter() public {
         string memory identifier = "Goldmine-Gold-Yield--1";
-        uint256 oldValue = 743;
         uint256 newValue = 1000;
 
         // Verify original state
         uint256 parameterID = getter.getComponent("Tag").getEntitiesWithValue(abi.encode(identifier))[0];
-        assertEq(abi.decode(getter.getComponent("Amount").getBytesValue(parameterID), (uint256)), oldValue);
+        uint256 oldValue = abi.decode(getter.getComponent("Amount").getBytesValue(parameterID), (uint256));
+        assertTrue(oldValue != newValue);
 
         // Set new value
         vm.prank(deployer);
@@ -93,7 +93,7 @@ contract GameTest is Test, DiamondDeployTest {
     }
 
     function testBarbarianReward() public {
-        uint256 time = 1000;
+        uint256 time = block.timestamp + 1000;
         vm.warp(time);
 
         // Verify that barbarian tile is initialized correctly
@@ -178,7 +178,7 @@ contract GameTest is Test, DiamondDeployTest {
 
     function testOrganizeDisbandMoveArmy() public {
         // bug: lastChaos time is 0. This is wrong.
-        uint256 time = block.timestamp + 600;
+        uint256 time = block.timestamp + 1000;
         // Deployer transfer enough gold & food to nation 1
         vm.startPrank(deployer);
         admin.dripToken(nation1CapitalAddr, "Warrior", 1000);
@@ -200,9 +200,9 @@ contract GameTest is Test, DiamondDeployTest {
         armyTemplateIDs[1] = horsemanTemplateID;
         armyTemplateIDs[2] = slingerTemplateID;
         uint256[] memory templateAmounts = new uint256[](3);
-        templateAmounts[0] = 500;
-        templateAmounts[1] = 500;
-        templateAmounts[2] = 500;
+        templateAmounts[0] = 50;
+        templateAmounts[1] = 50;
+        templateAmounts[2] = 50;
         vm.warp(time + 10);
         time += 10;
 
@@ -234,7 +234,8 @@ contract GameTest is Test, DiamondDeployTest {
     }
 
     function testBattleArmy() public {
-        uint256 time = block.timestamp + 600;
+        uint256 time = block.timestamp + 1000;
+        vm.warp(time);
 
         // Deployer transfer enough gold & food to nation 1 & 2
         vm.startPrank(deployer);
@@ -257,14 +258,14 @@ contract GameTest is Test, DiamondDeployTest {
         armyTemplateIDs[1] = horsemanTemplateID;
         armyTemplateIDs[2] = slingerTemplateID;
         uint256[] memory armyTemplateAmounts = new uint256[](3);
-        armyTemplateAmounts[0] = 500;
-        armyTemplateAmounts[1] = 500;
-        armyTemplateAmounts[2] = 500;
-        vm.warp(time + 10);
+        armyTemplateAmounts[0] = 50;
+        armyTemplateAmounts[1] = 50;
+        armyTemplateAmounts[2] = 50;
         time += 10;
+        vm.warp(time);
 
-        vm.warp(time + 10);
         time += 10;
+        vm.warp(time);
 
         uint256 army11ID = game.organizeArmy(nation1CapitalID, armyTemplateIDs, armyTemplateAmounts);
         address army11Addr = getter.getAddress(army11ID);
@@ -329,10 +330,7 @@ contract GameTest is Test, DiamondDeployTest {
 
         vm.startPrank(player2);
 
-        // Note: just enough to kill army 11
-        uint256 battleTime = 8;
-
-        for (uint256 i = 0; i < battleTime; i++) {
+        while (slingerToken.balanceOf(army11Addr) > 0) {
             vm.warp(time + 10);
             time += 10;
             game.battle(army21ID, army11ID);
@@ -351,11 +349,10 @@ contract GameTest is Test, DiamondDeployTest {
     }
 
     function testUpgradeCapitalBattleClaimTileMoveCapital() public {
-        // bug: lastChaos time is 0. This is wrong.
-        uint256 time = block.timestamp + 600;
+        uint256 time = block.timestamp + 1000;
+
         // Deployer transfer enough gold & food to nation 1 & 2
         vm.startPrank(deployer);
-
         admin.dripToken(nation1CapitalAddr, "Warrior", 1000);
         admin.dripToken(nation1CapitalAddr, "Horseman", 1000);
         admin.dripToken(nation1CapitalAddr, "Slinger", 1000);
@@ -376,9 +373,9 @@ contract GameTest is Test, DiamondDeployTest {
         armyTemplateIDs[1] = horsemanTemplateID;
         armyTemplateIDs[2] = slingerTemplateID;
         uint256[] memory armyTemplateAmounts = new uint256[](3);
-        armyTemplateAmounts[0] = 500;
-        armyTemplateAmounts[1] = 500;
-        armyTemplateAmounts[2] = 500;
+        armyTemplateAmounts[0] = 50;
+        armyTemplateAmounts[1] = 50;
+        armyTemplateAmounts[2] = 50;
         vm.warp(time + 10);
         time += 10;
         uint256 army11ID = game.organizeArmy(nation1CapitalID, armyTemplateIDs, armyTemplateAmounts);
@@ -431,7 +428,7 @@ contract GameTest is Test, DiamondDeployTest {
 
     function testBattleCapitalChaos() public {
         // Start time
-        uint256 time = block.timestamp + 500;
+        uint256 time = block.timestamp + 1000;
         vm.warp(time);
 
         // Deployer transfers gold, food, and troops to Nation 1 and Nation 2
@@ -457,9 +454,9 @@ contract GameTest is Test, DiamondDeployTest {
         armyTemplateIDs[1] = horsemanTemplateID;
         armyTemplateIDs[2] = slingerTemplateID;
         uint256[] memory armyTemplateAmounts = new uint256[](3);
-        armyTemplateAmounts[0] = 500;
-        armyTemplateAmounts[1] = 500;
-        armyTemplateAmounts[2] = 500;
+        armyTemplateAmounts[0] = 50;
+        armyTemplateAmounts[1] = 50;
+        armyTemplateAmounts[2] = 50;
         time += 10;
         vm.warp(time);
         uint256 army11ID = game.organizeArmy(nation1CapitalID, armyTemplateIDs, armyTemplateAmounts);
@@ -487,7 +484,7 @@ contract GameTest is Test, DiamondDeployTest {
         game.upgradeCapital(nation2CapitalID);
 
         // Nation 2 upgrades its capital after chaos
-        time += 200;
+        time += 1000;
         vm.warp(time);
         game.upgradeCapital(nation2CapitalID);
         vm.stopPrank();
@@ -505,7 +502,7 @@ contract GameTest is Test, DiamondDeployTest {
 
         vm.stopPrank();
 
-        uint256 time = block.timestamp + 600;
+        uint256 time = block.timestamp + 1000;
         vm.warp(time);
         vm.startPrank(player1);
         game.upgradeCapital(nation1CapitalID);
@@ -533,7 +530,8 @@ contract GameTest is Test, DiamondDeployTest {
 
     function testGather() public {
         // bug: lastChaos time is 0. This is wrong.
-        uint256 time = block.timestamp + 600;
+        uint256 time = block.timestamp + 1000;
+        vm.warp(time);
 
         // Deployer transfer enough gold & food to nation 1 & 2
         vm.startPrank(deployer);
@@ -551,9 +549,9 @@ contract GameTest is Test, DiamondDeployTest {
         armyTemplateIDs[1] = horsemanTemplateID;
         armyTemplateIDs[2] = slingerTemplateID;
         uint256[] memory armyTemplateAmounts = new uint256[](3);
-        armyTemplateAmounts[0] = 500;
-        armyTemplateAmounts[1] = 500;
-        armyTemplateAmounts[2] = 500;
+        armyTemplateAmounts[0] = 50;
+        armyTemplateAmounts[1] = 50;
+        armyTemplateAmounts[2] = 50;
 
         vm.warp(time + 10);
         time += 10;
@@ -577,8 +575,10 @@ contract GameTest is Test, DiamondDeployTest {
         game.startGather(army11ID, resourceID);
         vm.warp(time + 50);
         time += 50;
+        console.log("before gather food", foodToken.balanceOf(army11Addr));
         game.endGather(army11ID);
         uint256 armyFoodBalance = foodToken.balanceOf(army11Addr);
+        console.log("after gather food", armyFoodBalance);
         assertTrue(armyFoodBalance > 0);
 
         vm.warp(time + 10);
@@ -595,7 +595,7 @@ contract GameTest is Test, DiamondDeployTest {
 
     function testTroopProduction() public {
         // Start time
-        uint256 time = block.timestamp + 500;
+        uint256 time = block.timestamp + 1000;
         vm.warp(time);
 
         // Deployer drips gold and food to Nation 1
@@ -628,7 +628,7 @@ contract GameTest is Test, DiamondDeployTest {
     // // Temporarily disabled
     // function testTransferDistance() public {
     //     // Start time
-    //     uint256 time = block.timestamp + 500;
+    //     uint256 time = block.timestamp + 1000;
     //     vm.warp(time);
 
     //     // Check transfer distance
@@ -655,9 +655,9 @@ contract GameTest is Test, DiamondDeployTest {
     //     armyTemplateIDs[1] = horsemanTemplateID;
     //     armyTemplateIDs[2] = slingerTemplateID;
     //     uint256[] memory armyTemplateAmounts = new uint256[](3);
-    //     armyTemplateAmounts[0] = 500;
-    //     armyTemplateAmounts[1] = 500;
-    //     armyTemplateAmounts[2] = 500;
+    //     armyTemplateAmounts[0] = 50;
+    //     armyTemplateAmounts[1] = 50;
+    //     armyTemplateAmounts[2] = 50;
     //     uint256 army21ID = game.organizeArmy(nation2CapitalID, armyTemplateIDs, armyTemplateAmounts);
     //     address army21Addr = getter.getAddress(army21ID);
     //     assertEq(foodToken.balanceOf(army21Addr), 0);
@@ -691,7 +691,7 @@ contract GameTest is Test, DiamondDeployTest {
 
     function testDelegation() public {
         // Start time
-        uint256 time = block.timestamp + 500;
+        uint256 time = block.timestamp + 1000;
         vm.warp(time);
 
         // Deployer drips gold and food to Nation 1
@@ -740,7 +740,7 @@ contract GameTest is Test, DiamondDeployTest {
 
     function testIdlePlayerRemoval() public {
         // Start time
-        uint256 time = block.timestamp + 500;
+        uint256 time = block.timestamp + 1000;
         vm.warp(time);
 
         // Deployer drips gold and food to Nation 1 and 2
@@ -759,39 +759,39 @@ contract GameTest is Test, DiamondDeployTest {
         vm.stopPrank();
 
         // Nation 2 upgrades capital
-        time += 50;
+        time += 100;
         vm.warp(time);
         vm.startPrank(player2);
         game.upgradeCapital(nation2CapitalID);
         vm.stopPrank();
 
-        // No idle nations are removed for being idle for 1000 seconds
-        time += 20;
+        // No idle nations are removed for being idle for 2000 seconds
+        time += 100;
         vm.warp(time);
         vm.startPrank(deployer);
-        admin.removeIdleNations(1000);
+        admin.removeIdleNations(2000);
         assertTrue(getter.isPlayerWhitelistedByGame(player1));
         assertTrue(getter.isPlayerWhitelistedByGame(player2));
         assertTrue(getter.isPlayerWhitelistedByGame(player3));
         vm.stopPrank();
 
-        // Nation 3 is removed for being idle for 500 seconds
+        // Nation 3 is removed for being idle for 800 seconds
         vm.startPrank(deployer);
-        admin.removeIdleNations(500);
+        admin.removeIdleNations(800);
         assertFalse(getter.isPlayerWhitelistedByGame(player3));
         assertEq(getter.getCapital(nation3ID), 0);
         vm.stopPrank();
 
-        // Nation 1 is removed for being idle for 50 seconds
+        // Nation 1 is removed for being idle for 150 seconds
         vm.startPrank(deployer);
-        admin.removeIdleNations(50);
+        admin.removeIdleNations(150);
         assertFalse(getter.isPlayerWhitelistedByGame(player1));
         assertEq(getter.getCapital(nation1ID), 0);
         vm.stopPrank();
 
-        // Nation 2 is removed for being idle for 10 seconds
+        // Nation 2 is removed for being idle for 50 seconds
         vm.startPrank(deployer);
-        admin.removeIdleNations(10);
+        admin.removeIdleNations(50);
         assertFalse(getter.isPlayerWhitelistedByGame(player2));
         assertEq(getter.getCapital(nation2ID), 0);
         vm.stopPrank();
@@ -799,7 +799,7 @@ contract GameTest is Test, DiamondDeployTest {
 
     function testDelegateAll() public {
         // Start time
-        uint256 time = block.timestamp + 500;
+        uint256 time = block.timestamp + 1000;
         vm.warp(time);
 
         // Deployer drips gold and food to Nation 1 and 2

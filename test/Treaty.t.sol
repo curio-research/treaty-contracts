@@ -29,7 +29,7 @@ contract TreatyTest is Test, DiamondDeployTest {
 
     function testDelegation() public {
         // Start time
-        uint256 time = block.timestamp + 500;
+        uint256 time = block.timestamp + 1000;
         vm.warp(time);
 
         // Deployer transfers gold, food, and troops to Nation 2
@@ -48,9 +48,9 @@ contract TreatyTest is Test, DiamondDeployTest {
         armyTemplateIDs[1] = warriorTemplateID;
         armyTemplateIDs[2] = slingerTemplateID;
         uint256[] memory armyTemplateAmounts = new uint256[](3);
-        armyTemplateAmounts[0] = 100;
-        armyTemplateAmounts[1] = 100;
-        armyTemplateAmounts[2] = 100;
+        armyTemplateAmounts[0] = 50;
+        armyTemplateAmounts[1] = 50;
+        armyTemplateAmounts[2] = 50;
         uint256 army21ID = game.organizeArmy(nation2CapitalID, armyTemplateIDs, armyTemplateAmounts);
         time += 1;
         vm.warp(time);
@@ -137,7 +137,7 @@ contract TreatyTest is Test, DiamondDeployTest {
 
     function testApproval() public {
         // Start time
-        uint256 time = block.timestamp + 500;
+        uint256 time = block.timestamp + 1000;
         vm.warp(time);
 
         // Check initial condition
@@ -180,7 +180,7 @@ contract TreatyTest is Test, DiamondDeployTest {
         assertEq(abi.decode(getter.getComponent("Level").getBytesValue(nation2CapitalID), (uint256)), 1);
 
         // Nation 2 upgrades capital via Treaty function
-        time += 30;
+        time += 3000;
         vm.warp(time);
         testTreaty.treatyUpgradeCapital(nation2CapitalID);
         assertEq(abi.decode(getter.getComponent("Level").getBytesValue(nation2CapitalID), (uint256)), 2);
@@ -189,7 +189,7 @@ contract TreatyTest is Test, DiamondDeployTest {
         testTreaty.treatyLeave();
 
         // Nation 2 upgrades capital
-        time += 30;
+        time += 3000;
         vm.warp(time);
         game.upgradeCapital(nation2CapitalID);
         assertEq(abi.decode(getter.getComponent("Level").getBytesValue(nation2CapitalID), (uint256)), 3);
@@ -198,7 +198,7 @@ contract TreatyTest is Test, DiamondDeployTest {
 
     function testAlliance() public {
         // Start time
-        uint256 time = block.timestamp + 500;
+        uint256 time = block.timestamp + 1000;
         vm.warp(time);
 
         // Deployer transfers gold, food, and troops to Nation 1, 2, and 3
@@ -229,9 +229,9 @@ contract TreatyTest is Test, DiamondDeployTest {
         armyTemplateIDs[1] = horsemanTemplateID;
         armyTemplateIDs[2] = slingerTemplateID;
         uint256[] memory armyTemplateAmounts = new uint256[](3);
-        armyTemplateAmounts[0] = 150;
-        armyTemplateAmounts[1] = 150;
-        armyTemplateAmounts[2] = 150;
+        armyTemplateAmounts[0] = 50;
+        armyTemplateAmounts[1] = 50;
+        armyTemplateAmounts[2] = 50;
         time += 10;
         vm.warp(time);
         uint256 army11ID = game.organizeArmy(nation1CapitalID, armyTemplateIDs, armyTemplateAmounts);
@@ -299,9 +299,9 @@ contract TreatyTest is Test, DiamondDeployTest {
 
         // Nation 2 organizes army
         vm.startPrank(player2);
-        armyTemplateAmounts[0] = 150;
-        armyTemplateAmounts[1] = 150;
-        armyTemplateAmounts[2] = 150;
+        armyTemplateAmounts[0] = 50;
+        armyTemplateAmounts[1] = 50;
+        armyTemplateAmounts[2] = 50;
         uint256 army21ID = game.organizeArmy(nation2CapitalID, armyTemplateIDs, armyTemplateAmounts);
         address army21Addr = getter.getAddress(army21ID);
         vm.stopPrank();
@@ -313,12 +313,12 @@ contract TreatyTest is Test, DiamondDeployTest {
         assertTrue(getter.getNationTreatySignature(nation3ID, allianceID) > 0);
 
         // Nation 3 organizes army
-        armyTemplateAmounts[0] = 90;
-        armyTemplateAmounts[1] = 90;
-        armyTemplateAmounts[2] = 90;
+        armyTemplateAmounts[0] = 55;
+        armyTemplateAmounts[1] = 55;
+        armyTemplateAmounts[2] = 55;
         uint256 army31ID = game.organizeArmy(nation3CapitalID, armyTemplateIDs, armyTemplateAmounts);
         address army31Addr = getter.getAddress(army31ID);
-        assertEq(horsemanToken.balanceOf(army31Addr), 90);
+        assertEq(horsemanToken.balanceOf(army31Addr), 55);
 
         // Nation 3 moves army from (52, 22) to (59, 31)
         time += 1;
@@ -359,12 +359,12 @@ contract TreatyTest is Test, DiamondDeployTest {
 
         // Nation 1 triggers Alliance to besiege Nation 2's army until it is destroyed
         // Nation 1's army and Nation 3's army should both survive
-        assertEq(horsemanToken.balanceOf(army21Addr), 150);
+        assertEq(horsemanToken.balanceOf(army21Addr), 50);
         time += 2;
         vm.warp(time);
         alliance.treatyBesiege(army21ID);
         assertTrue(horsemanToken.balanceOf(army11Addr) < army11HorsemanBalance);
-        assertTrue(horsemanToken.balanceOf(army21Addr) < 150);
+        assertTrue(horsemanToken.balanceOf(army21Addr) < 50);
         assertTrue(horsemanToken.balanceOf(army31Addr) < 90);
         while (getter.getNation(army21ID) != 0) {
             time += 2;
@@ -378,7 +378,7 @@ contract TreatyTest is Test, DiamondDeployTest {
 
     function testMercenaryLeague() public {
         // Start time
-        uint256 time = block.timestamp + 500;
+        uint256 time = block.timestamp + 1000;
         vm.warp(time);
 
         // Deployer transfers gold, food, and troops to Nation 1, 2, and 3
@@ -409,9 +409,9 @@ contract TreatyTest is Test, DiamondDeployTest {
         armyTemplateIDs[1] = horsemanTemplateID;
         armyTemplateIDs[2] = slingerTemplateID;
         uint256[] memory armyTemplateAmounts = new uint256[](3);
-        armyTemplateAmounts[0] = 150;
-        armyTemplateAmounts[1] = 150;
-        armyTemplateAmounts[2] = 150;
+        armyTemplateAmounts[0] = 50;
+        armyTemplateAmounts[1] = 50;
+        armyTemplateAmounts[2] = 50;
         time += 10;
         vm.warp(time);
         uint256 army11ID = game.organizeArmy(nation1CapitalID, armyTemplateIDs, armyTemplateAmounts);
@@ -454,7 +454,7 @@ contract TreatyTest is Test, DiamondDeployTest {
         **/
 
         // Start time
-        uint256 time = block.timestamp + 500;
+        uint256 time = block.timestamp + 1000;
         vm.warp(time);
 
         // Player1 deploys NAPact and whitelists self
@@ -480,9 +480,9 @@ contract TreatyTest is Test, DiamondDeployTest {
         vm.startPrank(player2);
         nonAggressionPact.treatyJoin();
         uint256[] memory armyTemplateAmounts = new uint256[](3);
-        armyTemplateAmounts[0] = 150;
-        armyTemplateAmounts[1] = 150;
-        armyTemplateAmounts[2] = 150;
+        armyTemplateAmounts[0] = 50;
+        armyTemplateAmounts[1] = 50;
+        armyTemplateAmounts[2] = 50;
         uint256[] memory armyTemplateIDs = new uint256[](3);
         armyTemplateIDs[0] = warriorTemplateID;
         armyTemplateIDs[1] = horsemanTemplateID;
@@ -519,7 +519,7 @@ contract TreatyTest is Test, DiamondDeployTest {
         - Player2 transfers gold from its army to player3's capital but reverted
         **/
         // Start time
-        uint256 time = block.timestamp + 500;
+        uint256 time = block.timestamp + 1000;
         vm.warp(time);
 
         // Player1 deploys embargo and whitelists self
@@ -547,9 +547,9 @@ contract TreatyTest is Test, DiamondDeployTest {
         vm.startPrank(player2);
         embargo.treatyJoin();
         uint256[] memory armyTemplateAmounts = new uint256[](3);
-        armyTemplateAmounts[0] = 150;
-        armyTemplateAmounts[1] = 150;
-        armyTemplateAmounts[2] = 150;
+        armyTemplateAmounts[0] = 50;
+        armyTemplateAmounts[1] = 50;
+        armyTemplateAmounts[2] = 50;
         uint256[] memory armyTemplateIDs = new uint256[](3);
         armyTemplateIDs[0] = warriorTemplateID;
         armyTemplateIDs[1] = horsemanTemplateID;
@@ -618,7 +618,7 @@ contract TreatyTest is Test, DiamondDeployTest {
         - Player2 forgot to pay, and player1 kicks player2 out
         - Player2 attacks player1 and succeeds
         */
-        uint256 time = block.timestamp + 500;
+        uint256 time = block.timestamp + 1000;
         vm.warp(time);
 
         // Player1 deploys NAPact and whitelists self
@@ -655,9 +655,9 @@ contract TreatyTest is Test, DiamondDeployTest {
         CurioWallet(nation2CapitalAddr).executeTx(address(foodToken), abi.encodeWithSignature("approve(address,uint256)", address(collectiveDefenseFund), 100000));
         collectiveDefenseFund.treatyJoin();
         uint256[] memory armyTemplateAmounts = new uint256[](3);
-        armyTemplateAmounts[0] = 150;
-        armyTemplateAmounts[1] = 150;
-        armyTemplateAmounts[2] = 150;
+        armyTemplateAmounts[0] = 50;
+        armyTemplateAmounts[1] = 50;
+        armyTemplateAmounts[2] = 50;
         uint256[] memory armyTemplateIDs = new uint256[](3);
         armyTemplateIDs[0] = warriorTemplateID;
         armyTemplateIDs[1] = horsemanTemplateID;
@@ -726,7 +726,7 @@ contract TreatyTest is Test, DiamondDeployTest {
         - p1 deploys contracts and puts on an order to sell 100 gold for 200 food
         - p2 talks to p1 and decides to purchase from p1
          */
-        uint256 time = block.timestamp + 500;
+        uint256 time = block.timestamp + 1000;
         vm.warp(time);
 
         // Player1 deploys Simple OTC
@@ -779,7 +779,7 @@ contract TreatyTest is Test, DiamondDeployTest {
         - p2 attempts to upgrade its capital but fails
          */
 
-        uint256 time = block.timestamp + 500;
+        uint256 time = block.timestamp + 1000;
         vm.warp(time);
 
         // Player1 deploys Handshake deal and propose

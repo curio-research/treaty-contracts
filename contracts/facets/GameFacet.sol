@@ -650,12 +650,18 @@ contract GameFacet is UseStorage {
         // Check army cap
         require(GameLib.getNationArmies(nationID).length < gs().worldConstants.maxArmyCountPerNation, "CURIO: Max number of armies reached");
 
+        // Check total troop amount
+        uint256 totalTroopAmount = GameLib.sum(_amounts);
+        require(
+            totalTroopAmount <= GameLib.getGameParameter("Army", "Troop", "Amount", "", ECSLib.getUint("Level", _capitalID)), // STYLING: DO NOT REMOVE
+            "CURIO: This exceeds the max army size limit. Try forming with less troops"
+        );
+
         // Add army
         address armyAddress = address(new CurioWallet(address(this)));
         armyID = Templates.addArmy(2, 1, 2, gs().worldConstants.tileWidth, nationID, midPosition, tilePosition, armyAddress);
 
         // Collect army traits from individual troop types & transfer troops from nation
-        uint256 load = 0; // sum
         address capitalAddress = ECSLib.getAddress("Address", _capitalID);
 
         require(_templateIDs.length == _amounts.length, "CURIO: Input lengths do not match");
@@ -664,13 +670,11 @@ contract GameFacet is UseStorage {
         // Transfer troops from capital to army
         for (uint256 i = 0; i < _templateIDs.length; i++) {
             CurioERC20 troopToken = CurioERC20(ECSLib.getAddress("Address", _templateIDs[i]));
-
-            load += ECSLib.getUint("Load", _templateIDs[i]) * _amounts[i];
             troopToken.transferFrom(capitalAddress, armyAddress, _amounts[i]);
         }
 
         // Edit army traits
-        ECSLib.setUint("Load", armyID, load);
+        ECSLib.setUint("Load", armyID, (GameLib.getGameParameter("Troop", "Resource", "Load", "", 0) * totalTroopAmount) / 1000);
 
         // Set last action time
         ECSLib.setUint("LastActed", nationID, block.timestamp);
