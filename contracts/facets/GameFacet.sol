@@ -328,7 +328,7 @@ contract GameFacet is UseStorage {
         // Require nations to fully recover the tile before upgrade
         address tileAddress = ECSLib.getAddress("Address", _tileID);
         CurioERC20 guardToken = GameLib.getTokenContract("Guard");
-        uint256 guardAmount = ECSLib.getUint("Amount", GameLib.getInventory(nationID, gs().templates["Guard"]));
+        uint256 guardAmount = ECSLib.getUint("Amount", GameLib.getInventory(_tileID, gs().templates["Guard"]));
         require(GameLib.getGameParameter("Tile", "Guard", "Amount", "", tileLevel) == guardAmount, "CURIO: You must recover tile before upgrading");
 
         // check if upgrade is in process

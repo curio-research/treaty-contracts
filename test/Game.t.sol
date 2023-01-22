@@ -22,7 +22,7 @@ contract GameTest is Test, DiamondDeployTest {
     // - [x] moveCapital
     // Tile:
     // - [x] claimTile
-    // - [ ] upgradeTile
+    // - [x] upgradeTile
     // - [ ] recoverTile
     // - [ ] disownTile
     // Production:
@@ -73,6 +73,31 @@ contract GameTest is Test, DiamondDeployTest {
         // Verify that no armies are initialized
         uint256[] memory nation1ArmyIDs = getter.getNationArmies(nation1ID);
         assertEq(nation1ArmyIDs.length, 0);
+    }
+
+    function testTiles() public {
+        uint256 time = 1000;
+        vm.warp(time);
+        uint256 level1TileUpgradeGoldCost = getter.getGameParameter("Tile", "Gold", "Cost", "Upgrade", 1);
+        console.log("Level 1 tile upgrade gold cost is", level1TileUpgradeGoldCost);
+
+        // Deployer drip resources to Nation 1's capital
+        vm.startPrank(deployer);
+        admin.dripToken(nation1CapitalAddr, "Gold", 100000000);
+        admin.dripToken(nation1CapitalAddr, "Food", 100000000);
+        vm.stopPrank();
+
+        // Verify tile ownership and level
+        uint256 nation1CapitalTileID = getter.getTileAt(nation1Pos);
+        assertEq(abi.decode(getter.getComponent("Nation").getBytesValue(nation1CapitalTileID), (uint256)), nation1ID);
+        assertEq(abi.decode(getter.getComponent("Level").getBytesValue(nation1CapitalTileID), (uint256)), 1);
+
+        // Nation 1 upgrades capital tile
+        vm.startPrank(player1);
+        game.upgradeTile(nation1CapitalTileID);
+        vm.stopPrank();
+        assertEq(abi.decode(getter.getComponent("Level").getBytesValue(nation1CapitalTileID), (uint256)), 2);
+        assertEq(goldToken.balanceOf(nation1CapitalAddr), 100000000 - level1TileUpgradeGoldCost);
     }
 
     function testGameParameter() public {
