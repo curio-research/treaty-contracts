@@ -3218,46 +3218,6 @@
     {
         "componentName": "Amount",
         "functionName": "",
-        "level": 0,
-        "object": "Guard",
-        "subject": "Tile",
-        "value": 29
-    },
-    {
-        "componentName": "Cooldown",
-        "functionName": "Recover",
-        "level": 0,
-        "object": "",
-        "subject": "Tile",
-        "value": 14
-    },
-    {
-        "componentName": "Cost",
-        "functionName": "Upgrade",
-        "level": 0,
-        "object": "Gold",
-        "subject": "Tile",
-        "value": 169162
-    },
-    {
-        "componentName": "Cost",
-        "functionName": "Upgrade",
-        "level": 0,
-        "object": "Food",
-        "subject": "Tile",
-        "value": 4229053
-    },
-    {
-        "componentName": "Cooldown",
-        "functionName": "Upgrade",
-        "level": 0,
-        "object": "",
-        "subject": "Tile",
-        "value": 14
-    },
-    {
-        "componentName": "Amount",
-        "functionName": "",
         "level": 1,
         "object": "Guard",
         "subject": "Tile",

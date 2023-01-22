@@ -4,6 +4,11 @@ from enum import Enum
 from types import LambdaType
 import numpy as np
 import json
+import pandas as pd
+from pathlib import Path
+import os
+
+
 
 import sys
 
@@ -721,7 +726,7 @@ class Game:
             curr_level += 1
 
         # Tile Stats
-        curr_level = 0
+        curr_level = 1
         max_tile_level = self.max_capital_level * \
             self.capital_level_to_building_level
 
@@ -781,9 +786,81 @@ class Game:
             outfile.write(json.dumps(game_parameters, indent=4))
         with open("tasks/world_parameters.json", "w+") as outfile:
             outfile.write(json.dumps(world_parameters, indent=4))
-        print('GodOS: generated and exported parameters')
+        print('GodOS: generated and exported parameters into json')
+
+    def export_excel_parameters(self):
+        # Tile Stats
+        # Initialize tile_stats as an empty DataFrame
+        tile_stats = pd.DataFrame(columns=['Level', 'Cooldown: Upgrade', 'Cooldown: moveCapital', 'Cost: Gold', 'Cost: Food', 'Amount: Guard'])
+
+        # Assign the maximum level of the tile
+        max_tile_level = self.max_capital_level * \
+            self.capital_level_to_building_level
+
+        # Initialize curr_level
+        curr_level = 1
+
+        # Loop through all the levels of the tile
+        while curr_level <= max_tile_level:
+            level = 'lv' + str(curr_level)
+            (cost_gold, cost_food) = get_tile_upgrade_cost(curr_level)
+            
+            tile_stats = tile_stats.append({
+                'Level': level,
+                'Cooldown: Upgrade': get_tile_upgrade_cooldown_in_second(curr_level),
+                'Cooldown: moveCapital': get_move_capital_cooldown_in_hour(curr_level),
+                'Cost: Gold': cost_gold,
+                'Cost: Food': cost_food,
+                'Amount: Guard': get_tile_troop_count(curr_level)},
+                ignore_index=True)
+
+            curr_level += 1
+
+        # Building Stats
+        # Initialize building_stats as an empty DataFrame
+        building_stats = pd.DataFrame(columns=['Level', 'Cooldown: Upgrade', 'Cooldown: moveCapital', 'Cost: Gold', 'Cost: Food', 'Amount: Guard'])
+
+        for bt in [Building.GOLDMINE, Building.FARM, Building.CAPITAL]:
+            max_building_level = 1
+            building_type = bt
+            if bt == Building.GOLDMINE:
+                max_building_level = self.max_capital_level * \
+                    self.capital_level_to_building_level
+            elif bt == Building.FARM:
+                max_building_level = self.max_capital_level * \
+                    self.capital_level_to_building_level
+            elif bt == Building.CAPITAL:
+                max_building_level = self.max_capital_level
+
+            curr_level = 0
+
+            while curr_level <= max_building_level:
+                (gold_upgrade_cost, food_upgrade_cost) = get_building_upgrade_cost(
+                    curr_level, building_type)
+                (gold_hourly_yield, food_hourly_yield) = get_building_hourly_yield_by_level(
+                    curr_level, building_type)
+                (gold_cap, food_cap) = get_building_resource_cap(
+                    curr_level, building_type)
+
+
+        # Export tile_stats into an excel file
+        filepath = os.path.join(os.path.expanduser('~'),'Desktop')
+        filename = 'treaty_stats.xlsx'
+        file_path = os.path.join(filepath, filename)
+        
+        # Create an ExcelWriter object
+        writer = pd.ExcelWriter(file_path, engine='xlsxwriter')
+
+        # Write the DataFrame 'tile_stats' to sheet 'Tile'
+        tile_stats.to_excel(writer, sheet_name='Tile', index=False)
+
+        # Save the excel file
+        writer.save()
+        print('GodOS: generated and exported parameters into excel')
+
 
 
 # change here when switching game mode
 game_instance = Game(GameMode.INTERNAL_PLAYTEST)
 game_instance.export_json_parameters()
+game_instance.export_excel_parameters()

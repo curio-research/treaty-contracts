@@ -1,8 +1,8 @@
 {
     "componentName": "Amount",
     "functionName": "",
-    "level": 0,
+    "level": 1,
     "object": "Guard",
     "subject": "Tile",
-    "value": 29
+    "value": 51
 }

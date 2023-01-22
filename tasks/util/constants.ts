@@ -150,7 +150,7 @@ export const treatyDescriptions: Record<string, Record<string, string>> = {
   SimpleOTC: {
     treatyLeave: 'Leave the SimpleOTC treaty.',
     treatyJoin: 'Join the SimpleOTC treaty.',
-    createOrder: 'Create a an order of how much token you want to sell in return for another token type.',
+    createOrder: 'Create an order of how much token you want to sell in return for another token type.',
     cancelOrder: 'Cancel your last order.',
     takeOrder: 'Take an order from the creator.',
   },

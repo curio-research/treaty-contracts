@@ -1,8 +1,8 @@
 {
     "componentName": "Cost",
     "functionName": "Upgrade",
-    "level": 5,
+    "level": 6,
     "object": "Gold",
     "subject": "Tile",
-    "value": 241773
+    "value": 259674
 }
