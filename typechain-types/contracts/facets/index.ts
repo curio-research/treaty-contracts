@@ -7,3 +7,4 @@ export type { DiamondLoupeFacet } from "./DiamondLoupeFacet";
 export type { GameFacet } from "./GameFacet";
 export type { GetterFacet } from "./GetterFacet";
 export type { OwnershipFacet } from "./OwnershipFacet";
+export type { UselessFacet } from "./UselessFacet";

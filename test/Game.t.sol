@@ -41,7 +41,7 @@ contract GameTest is Test, DiamondDeployTest {
     // - [x] upgradeResource
     // Battle:
     // - [x] battle (army vs. army)
-    // - [ ] battle (army vs. tile)
+    // - [x] battle (army vs. tile)
     // Treaty:
     // - [x] delegateGameFunction
 
@@ -92,6 +92,90 @@ contract GameTest is Test, DiamondDeployTest {
         assertEq(abi.decode(getter.getComponent("Amount").getBytesValue(parameterID), (uint256)), newValue);
     }
 
+    function testBarbarianReward() public {
+        uint256 time = 1000;
+        vm.warp(time);
+
+        // Verify that barbarian tile is initialized correctly
+        uint256 barbarinaTileID = getter.getTileAt(barbarinaTilePos);
+        address barbarinaTileAddr = getter.getAddress(barbarinaTileID);
+        assertEq(abi.decode(getter.getComponent("Terrain").getBytesValue(barbarinaTileID), (uint256)), 4);
+        assertEq(abi.decode(getter.getComponent("Level").getBytesValue(barbarinaTileID), (uint256)), 8);
+        uint256 barbarianReward = getter.getGameParameter("Barbarian", "Gold", "Reward", "", 8);
+        console.log("Barbarian gold reward is", barbarianReward);
+
+        // Drip resources and troops to Nation 2's capital
+        vm.startPrank(deployer);
+        admin.dripToken(nation2CapitalAddr, "Horseman", 1000);
+        vm.stopPrank();
+
+        // Verify original state
+        assertEq(horsemanToken.balanceOf(nation2CapitalAddr), 1000);
+        assertEq(goldToken.balanceOf(nation2CapitalAddr), 0);
+        assertEq(foodToken.balanceOf(nation2CapitalAddr), 0);
+
+        vm.startPrank(player2);
+
+        // Nation 2 organizes army 1
+        uint256[] memory armyTemplateIDs = new uint256[](1);
+        armyTemplateIDs[0] = horsemanTemplateID;
+        uint256[] memory templateAmounts = new uint256[](1);
+        templateAmounts[0] = 150;
+        uint256 army1ID = game.organizeArmy(nation2CapitalID, armyTemplateIDs, templateAmounts);
+
+        // Verify that army 1 is at (62, 32)
+        Position memory army1Position = getter.getPositionExternal("Position", army1ID);
+        assertEq(army1Position.x, 62);
+        assertEq(army1Position.y, 32);
+
+        // Nation 2 moves army 1 from (62, 32) to (62, 48)
+        for (uint256 i = 1; i <= 8; i++) {
+            time += 1;
+            vm.warp(time);
+            game.move(army1ID, Position({x: 62, y: 32 + 2 * i}));
+        }
+
+        // Verify that army 1 is at (62, 48)
+        army1Position = getter.getPositionExternal("Position", army1ID);
+        assertEq(army1Position.x, 62);
+        assertEq(army1Position.y, 48);
+
+        // Nation 2 organizes army 2
+        uint256 army2ID = game.organizeArmy(nation2CapitalID, armyTemplateIDs, templateAmounts);
+
+        // Nation 2 moves army 2 from (62, 32) to (62, 49)
+        for (uint256 i = 1; i <= 7; i++) {
+            time += 1;
+            vm.warp(time);
+            game.move(army2ID, Position({x: 62, y: 32 + 2 * i}));
+        }
+        time += 1;
+        vm.warp(time);
+        game.move(army2ID, Position({x: 62, y: 47}));
+        time += 1;
+        vm.warp(time);
+        game.move(army2ID, Position({x: 62, y: 49}));
+
+        // Nation 2 uses both armies to subjugate barbarian at tile position (60, 50)
+        time += 2;
+        vm.warp(time);
+        uint256 barbarinaFullHealth = guardToken.balanceOf(barbarinaTileAddr);
+        game.battle(army2ID, barbarinaTileID);
+
+        while (guardToken.balanceOf(barbarinaTileAddr) < barbarinaFullHealth) {
+            time += 2;
+            vm.warp(time);
+            game.battle(army1ID, barbarinaTileID);
+            if (guardToken.balanceOf(barbarinaTileAddr) == barbarinaFullHealth) break;
+            game.battle(army2ID, barbarinaTileID);
+        }
+
+        // Verify that barbarian reward is received
+        assertEq(goldToken.balanceOf(nation2CapitalAddr), barbarianReward);
+
+        vm.stopPrank();
+    }
+
     function testOrganizeDisbandMoveArmy() public {
         // bug: lastChaos time is 0. This is wrong.
         uint256 time = block.timestamp + 600;
@@ -111,18 +195,18 @@ contract GameTest is Test, DiamondDeployTest {
 
         uint256 nation1CapitalID = getter.getCapital(nation1ID);
 
-        uint256[] memory chinaArmyTemplateIDs = new uint256[](3);
-        chinaArmyTemplateIDs[0] = warriorTemplateID;
-        chinaArmyTemplateIDs[1] = horsemanTemplateID;
-        chinaArmyTemplateIDs[2] = slingerTemplateID;
-        uint256[] memory chinaTemplateAmounts = new uint256[](3);
-        chinaTemplateAmounts[0] = 500;
-        chinaTemplateAmounts[1] = 500;
-        chinaTemplateAmounts[2] = 500;
+        uint256[] memory armyTemplateIDs = new uint256[](3);
+        armyTemplateIDs[0] = warriorTemplateID;
+        armyTemplateIDs[1] = horsemanTemplateID;
+        armyTemplateIDs[2] = slingerTemplateID;
+        uint256[] memory templateAmounts = new uint256[](3);
+        templateAmounts[0] = 500;
+        templateAmounts[1] = 500;
+        templateAmounts[2] = 500;
         vm.warp(time + 10);
         time += 10;
 
-        uint256 army11ID = game.organizeArmy(nation1CapitalID, chinaArmyTemplateIDs, chinaTemplateAmounts);
+        uint256 army11ID = game.organizeArmy(nation1CapitalID, armyTemplateIDs, templateAmounts);
         address army11Addr = getter.getAddress(army11ID);
         assertEq(warriorToken.balanceOf(nation1CapitalAddr) + warriorToken.balanceOf(army11Addr), 1000);
         assertEq(slingerToken.balanceOf(nation1CapitalAddr) + warriorToken.balanceOf(army11Addr), 1000);
