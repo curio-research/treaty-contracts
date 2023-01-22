@@ -105,10 +105,13 @@ export const treatyDescriptions: Record<string, Record<string, string>> = {
     headerImage: 'https://www.militarytimes.com/resizer/RhWHiePxZUim5AvA2jEFR6zExdM=/arc-photo-archetype/arc3-prod/public/M3G7VLLKZ5F7DKNTREOSANBWIE.jpg',
     treatyJoin: 'Pay 1000 gold tokens to join the alliance and be granted protection.',
     treatyLeave: 'Leave the alliance and lose protection.',
+    getTreatySigners: 'Get the list of treaty signers.',
     treatyBesiege: 'Battle a target army belonging to a non-ally nation with all nearby ally armies.',
   },
   CollectiveDefenseFund: {
     headerImage: 'https://ik.imagekit.io/po8th4g4eqj/prod/tr:w-1168/nato-flags-1168x440.jpg',
+    getCouncilMembers: 'Get the list of council members.',
+    getTreatySigners: 'Get the list of treaty signers.',
     treatyJoin: 'Pay for the fund membership and be granted protection.',
     treatyLeave: 'Leave the fund and lose protection.',
     payMembershipFee: 'Pay the membership fee to keep your membership active.',
@@ -124,8 +127,10 @@ export const treatyDescriptions: Record<string, Record<string, string>> = {
     distributeFund: 'Distribute the fund to a certain entity.',
   },
   Embargo: {
+    headerImage: 'https://spectrum.ieee.org/media-library/photo-of-the-emma-maersk-cargo-ship.jpg?id=25585784&width=2400&height=1800',
     treatyLeave: 'Leave the embargo treaty.',
     treatyJoin: 'Join the embargo treaty.',
+    getTreatySigners: 'Get the list of treaty signers.',
     addToSanctionList: 'Add a nation to the sanction list, so members canont trade with it.',
     removeFromSanctionList: 'Remove a nation from the sanction list.',
     removeMember: 'Remove a nation from the Embargo treaty.',
@@ -133,6 +138,7 @@ export const treatyDescriptions: Record<string, Record<string, string>> = {
   NonAggressionPact: {
     treatyLeave: 'Leave the NonAggressionPact treaty.',
     treatyJoin: 'Join the NonAggressionPact treaty.',
+    getTreatySigners: 'Get the list of treaty signers.',
     addToWhiteList: 'Add a nation to the whitelist.',
     removeFromWhiteList: 'Remove a nation from the whitelist.',
     removeMember: 'Remove a nation from the NonAggressionPact treaty.',
@@ -140,6 +146,7 @@ export const treatyDescriptions: Record<string, Record<string, string>> = {
   MercenaryLeague: {
     treatyLeave: 'Leave the MercenaryLeague treaty.',
     treatyJoin: 'Join the MercenaryLeague treaty.',
+    getTreatySigners: 'Get the list of treaty signers.',
     addToWarCouncil: 'Add a nation to the war council that can conscript armies from member nations.',
     removeFromWarCouncil: 'Remove a nation from the war council.',
     setConsciptionDuration: 'Set the conscription duration.',
@@ -150,6 +157,7 @@ export const treatyDescriptions: Record<string, Record<string, string>> = {
   SimpleOTC: {
     treatyLeave: 'Leave the SimpleOTC treaty.',
     treatyJoin: 'Join the SimpleOTC treaty.',
+    getTreatySigners: 'Get the list of treaty signers.',
     createOrder: 'Create an order of how much token you want to sell in return for another token type.',
     cancelOrder: 'Cancel your last order.',
     takeOrder: 'Take an order from the creator.',

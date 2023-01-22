@@ -12,6 +12,18 @@ contract NonAggressionPact is CurioTreaty {
         description = "Member nations cannot battle armies or tiles of one another";
     }
 
+    // ----------------------------------------------------------
+    // Set getters
+    // ----------------------------------------------------------
+
+    function getTreatySigners() public view returns (uint256[] memory) {
+        return admin.getTreatySigners(getter.getEntityByAddress(address (this)));
+    }
+
+    // ----------------------------------------------------------
+    // Owner functionos
+    // ---------------------------------------------------------- 
+
     function addToWhitelist(uint256 _nationID) public onlyOwner {
         admin.addToTreatyWhitelist(_nationID);
     }
@@ -24,6 +36,10 @@ contract NonAggressionPact is CurioTreaty {
         admin.removeFromTreatyWhitelist(_nationID); // need to be whitelisted again for joining
         admin.removeSigner(_nationID);
     }
+
+    // ----------------------------------------------------------
+    // Player functionos
+    // ---------------------------------------------------------- 
 
     function treatyJoin() public override onlyWhitelist {
         super.treatyJoin();

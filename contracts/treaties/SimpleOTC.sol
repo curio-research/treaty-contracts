@@ -24,6 +24,18 @@ contract SimpleOTC is CurioTreaty {
         emptyOrder = Order({sellTokenName: "", sellAmount: 0, buyTokenName: "", buyAmount: 0, createdAt: 0});
     }
 
+    // ----------------------------------------------------------
+    // Set getters
+    // ----------------------------------------------------------
+
+    function getTreatySigners() public view returns (uint256[] memory) {
+        return admin.getTreatySigners(getter.getEntityByAddress(address (this)));
+    }
+
+    // ----------------------------------------------------------
+    // Owner functions
+    // ----------------------------------------------------------
+
     /**
      * @dev Create an order. Must be called by a nation.
      * @param _sellTokenName name of the token to sell
