@@ -3,6 +3,8 @@ pragma solidity ^0.8.13;
 
 import {CurioTreaty} from "contracts/standards/CurioTreaty.sol";
 import {CurioERC20} from "contracts/standards/CurioERC20.sol";
+import {AdminFacet} from "contracts/facets/AdminFacet.sol";
+import {GetterFacet} from "contracts/facets/GetterFacet.sol";
 import {Position} from "contracts/libraries/Types.sol";
 import {Set} from "contracts/Set.sol";
 
@@ -27,11 +29,11 @@ contract MercenaryLeague is CurioTreaty {
         _;
     }
 
-    function name() external view override returns (string memory) {
+    function name() external pure override returns (string memory) {
         return "Mercenary League";
     }
 
-    function description() external view override returns (string memory) {
+    function description() external pure override returns (string memory) {
         return "A Military Alliance that allows drafting of armies.";
     }
 

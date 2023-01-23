@@ -41,11 +41,11 @@ contract CollectiveDefenseFund is CurioTreaty {
         council = new Set();
     }
 
-    function name() external view override returns (string memory) {
+    function name() external pure override returns (string memory) {
         return "Collective Defense Fund";
     }
 
-    function description() external view override returns (string memory) {
+    function description() external pure override returns (string memory) {
         return "Owner of the League can point to which nation the league is sanctioning";
     }
 

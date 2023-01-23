@@ -10,11 +10,11 @@ import {Position} from "contracts/libraries/Types.sol";
 contract NonAggressionPact is CurioTreaty {
     constructor(address _diamond) CurioTreaty(_diamond) {}
 
-    function name() external view override returns (string memory) {
+    function name() external pure override returns (string memory) {
         return "Non-Aggression Pact";
     }
 
-    function description() external view override returns (string memory) {
+    function description() external pure override returns (string memory) {
         return "Member nations cannot battle armies or tiles of one another";
     }
 

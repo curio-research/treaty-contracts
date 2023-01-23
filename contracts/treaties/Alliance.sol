@@ -15,11 +15,11 @@ contract Alliance is CurioTreaty {
         goldToken = getter.getTokenContract("Gold");
     }
 
-    function name() external view override returns (string memory) {
+    function name() external pure override returns (string memory) {
         return "Alliance";
     }
 
-    function description() external view override returns (string memory) {
+    function description() external pure override returns (string memory) {
         return "A treaty between two or more countries to work together towards a common goal or to defend each other in the case of external aggression";
     }
 

@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.13;
 
+import {AdminFacet} from "contracts/facets/AdminFacet.sol";
 import {GetterFacet} from "contracts/facets/GetterFacet.sol";
 
 abstract contract CurioTreaty {
@@ -42,13 +43,13 @@ abstract contract CurioTreaty {
      * @dev Check if a nation has been a treaty signer for at least a duration.
      * @param _duration duration in seconds
      */
-    function minimumStay(uint256 _duration) public view returns (bool) {
+    modifier minimumStay(uint256 _duration) {
         GetterFacet getter = GetterFacet(diamond);
         uint256 nationID = getter.getEntityByAddress(msg.sender);
         uint256 treatyID = getter.getEntityByAddress(address(this));
 
         // Check if nation has been a treaty signer for at least the duration
-        uint256 nationJoinTime = abi.decode(getter.getComponent("InitTimestamp").getBytesValue(getter.getNationTreatySignature(nationId, treatyID)), (uint256));
+        uint256 nationJoinTime = abi.decode(getter.getComponent("InitTimestamp").getBytesValue(getter.getNationTreatySignature(nationID, treatyID)), (uint256));
         require(block.timestamp >= nationJoinTime + _duration, "Have not stayed for minimum duration");
         _;
     }

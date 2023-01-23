@@ -40,11 +40,11 @@ contract HandshakeDeal is CurioTreaty {
 
     constructor(address _diamond) CurioTreaty(_diamond) {}
 
-    function name() external view override returns (string memory) {
+    function name() external pure override returns (string memory) {
         return "Handshake Deal";
     }
 
-    function description() external view override returns (string memory) {
+    function description() external pure override returns (string memory) {
         return "Flexible handshake agreement between nations";
     }
 

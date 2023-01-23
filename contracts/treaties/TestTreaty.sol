@@ -8,11 +8,11 @@ import {GetterFacet} from "contracts/facets/GetterFacet.sol";
 contract TestTreaty is CurioTreaty {
     constructor(address _diamond) CurioTreaty(_diamond) {}
 
-    function name() external view override returns (string memory) {
+    function name() external pure override returns (string memory) {
         return "Test Treaty";
     }
 
-    function description() external view override returns (string memory) {
+    function description() external pure override returns (string memory) {
         return "Treaty for testing";
     }
 

@@ -22,11 +22,11 @@ contract SimpleOTC is CurioTreaty {
         emptyOrder = Order({sellTokenName: "", sellAmount: 0, buyTokenName: "", buyAmount: 0, createdAt: 0});
     }
 
-    function name() external view override returns (string memory) {
+    function name() external pure override returns (string memory) {
         return "Simple OTC Trading Agreement";
     }
 
-    function description() external view override returns (string memory) {
+    function description() external pure override returns (string memory) {
         return "OTC Trading between players";
     }
 
