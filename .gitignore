@@ -20,3 +20,4 @@ tasks/signers
 crashes
 reports
 pnm-cov.json
+/curio-vault/
