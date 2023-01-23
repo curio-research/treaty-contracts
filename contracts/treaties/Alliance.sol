@@ -1,18 +1,26 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.13;
 
-import {CurioTreaty} from "contracts/standards/CurioTreaty.sol";
 import {CurioERC20} from "contracts/standards/CurioERC20.sol";
+import {CurioTreaty} from "contracts/standards/CurioTreaty.sol";
+import {GameFacet} from "contracts/facets/GameFacet.sol";
+import {GetterFacet} from "contracts/facets/GetterFacet.sol";
 import {Position} from "contracts/libraries/Types.sol";
 
 contract Alliance is CurioTreaty {
     CurioERC20 public goldToken;
 
     constructor(address _diamond) CurioTreaty(_diamond) {
+        GetterFacet getter = GetterFacet(diamond);
         goldToken = getter.getTokenContract("Gold");
+    }
 
-        name = "Alliance";
-        description = "A treaty between two or more countries to work together towards a common goal or to defend each other in the case of external aggression";
+    function name() external pure override returns (string memory) {
+        return "Alliance";
+    }
+
+    function description() external pure override returns (string memory) {
+        return "A treaty between two or more countries to work together towards a common goal or to defend each other in the case of external aggression";
     }
 
     // ----------------------------------------------------------
@@ -20,6 +28,8 @@ contract Alliance is CurioTreaty {
     // ----------------------------------------------------------
 
     function treatyJoin() public override {
+        GetterFacet getter = GetterFacet(diamond);
+
         // Transfer 1000 gold from nation to treaty
         address nationCapitalAddress = getter.getAddress(getter.getCapital(getter.getEntityByAddress(msg.sender)));
         goldToken.transferFrom(nationCapitalAddress, address(this), 1000);
@@ -30,12 +40,11 @@ contract Alliance is CurioTreaty {
         super.treatyJoin();
     }
 
-    function treatyLeave() public override {
-        // Check if nation has stayed in alliance for at least 10 seconds
-        uint256 nationID = getter.getEntityByAddress(msg.sender);
-        require(minimumStayCheck(nationID, 10), "Alliance: Nation must stay for at least 10 seconds");
-
+    function treatyLeave() public override minimumStay(10) {
+        GetterFacet getter = GetterFacet(diamond);
+      
         // Transfer 1000 gold from treaty back to nation
+        uint256 nationID = getter.getEntityByAddress(msg.sender);
         address nationCapitalAddress = getter.getAddress(getter.getCapital(nationID));
         goldToken.transfer(nationCapitalAddress, 1000);
 
@@ -50,6 +59,8 @@ contract Alliance is CurioTreaty {
      * @param _targetArmyID target army entity
      */
     function treatyBesiege(uint256 _targetArmyID) public onlySigner {
+        GetterFacet getter = GetterFacet(diamond);
+     
         // Check if target army is in a non-ally nation
         uint256 targetNationID = getter.getNation(_targetArmyID);
         uint256 treatyID = getter.getEntityByAddress(address(this));
@@ -67,7 +78,7 @@ contract Alliance is CurioTreaty {
                 uint256 armyNationID = getter.getNation(armyIDs[j]);
                 if (getter.getNationTreatySignature(armyNationID, treatyID) != 0) {
                     // Use army to battle target army
-                    game.battle(armyIDs[j], _targetArmyID);
+                    GameFacet(diamond).battle(armyIDs[j], _targetArmyID);
 
                     // Return early if target army is dead
                     if (getter.getNation(_targetArmyID) == 0) return;
@@ -81,6 +92,8 @@ contract Alliance is CurioTreaty {
     // ----------------------------------------------------------
 
     function approveBattle(uint256 _nationID, bytes memory _encodedParams) public view override returns (bool) {
+        GetterFacet getter = GetterFacet(diamond);
+
         // Disapprove if target nation is an ally
         (, , uint256 targetID) = abi.decode(_encodedParams, (uint256, uint256, uint256));
         uint256 targetNationID = getter.getNation(targetID);

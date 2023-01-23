@@ -2,8 +2,9 @@
 pragma solidity ^0.8.13;
 
 import {CurioTreaty} from "contracts/standards/CurioTreaty.sol";
-import {GetterFacet} from "contracts/facets/GetterFacet.sol";
 import {CurioERC20} from "contracts/standards/CurioERC20.sol";
+import {GetterFacet} from "contracts/facets/GetterFacet.sol";
+import {AdminFacet} from "contracts/facets/AdminFacet.sol";
 import {Position} from "contracts/libraries/Types.sol";
 import {Set} from "contracts/Set.sol";
 
@@ -24,6 +25,7 @@ contract CollectiveDefenseFund is CurioTreaty {
     Set public council;
 
     modifier onlyCouncilOrPact() {
+        GetterFacet getter = GetterFacet(diamond);
         uint256 callerID = getter.getEntityByAddress(msg.sender);
         require(council.includes(callerID) || msg.sender == address(this), "CDFund: Only council or pact can call");
         _;
@@ -31,8 +33,7 @@ contract CollectiveDefenseFund is CurioTreaty {
 
     constructor(address _diamond) CurioTreaty(_diamond) {
         // Initialize treaty
-        name = "Collective Defense Fund";
-        description = "Owner of the League can point to which nation the league is sanctioning";
+        GetterFacet getter = GetterFacet(diamond);
         goldToken = getter.getTokenContract("Gold");
         foodToken = getter.getTokenContract("Food");
 
@@ -40,19 +41,30 @@ contract CollectiveDefenseFund is CurioTreaty {
         council = new Set();
     }
 
+    function name() external pure override returns (string memory) {
+        return "Collective Defense Fund";
+    }
+
+    function description() external pure override returns (string memory) {
+        return "Owner of the League can point to which nation the league is sanctioning";
+    }
+
     // ----------------------------------------------------------
     // Owner and council functions
     // ----------------------------------------------------------
 
     function addToWhitelist(uint256 _nationID) public onlyOwner {
+        AdminFacet admin = AdminFacet(diamond);
         admin.addToTreatyWhitelist(_nationID);
     }
 
     function removeFromWhitelist(uint256 _nationID) public onlyOwner {
+        AdminFacet admin = AdminFacet(diamond);
         admin.removeFromTreatyWhitelist(_nationID);
     }
 
     function addToCouncil(uint256 _nationID) public onlyOwner {
+        GetterFacet getter = GetterFacet(diamond);
         require(getter.getNationTreatySignature(_nationID, getter.getEntityByAddress(address(this))) != 0, "CDFund: Only signed nations can join council");
         council.add(_nationID);
     }
@@ -70,6 +82,8 @@ contract CollectiveDefenseFund is CurioTreaty {
     }
 
     function removeMember(uint256 _nationID) public onlyCouncilOrPact {
+        GetterFacet getter = GetterFacet(diamond);
+       
         // Only owner can remove council members
         uint256 treatyID = getter.getEntityByAddress(address(this));
         uint256 ownerID = abi.decode(getter.getComponent("Owner").getBytesValue(treatyID), (uint256));
@@ -79,11 +93,14 @@ contract CollectiveDefenseFund is CurioTreaty {
             require(!council.includes(_nationID), "CDFund: Need owner to `removeFromCouncil` first");
         }
 
+        AdminFacet admin = AdminFacet(diamond);
         admin.removeFromTreatyWhitelist(_nationID); // need to be whitelisted again for joining
         admin.removeSigner(_nationID);
     }
 
     function withdraw(uint256 _goldAmount, uint256 _foodAmount) external onlyCouncilOrPact {
+        GetterFacet getter = GetterFacet(diamond);
+      
         // Check that withdrawal amount is within quota
         require(_goldAmount <= goldWithdrawQuota, "CDFund: Amount exceeds quota");
         require(_foodAmount <= foodWithdrawQuota, "CDFund: Amount exceeds quota");
@@ -104,6 +121,7 @@ contract CollectiveDefenseFund is CurioTreaty {
     }
 
     function removeAllOverdueMembers() external onlyCouncilOrPact {
+        GetterFacet getter = GetterFacet(diamond);
         uint256 treatyID = getter.getEntityByAddress(address(this));
         uint256[] memory signers = getter.getTreatySigners(treatyID);
 
@@ -120,6 +138,8 @@ contract CollectiveDefenseFund is CurioTreaty {
         string memory _resourceType,
         uint256 _amount
     ) external onlyCouncilOrPact {
+        GetterFacet getter = GetterFacet(diamond);
+    
         // Check that withdrawal amount is within quota
         if (_strEq(_resourceType, "Gold")) {
             require(_amount <= goldWithdrawQuota, "CDFund: Amount exceeds quota");
@@ -143,6 +163,8 @@ contract CollectiveDefenseFund is CurioTreaty {
     // ----------------------------------------------------------
 
     function treatyJoin() public override onlyWhitelist {
+        GetterFacet getter = GetterFacet(diamond);
+       
         // Check whether the nation is whitelisted
         uint256 nationID = getter.getEntityByAddress(msg.sender);
         uint256 treatyID = getter.getEntityByAddress(address(this));
@@ -156,6 +178,8 @@ contract CollectiveDefenseFund is CurioTreaty {
     }
 
     function treatyLeave() public override {
+        GetterFacet getter = GetterFacet(diamond);
+       
         // Check if nation has stayed in pact for at least 10 seconds
         uint256 nationID = getter.getEntityByAddress(msg.sender);
         uint256 treatyID = getter.getEntityByAddress(address(this));
@@ -166,6 +190,7 @@ contract CollectiveDefenseFund is CurioTreaty {
         council.remove(nationID);
 
         // Remove nation from whitelist
+        AdminFacet admin = AdminFacet(diamond);
         admin.removeFromTreatyWhitelist(nationID); // need to be whitelisted again to join
 
         // Remove nation's signature
@@ -174,6 +199,8 @@ contract CollectiveDefenseFund is CurioTreaty {
 
     /// @notice Can pay between half and full deposit interval
     function payMembershipFee() external onlySigner {
+        GetterFacet getter = GetterFacet(diamond);
+        
         // Check last paid time
         uint256 nationID = getter.getEntityByAddress(msg.sender);
         require(block.timestamp > lastPaid[nationID] + depositTimeInterval / 2, "CDFund: Last payment was too soon");
@@ -182,6 +209,7 @@ contract CollectiveDefenseFund is CurioTreaty {
     }
 
     function _payFeesHelper(uint256 _nationID) internal {
+        GetterFacet getter = GetterFacet(diamond);
         address senderCapitalAddr = getter.getAddress(getter.getCapital(_nationID));
 
         // Check balance sufficience
@@ -201,6 +229,8 @@ contract CollectiveDefenseFund is CurioTreaty {
     // ----------------------------------------------------------
 
     function approveBattle(uint256 _nationID, bytes memory _encodedParams) public view override returns (bool) {
+        GetterFacet getter = GetterFacet(diamond);
+       
         // Disapprove if target nation is part of collective fund
         (, , uint256 battleTargetID) = abi.decode(_encodedParams, (uint256, uint256, uint256));
         uint256 targetNationID = getter.getNation(battleTargetID);
