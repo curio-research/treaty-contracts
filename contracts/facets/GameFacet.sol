@@ -396,7 +396,7 @@ contract GameFacet is UseStorage {
             for (uint256 i = 0; i < resourceTemplateIDs.length; i++) {
                 CurioERC20 resourceToken = CurioERC20(ECSLib.getAddress("Address", resourceTemplateIDs[i]));
                 uint256 balance = ECSLib.getUint("Amount", GameLib.getInventory(nationID, resourceTemplateIDs[i]));
-                uint256 totalRecoverCost = GameLib.getGameParameter("Tile", ECSLib.getString("Name", resourceTemplateIDs[i]), "Cost", "Upgrade", ECSLib.getUint("Level", _tileID)) * lostGuardAmount;
+                uint256 totalRecoverCost = GameLib.getGameParameter("Tile", ECSLib.getString("Name", resourceTemplateIDs[i]), "Cost", "Upgrade", tileLevel) * lostGuardAmount;
                 require(balance >= totalRecoverCost, "CURIO: Insufficient balance");
 
                 resourceToken.destroyToken(capitalAddress, totalRecoverCost);
