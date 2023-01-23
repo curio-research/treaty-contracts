@@ -40,9 +40,9 @@ export const startGameSync = async (deployment: GameConfig): Promise<void> => {
 // string -> objectID
 export const putObject = async (str: string): Promise<string> => {
   try {
-    const { data } = await api.post(`/json/put`, { content: str });
+    const { data } = await api.post(`/object/put`, { content: str });
 
-    return data.content.id;
+    return data.object.id;
   } catch (err: any) {
     throw new Error(err.message);
   }

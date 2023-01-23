@@ -244,7 +244,6 @@ export interface CurioInterface extends utils.Interface {
     "treatyApprovalCheck(string,uint256,bytes)": FunctionFragment;
     "owner()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
-    "uselessFunction()": FunctionFragment;
     "_getComponent(string)": FunctionFragment;
     "concatenate(uint256[],uint256[])": FunctionFragment;
     "getAddressComponent(string)": FunctionFragment;
@@ -381,7 +380,6 @@ export interface CurioInterface extends utils.Interface {
       | "treatyApprovalCheck"
       | "owner"
       | "transferOwnership"
-      | "uselessFunction"
       | "_getComponent"
       | "concatenate"
       | "getAddressComponent"
@@ -909,10 +907,6 @@ export interface CurioInterface extends utils.Interface {
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
-    functionFragment: "uselessFunction",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
     functionFragment: "_getComponent",
     values: [PromiseOrValue<string>]
   ): string;
@@ -1368,10 +1362,6 @@ export interface CurioInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "transferOwnership",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "uselessFunction",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -2169,8 +2159,6 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    uselessFunction(overrides?: CallOverrides): Promise<[string]>;
-
     _getComponent(
       _name: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -2878,8 +2866,6 @@ export interface Curio extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  uselessFunction(overrides?: CallOverrides): Promise<string>;
-
   _getComponent(
     _name: PromiseOrValue<string>,
     overrides?: CallOverrides
@@ -3578,8 +3564,6 @@ export interface Curio extends BaseContract {
       _newOwner: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
-
-    uselessFunction(overrides?: CallOverrides): Promise<string>;
 
     _getComponent(
       _name: PromiseOrValue<string>,
@@ -4341,8 +4325,6 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    uselessFunction(overrides?: CallOverrides): Promise<BigNumber>;
-
     _getComponent(
       _name: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -5048,8 +5030,6 @@ export interface Curio extends BaseContract {
       _newOwner: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
-
-    uselessFunction(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     _getComponent(
       _name: PromiseOrValue<string>,

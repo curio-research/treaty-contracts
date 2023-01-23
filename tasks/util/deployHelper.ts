@@ -72,12 +72,11 @@ export const uploadABI = async (hre: HardhatRuntimeEnvironment, contractName: st
 
     return objectId;
   } catch (error) {
-    console.log(chalk.bgRed('✦ Pinata error: ' + error));
+    console.log(chalk.bgRed('✦ Upload ABI error: ' + error));
     return '';
   }
 };
 
-// Retrieve at https://gateway.pinata.cloud/ipfs/<hash>
 export const deployTreatyTemplate = async (name: string, admin: Signer, hre: HardhatRuntimeEnvironment, diamond: Curio, gasLimit: number) => {
   const args = [diamond.address];
 
