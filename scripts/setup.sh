@@ -9,3 +9,4 @@ yarn build
 yarn unlink; yarn link
 cd ..
 yarn link curio-vault
+cp .env.pnm .env
