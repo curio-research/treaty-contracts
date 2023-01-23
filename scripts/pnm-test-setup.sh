@@ -6,6 +6,6 @@ fi
 cd curio-vault
 yarn
 yarn build
-yarn unlink; yarn link
+yarn unlink || true; yarn link
 cd ..
 yarn link curio-vault
