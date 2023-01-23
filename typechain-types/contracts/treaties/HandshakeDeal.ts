@@ -64,6 +64,7 @@ export interface HandshakeDealInterface extends utils.Interface {
     "diamond()": FunctionFragment;
     "game()": FunctionFragment;
     "getNationDeals(uint256)": FunctionFragment;
+    "getTreatySigners()": FunctionFragment;
     "getter()": FunctionFragment;
     "idToDeal(uint256)": FunctionFragment;
     "minimumStayCheck(uint256,uint256)": FunctionFragment;
@@ -109,6 +110,7 @@ export interface HandshakeDealInterface extends utils.Interface {
       | "diamond"
       | "game"
       | "getNationDeals"
+      | "getTreatySigners"
       | "getter"
       | "idToDeal"
       | "minimumStayCheck"
@@ -226,6 +228,10 @@ export interface HandshakeDealInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "getNationDeals",
     values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getTreatySigners",
+    values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "getter", values?: undefined): string;
   encodeFunctionData(
@@ -390,6 +396,10 @@ export interface HandshakeDealInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "game", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getNationDeals",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getTreatySigners",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "getter", data: BytesLike): Result;
@@ -608,6 +618,8 @@ export interface HandshakeDeal extends BaseContract {
       _nationID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[BigNumber[]]>;
+
+    getTreatySigners(overrides?: CallOverrides): Promise<[BigNumber[]]>;
 
     getter(overrides?: CallOverrides): Promise<[string]>;
 
@@ -836,6 +848,8 @@ export interface HandshakeDeal extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber[]>;
 
+  getTreatySigners(overrides?: CallOverrides): Promise<BigNumber[]>;
+
   getter(overrides?: CallOverrides): Promise<string>;
 
   idToDeal(
@@ -1063,6 +1077,8 @@ export interface HandshakeDeal extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber[]>;
 
+    getTreatySigners(overrides?: CallOverrides): Promise<BigNumber[]>;
+
     getter(overrides?: CallOverrides): Promise<string>;
 
     idToDeal(
@@ -1289,6 +1305,8 @@ export interface HandshakeDeal extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    getTreatySigners(overrides?: CallOverrides): Promise<BigNumber>;
+
     getter(overrides?: CallOverrides): Promise<BigNumber>;
 
     idToDeal(
@@ -1507,6 +1525,8 @@ export interface HandshakeDeal extends BaseContract {
       _nationID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
+
+    getTreatySigners(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getter(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 

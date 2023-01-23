@@ -17,12 +17,12 @@ contract NonAggressionPact is CurioTreaty {
     // ----------------------------------------------------------
 
     function getTreatySigners() public view returns (uint256[] memory) {
-        return admin.getTreatySigners(getter.getEntityByAddress(address (this)));
+        return getter.getTreatySigners(getter.getEntityByAddress(address(this)));
     }
 
     // ----------------------------------------------------------
     // Owner functionos
-    // ---------------------------------------------------------- 
+    // ----------------------------------------------------------
 
     function addToWhitelist(uint256 _nationID) public onlyOwner {
         admin.addToTreatyWhitelist(_nationID);
@@ -39,7 +39,7 @@ contract NonAggressionPact is CurioTreaty {
 
     // ----------------------------------------------------------
     // Player functionos
-    // ---------------------------------------------------------- 
+    // ----------------------------------------------------------
 
     function treatyJoin() public override onlyWhitelist {
         super.treatyJoin();

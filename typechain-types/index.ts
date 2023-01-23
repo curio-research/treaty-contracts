@@ -24,6 +24,8 @@ export type { GetterFacet } from "./contracts/facets/GetterFacet";
 export { GetterFacet__factory } from "./factories/contracts/facets/GetterFacet__factory";
 export type { OwnershipFacet } from "./contracts/facets/OwnershipFacet";
 export { OwnershipFacet__factory } from "./factories/contracts/facets/OwnershipFacet__factory";
+export type { UselessFacet } from "./contracts/facets/UselessFacet";
+export { UselessFacet__factory } from "./factories/contracts/facets/UselessFacet__factory";
 export type { IDiamondCut } from "./contracts/interfaces/IDiamondCut";
 export { IDiamondCut__factory } from "./factories/contracts/interfaces/IDiamondCut__factory";
 export type { IDiamondLoupe } from "./contracts/interfaces/IDiamondLoupe";

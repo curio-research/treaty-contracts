@@ -355,7 +355,7 @@ contract TreatyTest is Test, DiamondDeployTest {
         vm.expectRevert("Alliance: Cannot besiege army of ally nation");
         alliance.treatyBesiege(army31ID);
         assertEq(horsemanToken.balanceOf(army11Addr), army11HorsemanBalance);
-        assertEq(horsemanToken.balanceOf(army31Addr), 90);
+        assertEq(horsemanToken.balanceOf(army31Addr), 55);
 
         // Nation 1 triggers Alliance to besiege Nation 2's army until it is destroyed
         // Nation 1's army and Nation 3's army should both survive

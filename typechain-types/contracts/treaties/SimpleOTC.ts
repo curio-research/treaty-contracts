@@ -56,6 +56,7 @@ export interface SimpleOTCInterface extends utils.Interface {
     "diamond()": FunctionFragment;
     "emptyOrder()": FunctionFragment;
     "game()": FunctionFragment;
+    "getTreatySigners()": FunctionFragment;
     "getter()": FunctionFragment;
     "minimumStayCheck(uint256,uint256)": FunctionFragment;
     "name()": FunctionFragment;
@@ -98,6 +99,7 @@ export interface SimpleOTCInterface extends utils.Interface {
       | "diamond"
       | "emptyOrder"
       | "game"
+      | "getTreatySigners"
       | "getter"
       | "minimumStayCheck"
       | "name"
@@ -227,6 +229,10 @@ export interface SimpleOTCInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "game", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "getTreatySigners",
+    values?: undefined
+  ): string;
   encodeFunctionData(functionFragment: "getter", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "minimumStayCheck",
@@ -366,6 +372,10 @@ export interface SimpleOTCInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "diamond", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "emptyOrder", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "game", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "getTreatySigners",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "getter", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "minimumStayCheck",
@@ -596,6 +606,8 @@ export interface SimpleOTC extends BaseContract {
 
     game(overrides?: CallOverrides): Promise<[string]>;
 
+    getTreatySigners(overrides?: CallOverrides): Promise<[BigNumber[]]>;
+
     getter(overrides?: CallOverrides): Promise<[string]>;
 
     minimumStayCheck(
@@ -810,6 +822,8 @@ export interface SimpleOTC extends BaseContract {
 
   game(overrides?: CallOverrides): Promise<string>;
 
+  getTreatySigners(overrides?: CallOverrides): Promise<BigNumber[]>;
+
   getter(overrides?: CallOverrides): Promise<string>;
 
   minimumStayCheck(
@@ -1022,6 +1036,8 @@ export interface SimpleOTC extends BaseContract {
 
     game(overrides?: CallOverrides): Promise<string>;
 
+    getTreatySigners(overrides?: CallOverrides): Promise<BigNumber[]>;
+
     getter(overrides?: CallOverrides): Promise<string>;
 
     minimumStayCheck(
@@ -1216,6 +1232,8 @@ export interface SimpleOTC extends BaseContract {
     emptyOrder(overrides?: CallOverrides): Promise<BigNumber>;
 
     game(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getTreatySigners(overrides?: CallOverrides): Promise<BigNumber>;
 
     getter(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1413,6 +1431,8 @@ export interface SimpleOTC extends BaseContract {
     emptyOrder(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     game(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    getTreatySigners(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getter(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 

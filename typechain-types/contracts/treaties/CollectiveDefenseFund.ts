@@ -60,6 +60,8 @@ export interface CollectiveDefenseFundInterface extends utils.Interface {
     "foodToken()": FunctionFragment;
     "foodWithdrawQuota()": FunctionFragment;
     "game()": FunctionFragment;
+    "getCouncilMembers()": FunctionFragment;
+    "getTreatySigners()": FunctionFragment;
     "getter()": FunctionFragment;
     "goldFee()": FunctionFragment;
     "goldToken()": FunctionFragment;
@@ -119,6 +121,8 @@ export interface CollectiveDefenseFundInterface extends utils.Interface {
       | "foodToken"
       | "foodWithdrawQuota"
       | "game"
+      | "getCouncilMembers"
+      | "getTreatySigners"
       | "getter"
       | "goldFee"
       | "goldToken"
@@ -267,6 +271,14 @@ export interface CollectiveDefenseFundInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "game", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "getCouncilMembers",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getTreatySigners",
+    values?: undefined
+  ): string;
   encodeFunctionData(functionFragment: "getter", values?: undefined): string;
   encodeFunctionData(functionFragment: "goldFee", values?: undefined): string;
   encodeFunctionData(functionFragment: "goldToken", values?: undefined): string;
@@ -462,6 +474,14 @@ export interface CollectiveDefenseFundInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "game", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "getCouncilMembers",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getTreatySigners",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "getter", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "goldFee", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "goldToken", data: BytesLike): Result;
@@ -725,6 +745,10 @@ export interface CollectiveDefenseFund extends BaseContract {
 
     game(overrides?: CallOverrides): Promise<[string]>;
 
+    getCouncilMembers(overrides?: CallOverrides): Promise<[BigNumber[]]>;
+
+    getTreatySigners(overrides?: CallOverrides): Promise<[BigNumber[]]>;
+
     getter(overrides?: CallOverrides): Promise<[string]>;
 
     goldFee(overrides?: CallOverrides): Promise<[BigNumber]>;
@@ -980,6 +1004,10 @@ export interface CollectiveDefenseFund extends BaseContract {
   foodWithdrawQuota(overrides?: CallOverrides): Promise<BigNumber>;
 
   game(overrides?: CallOverrides): Promise<string>;
+
+  getCouncilMembers(overrides?: CallOverrides): Promise<BigNumber[]>;
+
+  getTreatySigners(overrides?: CallOverrides): Promise<BigNumber[]>;
 
   getter(overrides?: CallOverrides): Promise<string>;
 
@@ -1237,6 +1265,10 @@ export interface CollectiveDefenseFund extends BaseContract {
 
     game(overrides?: CallOverrides): Promise<string>;
 
+    getCouncilMembers(overrides?: CallOverrides): Promise<BigNumber[]>;
+
+    getTreatySigners(overrides?: CallOverrides): Promise<BigNumber[]>;
+
     getter(overrides?: CallOverrides): Promise<string>;
 
     goldFee(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1487,6 +1519,10 @@ export interface CollectiveDefenseFund extends BaseContract {
     foodWithdrawQuota(overrides?: CallOverrides): Promise<BigNumber>;
 
     game(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getCouncilMembers(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getTreatySigners(overrides?: CallOverrides): Promise<BigNumber>;
 
     getter(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1746,6 +1782,10 @@ export interface CollectiveDefenseFund extends BaseContract {
     foodWithdrawQuota(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     game(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    getCouncilMembers(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    getTreatySigners(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getter(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 

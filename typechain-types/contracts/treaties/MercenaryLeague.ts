@@ -55,6 +55,8 @@ export interface MercenaryLeagueInterface extends utils.Interface {
     "description()": FunctionFragment;
     "diamond()": FunctionFragment;
     "game()": FunctionFragment;
+    "getTreatySigners()": FunctionFragment;
+    "getWarCouncilMembers()": FunctionFragment;
     "getter()": FunctionFragment;
     "goldToken()": FunctionFragment;
     "memberConscriptionStartTime(uint256)": FunctionFragment;
@@ -103,6 +105,8 @@ export interface MercenaryLeagueInterface extends utils.Interface {
       | "description"
       | "diamond"
       | "game"
+      | "getTreatySigners"
+      | "getWarCouncilMembers"
       | "getter"
       | "goldToken"
       | "memberConscriptionStartTime"
@@ -230,6 +234,14 @@ export interface MercenaryLeagueInterface extends utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "diamond", values?: undefined): string;
   encodeFunctionData(functionFragment: "game", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "getTreatySigners",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getWarCouncilMembers",
+    values?: undefined
+  ): string;
   encodeFunctionData(functionFragment: "getter", values?: undefined): string;
   encodeFunctionData(functionFragment: "goldToken", values?: undefined): string;
   encodeFunctionData(
@@ -393,6 +405,14 @@ export interface MercenaryLeagueInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "diamond", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "game", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "getTreatySigners",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getWarCouncilMembers",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "getter", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "goldToken", data: BytesLike): Result;
   decodeFunctionResult(
@@ -623,6 +643,10 @@ export interface MercenaryLeague extends BaseContract {
 
     game(overrides?: CallOverrides): Promise<[string]>;
 
+    getTreatySigners(overrides?: CallOverrides): Promise<[BigNumber[]]>;
+
+    getWarCouncilMembers(overrides?: CallOverrides): Promise<[BigNumber[]]>;
+
     getter(overrides?: CallOverrides): Promise<[string]>;
 
     goldToken(overrides?: CallOverrides): Promise<[string]>;
@@ -839,6 +863,10 @@ export interface MercenaryLeague extends BaseContract {
   diamond(overrides?: CallOverrides): Promise<string>;
 
   game(overrides?: CallOverrides): Promise<string>;
+
+  getTreatySigners(overrides?: CallOverrides): Promise<BigNumber[]>;
+
+  getWarCouncilMembers(overrides?: CallOverrides): Promise<BigNumber[]>;
 
   getter(overrides?: CallOverrides): Promise<string>;
 
@@ -1057,6 +1085,10 @@ export interface MercenaryLeague extends BaseContract {
 
     game(overrides?: CallOverrides): Promise<string>;
 
+    getTreatySigners(overrides?: CallOverrides): Promise<BigNumber[]>;
+
+    getWarCouncilMembers(overrides?: CallOverrides): Promise<BigNumber[]>;
+
     getter(overrides?: CallOverrides): Promise<string>;
 
     goldToken(overrides?: CallOverrides): Promise<string>;
@@ -1270,6 +1302,10 @@ export interface MercenaryLeague extends BaseContract {
     diamond(overrides?: CallOverrides): Promise<BigNumber>;
 
     game(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getTreatySigners(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getWarCouncilMembers(overrides?: CallOverrides): Promise<BigNumber>;
 
     getter(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1490,6 +1526,12 @@ export interface MercenaryLeague extends BaseContract {
     diamond(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     game(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    getTreatySigners(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    getWarCouncilMembers(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     getter(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 

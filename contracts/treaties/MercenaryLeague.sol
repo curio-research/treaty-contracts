@@ -37,7 +37,7 @@ contract MercenaryLeague is CurioTreaty {
     }
 
     function getTreatySigners() public view returns (uint256[] memory) {
-        return admin.getTreatySigners(getter.getEntityByAddress(address (this)));
+        return getter.getTreatySigners(getter.getEntityByAddress(address(this)));
     }
 
     // ----------------------------------------------------------

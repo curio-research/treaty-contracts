@@ -53,6 +53,7 @@ export interface NonAggressionPactInterface extends utils.Interface {
     "description()": FunctionFragment;
     "diamond()": FunctionFragment;
     "game()": FunctionFragment;
+    "getTreatySigners()": FunctionFragment;
     "getter()": FunctionFragment;
     "minimumStayCheck(uint256,uint256)": FunctionFragment;
     "name()": FunctionFragment;
@@ -93,6 +94,7 @@ export interface NonAggressionPactInterface extends utils.Interface {
       | "description"
       | "diamond"
       | "game"
+      | "getTreatySigners"
       | "getter"
       | "minimumStayCheck"
       | "name"
@@ -206,6 +208,10 @@ export interface NonAggressionPactInterface extends utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "diamond", values?: undefined): string;
   encodeFunctionData(functionFragment: "game", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "getTreatySigners",
+    values?: undefined
+  ): string;
   encodeFunctionData(functionFragment: "getter", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "minimumStayCheck",
@@ -340,6 +346,10 @@ export interface NonAggressionPactInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "diamond", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "game", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "getTreatySigners",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "getter", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "minimumStayCheck",
@@ -545,6 +555,8 @@ export interface NonAggressionPact extends BaseContract {
 
     game(overrides?: CallOverrides): Promise<[string]>;
 
+    getTreatySigners(overrides?: CallOverrides): Promise<[BigNumber[]]>;
+
     getter(overrides?: CallOverrides): Promise<[string]>;
 
     minimumStayCheck(
@@ -731,6 +743,8 @@ export interface NonAggressionPact extends BaseContract {
   diamond(overrides?: CallOverrides): Promise<string>;
 
   game(overrides?: CallOverrides): Promise<string>;
+
+  getTreatySigners(overrides?: CallOverrides): Promise<BigNumber[]>;
 
   getter(overrides?: CallOverrides): Promise<string>;
 
@@ -919,6 +933,8 @@ export interface NonAggressionPact extends BaseContract {
 
     game(overrides?: CallOverrides): Promise<string>;
 
+    getTreatySigners(overrides?: CallOverrides): Promise<BigNumber[]>;
+
     getter(overrides?: CallOverrides): Promise<string>;
 
     minimumStayCheck(
@@ -1104,6 +1120,8 @@ export interface NonAggressionPact extends BaseContract {
     diamond(overrides?: CallOverrides): Promise<BigNumber>;
 
     game(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getTreatySigners(overrides?: CallOverrides): Promise<BigNumber>;
 
     getter(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1292,6 +1310,8 @@ export interface NonAggressionPact extends BaseContract {
     diamond(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     game(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    getTreatySigners(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getter(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
