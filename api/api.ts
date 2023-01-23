@@ -31,7 +31,18 @@ export const startGameSync = async (deployment: GameConfig): Promise<void> => {
   try {
     const indexerApi = axios.create({ baseURL: deployment.indexerUrl });
 
-    const { data } = await indexerApi.post(`/startGameSync`, { deploymentId: deployment.deploymentId });
+    await indexerApi.post(`/startGameSync`, { deploymentId: deployment.deploymentId });
+  } catch (err: any) {
+    throw new Error(err.message);
+  }
+};
+
+// string -> objectID
+export const putObject = async (str: string): Promise<string> => {
+  try {
+    const { data } = await api.post(`/json/put`, { content: str });
+
+    return data.content.id;
   } catch (err: any) {
     throw new Error(err.message);
   }
