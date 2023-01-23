@@ -6,7 +6,8 @@ fi
 cd curio-vault
 yarn
 yarn build
-yarn unlink; yarn link
+#yarn unlink; 
+yarn link
 cd ..
 yarn link curio-vault
 cp .env.pnm .env
