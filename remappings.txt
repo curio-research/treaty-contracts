@@ -1,4 +1,5 @@
 @pwnednomore/contracts/=lib/pnm-contracts/
+pnm-contracts/=lib/pnm-contracts/
 ds-test/=lib/pnm-contracts/lib/forge-std/lib/ds-test/src/
 forge-std/=lib/pnm-contracts/lib/forge-std/src/
 solmate/=lib/solmate/src/
