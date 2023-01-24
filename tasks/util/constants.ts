@@ -17,8 +17,8 @@ export const INNER_REGION_RADIUS_BY_TILE_COUNT = 3;
 export const NUM_INIT_TERRAIN_TYPES = Math.floor((Object.keys(TILE_TYPE).length + 1) / 2);
 
 export const MAP_INPUT: MapInput = {
-  width: 19,
-  height: 19,
+  width: 17,
+  height: 17,
   innerRadiusByTileCount: INNER_REGION_RADIUS_BY_TILE_COUNT,
 };
 

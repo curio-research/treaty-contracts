@@ -818,7 +818,9 @@ class Game:
 
         # Building Stats
         # Initialize building_stats as an empty DataFrame
-        building_stats = pd.DataFrame(columns=['Level', 'Cooldown: Upgrade', 'Cooldown: moveCapital', 'Cost: Gold', 'Cost: Food', 'Amount: Guard'])
+        capital_stats = pd.DataFrame(columns=['Level', 'Cooldown: Upgrade', 'Cooldown: moveCapital', 'Upgrade Cost: Gold', 'Upgrade Cost: Food', 'Yield: Gold', 'Yield: Food', 'Cap: Food', 'Cap: Gold'])
+        goldmine_stats = pd.DataFrame(columns=['Level', 'Cooldown: Upgrade', 'Upgrade Cost: Gold', 'Upgrade Cost: Food', 'Yield: Gold', 'Yield: Food', 'Cap: Food', 'Cap: Gold'])
+        farm_stats = pd.DataFrame(columns=['Level', 'Cooldown: Upgrade', 'Upgrade Cost: Gold', 'Upgrade Cost: Food', 'Yield: Gold', 'Yield: Food', 'Cap: Food', 'Cap: Gold'])
 
         for bt in [Building.GOLDMINE, Building.FARM, Building.CAPITAL]:
             max_building_level = 1
@@ -834,7 +836,6 @@ class Game:
 
             curr_level = 0
 
-            building_stats = pd.DataFrame(columns=['Level', 'UpgradeCost: Food', 'Cooldown: moveCapital', 'Cost: Gold', 'Cost: Food', 'Amount: Guard'])
             level = 'lv' + str(curr_level)
             while curr_level <= max_building_level:
                 (gold_upgrade_cost, food_upgrade_cost) = get_building_upgrade_cost(
@@ -843,15 +844,19 @@ class Game:
                     curr_level, building_type)
                 (gold_cap, food_cap) = get_building_resource_cap(
                     curr_level, building_type)
-            
-            tile_stats = tile_stats.append({
-                'Level': level,
-                'Cooldown: Upgrade': get_tile_upgrade_cooldown_in_second(curr_level),
-                'Cooldown: moveCapital': get_move_capital_cooldown_in_hour(curr_level),
-                'Cost: Gold': cost_gold,
-                'Cost: Food': cost_food,
-                'Amount: Guard': get_tile_troop_count(curr_level)},
-                ignore_index=True)
+            if bt == Building.CAPITAL:
+                capital_stats = capital_stats.append({
+                    'Level': level,
+                    'Cooldown: Upgrade': get_building_upgrade_cooldown_in_hour(curr_level, building_type),
+                    'Cooldown: moveCapital': get_move_capital_cooldown_in_hour(curr_level),
+                    'Cost: Gold': gold_upgrade_cost,
+                    'Cost: Food': food_upgrade_cost,
+                    'Yield: Gold': gold_hourly_yield,
+                    'Yield: Food': food_hourly_yield,
+                    'Cap: Food': food_cap,
+                    'Cap: Gold': gold_cap},
+                    ignore_index=True)
+                
 
             curr_level += 1
 
@@ -877,4 +882,4 @@ class Game:
 # change here when switching game mode
 game_instance = Game(GameMode.INTERNAL_PLAYTEST)
 game_instance.export_json_parameters()
-game_instance.export_excel_parameters()
+# game_instance.export_excel_parameters()
