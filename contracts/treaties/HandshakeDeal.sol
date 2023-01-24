@@ -28,7 +28,7 @@ contract HandshakeDeal is CurioTreaty {
     struct Deal {
         uint256 dealID;
         uint256 proposerID;
-        ApprovalFunctionType functionOfAgreement;
+        string functionOfAgreement;
         bytes encodedParams;
         uint256 signedAt;
         uint256 effectiveDuration;
@@ -48,6 +48,11 @@ contract HandshakeDeal is CurioTreaty {
         return "Flexible handshake agreement between nations";
     }
 
+    function _strEq(string memory _s1, string memory _s2) internal pure returns (bool) {
+        if (bytes(_s1).length != bytes(_s2).length) return false;
+        return (keccak256(abi.encodePacked((_s1))) == keccak256(abi.encodePacked((_s2))));
+    }
+
     // ----------------------------------------------------------
     // Set getters
     // ----------------------------------------------------------
@@ -62,19 +67,20 @@ contract HandshakeDeal is CurioTreaty {
     // ----------------------------------------------------------
 
     function proposeDeal1(
-        ApprovalFunctionType _functionType,
+        string memory _functionType,
         uint256 _uint256Param,
         uint256 _effectiveDuration
     ) public onlySigner returns (uint256) {
         require(
-            _functionType == ApprovalFunctionType.approveUpgradeCapital ||
-                _functionType == ApprovalFunctionType.approveUpgradeTile ||
-                _functionType == ApprovalFunctionType.approveRecoverTile ||
-                _functionType == ApprovalFunctionType.approveDisownTile ||
-                _functionType == ApprovalFunctionType.approveEndGather ||
-                _functionType == ApprovalFunctionType.approveUnloadResources ||
-                _functionType == ApprovalFunctionType.approveHarvestResourcesFromCapital ||
-                _functionType == ApprovalFunctionType.approveUpgradeResource,
+            _strEq(_functionType, "approveUpgradeCapital") ||
+            _strEq(_functionType, "approveUpgradeTile") ||
+            _strEq(_functionType, "approveRecoverTile") ||
+            _strEq(_functionType, "approveDisownTile") ||
+            _strEq(_functionType, "approveEndGather") ||
+            _strEq(_functionType, "approveUnloadResources") ||
+            _strEq(_functionType, "approveHarvestResource") ||
+            _strEq(_functionType, "approveHarvestResourcesFromCapital") ||
+            _strEq(_functionType, "approveUpgradeResource"),
             "Handshake: Invalid function type"
         );
         GetterFacet getter = GetterFacet(diamond);
@@ -95,16 +101,16 @@ contract HandshakeDeal is CurioTreaty {
     }
 
     function proposeDeal2(
-        ApprovalFunctionType _functionType,
+        string memory _functionType,
         uint256 _uint256Param1,
         uint256 _uint256Param2,
         uint256 _effectiveDuration
     ) public onlySigner returns (uint256) {
         require(
-            _functionType == ApprovalFunctionType.approveStartTroopProduction || // FORMATTING: DO NOT REMOVE THIS COMMENT
-                _functionType == ApprovalFunctionType.approveStartGather ||
-                _functionType == ApprovalFunctionType.approveHarvestResource ||
-                _functionType == ApprovalFunctionType.approveBattle,
+            _strEq(_functionType, "approveStartTroopProduction") ||
+            _strEq(_functionType, "approveStartGather") ||
+            _strEq(_functionType, "approveHarvestResource") ||
+            _strEq(_functionType, "approveBattle"), // FORMATTING: DO NOT REMOVE THIS COMMENT
             "Handshake: Invalid function type"
         );
         GetterFacet getter = GetterFacet(diamond);
@@ -125,15 +131,15 @@ contract HandshakeDeal is CurioTreaty {
     }
 
     function proposeDeal3(
-        ApprovalFunctionType _functionType,
+        string memory _functionType,
         uint256 _uint256Param,
         Position memory _positionParam,
         uint256 _effectiveDuration
     ) public onlySigner returns (uint256) {
         require(
-            _functionType == ApprovalFunctionType.approveMoveCapital || // FORMATTING: DO NOT REMOVE THIS COMMENT
-                _functionType == ApprovalFunctionType.approveClaimTile ||
-                _functionType == ApprovalFunctionType.approveMove,
+            _strEq(_functionType, "approveMoveCapital") ||
+            _strEq(_functionType, "approveClaimTile") ||
+            _strEq(_functionType, "approveMove"), // FORMATTING: DO NOT REMOVE THIS COMMENT
             "Handshake: Invalid function type"
         );
         GetterFacet getter = GetterFacet(diamond);
@@ -183,7 +189,7 @@ contract HandshakeDeal is CurioTreaty {
         uint256[] memory signedDealIDs = nationIDToDealIDs[_nationID];
         for (uint256 i = 0; i < signedDealIDs.length; i++) {
             Deal memory deal = idToDeal[signedDealIDs[i]];
-            if (deal.functionOfAgreement == ApprovalFunctionType.approveUpgradeCapital) {
+            if (_strEq(deal.functionOfAgreement, "approveUpgradeCapital")) {
                 uint256 specifiedCapitalID = abi.decode(deal.encodedParams, (uint256));
                 if (capitalID == specifiedCapitalID) {
                     if (block.timestamp < deal.signedAt + deal.effectiveDuration) {
@@ -200,7 +206,7 @@ contract HandshakeDeal is CurioTreaty {
         uint256[] memory signedDealIDs = nationIDToDealIDs[_nationID];
         for (uint256 i = 0; i < signedDealIDs.length; i++) {
             Deal memory deal = idToDeal[signedDealIDs[i]];
-            if (deal.functionOfAgreement == ApprovalFunctionType.approveMoveCapital) {
+            if (_strEq(deal.functionOfAgreement, "approveMoveCapital")) {
                 (uint256 specifiedCapitalID, uint256 specifiedTargetTileID) = abi.decode(deal.encodedParams, (uint256, uint256));
                 if (capitalID == specifiedCapitalID && targetTileID == specifiedTargetTileID) {
                     if (block.timestamp < deal.signedAt + deal.effectiveDuration) {
@@ -217,7 +223,7 @@ contract HandshakeDeal is CurioTreaty {
         uint256[] memory signedDealIDs = nationIDToDealIDs[_nationID];
         for (uint256 i = 0; i < signedDealIDs.length; i++) {
             Deal memory deal = idToDeal[signedDealIDs[i]];
-            if (deal.functionOfAgreement == ApprovalFunctionType.approveClaimTile) {
+            if (_strEq(deal.functionOfAgreement, "approveClaimTile")) {
                 uint256 specifiedTileID = abi.decode(deal.encodedParams, (uint256));
                 if (tileID == specifiedTileID) {
                     if (block.timestamp < deal.signedAt + deal.effectiveDuration) {
@@ -234,7 +240,7 @@ contract HandshakeDeal is CurioTreaty {
         uint256[] memory signedDealIDs = nationIDToDealIDs[_nationID];
         for (uint256 i = 0; i < signedDealIDs.length; i++) {
             Deal memory deal = idToDeal[signedDealIDs[i]];
-            if (deal.functionOfAgreement == ApprovalFunctionType.approveUpgradeTile) {
+            if (_strEq(deal.functionOfAgreement, "approveUpgradeTile")) {
                 uint256 specifiedTileID = abi.decode(deal.encodedParams, (uint256));
                 if (tileID == specifiedTileID) {
                     if (block.timestamp < deal.signedAt + deal.effectiveDuration) {
@@ -251,7 +257,7 @@ contract HandshakeDeal is CurioTreaty {
         uint256[] memory signedDealIDs = nationIDToDealIDs[_nationID];
         for (uint256 i = 0; i < signedDealIDs.length; i++) {
             Deal memory deal = idToDeal[signedDealIDs[i]];
-            if (deal.functionOfAgreement == ApprovalFunctionType.approveRecoverTile) {
+            if (_strEq(deal.functionOfAgreement, "approveRecoverTile")) {
                 uint256 specifiedTileID = abi.decode(deal.encodedParams, (uint256));
                 if (tileID == specifiedTileID) {
                     if (block.timestamp < deal.signedAt + deal.effectiveDuration) {
@@ -268,7 +274,7 @@ contract HandshakeDeal is CurioTreaty {
         uint256[] memory signedDealIDs = nationIDToDealIDs[_nationID];
         for (uint256 i = 0; i < signedDealIDs.length; i++) {
             Deal memory deal = idToDeal[signedDealIDs[i]];
-            if (deal.functionOfAgreement == ApprovalFunctionType.approveDisownTile) {
+            if (_strEq(deal.functionOfAgreement, "approveDisownTile")) {
                 uint256 specifiedTileID = abi.decode(deal.encodedParams, (uint256));
                 if (tileID == specifiedTileID) {
                     if (block.timestamp < deal.signedAt + deal.effectiveDuration) {
@@ -285,7 +291,7 @@ contract HandshakeDeal is CurioTreaty {
         uint256[] memory signedDealIDs = nationIDToDealIDs[_nationID];
         for (uint256 i = 0; i < signedDealIDs.length; i++) {
             Deal memory deal = idToDeal[signedDealIDs[i]];
-            if (deal.functionOfAgreement == ApprovalFunctionType.approveMove) {
+            if (_strEq(deal.functionOfAgreement, "approveMove")) {
                 (uint256 specifiedArmyID, Position memory specifiedTargetPosition) = abi.decode(deal.encodedParams, (uint256, Position));
                 if (specifiedArmyID == armyID && _coincident(targetPosition, specifiedTargetPosition)) {
                     if (block.timestamp < deal.signedAt + deal.effectiveDuration) {
@@ -303,7 +309,7 @@ contract HandshakeDeal is CurioTreaty {
         uint256[] memory signedDealIDs = nationIDToDealIDs[_nationID];
         for (uint256 i = 0; i < signedDealIDs.length; i++) {
             Deal memory deal = idToDeal[signedDealIDs[i]];
-            if (deal.functionOfAgreement == ApprovalFunctionType.approveBattle) {
+            if (_strEq(deal.functionOfAgreement, "approveBattle")) {
                 (uint256 specifiedArmyID, uint256 specifiedTargetID) = abi.decode(deal.encodedParams, (uint256, uint256));
                 if (specifiedArmyID == armyID && specifiedTargetID == battleTargetID) {
                     if (block.timestamp < deal.signedAt + deal.effectiveDuration) {
@@ -320,7 +326,7 @@ contract HandshakeDeal is CurioTreaty {
         uint256[] memory signedDealIDs = nationIDToDealIDs[_nationID];
         for (uint256 i = 0; i < signedDealIDs.length; i++) {
             Deal memory deal = idToDeal[signedDealIDs[i]];
-            if (deal.functionOfAgreement == ApprovalFunctionType.approveStartGather) {
+            if (_strEq(deal.functionOfAgreement, "approveStartGather")) {
                 (uint256 specifiedArmyID, uint256 specifiedResourceID) = abi.decode(deal.encodedParams, (uint256, uint256));
                 if (specifiedArmyID == armyID && specifiedResourceID == resourceID) {
                     if (block.timestamp < deal.signedAt + deal.effectiveDuration) {
@@ -337,7 +343,7 @@ contract HandshakeDeal is CurioTreaty {
         uint256[] memory signedDealIDs = nationIDToDealIDs[_nationID];
         for (uint256 i = 0; i < signedDealIDs.length; i++) {
             Deal memory deal = idToDeal[signedDealIDs[i]];
-            if (deal.functionOfAgreement == ApprovalFunctionType.approveEndGather) {
+            if (_strEq(deal.functionOfAgreement, "approveEndGather")) {
                 uint256 specifiedArmyID = abi.decode(deal.encodedParams, (uint256));
                 if (specifiedArmyID == armyID) {
                     if (block.timestamp < deal.signedAt + deal.effectiveDuration) {
@@ -354,7 +360,7 @@ contract HandshakeDeal is CurioTreaty {
         uint256[] memory signedDealIDs = nationIDToDealIDs[_nationID];
         for (uint256 i = 0; i < signedDealIDs.length; i++) {
             Deal memory deal = idToDeal[signedDealIDs[i]];
-            if (deal.functionOfAgreement == ApprovalFunctionType.approveEndGather) {
+            if (_strEq(deal.functionOfAgreement, "approveUnloadResources")) {
                 uint256 specifiedArmyID = abi.decode(deal.encodedParams, (uint256));
                 if (specifiedArmyID == armyID) {
                     if (block.timestamp < deal.signedAt + deal.effectiveDuration) {
@@ -371,7 +377,7 @@ contract HandshakeDeal is CurioTreaty {
         uint256[] memory signedDealIDs = nationIDToDealIDs[_nationID];
         for (uint256 i = 0; i < signedDealIDs.length; i++) {
             Deal memory deal = idToDeal[signedDealIDs[i]];
-            if (deal.functionOfAgreement == ApprovalFunctionType.approveHarvestResource) {
+            if (_strEq(deal.functionOfAgreement, "approveHarvestResource")) {
                 uint256 specifiedResourceID = abi.decode(deal.encodedParams, (uint256));
                 if (specifiedResourceID == resourceID) {
                     if (block.timestamp < deal.signedAt + deal.effectiveDuration) {
@@ -388,7 +394,7 @@ contract HandshakeDeal is CurioTreaty {
         uint256[] memory signedDealIDs = nationIDToDealIDs[_nationID];
         for (uint256 i = 0; i < signedDealIDs.length; i++) {
             Deal memory deal = idToDeal[signedDealIDs[i]];
-            if (deal.functionOfAgreement == ApprovalFunctionType.approveHarvestResourcesFromCapital) {
+            if (_strEq(deal.functionOfAgreement, "approveHarvestResourcesFromCapital")) {
                 uint256 specifiedCapitalID = abi.decode(deal.encodedParams, (uint256));
                 if (specifiedCapitalID == capitalID) {
                     if (block.timestamp < deal.signedAt + deal.effectiveDuration) {
@@ -405,7 +411,7 @@ contract HandshakeDeal is CurioTreaty {
         uint256[] memory signedDealIDs = nationIDToDealIDs[_nationID];
         for (uint256 i = 0; i < signedDealIDs.length; i++) {
             Deal memory deal = idToDeal[signedDealIDs[i]];
-            if (deal.functionOfAgreement == ApprovalFunctionType.approveUpgradeResource) {
+            if (_strEq(deal.functionOfAgreement, "approveUpgradeResource")) {
                 uint256 specifiedCapitalID = abi.decode(deal.encodedParams, (uint256));
                 if (specifiedCapitalID == resourceID) {
                     if (block.timestamp < deal.signedAt + deal.effectiveDuration) {
@@ -423,9 +429,9 @@ contract HandshakeDeal is CurioTreaty {
         uint256[] memory signedDealIDs = nationIDToDealIDs[_nationID];
         for (uint256 i = 0; i < signedDealIDs.length; i++) {
             Deal memory deal = idToDeal[signedDealIDs[i]];
-            if (deal.functionOfAgreement == ApprovalFunctionType.approveStartTroopProduction) {
-                uint256 agreedTemplateID = abi.decode(deal.encodedParams, (uint256));
-                if (agreedTemplateID == troopTemplateID) {
+            if (_strEq(deal.functionOfAgreement, "approveStartTroopProduction")) {
+                uint256 specifiedTemplateID = abi.decode(deal.encodedParams, (uint256));
+                if (specifiedTemplateID == troopTemplateID) {
                     if (block.timestamp < deal.signedAt + deal.effectiveDuration) {
                         return false;
                     }

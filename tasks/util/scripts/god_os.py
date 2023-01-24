@@ -180,8 +180,8 @@ def get_barbarian_reward(level: int) -> np.array:
     goldcost_per_troop = game_instance.resource_weight_light
     foodcost_per_troop = game_instance.resource_weight_heavy
     # Increase cost bc barbarians are strengthened
-    total_goldcost = barbarian_count * goldcost_per_troop * 10
-    total_foodcost = barbarian_count * foodcost_per_troop * 10
+    total_goldcost = barbarian_count * goldcost_per_troop * 4
+    total_foodcost = barbarian_count * foodcost_per_troop * 4
     # actual reward = base reward * exponential curve (level as x)
     gold_reward = total_goldcost * game_instance.barbarian_reward_to_cost_coefficient * fast_exponential_curve(
         game_instance.max_capital_level * game_instance.capital_level_to_building_level)(level) / fast_exponential_curve(9)(1)
@@ -600,10 +600,10 @@ class Game:
             self.chaos_period_in_seconds = 120
             self.super_tile_init_time_in_hour = 0
         if mode == GameMode.INTERNAL_PLAYTEST:
-            self.total_tile_count = 19*19
-            self.expected_player_count = 12
+            self.total_tile_count = 17*17
+            self.expected_player_count = 9
             self.init_player_tile_count = 1
-            self.expected_play_time_in_hour = 120
+            self.expected_play_time_in_hour = 60
             self.upgrade_time_to_expected_play_time_ratio = 1/2
             self.init_player_goldmine_count = 1
             self.init_player_farm_count = 1
@@ -834,6 +834,8 @@ class Game:
 
             curr_level = 0
 
+            building_stats = pd.DataFrame(columns=['Level', 'UpgradeCost: Food', 'Cooldown: moveCapital', 'Cost: Gold', 'Cost: Food', 'Amount: Guard'])
+            level = 'lv' + str(curr_level)
             while curr_level <= max_building_level:
                 (gold_upgrade_cost, food_upgrade_cost) = get_building_upgrade_cost(
                     curr_level, building_type)
@@ -841,6 +843,18 @@ class Game:
                     curr_level, building_type)
                 (gold_cap, food_cap) = get_building_resource_cap(
                     curr_level, building_type)
+            
+            tile_stats = tile_stats.append({
+                'Level': level,
+                'Cooldown: Upgrade': get_tile_upgrade_cooldown_in_second(curr_level),
+                'Cooldown: moveCapital': get_move_capital_cooldown_in_hour(curr_level),
+                'Cost: Gold': cost_gold,
+                'Cost: Food': cost_food,
+                'Amount: Guard': get_tile_troop_count(curr_level)},
+                ignore_index=True)
+
+            curr_level += 1
+
 
 
         # Export tile_stats into an excel file
