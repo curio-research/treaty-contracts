@@ -26,7 +26,6 @@ import type {
 export interface SimpleOTCInterface extends utils.Interface {
   functions: {
     "addressToOrder(address)": FunctionFragment;
-    "admin()": FunctionFragment;
     "approveBattle(uint256,bytes)": FunctionFragment;
     "approveClaimTile(uint256,bytes)": FunctionFragment;
     "approveDelegateGameFunction(uint256,bytes)": FunctionFragment;
@@ -55,9 +54,6 @@ export interface SimpleOTCInterface extends utils.Interface {
     "description()": FunctionFragment;
     "diamond()": FunctionFragment;
     "emptyOrder()": FunctionFragment;
-    "game()": FunctionFragment;
-    "getter()": FunctionFragment;
-    "minimumStayCheck(uint256,uint256)": FunctionFragment;
     "name()": FunctionFragment;
     "takeOrder(address)": FunctionFragment;
     "treatyDelegateGameFunction(string,uint256,bool)": FunctionFragment;
@@ -68,7 +64,6 @@ export interface SimpleOTCInterface extends utils.Interface {
   getFunction(
     nameOrSignatureOrTopic:
       | "addressToOrder"
-      | "admin"
       | "approveBattle"
       | "approveClaimTile"
       | "approveDelegateGameFunction"
@@ -97,9 +92,6 @@ export interface SimpleOTCInterface extends utils.Interface {
       | "description"
       | "diamond"
       | "emptyOrder"
-      | "game"
-      | "getter"
-      | "minimumStayCheck"
       | "name"
       | "takeOrder"
       | "treatyDelegateGameFunction"
@@ -111,7 +103,6 @@ export interface SimpleOTCInterface extends utils.Interface {
     functionFragment: "addressToOrder",
     values: [PromiseOrValue<string>]
   ): string;
-  encodeFunctionData(functionFragment: "admin", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "approveBattle",
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BytesLike>]
@@ -226,12 +217,6 @@ export interface SimpleOTCInterface extends utils.Interface {
     functionFragment: "emptyOrder",
     values?: undefined
   ): string;
-  encodeFunctionData(functionFragment: "game", values?: undefined): string;
-  encodeFunctionData(functionFragment: "getter", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "minimumStayCheck",
-    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
-  ): string;
   encodeFunctionData(functionFragment: "name", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "takeOrder",
@@ -258,7 +243,6 @@ export interface SimpleOTCInterface extends utils.Interface {
     functionFragment: "addressToOrder",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "admin", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "approveBattle",
     data: BytesLike
@@ -365,12 +349,6 @@ export interface SimpleOTCInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "diamond", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "emptyOrder", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "game", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "getter", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "minimumStayCheck",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "takeOrder", data: BytesLike): Result;
   decodeFunctionResult(
@@ -425,8 +403,6 @@ export interface SimpleOTC extends BaseContract {
         createdAt: BigNumber;
       }
     >;
-
-    admin(overrides?: CallOverrides): Promise<[string]>;
 
     approveBattle(
       _nationID: PromiseOrValue<BigNumberish>,
@@ -594,16 +570,6 @@ export interface SimpleOTC extends BaseContract {
       }
     >;
 
-    game(overrides?: CallOverrides): Promise<[string]>;
-
-    getter(overrides?: CallOverrides): Promise<[string]>;
-
-    minimumStayCheck(
-      _nationID: PromiseOrValue<BigNumberish>,
-      _duration: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
-
     name(overrides?: CallOverrides): Promise<[string]>;
 
     takeOrder(
@@ -639,8 +605,6 @@ export interface SimpleOTC extends BaseContract {
       createdAt: BigNumber;
     }
   >;
-
-  admin(overrides?: CallOverrides): Promise<string>;
 
   approveBattle(
     _nationID: PromiseOrValue<BigNumberish>,
@@ -808,16 +772,6 @@ export interface SimpleOTC extends BaseContract {
     }
   >;
 
-  game(overrides?: CallOverrides): Promise<string>;
-
-  getter(overrides?: CallOverrides): Promise<string>;
-
-  minimumStayCheck(
-    _nationID: PromiseOrValue<BigNumberish>,
-    _duration: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
-
   name(overrides?: CallOverrides): Promise<string>;
 
   takeOrder(
@@ -853,8 +807,6 @@ export interface SimpleOTC extends BaseContract {
         createdAt: BigNumber;
       }
     >;
-
-    admin(overrides?: CallOverrides): Promise<string>;
 
     approveBattle(
       _nationID: PromiseOrValue<BigNumberish>,
@@ -1020,16 +972,6 @@ export interface SimpleOTC extends BaseContract {
       }
     >;
 
-    game(overrides?: CallOverrides): Promise<string>;
-
-    getter(overrides?: CallOverrides): Promise<string>;
-
-    minimumStayCheck(
-      _nationID: PromiseOrValue<BigNumberish>,
-      _duration: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
-
     name(overrides?: CallOverrides): Promise<string>;
 
     takeOrder(
@@ -1056,8 +998,6 @@ export interface SimpleOTC extends BaseContract {
       arg0: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
-
-    admin(overrides?: CallOverrides): Promise<BigNumber>;
 
     approveBattle(
       _nationID: PromiseOrValue<BigNumberish>,
@@ -1215,16 +1155,6 @@ export interface SimpleOTC extends BaseContract {
 
     emptyOrder(overrides?: CallOverrides): Promise<BigNumber>;
 
-    game(overrides?: CallOverrides): Promise<BigNumber>;
-
-    getter(overrides?: CallOverrides): Promise<BigNumber>;
-
-    minimumStayCheck(
-      _nationID: PromiseOrValue<BigNumberish>,
-      _duration: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     name(overrides?: CallOverrides): Promise<BigNumber>;
 
     takeOrder(
@@ -1253,8 +1183,6 @@ export interface SimpleOTC extends BaseContract {
       arg0: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
-
-    admin(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     approveBattle(
       _nationID: PromiseOrValue<BigNumberish>,
@@ -1411,16 +1339,6 @@ export interface SimpleOTC extends BaseContract {
     diamond(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     emptyOrder(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    game(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    getter(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    minimumStayCheck(
-      _nationID: PromiseOrValue<BigNumberish>,
-      _duration: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
 
     name(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 

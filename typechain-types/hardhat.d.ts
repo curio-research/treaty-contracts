@@ -45,10 +45,6 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.OwnershipFacet__factory>;
     getContractFactory(
-      name: "UselessFacet",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.UselessFacet__factory>;
-    getContractFactory(
       name: "IDiamondCut",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IDiamondCut__factory>;
@@ -173,6 +169,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Curio__factory>;
     getContractFactory(
+      name: "ERC20",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ERC20__factory>;
+    getContractFactory(
       name: "ERC721",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ERC721__factory>;
@@ -221,11 +221,6 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.OwnershipFacet>;
-    getContractAt(
-      name: "UselessFacet",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.UselessFacet>;
     getContractAt(
       name: "IDiamondCut",
       address: string,
@@ -381,6 +376,11 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.Curio>;
+    getContractAt(
+      name: "ERC20",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ERC20>;
     getContractAt(
       name: "ERC721",
       address: string,
