@@ -645,6 +645,7 @@ class Game:
             self.capital_level_to_building_level)
         world_parameters["secondsToTrainAThousandTroops"] = int(
             self.base_troop_training_in_seconds * 1000)
+        game_parameters.append({"subject": "InnerLayer", "object": "Tile", "componentName": "Size", "level": 0, "functionName": "initializeTile", "value": 1920})
         game_parameters.append({"subject": "Army", "componentName": "Rate", "object": "Gold", "level": 0,
                                "functionName": "gather", "value": int(get_hourly_gather_rate_per_army(Resource.GOLD) * 1000 / 3600)})
         game_parameters.append({"subject": "Army", "componentName": "Rate", "object": "Food", "level": 0,
