@@ -45,10 +45,6 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.OwnershipFacet__factory>;
     getContractFactory(
-      name: "UselessFacet",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.UselessFacet__factory>;
-    getContractFactory(
       name: "IDiamondCut",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IDiamondCut__factory>;
@@ -68,10 +64,6 @@ declare module "hardhat/types/runtime" {
       name: "IERC20",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IERC20__factory>;
-    getContractFactory(
-      name: "ITreaty",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.ITreaty__factory>;
     getContractFactory(
       name: "ECSLib",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -222,11 +214,6 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.OwnershipFacet>;
     getContractAt(
-      name: "UselessFacet",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.UselessFacet>;
-    getContractAt(
       name: "IDiamondCut",
       address: string,
       signer?: ethers.Signer
@@ -251,11 +238,6 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.IERC20>;
-    getContractAt(
-      name: "ITreaty",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.ITreaty>;
     getContractAt(
       name: "ECSLib",
       address: string,

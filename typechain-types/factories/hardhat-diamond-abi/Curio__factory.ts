@@ -2463,32 +2463,6 @@ const _abi = [
     type: "function",
   },
   {
-    inputs: [],
-    name: "getAddressNonce",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "uselessFunction",
-    outputs: [
-      {
-        internalType: "string",
-        name: "",
-        type: "string",
-      },
-    ],
-    stateMutability: "pure",
-    type: "function",
-  },
-  {
     anonymous: false,
     inputs: [
       {

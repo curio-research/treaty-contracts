@@ -26,7 +26,6 @@ import type {
 export interface EmbargoInterface extends utils.Interface {
   functions: {
     "addToSanctionList(uint256)": FunctionFragment;
-    "admin()": FunctionFragment;
     "approveBattle(uint256,bytes)": FunctionFragment;
     "approveClaimTile(uint256,bytes)": FunctionFragment;
     "approveDelegateGameFunction(uint256,bytes)": FunctionFragment;
@@ -52,11 +51,8 @@ export interface EmbargoInterface extends utils.Interface {
     "approveUpgradeTile(uint256,bytes)": FunctionFragment;
     "description()": FunctionFragment;
     "diamond()": FunctionFragment;
-    "game()": FunctionFragment;
     "getSanctionList()": FunctionFragment;
     "getTreatySigners()": FunctionFragment;
-    "getter()": FunctionFragment;
-    "minimumStayCheck(uint256,uint256)": FunctionFragment;
     "name()": FunctionFragment;
     "removeFromSanctionList(uint256)": FunctionFragment;
     "removeMember(uint256)": FunctionFragment;
@@ -69,7 +65,6 @@ export interface EmbargoInterface extends utils.Interface {
   getFunction(
     nameOrSignatureOrTopic:
       | "addToSanctionList"
-      | "admin"
       | "approveBattle"
       | "approveClaimTile"
       | "approveDelegateGameFunction"
@@ -95,11 +90,8 @@ export interface EmbargoInterface extends utils.Interface {
       | "approveUpgradeTile"
       | "description"
       | "diamond"
-      | "game"
       | "getSanctionList"
       | "getTreatySigners"
-      | "getter"
-      | "minimumStayCheck"
       | "name"
       | "removeFromSanctionList"
       | "removeMember"
@@ -113,7 +105,6 @@ export interface EmbargoInterface extends utils.Interface {
     functionFragment: "addToSanctionList",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
-  encodeFunctionData(functionFragment: "admin", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "approveBattle",
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BytesLike>]
@@ -211,7 +202,6 @@ export interface EmbargoInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "diamond", values?: undefined): string;
-  encodeFunctionData(functionFragment: "game", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "getSanctionList",
     values?: undefined
@@ -219,11 +209,6 @@ export interface EmbargoInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "getTreatySigners",
     values?: undefined
-  ): string;
-  encodeFunctionData(functionFragment: "getter", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "minimumStayCheck",
-    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(functionFragment: "name", values?: undefined): string;
   encodeFunctionData(
@@ -259,7 +244,6 @@ export interface EmbargoInterface extends utils.Interface {
     functionFragment: "addToSanctionList",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "admin", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "approveBattle",
     data: BytesLike
@@ -357,18 +341,12 @@ export interface EmbargoInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "diamond", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "game", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getSanctionList",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "getTreatySigners",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "getter", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "minimumStayCheck",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
@@ -428,8 +406,6 @@ export interface Embargo extends BaseContract {
       _nationID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
-
-    admin(overrides?: CallOverrides): Promise<[string]>;
 
     approveBattle(
       _nationID: PromiseOrValue<BigNumberish>,
@@ -573,19 +549,9 @@ export interface Embargo extends BaseContract {
 
     diamond(overrides?: CallOverrides): Promise<[string]>;
 
-    game(overrides?: CallOverrides): Promise<[string]>;
-
     getSanctionList(overrides?: CallOverrides): Promise<[BigNumber[]]>;
 
     getTreatySigners(overrides?: CallOverrides): Promise<[BigNumber[]]>;
-
-    getter(overrides?: CallOverrides): Promise<[string]>;
-
-    minimumStayCheck(
-      _nationID: PromiseOrValue<BigNumberish>,
-      _duration: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
 
     name(overrides?: CallOverrides): Promise<[string]>;
 
@@ -621,8 +587,6 @@ export interface Embargo extends BaseContract {
     _nationID: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
-
-  admin(overrides?: CallOverrides): Promise<string>;
 
   approveBattle(
     _nationID: PromiseOrValue<BigNumberish>,
@@ -766,19 +730,9 @@ export interface Embargo extends BaseContract {
 
   diamond(overrides?: CallOverrides): Promise<string>;
 
-  game(overrides?: CallOverrides): Promise<string>;
-
   getSanctionList(overrides?: CallOverrides): Promise<BigNumber[]>;
 
   getTreatySigners(overrides?: CallOverrides): Promise<BigNumber[]>;
-
-  getter(overrides?: CallOverrides): Promise<string>;
-
-  minimumStayCheck(
-    _nationID: PromiseOrValue<BigNumberish>,
-    _duration: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
 
   name(overrides?: CallOverrides): Promise<string>;
 
@@ -814,8 +768,6 @@ export interface Embargo extends BaseContract {
       _nationID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
-
-    admin(overrides?: CallOverrides): Promise<string>;
 
     approveBattle(
       _nationID: PromiseOrValue<BigNumberish>,
@@ -959,19 +911,9 @@ export interface Embargo extends BaseContract {
 
     diamond(overrides?: CallOverrides): Promise<string>;
 
-    game(overrides?: CallOverrides): Promise<string>;
-
     getSanctionList(overrides?: CallOverrides): Promise<BigNumber[]>;
 
     getTreatySigners(overrides?: CallOverrides): Promise<BigNumber[]>;
-
-    getter(overrides?: CallOverrides): Promise<string>;
-
-    minimumStayCheck(
-      _nationID: PromiseOrValue<BigNumberish>,
-      _duration: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
 
     name(overrides?: CallOverrides): Promise<string>;
 
@@ -1006,8 +948,6 @@ export interface Embargo extends BaseContract {
       _nationID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
-
-    admin(overrides?: CallOverrides): Promise<BigNumber>;
 
     approveBattle(
       _nationID: PromiseOrValue<BigNumberish>,
@@ -1151,19 +1091,9 @@ export interface Embargo extends BaseContract {
 
     diamond(overrides?: CallOverrides): Promise<BigNumber>;
 
-    game(overrides?: CallOverrides): Promise<BigNumber>;
-
     getSanctionList(overrides?: CallOverrides): Promise<BigNumber>;
 
     getTreatySigners(overrides?: CallOverrides): Promise<BigNumber>;
-
-    getter(overrides?: CallOverrides): Promise<BigNumber>;
-
-    minimumStayCheck(
-      _nationID: PromiseOrValue<BigNumberish>,
-      _duration: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
 
     name(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1200,8 +1130,6 @@ export interface Embargo extends BaseContract {
       _nationID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
-
-    admin(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     approveBattle(
       _nationID: PromiseOrValue<BigNumberish>,
@@ -1345,19 +1273,9 @@ export interface Embargo extends BaseContract {
 
     diamond(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    game(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
     getSanctionList(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getTreatySigners(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    getter(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    minimumStayCheck(
-      _nationID: PromiseOrValue<BigNumberish>,
-      _duration: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
 
     name(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 

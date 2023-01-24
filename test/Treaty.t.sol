@@ -278,7 +278,7 @@ contract TreatyTest is Test, DiamondDeployTest {
 
         // Nation 2 fails to leave alliance
         vm.startPrank(player2);
-        vm.expectRevert("Alliance: Nation must stay for at least 10 seconds");
+        vm.expectRevert("Have not stayed for minimum duration");
         alliance.treatyLeave();
         vm.stopPrank();
 
