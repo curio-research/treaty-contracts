@@ -133,7 +133,8 @@ contract HandshakeDeal is CurioTreaty {
     function proposeDeal3(
         string memory _functionType,
         uint256 _uint256Param,
-        Position memory _positionParam,
+        uint256 x_pos,
+        uint256 y_pos,
         uint256 _effectiveDuration
     ) public onlySigner returns (uint256) {
         require(
@@ -146,11 +147,13 @@ contract HandshakeDeal is CurioTreaty {
         uint256 proposerID = getter.getEntityByAddress(msg.sender);
         dealCount++;
 
+        Position memory position = Position({x: x_pos, y: y_pos});
+
         idToDeal[dealCount] = Deal({
             dealID: dealCount, // FORMATTING: DO NOT REMOVE THIS COMMENT,
             proposerID: proposerID,
             functionOfAgreement: _functionType,
-            encodedParams: abi.encode(_uint256Param, _positionParam),
+            encodedParams: abi.encode(_uint256Param, position),
             signedAt: block.timestamp,
             effectiveDuration: _effectiveDuration
         });

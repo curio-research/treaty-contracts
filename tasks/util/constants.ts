@@ -162,4 +162,12 @@ export const treatyDescriptions: Record<string, Record<string, string>> = {
     cancelOrder: 'Cancel your last order.',
     takeOrder: 'Take an order from the creator.',
   },
+  HandshakeDeal: {
+    treatyLeave: 'Leave the HandshakeDeal treaty.',
+    treatyJoin: 'Join the HandshakeDeal treaty.',
+    getTreatySigners: 'Get the list of treaty signers.',
+    proposeDeal1: 'Propose a deal to another nation. Note that the valid deal types are "approveUpgradeCapital", "approveUpgradeTile", "approveRecoverTile", "approveDisownTile", "approveEndGather", "approveUnloadResources", "approveHarvestResource", "approveHarvestResourcesFromCapital", "approveUpgradeResource". _uint256Param stands for the capitalID, tileID, or resourceID.',
+    proposeDeal2: 'Propose a deal to another nation. Note that the valid deal types are "approveStartTroopProduction", "approveStartGather", "approveHarvestResource", "approveBattle". Check out what _uint256Param1 and _uint256Param2 stand for in our opensourced codebase.',
+    proposeDeal3: 'Propose a deal to another nation. Note that the valid deal types are "approveMoveCapital", "approveClaimTile", and "approveMove". _uint256Param stands for capitalID, tileID, or armyID. x_pos and y_pos inputs the position for the function.',
+  }
 };
