@@ -221,7 +221,6 @@ export const chooseRandomEmptyPosition = (tileMap: TileMap, inner: boolean = fal
   const mapWidth = tileMap.length;
   const mapHeight = tileMap[0].length;
   const center = { x: Math.floor(mapWidth / 2), y: Math.floor(mapHeight / 2) };
-  console.log('center', center);
 
   let pos;
   do {

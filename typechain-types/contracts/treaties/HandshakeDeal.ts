@@ -23,16 +23,6 @@ import type {
   PromiseOrValue,
 } from "../../common";
 
-export type PositionStruct = {
-  x: PromiseOrValue<BigNumberish>;
-  y: PromiseOrValue<BigNumberish>;
-};
-
-export type PositionStructOutput = [BigNumber, BigNumber] & {
-  x: BigNumber;
-  y: BigNumber;
-};
-
 export interface HandshakeDealInterface extends utils.Interface {
   functions: {
     "approveBattle(uint256,bytes)": FunctionFragment;
@@ -66,9 +56,9 @@ export interface HandshakeDealInterface extends utils.Interface {
     "idToDeal(uint256)": FunctionFragment;
     "name()": FunctionFragment;
     "nationIDToDealIDs(uint256,uint256)": FunctionFragment;
-    "proposeDeal1(uint8,uint256,uint256)": FunctionFragment;
-    "proposeDeal2(uint8,uint256,uint256,uint256)": FunctionFragment;
-    "proposeDeal3(uint8,uint256,(uint256,uint256),uint256)": FunctionFragment;
+    "proposeDeal1(string,uint256,uint256)": FunctionFragment;
+    "proposeDeal2(string,uint256,uint256,uint256)": FunctionFragment;
+    "proposeDeal3(string,uint256,uint256,uint256,uint256)": FunctionFragment;
     "signDeal(uint256)": FunctionFragment;
     "treatyDelegateGameFunction(string,uint256,bool)": FunctionFragment;
     "treatyJoin()": FunctionFragment;
@@ -235,7 +225,7 @@ export interface HandshakeDealInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "proposeDeal1",
     values: [
-      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<string>,
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>
     ]
@@ -243,7 +233,7 @@ export interface HandshakeDealInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "proposeDeal2",
     values: [
-      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<string>,
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>
@@ -252,9 +242,10 @@ export interface HandshakeDealInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "proposeDeal3",
     values: [
+      PromiseOrValue<string>,
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>,
-      PositionStruct,
+      PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>
     ]
   ): string;
@@ -599,10 +590,10 @@ export interface HandshakeDeal extends BaseContract {
       arg0: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<
-      [BigNumber, BigNumber, number, string, BigNumber, BigNumber] & {
+      [BigNumber, BigNumber, string, string, BigNumber, BigNumber] & {
         dealID: BigNumber;
         proposerID: BigNumber;
-        functionOfAgreement: number;
+        functionOfAgreement: string;
         encodedParams: string;
         signedAt: BigNumber;
         effectiveDuration: BigNumber;
@@ -618,14 +609,14 @@ export interface HandshakeDeal extends BaseContract {
     ): Promise<[BigNumber]>;
 
     proposeDeal1(
-      _functionType: PromiseOrValue<BigNumberish>,
+      _functionType: PromiseOrValue<string>,
       _uint256Param: PromiseOrValue<BigNumberish>,
       _effectiveDuration: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     proposeDeal2(
-      _functionType: PromiseOrValue<BigNumberish>,
+      _functionType: PromiseOrValue<string>,
       _uint256Param1: PromiseOrValue<BigNumberish>,
       _uint256Param2: PromiseOrValue<BigNumberish>,
       _effectiveDuration: PromiseOrValue<BigNumberish>,
@@ -633,9 +624,10 @@ export interface HandshakeDeal extends BaseContract {
     ): Promise<ContractTransaction>;
 
     proposeDeal3(
-      _functionType: PromiseOrValue<BigNumberish>,
+      _functionType: PromiseOrValue<string>,
       _uint256Param: PromiseOrValue<BigNumberish>,
-      _positionParam: PositionStruct,
+      x_pos: PromiseOrValue<BigNumberish>,
+      y_pos: PromiseOrValue<BigNumberish>,
       _effectiveDuration: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
@@ -816,10 +808,10 @@ export interface HandshakeDeal extends BaseContract {
     arg0: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<
-    [BigNumber, BigNumber, number, string, BigNumber, BigNumber] & {
+    [BigNumber, BigNumber, string, string, BigNumber, BigNumber] & {
       dealID: BigNumber;
       proposerID: BigNumber;
-      functionOfAgreement: number;
+      functionOfAgreement: string;
       encodedParams: string;
       signedAt: BigNumber;
       effectiveDuration: BigNumber;
@@ -835,14 +827,14 @@ export interface HandshakeDeal extends BaseContract {
   ): Promise<BigNumber>;
 
   proposeDeal1(
-    _functionType: PromiseOrValue<BigNumberish>,
+    _functionType: PromiseOrValue<string>,
     _uint256Param: PromiseOrValue<BigNumberish>,
     _effectiveDuration: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   proposeDeal2(
-    _functionType: PromiseOrValue<BigNumberish>,
+    _functionType: PromiseOrValue<string>,
     _uint256Param1: PromiseOrValue<BigNumberish>,
     _uint256Param2: PromiseOrValue<BigNumberish>,
     _effectiveDuration: PromiseOrValue<BigNumberish>,
@@ -850,9 +842,10 @@ export interface HandshakeDeal extends BaseContract {
   ): Promise<ContractTransaction>;
 
   proposeDeal3(
-    _functionType: PromiseOrValue<BigNumberish>,
+    _functionType: PromiseOrValue<string>,
     _uint256Param: PromiseOrValue<BigNumberish>,
-    _positionParam: PositionStruct,
+    x_pos: PromiseOrValue<BigNumberish>,
+    y_pos: PromiseOrValue<BigNumberish>,
     _effectiveDuration: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
@@ -1033,10 +1026,10 @@ export interface HandshakeDeal extends BaseContract {
       arg0: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<
-      [BigNumber, BigNumber, number, string, BigNumber, BigNumber] & {
+      [BigNumber, BigNumber, string, string, BigNumber, BigNumber] & {
         dealID: BigNumber;
         proposerID: BigNumber;
-        functionOfAgreement: number;
+        functionOfAgreement: string;
         encodedParams: string;
         signedAt: BigNumber;
         effectiveDuration: BigNumber;
@@ -1052,14 +1045,14 @@ export interface HandshakeDeal extends BaseContract {
     ): Promise<BigNumber>;
 
     proposeDeal1(
-      _functionType: PromiseOrValue<BigNumberish>,
+      _functionType: PromiseOrValue<string>,
       _uint256Param: PromiseOrValue<BigNumberish>,
       _effectiveDuration: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     proposeDeal2(
-      _functionType: PromiseOrValue<BigNumberish>,
+      _functionType: PromiseOrValue<string>,
       _uint256Param1: PromiseOrValue<BigNumberish>,
       _uint256Param2: PromiseOrValue<BigNumberish>,
       _effectiveDuration: PromiseOrValue<BigNumberish>,
@@ -1067,9 +1060,10 @@ export interface HandshakeDeal extends BaseContract {
     ): Promise<BigNumber>;
 
     proposeDeal3(
-      _functionType: PromiseOrValue<BigNumberish>,
+      _functionType: PromiseOrValue<string>,
       _uint256Param: PromiseOrValue<BigNumberish>,
-      _positionParam: PositionStruct,
+      x_pos: PromiseOrValue<BigNumberish>,
+      y_pos: PromiseOrValue<BigNumberish>,
       _effectiveDuration: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -1259,14 +1253,14 @@ export interface HandshakeDeal extends BaseContract {
     ): Promise<BigNumber>;
 
     proposeDeal1(
-      _functionType: PromiseOrValue<BigNumberish>,
+      _functionType: PromiseOrValue<string>,
       _uint256Param: PromiseOrValue<BigNumberish>,
       _effectiveDuration: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     proposeDeal2(
-      _functionType: PromiseOrValue<BigNumberish>,
+      _functionType: PromiseOrValue<string>,
       _uint256Param1: PromiseOrValue<BigNumberish>,
       _uint256Param2: PromiseOrValue<BigNumberish>,
       _effectiveDuration: PromiseOrValue<BigNumberish>,
@@ -1274,9 +1268,10 @@ export interface HandshakeDeal extends BaseContract {
     ): Promise<BigNumber>;
 
     proposeDeal3(
-      _functionType: PromiseOrValue<BigNumberish>,
+      _functionType: PromiseOrValue<string>,
       _uint256Param: PromiseOrValue<BigNumberish>,
-      _positionParam: PositionStruct,
+      x_pos: PromiseOrValue<BigNumberish>,
+      y_pos: PromiseOrValue<BigNumberish>,
       _effectiveDuration: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
@@ -1468,14 +1463,14 @@ export interface HandshakeDeal extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     proposeDeal1(
-      _functionType: PromiseOrValue<BigNumberish>,
+      _functionType: PromiseOrValue<string>,
       _uint256Param: PromiseOrValue<BigNumberish>,
       _effectiveDuration: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     proposeDeal2(
-      _functionType: PromiseOrValue<BigNumberish>,
+      _functionType: PromiseOrValue<string>,
       _uint256Param1: PromiseOrValue<BigNumberish>,
       _uint256Param2: PromiseOrValue<BigNumberish>,
       _effectiveDuration: PromiseOrValue<BigNumberish>,
@@ -1483,9 +1478,10 @@ export interface HandshakeDeal extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     proposeDeal3(
-      _functionType: PromiseOrValue<BigNumberish>,
+      _functionType: PromiseOrValue<string>,
       _uint256Param: PromiseOrValue<BigNumberish>,
-      _positionParam: PositionStruct,
+      x_pos: PromiseOrValue<BigNumberish>,
+      y_pos: PromiseOrValue<BigNumberish>,
       _effectiveDuration: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
