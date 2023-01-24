@@ -2,7 +2,7 @@
     "componentName": "Cost",
     "functionName": "",
     "level": 0,
-    "object": "Food",
+    "object": "Gold",
     "subject": "Troop Production",
-    "value": 25000
+    "value": 1000
 }

@@ -1,8 +1,8 @@
 {
-    "componentName": "Rate",
-    "functionName": "gather",
+    "componentName": "Size",
+    "functionName": "initializeTile",
     "level": 0,
-    "object": "Gold",
-    "subject": "Army",
-    "value": 11681
+    "object": "Tile",
+    "subject": "InnerLayer",
+    "value": 1920
 }
