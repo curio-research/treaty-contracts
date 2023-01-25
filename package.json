@@ -3,6 +3,7 @@
   "private": true,
   "license": "TBD",
   "scripts": {
+    "prepare": "bash ./scripts/pnm-test-setup.sh",
     "contract-size": "yarn run hardhat size-contracts",
     "getInitParams": "npx ts-node test/util/foundry/getInitParams.ts",
     "getFuncSelectors": "npx ts-node test/util/foundry/getFuncSelectors.ts",
