@@ -1,8 +1,8 @@
 {
-    "componentName": "Load",
-    "functionName": "",
+    "componentName": "Rate",
+    "functionName": "gather",
     "level": 0,
-    "object": "Resource",
-    "subject": "Troop",
-    "value": 9097
+    "object": "Food",
+    "subject": "Army",
+    "value": 42833
 }
