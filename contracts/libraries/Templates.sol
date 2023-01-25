@@ -44,7 +44,7 @@ library Templates {
         ECSLib.setUint("LastMoved", capitalID, block.timestamp);
         ECSLib.setUint("LastSacked", capitalID, 0);
         ECSLib.setUint("LastUpgraded", capitalID, 0);
-        ECSLib.setUint("LastHarvested", capitalID, 0);
+        ECSLib.setUint("LastHarvested", capitalID, block.timestamp);
         ECSLib.setUint("Nation", capitalID, _nationID);
         ECSLib.setUint("Level", capitalID, 1);
         ECSLib.setAddress("Address", capitalID, _address);

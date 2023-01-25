@@ -18,6 +18,19 @@ contract NonAggressionPact is CurioTreaty {
         return "Member nations cannot battle armies or tiles of one another";
     }
 
+    // ----------------------------------------------------------
+    // Set getters
+    // ----------------------------------------------------------
+
+    function getTreatySigners() public view returns (uint256[] memory) {
+        GetterFacet getter = GetterFacet(diamond);
+        return getter.getTreatySigners(getter.getEntityByAddress(address(this)));
+    }
+
+    // ----------------------------------------------------------
+    // Owner functionos
+    // ----------------------------------------------------------
+
     function addToWhitelist(uint256 _nationID) public onlyOwner {
         AdminFacet admin = AdminFacet(diamond);
         admin.addToTreatyWhitelist(_nationID);
@@ -34,13 +47,17 @@ contract NonAggressionPact is CurioTreaty {
         admin.removeSigner(_nationID);
     }
 
+    // ----------------------------------------------------------
+    // Player functionos
+    // ----------------------------------------------------------
+
     function treatyJoin() public override onlyWhitelist {
         super.treatyJoin();
     }
 
     function treatyLeave() public override minimumStay(30) {
         GetterFacet getter = GetterFacet(diamond);
-       
+
         // Remove nation from whitelist
         uint256 nationID = getter.getEntityByAddress(msg.sender);
         AdminFacet admin = AdminFacet(diamond);
@@ -55,7 +72,7 @@ contract NonAggressionPact is CurioTreaty {
 
     function approveBattle(uint256 _nationID, bytes memory _encodedParams) public view override returns (bool) {
         GetterFacet getter = GetterFacet(diamond);
-       
+
         // Disapprove if target nation is part of pact
         (, , uint256 battleTargetID) = abi.decode(_encodedParams, (uint256, uint256, uint256));
         uint256 targetNationID = getter.getNation(battleTargetID);

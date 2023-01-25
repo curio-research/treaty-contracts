@@ -24,6 +24,19 @@ contract Embargo is CurioTreaty {
     }
 
     // ----------------------------------------------------------
+    // Set getters
+    // ----------------------------------------------------------
+
+    function getSanctionList() public view returns (uint256[] memory) {
+        return sanctionList.getAll();
+    }
+
+    function getTreatySigners() public view returns (uint256[] memory) {
+        GetterFacet getter = GetterFacet(diamond);
+        return getter.getTreatySigners(getter.getEntityByAddress(address(this)));
+    }
+
+    // ----------------------------------------------------------
     // Owner functions
     // ----------------------------------------------------------
     function addToSanctionList(uint256 _nationID) public onlyOwner {
@@ -53,7 +66,7 @@ contract Embargo is CurioTreaty {
 
     function approveTransfer(uint256 _nationID, bytes memory _encodedParams) public view override returns (bool) {
         GetterFacet getter = GetterFacet(diamond);
-       
+
         // Disapprove if transfer is to a nation on the sanction list
         (uint256 toID, ) = abi.decode(_encodedParams, (uint256, uint256));
         uint256 toNationID = getter.getNation(toID);
