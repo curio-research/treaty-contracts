@@ -76,7 +76,7 @@ contract GameTest is Test, DiamondDeployTest {
     }
 
     function testTiles() public {
-        uint256 time = 1000;
+        uint256 time = block.timestamp + 1000;
         vm.warp(time);
         uint256 level1TileUpgradeGoldCost = getter.getGameParameter("Tile", "Gold", "Cost", "Upgrade", 1);
         console.log("Level 1 tile upgrade gold cost is", level1TileUpgradeGoldCost);
@@ -381,8 +381,8 @@ contract GameTest is Test, DiamondDeployTest {
         admin.dripToken(nation1CapitalAddr, "Warrior", 1000);
         admin.dripToken(nation1CapitalAddr, "Horseman", 1000);
         admin.dripToken(nation1CapitalAddr, "Slinger", 1000);
-        admin.dripToken(nation1CapitalAddr, "Food", 1000000);
-        admin.dripToken(nation1CapitalAddr, "Gold", 1000000);
+        admin.dripToken(nation1CapitalAddr, "Food", 100000000);
+        admin.dripToken(nation1CapitalAddr, "Gold", 100000000);
 
         admin.dripToken(nation2CapitalAddr, "Warrior", 1000);
         admin.dripToken(nation2CapitalAddr, "Horseman", 1000);
@@ -419,11 +419,20 @@ contract GameTest is Test, DiamondDeployTest {
         uint256 targetTileID = getter.getTileAt(targetTilePos);
         address targetTileAddress = getter.getAddress(targetTileID);
 
-        uint256 battleTime = 2;
-        for (uint256 i = 0; i < battleTime; i++) {
+        uint256 army12ID = game.organizeArmy(nation1CapitalID, armyTemplateIDs, armyTemplateAmounts);
+        time += 1;
+        vm.warp(time);
+        game.move(army12ID, Position({x: 62, y: 10}));
+
+        time += 1;
+        vm.warp(time);
+        game.move(army12ID, Position({x: 62, y: 8}));
+
+        while (guardToken.balanceOf(targetTileAddress) > 0) {
             vm.warp(time + 10);
             time += 10;
             game.battle(army11ID, targetTileID);
+            game.battle(army12ID, targetTileID);
         }
         assertEq(guardToken.balanceOf(targetTileAddress), 0);
 
@@ -436,7 +445,7 @@ contract GameTest is Test, DiamondDeployTest {
         assertEq(getter.getNation(targetTileID), nation1ID);
 
         // Nation 1 move capital to new tile
-        time += 10;
+        time += 36000;
         vm.warp(time);
         assertTrue(getter.getResourceAtTile(targetTilePos) > 0);
         game.moveCapital(nation1CapitalID, targetTilePos);
@@ -458,14 +467,14 @@ contract GameTest is Test, DiamondDeployTest {
 
         // Deployer transfers gold, food, and troops to Nation 1 and Nation 2
         vm.startPrank(deployer);
-        admin.dripToken(nation1CapitalAddr, "Gold", 1000000);
-        admin.dripToken(nation1CapitalAddr, "Food", 1000000);
+        admin.dripToken(nation1CapitalAddr, "Gold", 100000000);
+        admin.dripToken(nation1CapitalAddr, "Food", 100000000);
         admin.dripToken(nation1CapitalAddr, "Warrior", 1000);
         admin.dripToken(nation1CapitalAddr, "Horseman", 1000);
         admin.dripToken(nation1CapitalAddr, "Slinger", 1000);
 
-        admin.dripToken(nation2CapitalAddr, "Gold", 1000000);
-        admin.dripToken(nation2CapitalAddr, "Food", 1000000);
+        admin.dripToken(nation2CapitalAddr, "Gold", 100000000);
+        admin.dripToken(nation2CapitalAddr, "Food", 100000000);
         admin.dripToken(nation2CapitalAddr, "Warrior", 1000);
         admin.dripToken(nation2CapitalAddr, "Horseman", 1000);
         admin.dripToken(nation2CapitalAddr, "Slinger", 1000);
@@ -522,8 +531,8 @@ contract GameTest is Test, DiamondDeployTest {
         Position memory farmTilePos = Position({x: 60, y: 5});
         admin.giftTileAndResourceAt(Position({x: 60, y: 5}), nation1ID);
 
-        admin.dripToken(nation1CapitalAddr, "Gold", 1000000);
-        admin.dripToken(nation1CapitalAddr, "Food", 1000000);
+        admin.dripToken(nation1CapitalAddr, "Gold", 1000000000);
+        admin.dripToken(nation1CapitalAddr, "Food", 1000000000);
 
         vm.stopPrank();
 
@@ -532,15 +541,17 @@ contract GameTest is Test, DiamondDeployTest {
         vm.startPrank(player1);
         game.upgradeCapital(nation1CapitalID);
         uint256 nation1CapitalID = getter.getCapital(nation1ID);
+        uint256 capitalGoldBalance = goldToken.balanceOf(nation1CapitalAddr);
+        uint256 capitalFoodBalance = foodToken.balanceOf(nation1CapitalAddr);
 
-        time += 20;
+        time += 3600;
         vm.warp(time);
         game.harvestResourcesFromCapital(nation1CapitalID);
 
         uint256 goldBalance1 = goldToken.balanceOf(nation1CapitalAddr);
         uint256 foodBalance1 = foodToken.balanceOf(nation1CapitalAddr);
-        assertTrue(goldBalance1 > 1000000);
-        assertTrue(foodBalance1 > 1000000);
+        assertTrue(goldBalance1 > capitalGoldBalance);
+        assertTrue(foodBalance1 > capitalFoodBalance);
 
         uint256 farmID = getter.getResourceAtTile(farmTilePos);
         game.upgradeResource(farmID);
