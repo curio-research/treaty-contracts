@@ -296,6 +296,7 @@ contract GameFacet is UseStorage {
         // Transfer ownership of resource
         uint256 resourceID = GameLib.getResourceAt(tilePosition);
         ECSLib.setUint("Nation", resourceID, nationID);
+        ECSLib.setUint("LastHarvested", resourceID, block.timestamp);
 
         // Set last action time
         ECSLib.setUint("LastActed", nationID, block.timestamp);
