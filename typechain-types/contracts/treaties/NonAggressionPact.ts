@@ -26,7 +26,6 @@ import type {
 export interface NonAggressionPactInterface extends utils.Interface {
   functions: {
     "addToWhitelist(uint256)": FunctionFragment;
-    "admin()": FunctionFragment;
     "approveBattle(uint256,bytes)": FunctionFragment;
     "approveClaimTile(uint256,bytes)": FunctionFragment;
     "approveDelegateGameFunction(uint256,bytes)": FunctionFragment;
@@ -52,9 +51,7 @@ export interface NonAggressionPactInterface extends utils.Interface {
     "approveUpgradeTile(uint256,bytes)": FunctionFragment;
     "description()": FunctionFragment;
     "diamond()": FunctionFragment;
-    "game()": FunctionFragment;
-    "getter()": FunctionFragment;
-    "minimumStayCheck(uint256,uint256)": FunctionFragment;
+    "getTreatySigners()": FunctionFragment;
     "name()": FunctionFragment;
     "removeFromWhitelist(uint256)": FunctionFragment;
     "removeMember(uint256)": FunctionFragment;
@@ -66,7 +63,6 @@ export interface NonAggressionPactInterface extends utils.Interface {
   getFunction(
     nameOrSignatureOrTopic:
       | "addToWhitelist"
-      | "admin"
       | "approveBattle"
       | "approveClaimTile"
       | "approveDelegateGameFunction"
@@ -92,9 +88,7 @@ export interface NonAggressionPactInterface extends utils.Interface {
       | "approveUpgradeTile"
       | "description"
       | "diamond"
-      | "game"
-      | "getter"
-      | "minimumStayCheck"
+      | "getTreatySigners"
       | "name"
       | "removeFromWhitelist"
       | "removeMember"
@@ -107,7 +101,6 @@ export interface NonAggressionPactInterface extends utils.Interface {
     functionFragment: "addToWhitelist",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
-  encodeFunctionData(functionFragment: "admin", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "approveBattle",
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BytesLike>]
@@ -205,11 +198,9 @@ export interface NonAggressionPactInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "diamond", values?: undefined): string;
-  encodeFunctionData(functionFragment: "game", values?: undefined): string;
-  encodeFunctionData(functionFragment: "getter", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "minimumStayCheck",
-    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
+    functionFragment: "getTreatySigners",
+    values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "name", values?: undefined): string;
   encodeFunctionData(
@@ -241,7 +232,6 @@ export interface NonAggressionPactInterface extends utils.Interface {
     functionFragment: "addToWhitelist",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "admin", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "approveBattle",
     data: BytesLike
@@ -339,10 +329,8 @@ export interface NonAggressionPactInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "diamond", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "game", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "getter", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "minimumStayCheck",
+    functionFragment: "getTreatySigners",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
@@ -398,8 +386,6 @@ export interface NonAggressionPact extends BaseContract {
       _nationID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
-
-    admin(overrides?: CallOverrides): Promise<[string]>;
 
     approveBattle(
       _nationID: PromiseOrValue<BigNumberish>,
@@ -543,15 +529,7 @@ export interface NonAggressionPact extends BaseContract {
 
     diamond(overrides?: CallOverrides): Promise<[string]>;
 
-    game(overrides?: CallOverrides): Promise<[string]>;
-
-    getter(overrides?: CallOverrides): Promise<[string]>;
-
-    minimumStayCheck(
-      _nationID: PromiseOrValue<BigNumberish>,
-      _duration: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
+    getTreatySigners(overrides?: CallOverrides): Promise<[BigNumber[]]>;
 
     name(overrides?: CallOverrides): Promise<[string]>;
 
@@ -585,8 +563,6 @@ export interface NonAggressionPact extends BaseContract {
     _nationID: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
-
-  admin(overrides?: CallOverrides): Promise<string>;
 
   approveBattle(
     _nationID: PromiseOrValue<BigNumberish>,
@@ -730,15 +706,7 @@ export interface NonAggressionPact extends BaseContract {
 
   diamond(overrides?: CallOverrides): Promise<string>;
 
-  game(overrides?: CallOverrides): Promise<string>;
-
-  getter(overrides?: CallOverrides): Promise<string>;
-
-  minimumStayCheck(
-    _nationID: PromiseOrValue<BigNumberish>,
-    _duration: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
+  getTreatySigners(overrides?: CallOverrides): Promise<BigNumber[]>;
 
   name(overrides?: CallOverrides): Promise<string>;
 
@@ -772,8 +740,6 @@ export interface NonAggressionPact extends BaseContract {
       _nationID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
-
-    admin(overrides?: CallOverrides): Promise<string>;
 
     approveBattle(
       _nationID: PromiseOrValue<BigNumberish>,
@@ -917,15 +883,7 @@ export interface NonAggressionPact extends BaseContract {
 
     diamond(overrides?: CallOverrides): Promise<string>;
 
-    game(overrides?: CallOverrides): Promise<string>;
-
-    getter(overrides?: CallOverrides): Promise<string>;
-
-    minimumStayCheck(
-      _nationID: PromiseOrValue<BigNumberish>,
-      _duration: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
+    getTreatySigners(overrides?: CallOverrides): Promise<BigNumber[]>;
 
     name(overrides?: CallOverrides): Promise<string>;
 
@@ -958,8 +916,6 @@ export interface NonAggressionPact extends BaseContract {
       _nationID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
-
-    admin(overrides?: CallOverrides): Promise<BigNumber>;
 
     approveBattle(
       _nationID: PromiseOrValue<BigNumberish>,
@@ -1103,15 +1059,7 @@ export interface NonAggressionPact extends BaseContract {
 
     diamond(overrides?: CallOverrides): Promise<BigNumber>;
 
-    game(overrides?: CallOverrides): Promise<BigNumber>;
-
-    getter(overrides?: CallOverrides): Promise<BigNumber>;
-
-    minimumStayCheck(
-      _nationID: PromiseOrValue<BigNumberish>,
-      _duration: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    getTreatySigners(overrides?: CallOverrides): Promise<BigNumber>;
 
     name(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1146,8 +1094,6 @@ export interface NonAggressionPact extends BaseContract {
       _nationID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
-
-    admin(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     approveBattle(
       _nationID: PromiseOrValue<BigNumberish>,
@@ -1291,15 +1237,7 @@ export interface NonAggressionPact extends BaseContract {
 
     diamond(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    game(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    getter(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    minimumStayCheck(
-      _nationID: PromiseOrValue<BigNumberish>,
-      _duration: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
+    getTreatySigners(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     name(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 

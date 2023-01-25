@@ -1,8 +1,8 @@
 {
-    "componentName": "Reward",
-    "functionName": "",
+    "componentName": "Cost",
+    "functionName": "Upgrade",
     "level": 2,
     "object": "Gold",
-    "subject": "Barbarian",
-    "value": 209183
+    "subject": "Capital",
+    "value": 48722327
 }

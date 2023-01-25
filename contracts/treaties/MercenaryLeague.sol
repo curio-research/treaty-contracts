@@ -3,6 +3,8 @@ pragma solidity ^0.8.13;
 
 import {CurioTreaty} from "contracts/standards/CurioTreaty.sol";
 import {CurioERC20} from "contracts/standards/CurioERC20.sol";
+import {AdminFacet} from "contracts/facets/AdminFacet.sol";
+import {GetterFacet} from "contracts/facets/GetterFacet.sol";
 import {Position} from "contracts/libraries/Types.sol";
 import {Set} from "contracts/Set.sol";
 
@@ -14,18 +16,38 @@ contract MercenaryLeague is CurioTreaty {
     uint256 public conscriptionDuration;
 
     constructor(address _diamond) CurioTreaty(_diamond) {
-        name = "Mercenary League";
-        description = "A Military Alliance that allows drafting of armies.";
-
+        GetterFacet getter = GetterFacet(diamond);
         goldToken = getter.getTokenContract("Gold");
         warCouncil = new Set();
         conscriptionDuration = 3600;
     }
 
     modifier onlyWarCouncil() {
+        GetterFacet getter = GetterFacet(diamond);
         uint256 callerID = getter.getEntityByAddress(msg.sender);
         require(warCouncil.includes(callerID), "Alliance: Only War Council can call");
         _;
+    }
+
+    function name() external pure override returns (string memory) {
+        return "Mercenary League";
+    }
+
+    function description() external pure override returns (string memory) {
+        return "A Military Alliance that allows drafting of armies.";
+    }
+
+    // ----------------------------------------------------------
+    // Set getters
+    // ----------------------------------------------------------
+
+    function getWarCouncilMembers() public view returns (uint256[] memory) {
+        return warCouncil.getAll();
+    }
+
+    function getTreatySigners() public view returns (uint256[] memory) {
+        GetterFacet getter = GetterFacet(diamond);
+        return getter.getTreatySigners(getter.getEntityByAddress(address(this)));
     }
 
     // ----------------------------------------------------------
@@ -46,6 +68,7 @@ contract MercenaryLeague is CurioTreaty {
     }
 
     function conscriptArmies(uint256 _nationID) public onlyWarCouncil {
+        GetterFacet getter = GetterFacet(diamond);
         require(memberToConscriptionFee[_nationID] > 0, "Alliance: Target must have a conscription fee set");
         require(getter.getNationTreatySignature(_nationID, getter.getEntityByAddress(address(this))) != 0, "Alliance: Target nation is not part of the alliance");
         require(memberConscriptionStartTime[getter.getEntityByAddress(msg.sender)] == 0, "Alliance: Target nation's armies have already been conscripted");
@@ -54,6 +77,7 @@ contract MercenaryLeague is CurioTreaty {
         address conscripterCapitalAddr = getter.getAddress(getter.getCapital(getter.getEntityByAddress(msg.sender)));
         address targetCapitalAddr = getter.getAddress(getter.getCapital(_nationID));
         goldToken.transferFrom(conscripterCapitalAddr, targetCapitalAddr, memberToConscriptionFee[_nationID]);
+        AdminFacet admin = AdminFacet(diamond);
         admin.adminDelegateGameFunction(_nationID, "Battle", getter.getEntityByAddress(msg.sender), 0, true);
         admin.adminDelegateGameFunction(_nationID, "Move", getter.getEntityByAddress(msg.sender), 0, true);
 
@@ -65,9 +89,11 @@ contract MercenaryLeague is CurioTreaty {
     // ----------------------------------------------------------
 
     function revokeArmies() public {
+        GetterFacet getter = GetterFacet(diamond);
         require(block.timestamp - memberConscriptionStartTime[getter.getEntityByAddress(msg.sender)] > conscriptionDuration, "Alliance: Nation's conscription hasn't expired yet");
 
         uint256 nationID = getter.getEntityByAddress(msg.sender);
+        AdminFacet admin = AdminFacet(diamond);
         admin.adminDelegateGameFunction(nationID, "Battle", getter.getEntityByAddress(msg.sender), 0, false);
         admin.adminDelegateGameFunction(nationID, "Move", getter.getEntityByAddress(msg.sender), 0, false);
 
@@ -75,18 +101,18 @@ contract MercenaryLeague is CurioTreaty {
         memberConscriptionStartTime[getter.getEntityByAddress(msg.sender)] = 0;
     }
 
-    function treatyLeave() public override {
-        // Check if nation has stayed in alliance for at least 10 seconds
-        uint256 nationID = getter.getEntityByAddress(msg.sender);
-        require(minimumStayCheck(nationID, 10), "Alliance: Nation must stay for at least 10 seconds");
+    function treatyLeave() public override minimumStay(10) {
+        GetterFacet getter = GetterFacet(diamond);
 
         // Check that nation has revoked conscripted armies (if any)
+        uint256 nationID = getter.getEntityByAddress(msg.sender);
         require(memberConscriptionStartTime[nationID] == 0, "Alliance: Nation must revoke conscripted armies before leaving");
 
         super.treatyLeave();
     }
 
     function setConscriptionFee(uint256 _fee) public onlySigner {
+        GetterFacet getter = GetterFacet(diamond);
         memberToConscriptionFee[getter.getEntityByAddress(msg.sender)] = _fee;
     }
 

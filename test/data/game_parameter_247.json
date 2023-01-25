@@ -1,8 +1,8 @@
 {
     "componentName": "Cost",
-    "functionName": "Move",
-    "level": 1,
-    "object": "Food",
-    "subject": "Capital",
-    "value": 0
+    "functionName": "Upgrade",
+    "level": 15,
+    "object": "Gold",
+    "subject": "Farm",
+    "value": 83020624
 }
