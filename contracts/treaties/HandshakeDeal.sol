@@ -38,8 +38,6 @@ contract HandshakeDeal is CurioTreaty {
     mapping(uint256 => uint256[]) public nationIDToDealIDs;
     mapping(uint256 => Deal) public idToDeal;
 
-    constructor(address _diamond) CurioTreaty(_diamond) {}
-
     function name() external pure override returns (string memory) {
         return "Handshake Deal";
     }

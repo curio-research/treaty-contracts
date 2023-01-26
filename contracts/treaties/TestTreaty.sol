@@ -6,8 +6,6 @@ import {GameFacet} from "contracts/facets/GameFacet.sol";
 import {GetterFacet} from "contracts/facets/GetterFacet.sol";
 
 contract TestTreaty is CurioTreaty {
-    constructor(address _diamond) CurioTreaty(_diamond) {}
-
     function name() external pure override returns (string memory) {
         return "Test Treaty";
     }

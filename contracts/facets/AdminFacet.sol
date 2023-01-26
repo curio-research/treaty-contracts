@@ -8,7 +8,6 @@ import {Templates} from "contracts/libraries/Templates.sol";
 import {Set} from "contracts/Set.sol";
 import {GameLib} from "contracts/libraries/GameLib.sol";
 import {CurioERC20} from "contracts/standards/CurioERC20.sol";
-import {CurioTreaty} from "contracts/standards/CurioTreaty.sol";
 
 /// @title Admin facet
 /// @notice Contains admin functions, treaty functions, and state functions (setters which players don't call)
@@ -270,27 +269,6 @@ contract AdminFacet is UseStorage {
         for (uint256 i = 0; i < _values.length; i++) {
             Templates.addGameParameter(_identifiers[i], _values[i]);
         }
-    }
-
-    /**
-     * @dev Register a new treaty template for the game.
-     * @param _address deployed treaty address
-     * @param _abiHash treaty abi hash
-     * @param _metadataLink treaty metadata link
-     * @return treatyTemplateID registered treaty template entity
-     * @notice This function is currently used for permissioned deployment of treaties. In the future, treaties will be
-     *         deployed permissionlessly by players.
-     */
-    function registerTreatyTemplate(
-        address _address,
-        string memory _abiHash,
-        string memory _metadataLink
-    ) external onlyAuthorized returns (uint256 treatyTemplateID) {
-        CurioTreaty treaty = CurioTreaty(_address);
-        string memory _name = treaty.name();
-        string memory _description = treaty.description();
-        treatyTemplateID = Templates.addTreatyTemplate(_address, _name, _description, _abiHash, _metadataLink);
-        gs().templates[_name] = treatyTemplateID;
     }
 
     function generateNewAddress() external onlyAuthorized returns (address) {

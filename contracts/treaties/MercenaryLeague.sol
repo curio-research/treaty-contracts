@@ -15,7 +15,8 @@ contract MercenaryLeague is CurioTreaty {
     mapping(uint256 => uint256) public memberConscriptionStartTime;
     uint256 public conscriptionDuration;
 
-    constructor(address _diamond) CurioTreaty(_diamond) {
+    function init(address _diamond) public override {
+        super.init(_diamond);
         GetterFacet getter = GetterFacet(diamond);
         goldToken = getter.getTokenContract("Gold");
         warCouncil = new Set();
