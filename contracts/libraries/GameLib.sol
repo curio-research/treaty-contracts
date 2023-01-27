@@ -446,10 +446,12 @@ library GameLib {
 
     function setGameParameter(string memory _identifier, uint256 _value) internal {
         uint256[] memory res = ECSLib.getStringComponent("Tag").getEntitiesWithValue(_identifier);
-        require(res.length > 0, "CURIO: You must add game parameter first");
-        uint256 parameterID = res[0];
-
-        ECSLib.setUint("Amount", parameterID, _value);
+        if (res.length > 0) {
+            uint256 parameterID = res[0];
+            ECSLib.setUint("Amount", parameterID, _value);
+        } else {
+            Templates.addGameParameter(_identifier, _value);
+        }
     }
 
     // ----------------------------------------------------------
