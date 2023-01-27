@@ -11,7 +11,8 @@ import {Set} from "contracts/Set.sol";
 contract Embargo is CurioTreaty {
     Set public sanctionList;
 
-    constructor(address _diamond) CurioTreaty(_diamond) {
+    function init(address _diamond) public override {
+        super.init(_diamond);
         sanctionList = new Set();
     }
 

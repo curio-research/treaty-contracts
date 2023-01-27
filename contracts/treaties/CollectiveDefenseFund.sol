@@ -14,12 +14,12 @@ contract CollectiveDefenseFund is CurioTreaty {
     CurioERC20 public foodToken;
 
     // Treaty-specific data
-    uint256 public goldFee = 10000;
-    uint256 public foodFee = 10000;
-    uint256 public withdrawTimeInterval = 86400;
-    uint256 public depositTimeInterval = 86400;
-    uint256 public goldWithdrawQuota = 5000;
-    uint256 public foodWithdrawQuota = 5000;
+    uint256 public goldFee;
+    uint256 public foodFee;
+    uint256 public withdrawTimeInterval;
+    uint256 public depositTimeInterval;
+    uint256 public goldWithdrawQuota;
+    uint256 public foodWithdrawQuota;
     mapping(uint256 => uint256) public lastPaid; // nationID => timestamp
     mapping(uint256 => uint256) public lastWithdrawn; // nationID => timestamp
     Set public council;
@@ -31,7 +31,16 @@ contract CollectiveDefenseFund is CurioTreaty {
         _;
     }
 
-    constructor(address _diamond) CurioTreaty(_diamond) {
+    function init(address _diamond) public override {
+        super.init(_diamond);
+
+        goldFee = 10000;
+        foodFee = 10000;
+        withdrawTimeInterval = 86400;
+        depositTimeInterval = 86400;
+        goldWithdrawQuota = 5000;
+        foodWithdrawQuota = 5000;
+
         // Initialize treaty
         GetterFacet getter = GetterFacet(diamond);
         goldToken = getter.getTokenContract("Gold");

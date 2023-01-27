@@ -18,7 +18,8 @@ contract SimpleOTC is CurioTreaty {
     mapping(address => Order) public addressToOrder;
     Order public emptyOrder;
 
-    constructor(address _diamond) CurioTreaty(_diamond) {
+    function init(address _diamond) public override {
+        super.init(_diamond);
         emptyOrder = Order({sellTokenName: "", sellAmount: 0, buyTokenName: "", buyAmount: 0, createdAt: 0});
     }
 

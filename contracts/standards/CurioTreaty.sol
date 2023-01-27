@@ -8,7 +8,8 @@ abstract contract CurioTreaty {
     // Facets
     address public diamond;
 
-    constructor(address _diamond) {
+    function init(address _diamond) public virtual {
+        require(diamond == address(0), "CurioTreaty: Treaty already initialized");
         require(_diamond != address(0), "CurioTreaty: Diamond address required");
         diamond = _diamond;
     }

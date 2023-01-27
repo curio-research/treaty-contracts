@@ -10,7 +10,8 @@ import {Position} from "contracts/libraries/Types.sol";
 contract Alliance is CurioTreaty {
     CurioERC20 public goldToken;
 
-    constructor(address _diamond) CurioTreaty(_diamond) {
+    function init(address _diamond) public override {
+        super.init(_diamond);
         GetterFacet getter = GetterFacet(diamond);
         goldToken = getter.getTokenContract("Gold");
     }

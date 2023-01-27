@@ -8,8 +8,6 @@ import {AdminFacet} from "contracts/facets/AdminFacet.sol";
 import {Position} from "contracts/libraries/Types.sol";
 
 contract NonAggressionPact is CurioTreaty {
-    constructor(address _diamond) CurioTreaty(_diamond) {}
-
     function name() external pure override returns (string memory) {
         return "Non-Aggression Pact";
     }

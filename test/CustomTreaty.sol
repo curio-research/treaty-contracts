@@ -6,7 +6,7 @@ import {CurioERC20} from "contracts/standards/CurioERC20.sol";
 import {GetterFacet} from "contracts/facets/GetterFacet.sol";
 import {Position} from "contracts/libraries/Types.sol";
 
-contract HandshakeDeal is CurioTreaty {
+contract CustomTreaty is CurioTreaty {
     enum ApprovalFunctionType {
         approveUpgradeCapital,
         approveMoveCapital,
@@ -39,11 +39,11 @@ contract HandshakeDeal is CurioTreaty {
     mapping(uint256 => Deal) public idToDeal;
 
     function name() external pure override returns (string memory) {
-        return "Handshake Deal";
+        return "Custom Treaty";
     }
 
     function description() external pure override returns (string memory) {
-        return "Flexible handshake agreement between nations";
+        return "Treaty for testing custom treaties feature. Based on HandshakeDeal treaty";
     }
 
     function _strEq(string memory _s1, string memory _s2) internal pure returns (bool) {
@@ -450,3 +450,4 @@ contract HandshakeDeal is CurioTreaty {
         return _p1.x == _p2.x && _p1.y == _p2.y;
     }
 }
+
