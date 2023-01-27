@@ -1,8 +1,8 @@
 {
-    "componentName": "LastRecovered",
+    "componentName": "Reward",
     "functionName": "",
-    "level": 18,
-    "object": "",
-    "subject": "SuperTile",
-    "value": 0
+    "level": 17,
+    "object": "Gold",
+    "subject": "Barbarian",
+    "value": 110807109
 }

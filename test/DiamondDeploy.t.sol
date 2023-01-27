@@ -436,7 +436,6 @@ contract DiamondDeployTest is Test {
                 capitalLevelToEntityLevelRatio: 3,
                 gameLengthInSeconds: 3600,
                 gameMode: GameMode.REGULAR,
-                maxArmyCountPerNation: 2,
                 maxCapitalLevel: 3,
                 maxNationCount: 20,
                 // maxTransferDistance: 100

@@ -8,6 +8,7 @@ import {Templates} from "contracts/libraries/Templates.sol";
 import {Set} from "contracts/Set.sol";
 import {GameLib} from "contracts/libraries/GameLib.sol";
 import {CurioERC20} from "contracts/standards/CurioERC20.sol";
+import {CurioWallet} from "contracts/standards/CurioWallet.sol";
 
 /// @title Admin facet
 /// @notice Contains admin functions, treaty functions, and state functions (setters which players don't call)
@@ -161,6 +162,13 @@ contract AdminFacet is UseStorage {
         uint256 resourceID = GameLib.getResourceAt(_startPosition);
         ECSLib.setUint("Nation", tileID, _nationID);
         ECSLib.setUint("Nation", resourceID, _nationID);
+    }
+
+    function giftNewArmy(uint256 _nationID, Position memory _position) external onlyAuthorized returns (uint256 armyID) {
+        address armyAddress = address(new CurioWallet(address(this)));
+        armyID = Templates.addArmy(2, 1, 2, gs().worldConstants.tileWidth, _nationID, _position, GameLib.getProperTilePosition(_position), armyAddress);
+        GameLib.getTokenContract("Horseman").dripToken(armyAddress, 100);
+        ECSLib.setUint("Load", armyID, GameLib.getGameParameter("Troop", "Resource", "Load", "", 0) / 10);
     }
 
     function removeEntity(uint256 _entity) external onlyAuthorized {

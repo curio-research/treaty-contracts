@@ -1,8 +1,8 @@
 {
-    "componentName": "Cooldown",
-    "functionName": "Upgrade",
+    "componentName": "Yield",
+    "functionName": "",
     "level": 14,
-    "object": "",
+    "object": "Gold",
     "subject": "Farm",
-    "value": 1654
+    "value": 0
 }

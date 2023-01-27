@@ -64,6 +64,54 @@
         "value": 30
     },
     {
+        "componentName": "Cap",
+        "functionName": "",
+        "level": 1,
+        "object": "Army",
+        "subject": "Capital",
+        "value": 2
+    },
+    {
+        "componentName": "Cap",
+        "functionName": "",
+        "level": 2,
+        "object": "Army",
+        "subject": "Capital",
+        "value": 3
+    },
+    {
+        "componentName": "Cap",
+        "functionName": "",
+        "level": 3,
+        "object": "Army",
+        "subject": "Capital",
+        "value": 4
+    },
+    {
+        "componentName": "Cap",
+        "functionName": "",
+        "level": 4,
+        "object": "Army",
+        "subject": "Capital",
+        "value": 5
+    },
+    {
+        "componentName": "Cap",
+        "functionName": "",
+        "level": 5,
+        "object": "Army",
+        "subject": "Capital",
+        "value": 6
+    },
+    {
+        "componentName": "Cap",
+        "functionName": "",
+        "level": 6,
+        "object": "Army",
+        "subject": "Capital",
+        "value": 7
+    },
+    {
         "componentName": "Yield",
         "functionName": "",
         "level": 0,

@@ -51,7 +51,7 @@ export interface NonAggressionPactInterface extends utils.Interface {
     "approveUpgradeTile(uint256,bytes)": FunctionFragment;
     "description()": FunctionFragment;
     "diamond()": FunctionFragment;
-    "getTreatySigners()": FunctionFragment;
+    "init(address)": FunctionFragment;
     "name()": FunctionFragment;
     "removeFromWhitelist(uint256)": FunctionFragment;
     "removeMember(uint256)": FunctionFragment;
@@ -88,7 +88,7 @@ export interface NonAggressionPactInterface extends utils.Interface {
       | "approveUpgradeTile"
       | "description"
       | "diamond"
-      | "getTreatySigners"
+      | "init"
       | "name"
       | "removeFromWhitelist"
       | "removeMember"
@@ -199,8 +199,8 @@ export interface NonAggressionPactInterface extends utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "diamond", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "getTreatySigners",
-    values?: undefined
+    functionFragment: "init",
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(functionFragment: "name", values?: undefined): string;
   encodeFunctionData(
@@ -329,10 +329,7 @@ export interface NonAggressionPactInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "diamond", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "getTreatySigners",
-    data: BytesLike
-  ): Result;
+  decodeFunctionResult(functionFragment: "init", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "removeFromWhitelist",
@@ -529,7 +526,10 @@ export interface NonAggressionPact extends BaseContract {
 
     diamond(overrides?: CallOverrides): Promise<[string]>;
 
-    getTreatySigners(overrides?: CallOverrides): Promise<[BigNumber[]]>;
+    init(
+      _diamond: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
 
     name(overrides?: CallOverrides): Promise<[string]>;
 
@@ -706,7 +706,10 @@ export interface NonAggressionPact extends BaseContract {
 
   diamond(overrides?: CallOverrides): Promise<string>;
 
-  getTreatySigners(overrides?: CallOverrides): Promise<BigNumber[]>;
+  init(
+    _diamond: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
 
   name(overrides?: CallOverrides): Promise<string>;
 
@@ -883,7 +886,10 @@ export interface NonAggressionPact extends BaseContract {
 
     diamond(overrides?: CallOverrides): Promise<string>;
 
-    getTreatySigners(overrides?: CallOverrides): Promise<BigNumber[]>;
+    init(
+      _diamond: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     name(overrides?: CallOverrides): Promise<string>;
 
@@ -1059,7 +1065,10 @@ export interface NonAggressionPact extends BaseContract {
 
     diamond(overrides?: CallOverrides): Promise<BigNumber>;
 
-    getTreatySigners(overrides?: CallOverrides): Promise<BigNumber>;
+    init(
+      _diamond: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
 
     name(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1237,7 +1246,10 @@ export interface NonAggressionPact extends BaseContract {
 
     diamond(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    getTreatySigners(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    init(
+      _diamond: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
 
     name(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 

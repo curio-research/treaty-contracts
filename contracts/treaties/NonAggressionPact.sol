@@ -20,11 +20,6 @@ contract NonAggressionPact is CurioTreaty {
     // Set getters
     // ----------------------------------------------------------
 
-    function getTreatySigners() public view returns (uint256[] memory) {
-        GetterFacet getter = GetterFacet(diamond);
-        return getter.getTreatySigners(getter.getEntityByAddress(address(this)));
-    }
-
     // ----------------------------------------------------------
     // Owner functionos
     // ----------------------------------------------------------

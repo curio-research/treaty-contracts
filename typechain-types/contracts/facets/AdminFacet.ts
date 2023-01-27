@@ -63,6 +63,7 @@ export interface AdminFacetInterface extends utils.Interface {
     "disallowHostCapital((uint256,uint256)[])": FunctionFragment;
     "dripToken(address,string,uint256)": FunctionFragment;
     "generateNewAddress()": FunctionFragment;
+    "giftNewArmy(uint256,(uint256,uint256))": FunctionFragment;
     "giftTileAndResourceAt((uint256,uint256),uint256)": FunctionFragment;
     "lockTiles((uint256,uint256)[])": FunctionFragment;
     "onlyQuery((uint256,uint256))": FunctionFragment;
@@ -70,7 +71,6 @@ export interface AdminFacetInterface extends utils.Interface {
     "registerComponents(address,(string,uint8)[])": FunctionFragment;
     "registerFunctionNames(string[])": FunctionFragment;
     "registerTemplateShortcuts(string[],uint256[])": FunctionFragment;
-    "registerTreatyTemplate(address,string,string)": FunctionFragment;
     "removeEntity(uint256)": FunctionFragment;
     "removeFromGameWhitelist(address)": FunctionFragment;
     "removeFromTreatyWhitelist(uint256)": FunctionFragment;
@@ -106,6 +106,7 @@ export interface AdminFacetInterface extends utils.Interface {
       | "disallowHostCapital"
       | "dripToken"
       | "generateNewAddress"
+      | "giftNewArmy"
       | "giftTileAndResourceAt"
       | "lockTiles"
       | "onlyQuery"
@@ -113,7 +114,6 @@ export interface AdminFacetInterface extends utils.Interface {
       | "registerComponents"
       | "registerFunctionNames"
       | "registerTemplateShortcuts"
-      | "registerTreatyTemplate"
       | "removeEntity"
       | "removeFromGameWhitelist"
       | "removeFromTreatyWhitelist"
@@ -216,6 +216,10 @@ export interface AdminFacetInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "giftNewArmy",
+    values: [PromiseOrValue<BigNumberish>, PositionStruct]
+  ): string;
+  encodeFunctionData(
     functionFragment: "giftTileAndResourceAt",
     values: [PositionStruct, PromiseOrValue<BigNumberish>]
   ): string;
@@ -242,14 +246,6 @@ export interface AdminFacetInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "registerTemplateShortcuts",
     values: [PromiseOrValue<string>[], PromiseOrValue<BigNumberish>[]]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "registerTreatyTemplate",
-    values: [
-      PromiseOrValue<string>,
-      PromiseOrValue<string>,
-      PromiseOrValue<string>
-    ]
   ): string;
   encodeFunctionData(
     functionFragment: "removeEntity",
@@ -366,6 +362,10 @@ export interface AdminFacetInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "giftNewArmy",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "giftTileAndResourceAt",
     data: BytesLike
   ): Result;
@@ -382,10 +382,6 @@ export interface AdminFacetInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "registerTemplateShortcuts",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "registerTreatyTemplate",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -570,6 +566,12 @@ export interface AdminFacet extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    giftNewArmy(
+      _nationID: PromiseOrValue<BigNumberish>,
+      _position: PositionStruct,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     giftTileAndResourceAt(
       _startPosition: PositionStruct,
       _nationID: PromiseOrValue<BigNumberish>,
@@ -606,13 +608,6 @@ export interface AdminFacet extends BaseContract {
     registerTemplateShortcuts(
       _names: PromiseOrValue<string>[],
       _IDs: PromiseOrValue<BigNumberish>[],
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    registerTreatyTemplate(
-      _address: PromiseOrValue<string>,
-      _abiHash: PromiseOrValue<string>,
-      _metadataLink: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -787,6 +782,12 @@ export interface AdminFacet extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  giftNewArmy(
+    _nationID: PromiseOrValue<BigNumberish>,
+    _position: PositionStruct,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   giftTileAndResourceAt(
     _startPosition: PositionStruct,
     _nationID: PromiseOrValue<BigNumberish>,
@@ -823,13 +824,6 @@ export interface AdminFacet extends BaseContract {
   registerTemplateShortcuts(
     _names: PromiseOrValue<string>[],
     _IDs: PromiseOrValue<BigNumberish>[],
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  registerTreatyTemplate(
-    _address: PromiseOrValue<string>,
-    _abiHash: PromiseOrValue<string>,
-    _metadataLink: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -998,6 +992,12 @@ export interface AdminFacet extends BaseContract {
 
     generateNewAddress(overrides?: CallOverrides): Promise<string>;
 
+    giftNewArmy(
+      _nationID: PromiseOrValue<BigNumberish>,
+      _position: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     giftTileAndResourceAt(
       _startPosition: PositionStruct,
       _nationID: PromiseOrValue<BigNumberish>,
@@ -1036,13 +1036,6 @@ export interface AdminFacet extends BaseContract {
       _IDs: PromiseOrValue<BigNumberish>[],
       overrides?: CallOverrides
     ): Promise<void>;
-
-    registerTreatyTemplate(
-      _address: PromiseOrValue<string>,
-      _abiHash: PromiseOrValue<string>,
-      _metadataLink: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
 
     removeEntity(
       _entity: PromiseOrValue<BigNumberish>,
@@ -1214,6 +1207,12 @@ export interface AdminFacet extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    giftNewArmy(
+      _nationID: PromiseOrValue<BigNumberish>,
+      _position: PositionStruct,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     giftTileAndResourceAt(
       _startPosition: PositionStruct,
       _nationID: PromiseOrValue<BigNumberish>,
@@ -1250,13 +1249,6 @@ export interface AdminFacet extends BaseContract {
     registerTemplateShortcuts(
       _names: PromiseOrValue<string>[],
       _IDs: PromiseOrValue<BigNumberish>[],
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    registerTreatyTemplate(
-      _address: PromiseOrValue<string>,
-      _abiHash: PromiseOrValue<string>,
-      _metadataLink: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -1432,6 +1424,12 @@ export interface AdminFacet extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
+    giftNewArmy(
+      _nationID: PromiseOrValue<BigNumberish>,
+      _position: PositionStruct,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
     giftTileAndResourceAt(
       _startPosition: PositionStruct,
       _nationID: PromiseOrValue<BigNumberish>,
@@ -1468,13 +1466,6 @@ export interface AdminFacet extends BaseContract {
     registerTemplateShortcuts(
       _names: PromiseOrValue<string>[],
       _IDs: PromiseOrValue<BigNumberish>[],
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    registerTreatyTemplate(
-      _address: PromiseOrValue<string>,
-      _abiHash: PromiseOrValue<string>,
-      _metadataLink: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

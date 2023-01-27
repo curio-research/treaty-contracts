@@ -23,8 +23,8 @@ contract GameTest is Test, DiamondDeployTest {
     // Tile:
     // - [x] claimTile
     // - [x] upgradeTile
-    // - [ ] recoverTile
-    // - [ ] disownTile
+    // - [x] recoverTile
+    // - [x] disownTile
     // Production:
     // - [x] startTroopProduction
     // - [x] endTroopProduction
@@ -458,6 +458,71 @@ contract GameTest is Test, DiamondDeployTest {
         assertEq(abi.decode(getter.getComponent("Nation").getBytesValue(farmID), (uint256)), nation1ID);
         game.upgradeResource(farmID);
         vm.stopPrank();
+    }
+
+    function testRecoverAndDisownTile() public {
+        // Start time and get constants
+        uint256 time = block.timestamp + 1000;
+        vm.warp(time);
+        Position memory tilePos = Position({x: 60, y: 20});
+        uint256 tileID = getter.getTileAt(tilePos);
+        assertEq(getter.getNation(tileID), 0);
+        uint256 level1TileGuardAmount = getter.getGameParameter("Tile", "Guard", "Amount", "", 1);
+        assertTrue(level1TileGuardAmount > 0);
+
+        // Deployer gifts tile and resources to Nation 1, army to Nation 2
+        vm.startPrank(deployer);
+        admin.giftTileAndResourceAt(tilePos, nation1ID);
+        admin.dripToken(nation1CapitalAddr, "Gold", 100000000);
+        admin.dripToken(nation1CapitalAddr, "Food", 100000000);
+        uint256 nation2ArmyID = admin.giftNewArmy(nation2ID, Position({x: 63, y: 23}));
+        vm.stopPrank();
+
+        // Verify initial conditions
+        assertEq(getter.getNation(tileID), nation1ID);
+        assertEq(guardToken.balanceOf(getter.getAddress(tileID)), level1TileGuardAmount);
+        assertEq(getter.getArmyAt(Position({x: 63, y: 23})), nation2ArmyID);
+        assertEq(horsemanToken.balanceOf(getter.getAddress(nation2ArmyID)), 100);
+
+        // Nation 1 disowns tile
+        vm.startPrank(player1);
+        time += 10;
+        vm.warp(time);
+        game.disownTile(tileID);
+        vm.stopPrank();
+
+        // Verify tile is disowned
+        assertEq(getter.getNation(tileID), 0);
+
+        // Deployer again gifts tile to Nation 1
+        vm.startPrank(deployer);
+        admin.giftTileAndResourceAt(tilePos, nation1ID);
+        vm.stopPrank();
+
+        // Nation 2 attacks tile once
+        vm.startPrank(player2);
+        time += 10;
+        vm.warp(time);
+        game.battle(nation2ArmyID, tileID);
+        vm.stopPrank();
+
+        // Verify that tile is injured but not neutralized
+        assertEq(getter.getNation(tileID), nation1ID);
+        assertTrue(guardToken.balanceOf(getter.getAddress(tileID)) < level1TileGuardAmount);
+        assertTrue(guardToken.balanceOf(getter.getAddress(tileID)) > 0);
+        assertEq(goldToken.balanceOf(nation1CapitalAddr), 100000000);
+
+        // Nation 1 recovers tile
+        vm.startPrank(player1);
+        time += 10;
+        vm.warp(time);
+        game.recoverTile(tileID);
+        vm.stopPrank();
+
+        // Verify that tile is recovered
+        assertEq(getter.getNation(tileID), nation1ID);
+        assertEq(guardToken.balanceOf(getter.getAddress(tileID)), level1TileGuardAmount);
+        assertTrue(goldToken.balanceOf(nation1CapitalAddr) < 100000000);
     }
 
     function testBattleCapitalChaos() public {
