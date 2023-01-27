@@ -59,7 +59,6 @@ export interface CollectiveDefenseFundInterface extends utils.Interface {
     "foodToken()": FunctionFragment;
     "foodWithdrawQuota()": FunctionFragment;
     "getCouncilMembers()": FunctionFragment;
-    "getTreatySigners()": FunctionFragment;
     "goldFee()": FunctionFragment;
     "goldToken()": FunctionFragment;
     "goldWithdrawQuota()": FunctionFragment;
@@ -117,7 +116,6 @@ export interface CollectiveDefenseFundInterface extends utils.Interface {
       | "foodToken"
       | "foodWithdrawQuota"
       | "getCouncilMembers"
-      | "getTreatySigners"
       | "goldFee"
       | "goldToken"
       | "goldWithdrawQuota"
@@ -265,10 +263,6 @@ export interface CollectiveDefenseFundInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "getCouncilMembers",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getTreatySigners",
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "goldFee", values?: undefined): string;
@@ -465,10 +459,6 @@ export interface CollectiveDefenseFundInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "getCouncilMembers",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getTreatySigners",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "goldFee", data: BytesLike): Result;
@@ -728,8 +718,6 @@ export interface CollectiveDefenseFund extends BaseContract {
 
     getCouncilMembers(overrides?: CallOverrides): Promise<[BigNumber[]]>;
 
-    getTreatySigners(overrides?: CallOverrides): Promise<[BigNumber[]]>;
-
     goldFee(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     goldToken(overrides?: CallOverrides): Promise<[string]>;
@@ -980,8 +968,6 @@ export interface CollectiveDefenseFund extends BaseContract {
   foodWithdrawQuota(overrides?: CallOverrides): Promise<BigNumber>;
 
   getCouncilMembers(overrides?: CallOverrides): Promise<BigNumber[]>;
-
-  getTreatySigners(overrides?: CallOverrides): Promise<BigNumber[]>;
 
   goldFee(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1234,8 +1220,6 @@ export interface CollectiveDefenseFund extends BaseContract {
 
     getCouncilMembers(overrides?: CallOverrides): Promise<BigNumber[]>;
 
-    getTreatySigners(overrides?: CallOverrides): Promise<BigNumber[]>;
-
     goldFee(overrides?: CallOverrides): Promise<BigNumber>;
 
     goldToken(overrides?: CallOverrides): Promise<string>;
@@ -1481,8 +1465,6 @@ export interface CollectiveDefenseFund extends BaseContract {
     foodWithdrawQuota(overrides?: CallOverrides): Promise<BigNumber>;
 
     getCouncilMembers(overrides?: CallOverrides): Promise<BigNumber>;
-
-    getTreatySigners(overrides?: CallOverrides): Promise<BigNumber>;
 
     goldFee(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1737,8 +1719,6 @@ export interface CollectiveDefenseFund extends BaseContract {
     foodWithdrawQuota(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getCouncilMembers(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    getTreatySigners(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     goldFee(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 

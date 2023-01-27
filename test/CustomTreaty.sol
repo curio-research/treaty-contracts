@@ -52,15 +52,6 @@ contract CustomTreaty is CurioTreaty {
     }
 
     // ----------------------------------------------------------
-    // Set getters
-    // ----------------------------------------------------------
-
-    function getTreatySigners() public view returns (uint256[] memory) {
-        GetterFacet getter = GetterFacet(diamond);
-        return getter.getTreatySigners(getter.getEntityByAddress(address(this)));
-    }
-
-    // ----------------------------------------------------------
     // Articles of Treaty
     // ----------------------------------------------------------
 
@@ -71,14 +62,14 @@ contract CustomTreaty is CurioTreaty {
     ) public onlySigner returns (uint256) {
         require(
             _strEq(_functionType, "approveUpgradeCapital") ||
-            _strEq(_functionType, "approveUpgradeTile") ||
-            _strEq(_functionType, "approveRecoverTile") ||
-            _strEq(_functionType, "approveDisownTile") ||
-            _strEq(_functionType, "approveEndGather") ||
-            _strEq(_functionType, "approveUnloadResources") ||
-            _strEq(_functionType, "approveHarvestResource") ||
-            _strEq(_functionType, "approveHarvestResourcesFromCapital") ||
-            _strEq(_functionType, "approveUpgradeResource"),
+                _strEq(_functionType, "approveUpgradeTile") ||
+                _strEq(_functionType, "approveRecoverTile") ||
+                _strEq(_functionType, "approveDisownTile") ||
+                _strEq(_functionType, "approveEndGather") ||
+                _strEq(_functionType, "approveUnloadResources") ||
+                _strEq(_functionType, "approveHarvestResource") ||
+                _strEq(_functionType, "approveHarvestResourcesFromCapital") ||
+                _strEq(_functionType, "approveUpgradeResource"),
             "Handshake: Invalid function type"
         );
         GetterFacet getter = GetterFacet(diamond);
@@ -105,10 +96,7 @@ contract CustomTreaty is CurioTreaty {
         uint256 _effectiveDuration
     ) public onlySigner returns (uint256) {
         require(
-            _strEq(_functionType, "approveStartTroopProduction") ||
-            _strEq(_functionType, "approveStartGather") ||
-            _strEq(_functionType, "approveHarvestResource") ||
-            _strEq(_functionType, "approveBattle"), // FORMATTING: DO NOT REMOVE THIS COMMENT
+            _strEq(_functionType, "approveStartTroopProduction") || _strEq(_functionType, "approveStartGather") || _strEq(_functionType, "approveHarvestResource") || _strEq(_functionType, "approveBattle"), // FORMATTING: DO NOT REMOVE THIS COMMENT
             "Handshake: Invalid function type"
         );
         GetterFacet getter = GetterFacet(diamond);
@@ -136,9 +124,7 @@ contract CustomTreaty is CurioTreaty {
         uint256 _effectiveDuration
     ) public onlySigner returns (uint256) {
         require(
-            _strEq(_functionType, "approveMoveCapital") ||
-            _strEq(_functionType, "approveClaimTile") ||
-            _strEq(_functionType, "approveMove"), // FORMATTING: DO NOT REMOVE THIS COMMENT
+            _strEq(_functionType, "approveMoveCapital") || _strEq(_functionType, "approveClaimTile") || _strEq(_functionType, "approveMove"), // FORMATTING: DO NOT REMOVE THIS COMMENT
             "Handshake: Invalid function type"
         );
         GetterFacet getter = GetterFacet(diamond);
@@ -450,4 +436,3 @@ contract CustomTreaty is CurioTreaty {
         return _p1.x == _p2.x && _p1.y == _p2.y;
     }
 }
-

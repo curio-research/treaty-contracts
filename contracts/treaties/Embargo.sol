@@ -32,11 +32,6 @@ contract Embargo is CurioTreaty {
         return sanctionList.getAll();
     }
 
-    function getTreatySigners() public view returns (uint256[] memory) {
-        GetterFacet getter = GetterFacet(diamond);
-        return getter.getTreatySigners(getter.getEntityByAddress(address(this)));
-    }
-
     // ----------------------------------------------------------
     // Owner functions
     // ----------------------------------------------------------

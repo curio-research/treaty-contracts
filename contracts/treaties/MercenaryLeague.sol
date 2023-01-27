@@ -46,11 +46,6 @@ contract MercenaryLeague is CurioTreaty {
         return warCouncil.getAll();
     }
 
-    function getTreatySigners() public view returns (uint256[] memory) {
-        GetterFacet getter = GetterFacet(diamond);
-        return getter.getTreatySigners(getter.getEntityByAddress(address(this)));
-    }
-
     // ----------------------------------------------------------
     // Owner & War Council functions
     // ----------------------------------------------------------

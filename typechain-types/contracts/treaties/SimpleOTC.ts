@@ -54,7 +54,6 @@ export interface SimpleOTCInterface extends utils.Interface {
     "description()": FunctionFragment;
     "diamond()": FunctionFragment;
     "emptyOrder()": FunctionFragment;
-    "getTreatySigners()": FunctionFragment;
     "init(address)": FunctionFragment;
     "name()": FunctionFragment;
     "takeOrder(address)": FunctionFragment;
@@ -94,7 +93,6 @@ export interface SimpleOTCInterface extends utils.Interface {
       | "description"
       | "diamond"
       | "emptyOrder"
-      | "getTreatySigners"
       | "init"
       | "name"
       | "takeOrder"
@@ -219,10 +217,6 @@ export interface SimpleOTCInterface extends utils.Interface {
   encodeFunctionData(functionFragment: "diamond", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "emptyOrder",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getTreatySigners",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -361,10 +355,6 @@ export interface SimpleOTCInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "diamond", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "emptyOrder", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "getTreatySigners",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "init", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "takeOrder", data: BytesLike): Result;
@@ -587,8 +577,6 @@ export interface SimpleOTC extends BaseContract {
       }
     >;
 
-    getTreatySigners(overrides?: CallOverrides): Promise<[BigNumber[]]>;
-
     init(
       _diamond: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -796,8 +784,6 @@ export interface SimpleOTC extends BaseContract {
     }
   >;
 
-  getTreatySigners(overrides?: CallOverrides): Promise<BigNumber[]>;
-
   init(
     _diamond: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -1003,8 +989,6 @@ export interface SimpleOTC extends BaseContract {
       }
     >;
 
-    getTreatySigners(overrides?: CallOverrides): Promise<BigNumber[]>;
-
     init(
       _diamond: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -1192,8 +1176,6 @@ export interface SimpleOTC extends BaseContract {
     diamond(overrides?: CallOverrides): Promise<BigNumber>;
 
     emptyOrder(overrides?: CallOverrides): Promise<BigNumber>;
-
-    getTreatySigners(overrides?: CallOverrides): Promise<BigNumber>;
 
     init(
       _diamond: PromiseOrValue<string>,
@@ -1384,8 +1366,6 @@ export interface SimpleOTC extends BaseContract {
     diamond(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     emptyOrder(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    getTreatySigners(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     init(
       _diamond: PromiseOrValue<string>,

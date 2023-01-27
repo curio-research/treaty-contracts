@@ -66,11 +66,6 @@ contract CollectiveDefenseFund is CurioTreaty {
         return council.getAll();
     }
 
-    function getTreatySigners() public view returns (uint256[] memory) {
-        GetterFacet getter = GetterFacet(diamond);
-        return getter.getTreatySigners(getter.getEntityByAddress(address(this)));
-    }
-
     // ----------------------------------------------------------
     // Owner and council functions
     // ----------------------------------------------------------
