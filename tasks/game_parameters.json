@@ -13,7 +13,7 @@
         "level": 0,
         "object": "Gold",
         "subject": "Army",
-        "value": 10708
+        "value": 9734
     },
     {
         "componentName": "Rate",
@@ -21,7 +21,7 @@
         "level": 0,
         "object": "Food",
         "subject": "Army",
-        "value": 42833
+        "value": 38939
     },
     {
         "componentName": "Load",
@@ -2181,7 +2181,7 @@
         "level": 0,
         "object": "Gold",
         "subject": "Capital",
-        "value": 13259250
+        "value": 12093855
     },
     {
         "componentName": "Cost",
@@ -2221,7 +2221,7 @@
         "level": 0,
         "object": "Gold",
         "subject": "Capital",
-        "value": 2651000
+        "value": 2418000
     },
     {
         "componentName": "Cost",
@@ -2277,7 +2277,7 @@
         "level": 1,
         "object": "Gold",
         "subject": "Capital",
-        "value": 28104903
+        "value": 25704563
     },
     {
         "componentName": "Cost",
@@ -2317,7 +2317,7 @@
         "level": 1,
         "object": "Gold",
         "subject": "Capital",
-        "value": 5620000
+        "value": 5140000
     },
     {
         "componentName": "Cost",
@@ -2373,7 +2373,7 @@
         "level": 2,
         "object": "Gold",
         "subject": "Capital",
-        "value": 44961461
+        "value": 41200596
     },
     {
         "componentName": "Cost",
@@ -2413,7 +2413,7 @@
         "level": 2,
         "object": "Gold",
         "subject": "Capital",
-        "value": 8992000
+        "value": 8240000
     },
     {
         "componentName": "Cost",
@@ -2469,7 +2469,7 @@
         "level": 3,
         "object": "Gold",
         "subject": "Capital",
-        "value": 64637235
+        "value": 59313514
     },
     {
         "componentName": "Cost",
@@ -2509,7 +2509,7 @@
         "level": 3,
         "object": "Gold",
         "subject": "Capital",
-        "value": 12927000
+        "value": 11862000
     },
     {
         "componentName": "Cost",
@@ -2565,7 +2565,7 @@
         "level": 4,
         "object": "Gold",
         "subject": "Capital",
-        "value": 87632398
+        "value": 80499672
     },
     {
         "componentName": "Cost",
@@ -2605,7 +2605,7 @@
         "level": 4,
         "object": "Gold",
         "subject": "Capital",
-        "value": 17526000
+        "value": 16099000
     },
     {
         "componentName": "Cost",
@@ -2661,7 +2661,7 @@
         "level": 5,
         "object": "Gold",
         "subject": "Capital",
-        "value": 114431861
+        "value": 105204388
     },
     {
         "componentName": "Cost",
@@ -2701,7 +2701,7 @@
         "level": 5,
         "object": "Gold",
         "subject": "Capital",
-        "value": 22886000
+        "value": 21040000
     },
     {
         "componentName": "Cost",
@@ -2765,7 +2765,7 @@
         "level": 6,
         "object": "Gold",
         "subject": "Capital",
-        "value": 29113000
+        "value": 26783000
     },
     {
         "componentName": "Cost",
