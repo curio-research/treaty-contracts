@@ -63,6 +63,7 @@ export interface CollectiveDefenseFundInterface extends utils.Interface {
     "goldFee()": FunctionFragment;
     "goldToken()": FunctionFragment;
     "goldWithdrawQuota()": FunctionFragment;
+    "init(address)": FunctionFragment;
     "lastPaid(uint256)": FunctionFragment;
     "lastWithdrawn(uint256)": FunctionFragment;
     "name()": FunctionFragment;
@@ -120,6 +121,7 @@ export interface CollectiveDefenseFundInterface extends utils.Interface {
       | "goldFee"
       | "goldToken"
       | "goldWithdrawQuota"
+      | "init"
       | "lastPaid"
       | "lastWithdrawn"
       | "name"
@@ -274,6 +276,10 @@ export interface CollectiveDefenseFundInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "goldWithdrawQuota",
     values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "init",
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "lastPaid",
@@ -471,6 +477,7 @@ export interface CollectiveDefenseFundInterface extends utils.Interface {
     functionFragment: "goldWithdrawQuota",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "init", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "lastPaid", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "lastWithdrawn",
@@ -729,6 +736,11 @@ export interface CollectiveDefenseFund extends BaseContract {
 
     goldWithdrawQuota(overrides?: CallOverrides): Promise<[BigNumber]>;
 
+    init(
+      _diamond: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     lastPaid(
       arg0: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -976,6 +988,11 @@ export interface CollectiveDefenseFund extends BaseContract {
   goldToken(overrides?: CallOverrides): Promise<string>;
 
   goldWithdrawQuota(overrides?: CallOverrides): Promise<BigNumber>;
+
+  init(
+    _diamond: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
 
   lastPaid(
     arg0: PromiseOrValue<BigNumberish>,
@@ -1225,6 +1242,11 @@ export interface CollectiveDefenseFund extends BaseContract {
 
     goldWithdrawQuota(overrides?: CallOverrides): Promise<BigNumber>;
 
+    init(
+      _diamond: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     lastPaid(
       arg0: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -1467,6 +1489,11 @@ export interface CollectiveDefenseFund extends BaseContract {
     goldToken(overrides?: CallOverrides): Promise<BigNumber>;
 
     goldWithdrawQuota(overrides?: CallOverrides): Promise<BigNumber>;
+
+    init(
+      _diamond: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
 
     lastPaid(
       arg0: PromiseOrValue<BigNumberish>,
@@ -1718,6 +1745,11 @@ export interface CollectiveDefenseFund extends BaseContract {
     goldToken(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     goldWithdrawQuota(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    init(
+      _diamond: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
 
     lastPaid(
       arg0: PromiseOrValue<BigNumberish>,

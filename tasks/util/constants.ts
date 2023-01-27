@@ -37,7 +37,6 @@ export const generateWorldConstants = (adminAddr: string, mapInput: MapInput): a
     worldHeight: mapInput.height * TILE_WIDTH,
     numInitTerrainTypes: NUM_INIT_TERRAIN_TYPES,
     // manual configs
-    maxArmyCountPerNation: 2,
     maxNationCount: 1000,
     gameMode: GameMode.BATTLE_ROYALE,
     gameLengthInSeconds: 2000000000,
@@ -169,5 +168,5 @@ export const treatyDescriptions: Record<string, Record<string, string>> = {
     proposeDeal1: 'Propose a deal to another nation. Note that the valid deal types are "approveUpgradeCapital", "approveUpgradeTile", "approveRecoverTile", "approveDisownTile", "approveEndGather", "approveUnloadResources", "approveHarvestResource", "approveHarvestResourcesFromCapital", "approveUpgradeResource". _uint256Param stands for the capitalID, tileID, or resourceID.',
     proposeDeal2: 'Propose a deal to another nation. Note that the valid deal types are "approveStartTroopProduction", "approveStartGather", "approveHarvestResource", "approveBattle". Check out what _uint256Param1 and _uint256Param2 stand for in our opensourced codebase.',
     proposeDeal3: 'Propose a deal to another nation. Note that the valid deal types are "approveMoveCapital", "approveClaimTile", and "approveMove". _uint256Param stands for capitalID, tileID, or armyID. x_pos and y_pos inputs the position for the function.',
-  }
+  },
 };

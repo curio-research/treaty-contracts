@@ -52,6 +52,7 @@ export interface NonAggressionPactInterface extends utils.Interface {
     "description()": FunctionFragment;
     "diamond()": FunctionFragment;
     "getTreatySigners()": FunctionFragment;
+    "init(address)": FunctionFragment;
     "name()": FunctionFragment;
     "removeFromWhitelist(uint256)": FunctionFragment;
     "removeMember(uint256)": FunctionFragment;
@@ -89,6 +90,7 @@ export interface NonAggressionPactInterface extends utils.Interface {
       | "description"
       | "diamond"
       | "getTreatySigners"
+      | "init"
       | "name"
       | "removeFromWhitelist"
       | "removeMember"
@@ -201,6 +203,10 @@ export interface NonAggressionPactInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "getTreatySigners",
     values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "init",
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(functionFragment: "name", values?: undefined): string;
   encodeFunctionData(
@@ -333,6 +339,7 @@ export interface NonAggressionPactInterface extends utils.Interface {
     functionFragment: "getTreatySigners",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "init", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "removeFromWhitelist",
@@ -531,6 +538,11 @@ export interface NonAggressionPact extends BaseContract {
 
     getTreatySigners(overrides?: CallOverrides): Promise<[BigNumber[]]>;
 
+    init(
+      _diamond: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     name(overrides?: CallOverrides): Promise<[string]>;
 
     removeFromWhitelist(
@@ -707,6 +719,11 @@ export interface NonAggressionPact extends BaseContract {
   diamond(overrides?: CallOverrides): Promise<string>;
 
   getTreatySigners(overrides?: CallOverrides): Promise<BigNumber[]>;
+
+  init(
+    _diamond: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
 
   name(overrides?: CallOverrides): Promise<string>;
 
@@ -885,6 +902,11 @@ export interface NonAggressionPact extends BaseContract {
 
     getTreatySigners(overrides?: CallOverrides): Promise<BigNumber[]>;
 
+    init(
+      _diamond: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     name(overrides?: CallOverrides): Promise<string>;
 
     removeFromWhitelist(
@@ -1060,6 +1082,11 @@ export interface NonAggressionPact extends BaseContract {
     diamond(overrides?: CallOverrides): Promise<BigNumber>;
 
     getTreatySigners(overrides?: CallOverrides): Promise<BigNumber>;
+
+    init(
+      _diamond: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
 
     name(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1238,6 +1265,11 @@ export interface NonAggressionPact extends BaseContract {
     diamond(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getTreatySigners(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    init(
+      _diamond: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
 
     name(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 

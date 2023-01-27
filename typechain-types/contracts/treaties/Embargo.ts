@@ -53,6 +53,7 @@ export interface EmbargoInterface extends utils.Interface {
     "diamond()": FunctionFragment;
     "getSanctionList()": FunctionFragment;
     "getTreatySigners()": FunctionFragment;
+    "init(address)": FunctionFragment;
     "name()": FunctionFragment;
     "removeFromSanctionList(uint256)": FunctionFragment;
     "removeMember(uint256)": FunctionFragment;
@@ -92,6 +93,7 @@ export interface EmbargoInterface extends utils.Interface {
       | "diamond"
       | "getSanctionList"
       | "getTreatySigners"
+      | "init"
       | "name"
       | "removeFromSanctionList"
       | "removeMember"
@@ -209,6 +211,10 @@ export interface EmbargoInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "getTreatySigners",
     values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "init",
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(functionFragment: "name", values?: undefined): string;
   encodeFunctionData(
@@ -349,6 +355,7 @@ export interface EmbargoInterface extends utils.Interface {
     functionFragment: "getTreatySigners",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "init", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "removeFromSanctionList",
@@ -553,6 +560,11 @@ export interface Embargo extends BaseContract {
 
     getTreatySigners(overrides?: CallOverrides): Promise<[BigNumber[]]>;
 
+    init(
+      _diamond: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     name(overrides?: CallOverrides): Promise<[string]>;
 
     removeFromSanctionList(
@@ -733,6 +745,11 @@ export interface Embargo extends BaseContract {
   getSanctionList(overrides?: CallOverrides): Promise<BigNumber[]>;
 
   getTreatySigners(overrides?: CallOverrides): Promise<BigNumber[]>;
+
+  init(
+    _diamond: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
 
   name(overrides?: CallOverrides): Promise<string>;
 
@@ -915,6 +932,11 @@ export interface Embargo extends BaseContract {
 
     getTreatySigners(overrides?: CallOverrides): Promise<BigNumber[]>;
 
+    init(
+      _diamond: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     name(overrides?: CallOverrides): Promise<string>;
 
     removeFromSanctionList(
@@ -1094,6 +1116,11 @@ export interface Embargo extends BaseContract {
     getSanctionList(overrides?: CallOverrides): Promise<BigNumber>;
 
     getTreatySigners(overrides?: CallOverrides): Promise<BigNumber>;
+
+    init(
+      _diamond: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
 
     name(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1276,6 +1303,11 @@ export interface Embargo extends BaseContract {
     getSanctionList(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getTreatySigners(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    init(
+      _diamond: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
 
     name(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 

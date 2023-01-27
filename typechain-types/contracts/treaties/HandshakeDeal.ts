@@ -54,6 +54,7 @@ export interface HandshakeDealInterface extends utils.Interface {
     "getNationDeals(uint256)": FunctionFragment;
     "getTreatySigners()": FunctionFragment;
     "idToDeal(uint256)": FunctionFragment;
+    "init(address)": FunctionFragment;
     "name()": FunctionFragment;
     "nationIDToDealIDs(uint256,uint256)": FunctionFragment;
     "proposeDeal1(string,uint256,uint256)": FunctionFragment;
@@ -96,6 +97,7 @@ export interface HandshakeDealInterface extends utils.Interface {
       | "getNationDeals"
       | "getTreatySigners"
       | "idToDeal"
+      | "init"
       | "name"
       | "nationIDToDealIDs"
       | "proposeDeal1"
@@ -216,6 +218,10 @@ export interface HandshakeDealInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "idToDeal",
     values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "init",
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(functionFragment: "name", values?: undefined): string;
   encodeFunctionData(
@@ -377,6 +383,7 @@ export interface HandshakeDealInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "idToDeal", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "init", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "nationIDToDealIDs",
@@ -600,6 +607,11 @@ export interface HandshakeDeal extends BaseContract {
       }
     >;
 
+    init(
+      _diamond: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     name(overrides?: CallOverrides): Promise<[string]>;
 
     nationIDToDealIDs(
@@ -817,6 +829,11 @@ export interface HandshakeDeal extends BaseContract {
       effectiveDuration: BigNumber;
     }
   >;
+
+  init(
+    _diamond: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
 
   name(overrides?: CallOverrides): Promise<string>;
 
@@ -1036,6 +1053,11 @@ export interface HandshakeDeal extends BaseContract {
       }
     >;
 
+    init(
+      _diamond: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     name(overrides?: CallOverrides): Promise<string>;
 
     nationIDToDealIDs(
@@ -1242,6 +1264,11 @@ export interface HandshakeDeal extends BaseContract {
     idToDeal(
       arg0: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    init(
+      _diamond: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     name(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1452,6 +1479,11 @@ export interface HandshakeDeal extends BaseContract {
     idToDeal(
       arg0: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    init(
+      _diamond: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     name(overrides?: CallOverrides): Promise<PopulatedTransaction>;

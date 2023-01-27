@@ -1,8 +1,8 @@
 {
-    "componentName": "Amount",
-    "functionName": "",
-    "level": 2,
-    "object": "Tile",
-    "subject": "Nation",
-    "value": 7
+    "componentName": "Cooldown",
+    "functionName": "Upgrade",
+    "level": 17,
+    "object": "",
+    "subject": "Tile",
+    "value": 364
 }

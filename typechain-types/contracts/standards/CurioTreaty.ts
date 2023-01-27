@@ -50,6 +50,7 @@ export interface CurioTreatyInterface extends utils.Interface {
     "approveUpgradeTile(uint256,bytes)": FunctionFragment;
     "description()": FunctionFragment;
     "diamond()": FunctionFragment;
+    "init(address)": FunctionFragment;
     "name()": FunctionFragment;
     "treatyDelegateGameFunction(string,uint256,bool)": FunctionFragment;
     "treatyJoin()": FunctionFragment;
@@ -83,6 +84,7 @@ export interface CurioTreatyInterface extends utils.Interface {
       | "approveUpgradeTile"
       | "description"
       | "diamond"
+      | "init"
       | "name"
       | "treatyDelegateGameFunction"
       | "treatyJoin"
@@ -186,6 +188,10 @@ export interface CurioTreatyInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "diamond", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "init",
+    values: [PromiseOrValue<string>]
+  ): string;
   encodeFunctionData(functionFragment: "name", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "treatyDelegateGameFunction",
@@ -301,6 +307,7 @@ export interface CurioTreatyInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "diamond", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "init", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "treatyDelegateGameFunction",
@@ -484,6 +491,11 @@ export interface CurioTreaty extends BaseContract {
 
     diamond(overrides?: CallOverrides): Promise<[string]>;
 
+    init(
+      _diamond: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     name(overrides?: CallOverrides): Promise<[string]>;
 
     treatyDelegateGameFunction(
@@ -643,6 +655,11 @@ export interface CurioTreaty extends BaseContract {
   description(overrides?: CallOverrides): Promise<string>;
 
   diamond(overrides?: CallOverrides): Promise<string>;
+
+  init(
+    _diamond: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
 
   name(overrides?: CallOverrides): Promise<string>;
 
@@ -804,6 +821,11 @@ export interface CurioTreaty extends BaseContract {
 
     diamond(overrides?: CallOverrides): Promise<string>;
 
+    init(
+      _diamond: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     name(overrides?: CallOverrides): Promise<string>;
 
     treatyDelegateGameFunction(
@@ -962,6 +984,11 @@ export interface CurioTreaty extends BaseContract {
     description(overrides?: CallOverrides): Promise<BigNumber>;
 
     diamond(overrides?: CallOverrides): Promise<BigNumber>;
+
+    init(
+      _diamond: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
 
     name(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1123,6 +1150,11 @@ export interface CurioTreaty extends BaseContract {
     description(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     diamond(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    init(
+      _diamond: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
 
     name(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 

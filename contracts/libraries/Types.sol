@@ -62,7 +62,6 @@ struct WorldConstants {
     uint256 capitalLevelToEntityLevelRatio; // 3 => lv1 capital unlocks lv3 resources
     uint256 gameLengthInSeconds; // 0 means not used
     GameMode gameMode;
-    uint256 maxArmyCountPerNation;
     uint256 maxCapitalLevel;
     uint256 maxNationCount;
     uint256 numInitTerrainTypes; // default is 6

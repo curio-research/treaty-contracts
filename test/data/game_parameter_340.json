@@ -1,8 +1,8 @@
 {
-    "componentName": "Yield",
-    "functionName": "",
-    "level": 6,
-    "object": "Gold",
+    "componentName": "Cooldown",
+    "functionName": "Upgrade",
+    "level": 5,
+    "object": "",
     "subject": "Capital",
-    "value": 1574
+    "value": 6869
 }

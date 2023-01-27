@@ -4,10 +4,8 @@ from enum import Enum
 from types import LambdaType
 import numpy as np
 import json
-import pandas as pd
 from pathlib import Path
 import os
-
 
 
 import sys
@@ -30,6 +28,7 @@ class GameMode(str, Enum):
     TEN_PLAYER_LONG_TEST = "TEN_PLAYER_LONG_TEST"
     FIVE_PLAYER_LONG_TEST = "FIVE_PLAYER_LONG_TEST"
     INTERNAL_PLAYTEST = "INTERNAL_PLAYTEST"
+
 
 class Building(str, Enum):
     GOLDMINE = "Goldmine"
@@ -81,7 +80,7 @@ def resource_cap_per_troop() -> int:
         (game_instance.max_capital_level + 1) / 2)
     # 1000 bc of units
     (building_gold_cap, building_food_cap) = 1000 * get_building_resource_cap(corresponding_building_level,
-                                                                       Building.GOLDMINE) + get_building_resource_cap(corresponding_building_level, Building.FARM)
+                                                                              Building.GOLDMINE) + get_building_resource_cap(corresponding_building_level, Building.FARM)
     median_army_size = get_troop_size_by_center_level(
         math.ceil((game_instance.max_capital_level + 1) / 2))
     # no difference btw resources, so take the avg
@@ -645,7 +644,8 @@ class Game:
             self.capital_level_to_building_level)
         world_parameters["secondsToTrainAThousandTroops"] = int(
             self.base_troop_training_in_seconds * 1000)
-        game_parameters.append({"subject": "InnerLayer", "object": "Tile", "componentName": "Size", "level": 0, "functionName": "initializeTile", "value": 1920})
+        game_parameters.append({"subject": "InnerLayer", "object": "Tile", "componentName": "Size",
+                               "level": 0, "functionName": "initializeTile", "value": 1920})
         game_parameters.append({"subject": "Army", "componentName": "Rate", "object": "Gold", "level": 0,
                                "functionName": "gather", "value": int(get_hourly_gather_rate_per_army(Resource.GOLD) * 1000 / 3600)})
         game_parameters.append({"subject": "Army", "componentName": "Rate", "object": "Food", "level": 0,
@@ -660,6 +660,18 @@ class Game:
                                "object": "", "level": 0, "functionName": "", "value": 1000000000})
         game_parameters.append({"subject": "Barbarian", "componentName": "Cooldown",
                                "object": "", "level": 0, "functionName": "", "value": 30})
+        game_parameters.append({"subject": "Capital", "componentName": "Cap",
+                               "object": "Army", "level": 1, "functionName": "", "value": 2})
+        game_parameters.append({"subject": "Capital", "componentName": "Cap",
+                               "object": "Army", "level": 2, "functionName": "", "value": 3})
+        game_parameters.append({"subject": "Capital", "componentName": "Cap",
+                               "object": "Army", "level": 3, "functionName": "", "value": 4})
+        game_parameters.append({"subject": "Capital", "componentName": "Cap",
+                               "object": "Army", "level": 4, "functionName": "", "value": 5})
+        game_parameters.append({"subject": "Capital", "componentName": "Cap",
+                               "object": "Army", "level": 5, "functionName": "", "value": 6})
+        game_parameters.append({"subject": "Capital", "componentName": "Cap",
+                               "object": "Army", "level": 6, "functionName": "", "value": 7})
 
         # Building Stats
         for bt in [Building.GOLDMINE, Building.FARM, Building.CAPITAL]:
@@ -760,10 +772,10 @@ class Game:
             # todo: refactor; tile count too low for beginner (lv1 capital upgrade too expensive)
             if (curr_level == 1):
                 game_parameters.append({"subject": "Nation", "componentName": "Amount", "object": "Tile", "level": curr_level,
-                                   "functionName": "", "value": 3})
+                                        "functionName": "", "value": 3})
             else:
                 game_parameters.append({"subject": "Nation", "componentName": "Amount", "object": "Tile", "level": curr_level,
-                                   "functionName": "", "value": self.init_player_tile_count + (curr_level - 1) * int(get_capital_tiles_interval())})
+                                        "functionName": "", "value": self.init_player_tile_count + (curr_level - 1) * int(get_capital_tiles_interval())})
             curr_level += 1
 
         # For Foundry:
@@ -792,7 +804,8 @@ class Game:
     def export_excel_parameters(self):
         # Tile Stats
         # Initialize tile_stats as an empty DataFrame
-        tile_stats = pd.DataFrame(columns=['Level', 'Cooldown: Upgrade', 'Cooldown: moveCapital', 'Cost: Gold', 'Cost: Food', 'Amount: Guard'])
+        tile_stats = pd.DataFrame(columns=[
+                                  'Level', 'Cooldown: Upgrade', 'Cooldown: moveCapital', 'Cost: Gold', 'Cost: Food', 'Amount: Guard'])
 
         # Assign the maximum level of the tile
         max_tile_level = self.max_capital_level * \
@@ -805,7 +818,7 @@ class Game:
         while curr_level <= max_tile_level:
             level = 'lv' + str(curr_level)
             (cost_gold, cost_food) = get_tile_upgrade_cost(curr_level)
-            
+
             tile_stats = tile_stats.append({
                 'Level': level,
                 'Cooldown: Upgrade': get_tile_upgrade_cooldown_in_second(curr_level),
@@ -819,9 +832,12 @@ class Game:
 
         # Building Stats
         # Initialize building_stats as an empty DataFrame
-        capital_stats = pd.DataFrame(columns=['Level', 'Cooldown: Upgrade', 'Cooldown: moveCapital', 'Upgrade Cost: Gold', 'Upgrade Cost: Food', 'Yield: Gold', 'Yield: Food', 'Cap: Food', 'Cap: Gold'])
-        goldmine_stats = pd.DataFrame(columns=['Level', 'Cooldown: Upgrade', 'Upgrade Cost: Gold', 'Upgrade Cost: Food', 'Yield: Gold', 'Yield: Food', 'Cap: Food', 'Cap: Gold'])
-        farm_stats = pd.DataFrame(columns=['Level', 'Cooldown: Upgrade', 'Upgrade Cost: Gold', 'Upgrade Cost: Food', 'Yield: Gold', 'Yield: Food', 'Cap: Food', 'Cap: Gold'])
+        capital_stats = pd.DataFrame(columns=['Level', 'Cooldown: Upgrade', 'Cooldown: moveCapital',
+                                     'Upgrade Cost: Gold', 'Upgrade Cost: Food', 'Yield: Gold', 'Yield: Food', 'Cap: Food', 'Cap: Gold'])
+        goldmine_stats = pd.DataFrame(columns=['Level', 'Cooldown: Upgrade', 'Upgrade Cost: Gold',
+                                      'Upgrade Cost: Food', 'Yield: Gold', 'Yield: Food', 'Cap: Food', 'Cap: Gold'])
+        farm_stats = pd.DataFrame(columns=['Level', 'Cooldown: Upgrade', 'Upgrade Cost: Gold',
+                                  'Upgrade Cost: Food', 'Yield: Gold', 'Yield: Food', 'Cap: Food', 'Cap: Gold'])
 
         for bt in [Building.GOLDMINE, Building.FARM, Building.CAPITAL]:
             max_building_level = 1
@@ -857,17 +873,14 @@ class Game:
                     'Cap: Food': food_cap,
                     'Cap: Gold': gold_cap},
                     ignore_index=True)
-                
 
             curr_level += 1
 
-
-
         # Export tile_stats into an excel file
-        filepath = os.path.join(os.path.expanduser('~'),'Desktop')
+        filepath = os.path.join(os.path.expanduser('~'), 'Desktop')
         filename = 'treaty_stats.xlsx'
         file_path = os.path.join(filepath, filename)
-        
+
         # Create an ExcelWriter object
         writer = pd.ExcelWriter(file_path, engine='xlsxwriter')
 
@@ -877,7 +890,6 @@ class Game:
         # Save the excel file
         writer.save()
         print('GodOS: generated and exported parameters into excel')
-
 
 
 # change here when switching game mode

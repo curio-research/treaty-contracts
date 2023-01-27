@@ -1,8 +1,8 @@
 {
     "componentName": "Load",
     "functionName": "",
-    "level": 16,
-    "object": "Gold",
+    "level": 15,
+    "object": "Food",
     "subject": "Goldmine",
-    "value": 7965000
+    "value": 0
 }

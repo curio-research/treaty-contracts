@@ -51,6 +51,7 @@ export interface AllianceInterface extends utils.Interface {
     "description()": FunctionFragment;
     "diamond()": FunctionFragment;
     "goldToken()": FunctionFragment;
+    "init(address)": FunctionFragment;
     "name()": FunctionFragment;
     "treatyBesiege(uint256)": FunctionFragment;
     "treatyDelegateGameFunction(string,uint256,bool)": FunctionFragment;
@@ -86,6 +87,7 @@ export interface AllianceInterface extends utils.Interface {
       | "description"
       | "diamond"
       | "goldToken"
+      | "init"
       | "name"
       | "treatyBesiege"
       | "treatyDelegateGameFunction"
@@ -191,6 +193,10 @@ export interface AllianceInterface extends utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "diamond", values?: undefined): string;
   encodeFunctionData(functionFragment: "goldToken", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "init",
+    values: [PromiseOrValue<string>]
+  ): string;
   encodeFunctionData(functionFragment: "name", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "treatyBesiege",
@@ -311,6 +317,7 @@ export interface AllianceInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "diamond", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "goldToken", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "init", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "treatyBesiege",
@@ -500,6 +507,11 @@ export interface Alliance extends BaseContract {
 
     goldToken(overrides?: CallOverrides): Promise<[string]>;
 
+    init(
+      _diamond: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     name(overrides?: CallOverrides): Promise<[string]>;
 
     treatyBesiege(
@@ -666,6 +678,11 @@ export interface Alliance extends BaseContract {
   diamond(overrides?: CallOverrides): Promise<string>;
 
   goldToken(overrides?: CallOverrides): Promise<string>;
+
+  init(
+    _diamond: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
 
   name(overrides?: CallOverrides): Promise<string>;
 
@@ -834,6 +851,11 @@ export interface Alliance extends BaseContract {
 
     goldToken(overrides?: CallOverrides): Promise<string>;
 
+    init(
+      _diamond: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     name(overrides?: CallOverrides): Promise<string>;
 
     treatyBesiege(
@@ -999,6 +1021,11 @@ export interface Alliance extends BaseContract {
     diamond(overrides?: CallOverrides): Promise<BigNumber>;
 
     goldToken(overrides?: CallOverrides): Promise<BigNumber>;
+
+    init(
+      _diamond: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
 
     name(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1167,6 +1194,11 @@ export interface Alliance extends BaseContract {
     diamond(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     goldToken(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    init(
+      _diamond: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
 
     name(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
