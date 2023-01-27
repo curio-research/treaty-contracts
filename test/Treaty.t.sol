@@ -11,6 +11,7 @@ import {CollectiveDefenseFund} from "contracts/treaties/CollectiveDefenseFund.so
 import {SimpleOTC} from "contracts/treaties/SimpleOTC.sol";
 import {HandshakeDeal} from "contracts/treaties/HandshakeDeal.sol";
 import {TestTreaty} from "contracts/treaties/TestTreaty.sol";
+import {CustomTreaty} from "test/CustomTreaty.sol";
 import {CurioWallet} from "contracts/standards/CurioWallet.sol";
 import {Position} from "contracts/libraries/Types.sol";
 import {console} from "forge-std/console.sol";
@@ -804,6 +805,46 @@ contract TreatyTest is Test, DiamondDeployTest {
         uint256 p1DealID = p1Deals[0];
         hsDeal.treatyJoin();
         hsDeal.signDeal(p1DealID);
+        vm.expectRevert("CURIO: Treaty disapproved UpgradeCapital");
+        game.upgradeCapital(nation2CapitalID);
+    }
+
+    function testCustomTreaty() public {
+        /**
+        Outline:
+        - First register the treaty template, then deploy.
+        - p1 proposed a deal to prevent upgrading p2's capital
+        - p2 signed the deal
+        - p2 attempts to upgrade its capital but fails
+         */
+
+        uint256 time = block.timestamp + 1000;
+        vm.warp(time);
+
+        // Player1 deploys Handshake deal and propose
+        vm.startPrank(player1);
+        CustomTreaty customTreatyTemplate = new CustomTreaty();
+        game.registerTreatyTemplate(address(customTreatyTemplate), "sample ABI", "sample metadata");
+        CustomTreaty customTreaty = CustomTreaty(game.deployTreaty(nation1ID, "Custom Treaty"));
+        customTreaty.treatyJoin();
+        customTreaty.proposeDeal1("approveUpgradeCapital", nation2CapitalID, 1000);
+        vm.stopPrank();
+
+        // assigns tokens to p1 and p2
+        vm.startPrank(deployer);
+        admin.dripToken(nation1CapitalAddr, "Gold", 10000000);
+        admin.dripToken(nation1CapitalAddr, "Food", 10000000);
+
+        admin.dripToken(nation2CapitalAddr, "Gold", 10000000);
+        admin.dripToken(nation2CapitalAddr, "Food", 10000000);
+        vm.stopPrank();
+
+        // Player2 joins treaty and signs the deal
+        vm.startPrank(player2);
+        uint256[] memory p1Deals = customTreaty.getNationDeals(nation1ID);
+        uint256 p1DealID = p1Deals[0];
+        customTreaty.treatyJoin();
+        customTreaty.signDeal(p1DealID);
         vm.expectRevert("CURIO: Treaty disapproved UpgradeCapital");
         game.upgradeCapital(nation2CapitalID);
     }
