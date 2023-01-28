@@ -1,8 +1,8 @@
 {
-    "componentName": "Reward",
+    "componentName": "Yield",
     "functionName": "",
-    "level": 11,
+    "level": 4,
     "object": "Food",
-    "subject": "Barbarian",
-    "value": 1052073
+    "subject": "Capital",
+    "value": 11237
 }

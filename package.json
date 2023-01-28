@@ -3,7 +3,7 @@
   "private": true,
   "license": "TBD",
   "scripts": {
-    "prepare": "bash ./scripts/setup.sh",
+    "prepare": "bash ./scripts/pnm-test-setup.sh",
     "contract-size": "yarn run hardhat size-contracts",
     "getInitParams": "npx ts-node test/util/foundry/getInitParams.ts",
     "getFuncSelectors": "npx ts-node test/util/foundry/getFuncSelectors.ts",
@@ -32,7 +32,6 @@
   "dependencies": {
     "@openzeppelin/contracts": "^4.3.2",
     "@openzeppelin/contracts-upgradeable": "^4.3.2",
-    "@pinata/sdk": "^1.1.23",
     "@typechain/ethers-v5": "^10.1.0",
     "@typechain/hardhat": "^6.1.3",
     "@types/fs-extra": "^9.0.13",

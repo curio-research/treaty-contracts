@@ -1,8 +1,8 @@
 {
-    "componentName": "LastRecovered",
+    "componentName": "Load",
     "functionName": "",
-    "level": 15,
-    "object": "",
-    "subject": "SuperTile",
-    "value": 0
+    "level": 5,
+    "object": "Food",
+    "subject": "Capital",
+    "value": 44093000
 }

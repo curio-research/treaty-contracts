@@ -189,22 +189,30 @@ contract DiamondDeployTest is Test {
         }
 
         // Initialize treaties
-        allianceTemplate = new Alliance(diamond);
-        allianceTemplateID = admin.registerTreatyTemplate(address(allianceTemplate), "sample ABI", "sample metadata");
-        testTreatyTemplate = new TestTreaty(diamond);
-        testTreatyTemplateID = admin.registerTreatyTemplate(address(testTreatyTemplate), "sample ABI", "sample metadata");
-        collectiveDefenseFundTemplate = new CollectiveDefenseFund(diamond);
-        collectiveDefenseFundTemplateID = admin.registerTreatyTemplate(address(collectiveDefenseFundTemplate), "sample ABI", "sample metadata");
-        embargoTemplate = new Embargo(diamond);
-        embargoTemplateID = admin.registerTreatyTemplate(address(embargoTemplate), "sample ABI", "sample metadata");
-        nonAggressionPactTemplate = new NonAggressionPact(diamond);
-        nonAggressionPactTemplateID = admin.registerTreatyTemplate(address(nonAggressionPactTemplate), "sample ABI", "sample metadata");
-        otcContractTemplate = new SimpleOTC(diamond);
-        otcContractTemplateID = admin.registerTreatyTemplate(address(otcContractTemplate), "sample ABI", "sample metadata");
-        handshakeDealTemplate = new HandshakeDeal(diamond);
-        handshakeDealTemplateID = admin.registerTreatyTemplate(address(handshakeDealTemplate), "sample ABI", "sample metadata");
-        mercenaryLeagueTemplate = new MercenaryLeague(diamond);
-        mercenaryLeagueTemplateID = admin.registerTreatyTemplate(address(mercenaryLeagueTemplate), "sample ABI", "sample metadata");
+        allianceTemplate = new Alliance();
+        allianceTemplate.init(diamond);
+        allianceTemplateID = game.registerTreatyTemplate(address(allianceTemplate), "sample ABI", "sample metadata");
+        testTreatyTemplate = new TestTreaty();
+        testTreatyTemplate.init(diamond);
+        testTreatyTemplateID = game.registerTreatyTemplate(address(testTreatyTemplate), "sample ABI", "sample metadata");
+        collectiveDefenseFundTemplate = new CollectiveDefenseFund();
+        collectiveDefenseFundTemplate.init(diamond);
+        collectiveDefenseFundTemplateID = game.registerTreatyTemplate(address(collectiveDefenseFundTemplate), "sample ABI", "sample metadata");
+        embargoTemplate = new Embargo();
+        embargoTemplate.init(diamond);
+        embargoTemplateID = game.registerTreatyTemplate(address(embargoTemplate), "sample ABI", "sample metadata");
+        nonAggressionPactTemplate = new NonAggressionPact();
+        nonAggressionPactTemplate.init(diamond);
+        nonAggressionPactTemplateID = game.registerTreatyTemplate(address(nonAggressionPactTemplate), "sample ABI", "sample metadata");
+        otcContractTemplate = new SimpleOTC();
+        otcContractTemplate.init(diamond);
+        otcContractTemplateID = game.registerTreatyTemplate(address(otcContractTemplate), "sample ABI", "sample metadata");
+        handshakeDealTemplate = new HandshakeDeal();
+        handshakeDealTemplate.init(diamond);
+        handshakeDealTemplateID = game.registerTreatyTemplate(address(handshakeDealTemplate), "sample ABI", "sample metadata");
+        mercenaryLeagueTemplate = new MercenaryLeague();
+        mercenaryLeagueTemplate.init(diamond);
+        mercenaryLeagueTemplateID = game.registerTreatyTemplate(address(mercenaryLeagueTemplate), "sample ABI", "sample metadata");
         console.log(">>> Treaties initialized");
 
         // Whitelist all players
@@ -279,7 +287,7 @@ contract DiamondDeployTest is Test {
     }
 
     function _registerFunctionNames() private {
-        string[] memory gameFunctionNames = new string[](21);
+        string[] memory gameFunctionNames = new string[](22);
         gameFunctionNames[0] = "JoinGame";
         gameFunctionNames[1] = "UpgradeCapital";
         gameFunctionNames[2] = "MoveCapital";
@@ -288,19 +296,20 @@ contract DiamondDeployTest is Test {
         gameFunctionNames[5] = "RecoverTile";
         gameFunctionNames[6] = "DisownTile";
         gameFunctionNames[7] = "StartTroopProduction";
-        gameFunctionNames[8] = "EndTroopProduction";
-        gameFunctionNames[9] = "Move";
-        gameFunctionNames[10] = "OrganizeArmy";
-        gameFunctionNames[11] = "DisbandArmy";
-        gameFunctionNames[12] = "StartGather";
-        gameFunctionNames[13] = "EndGather";
-        gameFunctionNames[14] = "UnloadResources";
-        gameFunctionNames[15] = "HarvestResource";
-        gameFunctionNames[16] = "HarvestResourcesFromCapital";
-        gameFunctionNames[17] = "UpgradeResource";
-        gameFunctionNames[18] = "Battle";
-        gameFunctionNames[19] = "DelegateGameFunction";
-        gameFunctionNames[20] = "DeployTreaty";
+        gameFunctionNames[8] = "StopTroopProduction";
+        gameFunctionNames[9] = "EndTroopProduction";
+        gameFunctionNames[10] = "Move";
+        gameFunctionNames[11] = "OrganizeArmy";
+        gameFunctionNames[12] = "DisbandArmy";
+        gameFunctionNames[13] = "StartGather";
+        gameFunctionNames[14] = "EndGather";
+        gameFunctionNames[15] = "UnloadResources";
+        gameFunctionNames[16] = "HarvestResource";
+        gameFunctionNames[17] = "HarvestResourcesFromCapital";
+        gameFunctionNames[18] = "UpgradeResource";
+        gameFunctionNames[19] = "Battle";
+        gameFunctionNames[20] = "DelegateGameFunction";
+        gameFunctionNames[21] = "DeployTreaty";
         admin.registerFunctionNames(gameFunctionNames);
     }
 
@@ -428,7 +437,7 @@ contract DiamondDeployTest is Test {
                 capitalLevelToEntityLevelRatio: 3,
                 gameLengthInSeconds: 3600,
                 gameMode: GameMode.REGULAR,
-                maxArmyCountPerNation: 2,
+                innerRadiusByTileCount: 0,
                 maxCapitalLevel: 3,
                 maxNationCount: 20,
                 // maxTransferDistance: 100

@@ -1,8 +1,8 @@
 {
-    "componentName": "Health",
+    "componentName": "Cost",
     "functionName": "",
     "level": 0,
-    "object": "",
-    "subject": "Settler",
-    "value": 1000000000
+    "object": "Food",
+    "subject": "Troop Production",
+    "value": 25000
 }
