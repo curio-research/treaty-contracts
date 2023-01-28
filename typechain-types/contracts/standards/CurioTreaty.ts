@@ -25,7 +25,6 @@ import type {
 
 export interface CurioTreatyInterface extends utils.Interface {
   functions: {
-    "admin()": FunctionFragment;
     "approveBattle(uint256,bytes)": FunctionFragment;
     "approveClaimTile(uint256,bytes)": FunctionFragment;
     "approveDelegateGameFunction(uint256,bytes)": FunctionFragment;
@@ -51,9 +50,7 @@ export interface CurioTreatyInterface extends utils.Interface {
     "approveUpgradeTile(uint256,bytes)": FunctionFragment;
     "description()": FunctionFragment;
     "diamond()": FunctionFragment;
-    "game()": FunctionFragment;
-    "getter()": FunctionFragment;
-    "minimumStayCheck(uint256,uint256)": FunctionFragment;
+    "init(address)": FunctionFragment;
     "name()": FunctionFragment;
     "treatyDelegateGameFunction(string,uint256,bool)": FunctionFragment;
     "treatyJoin()": FunctionFragment;
@@ -62,7 +59,6 @@ export interface CurioTreatyInterface extends utils.Interface {
 
   getFunction(
     nameOrSignatureOrTopic:
-      | "admin"
       | "approveBattle"
       | "approveClaimTile"
       | "approveDelegateGameFunction"
@@ -88,16 +84,13 @@ export interface CurioTreatyInterface extends utils.Interface {
       | "approveUpgradeTile"
       | "description"
       | "diamond"
-      | "game"
-      | "getter"
-      | "minimumStayCheck"
+      | "init"
       | "name"
       | "treatyDelegateGameFunction"
       | "treatyJoin"
       | "treatyLeave"
   ): FunctionFragment;
 
-  encodeFunctionData(functionFragment: "admin", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "approveBattle",
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BytesLike>]
@@ -195,11 +188,9 @@ export interface CurioTreatyInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "diamond", values?: undefined): string;
-  encodeFunctionData(functionFragment: "game", values?: undefined): string;
-  encodeFunctionData(functionFragment: "getter", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "minimumStayCheck",
-    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
+    functionFragment: "init",
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(functionFragment: "name", values?: undefined): string;
   encodeFunctionData(
@@ -219,7 +210,6 @@ export interface CurioTreatyInterface extends utils.Interface {
     values?: undefined
   ): string;
 
-  decodeFunctionResult(functionFragment: "admin", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "approveBattle",
     data: BytesLike
@@ -317,12 +307,7 @@ export interface CurioTreatyInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "diamond", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "game", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "getter", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "minimumStayCheck",
-    data: BytesLike
-  ): Result;
+  decodeFunctionResult(functionFragment: "init", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "treatyDelegateGameFunction",
@@ -364,8 +349,6 @@ export interface CurioTreaty extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    admin(overrides?: CallOverrides): Promise<[string]>;
-
     approveBattle(
       _nationID: PromiseOrValue<BigNumberish>,
       _encodedParams: PromiseOrValue<BytesLike>,
@@ -508,15 +491,10 @@ export interface CurioTreaty extends BaseContract {
 
     diamond(overrides?: CallOverrides): Promise<[string]>;
 
-    game(overrides?: CallOverrides): Promise<[string]>;
-
-    getter(overrides?: CallOverrides): Promise<[string]>;
-
-    minimumStayCheck(
-      _nationID: PromiseOrValue<BigNumberish>,
-      _duration: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
+    init(
+      _diamond: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
 
     name(overrides?: CallOverrides): Promise<[string]>;
 
@@ -535,8 +513,6 @@ export interface CurioTreaty extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
   };
-
-  admin(overrides?: CallOverrides): Promise<string>;
 
   approveBattle(
     _nationID: PromiseOrValue<BigNumberish>,
@@ -680,15 +656,10 @@ export interface CurioTreaty extends BaseContract {
 
   diamond(overrides?: CallOverrides): Promise<string>;
 
-  game(overrides?: CallOverrides): Promise<string>;
-
-  getter(overrides?: CallOverrides): Promise<string>;
-
-  minimumStayCheck(
-    _nationID: PromiseOrValue<BigNumberish>,
-    _duration: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
+  init(
+    _diamond: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
 
   name(overrides?: CallOverrides): Promise<string>;
 
@@ -708,8 +679,6 @@ export interface CurioTreaty extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
-    admin(overrides?: CallOverrides): Promise<string>;
-
     approveBattle(
       _nationID: PromiseOrValue<BigNumberish>,
       _encodedParams: PromiseOrValue<BytesLike>,
@@ -852,15 +821,10 @@ export interface CurioTreaty extends BaseContract {
 
     diamond(overrides?: CallOverrides): Promise<string>;
 
-    game(overrides?: CallOverrides): Promise<string>;
-
-    getter(overrides?: CallOverrides): Promise<string>;
-
-    minimumStayCheck(
-      _nationID: PromiseOrValue<BigNumberish>,
-      _duration: PromiseOrValue<BigNumberish>,
+    init(
+      _diamond: PromiseOrValue<string>,
       overrides?: CallOverrides
-    ): Promise<boolean>;
+    ): Promise<void>;
 
     name(overrides?: CallOverrides): Promise<string>;
 
@@ -879,8 +843,6 @@ export interface CurioTreaty extends BaseContract {
   filters: {};
 
   estimateGas: {
-    admin(overrides?: CallOverrides): Promise<BigNumber>;
-
     approveBattle(
       _nationID: PromiseOrValue<BigNumberish>,
       _encodedParams: PromiseOrValue<BytesLike>,
@@ -1023,14 +985,9 @@ export interface CurioTreaty extends BaseContract {
 
     diamond(overrides?: CallOverrides): Promise<BigNumber>;
 
-    game(overrides?: CallOverrides): Promise<BigNumber>;
-
-    getter(overrides?: CallOverrides): Promise<BigNumber>;
-
-    minimumStayCheck(
-      _nationID: PromiseOrValue<BigNumberish>,
-      _duration: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
+    init(
+      _diamond: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     name(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1052,8 +1009,6 @@ export interface CurioTreaty extends BaseContract {
   };
 
   populateTransaction: {
-    admin(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
     approveBattle(
       _nationID: PromiseOrValue<BigNumberish>,
       _encodedParams: PromiseOrValue<BytesLike>,
@@ -1196,14 +1151,9 @@ export interface CurioTreaty extends BaseContract {
 
     diamond(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    game(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    getter(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    minimumStayCheck(
-      _nationID: PromiseOrValue<BigNumberish>,
-      _duration: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
+    init(
+      _diamond: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     name(overrides?: CallOverrides): Promise<PopulatedTransaction>;

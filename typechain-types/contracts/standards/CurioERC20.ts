@@ -29,7 +29,6 @@ import type {
 
 export interface CurioERC20Interface extends utils.Interface {
   functions: {
-    "admin()": FunctionFragment;
     "allowance(address,address)": FunctionFragment;
     "approve(address,uint256)": FunctionFragment;
     "balanceOf(address)": FunctionFragment;
@@ -37,8 +36,6 @@ export interface CurioERC20Interface extends utils.Interface {
     "destroyToken(address,uint256)": FunctionFragment;
     "diamond()": FunctionFragment;
     "dripToken(address,uint256)": FunctionFragment;
-    "game()": FunctionFragment;
-    "getter()": FunctionFragment;
     "maxTransferDistance()": FunctionFragment;
     "name()": FunctionFragment;
     "symbol()": FunctionFragment;
@@ -50,7 +47,6 @@ export interface CurioERC20Interface extends utils.Interface {
 
   getFunction(
     nameOrSignatureOrTopic:
-      | "admin"
       | "allowance"
       | "approve"
       | "balanceOf"
@@ -58,8 +54,6 @@ export interface CurioERC20Interface extends utils.Interface {
       | "destroyToken"
       | "diamond"
       | "dripToken"
-      | "game"
-      | "getter"
       | "maxTransferDistance"
       | "name"
       | "symbol"
@@ -69,7 +63,6 @@ export interface CurioERC20Interface extends utils.Interface {
       | "transferFrom"
   ): FunctionFragment;
 
-  encodeFunctionData(functionFragment: "admin", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "allowance",
     values: [PromiseOrValue<string>, PromiseOrValue<string>]
@@ -92,8 +85,6 @@ export interface CurioERC20Interface extends utils.Interface {
     functionFragment: "dripToken",
     values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
-  encodeFunctionData(functionFragment: "game", values?: undefined): string;
-  encodeFunctionData(functionFragment: "getter", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "maxTransferDistance",
     values?: undefined
@@ -121,7 +112,6 @@ export interface CurioERC20Interface extends utils.Interface {
     ]
   ): string;
 
-  decodeFunctionResult(functionFragment: "admin", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "allowance", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "approve", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
@@ -132,8 +122,6 @@ export interface CurioERC20Interface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "diamond", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "dripToken", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "game", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "getter", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "maxTransferDistance",
     data: BytesLike
@@ -214,8 +202,6 @@ export interface CurioERC20 extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    admin(overrides?: CallOverrides): Promise<[string]>;
-
     allowance(
       _owner: PromiseOrValue<string>,
       _spender: PromiseOrValue<string>,
@@ -249,10 +235,6 @@ export interface CurioERC20 extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    game(overrides?: CallOverrides): Promise<[string]>;
-
-    getter(overrides?: CallOverrides): Promise<[string]>;
-
     maxTransferDistance(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     name(overrides?: CallOverrides): Promise<[string]>;
@@ -280,8 +262,6 @@ export interface CurioERC20 extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
   };
-
-  admin(overrides?: CallOverrides): Promise<string>;
 
   allowance(
     _owner: PromiseOrValue<string>,
@@ -316,10 +296,6 @@ export interface CurioERC20 extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  game(overrides?: CallOverrides): Promise<string>;
-
-  getter(overrides?: CallOverrides): Promise<string>;
-
   maxTransferDistance(overrides?: CallOverrides): Promise<BigNumber>;
 
   name(overrides?: CallOverrides): Promise<string>;
@@ -348,8 +324,6 @@ export interface CurioERC20 extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
-    admin(overrides?: CallOverrides): Promise<string>;
-
     allowance(
       _owner: PromiseOrValue<string>,
       _spender: PromiseOrValue<string>,
@@ -382,10 +356,6 @@ export interface CurioERC20 extends BaseContract {
       _amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
-
-    game(overrides?: CallOverrides): Promise<string>;
-
-    getter(overrides?: CallOverrides): Promise<string>;
 
     maxTransferDistance(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -440,8 +410,6 @@ export interface CurioERC20 extends BaseContract {
   };
 
   estimateGas: {
-    admin(overrides?: CallOverrides): Promise<BigNumber>;
-
     allowance(
       _owner: PromiseOrValue<string>,
       _spender: PromiseOrValue<string>,
@@ -475,10 +443,6 @@ export interface CurioERC20 extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    game(overrides?: CallOverrides): Promise<BigNumber>;
-
-    getter(overrides?: CallOverrides): Promise<BigNumber>;
-
     maxTransferDistance(overrides?: CallOverrides): Promise<BigNumber>;
 
     name(overrides?: CallOverrides): Promise<BigNumber>;
@@ -508,8 +472,6 @@ export interface CurioERC20 extends BaseContract {
   };
 
   populateTransaction: {
-    admin(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
     allowance(
       _owner: PromiseOrValue<string>,
       _spender: PromiseOrValue<string>,
@@ -542,10 +504,6 @@ export interface CurioERC20 extends BaseContract {
       _amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
-
-    game(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    getter(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     maxTransferDistance(
       overrides?: CallOverrides

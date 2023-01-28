@@ -1,8 +1,8 @@
 {
-    "componentName": "Cooldown",
+    "componentName": "Health",
     "functionName": "",
     "level": 0,
     "object": "",
-    "subject": "Barbarian",
-    "value": 30
+    "subject": "Settler",
+    "value": 1000000000
 }

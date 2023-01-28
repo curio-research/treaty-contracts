@@ -1,6 +1,6 @@
 import masterWhitelist from './util/whitelist.json';
 import chalk from 'chalk';
-import { publishDeployment, isConnectionLive, startGameSync } from './../api/deployment';
+import { publishDeployment, isConnectionLive, startGameSync } from '../api/api';
 import { task } from 'hardhat/config';
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { printDivider, indexerUrlSelector, saveMapToLocal, initializeGame } from './util/deployHelper';

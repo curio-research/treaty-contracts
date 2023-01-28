@@ -73,9 +73,9 @@ export const generateMap = (mapInput: MapInput): TileMap => {
   const innerDiameterByTileCount = innerRadiusByTileCount ? innerRadiusByTileCount * 2 + 1 : 0;
 
   // specify outer density
-  const level1GoldMineDensity = 0.1; // restore to 0.1
-  const level1BarbarianDensity = 0.2; // restore to 0.02
-  const level2BarbarianDensity = 0.02; // restore to 0.02
+  const level1GoldMineDensity = 0.15; // restore to 0.1
+  const level1BarbarianDensity = 0.06; // restore to 0.02
+  const level2BarbarianDensity = 0.04; // restore to 0.02
 
   if (!innerRadiusByTileCount) {
     // add gold mines and barbarians
@@ -94,9 +94,9 @@ export const generateMap = (mapInput: MapInput): TileMap => {
     }
   } else {
     // specify inner density
-    const level1GoldMineDensityInner = 0.6;
-    const level1BarbarianDensityInner = 0.1;
-    const level2BarbarianDensityInner = 0.1;
+    const level1GoldMineDensityInner = 0.3;
+    const level1BarbarianDensityInner = 0.02;
+    const level2BarbarianDensityInner = 0.02;
 
     // add inner gold mines and barbarians
     const totalTileCountInner = innerDiameterByTileCount * innerDiameterByTileCount;
@@ -221,7 +221,6 @@ export const chooseRandomEmptyPosition = (tileMap: TileMap, inner: boolean = fal
   const mapWidth = tileMap.length;
   const mapHeight = tileMap[0].length;
   const center = { x: Math.floor(mapWidth / 2), y: Math.floor(mapHeight / 2) };
-  console.log('center', center);
 
   let pos;
   do {

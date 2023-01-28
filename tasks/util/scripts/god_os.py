@@ -4,6 +4,9 @@ from enum import Enum
 from types import LambdaType
 import numpy as np
 import json
+from pathlib import Path
+import os
+
 
 import sys
 
@@ -19,6 +22,12 @@ class GameMode(str, Enum):
     THREE_PLAYER_SHORT_TEST = "THREE_PLAYER_SHORT_TEST"
     TEN_PLAYER_SHORT_TEST = "TEN_PLAYER_SHORT_TEST"
     FIVE_PLAYER_SHORT_TEST = "FIVE_PLAYER_SHORT_TEST"
+    SIX_PLAYER_SHORT_TEST = "SIX_PLAYER_SHORT_TEST"
+    SIX_PLAYER_LONG_TEST = "SIX_PLAYER_LONG_TEST"
+    THREE_PLAYER_LONG_TEST = "THREE_PLAYER_LONG_TEST"
+    TEN_PLAYER_LONG_TEST = "TEN_PLAYER_LONG_TEST"
+    FIVE_PLAYER_LONG_TEST = "FIVE_PLAYER_LONG_TEST"
+    INTERNAL_PLAYTEST = "INTERNAL_PLAYTEST"
 
 
 class Building(str, Enum):
@@ -69,12 +78,13 @@ def resource_cap_per_troop() -> int:
     # should take the middle of the interval => if ccl = 2, ccltbl = 3, then it corresponds to (6 + 3) / 2 = 4.5
     corresponding_building_level = building_level_based_on_center_level(
         (game_instance.max_capital_level + 1) / 2)
-    (building_gold_cap, building_food_cap) = get_building_resource_cap(corresponding_building_level,
-                                                                       Building.GOLDMINE) + get_building_resource_cap(corresponding_building_level, Building.FARM)
+    # 1000 bc of units
+    (building_gold_cap, building_food_cap) = 1000 * get_building_resource_cap(corresponding_building_level,
+                                                                              Building.GOLDMINE) + get_building_resource_cap(corresponding_building_level, Building.FARM)
     median_army_size = get_troop_size_by_center_level(
         math.ceil((game_instance.max_capital_level + 1) / 2))
     # no difference btw resources, so take the avg
-    return (building_gold_cap + building_food_cap) / 2 / median_army_size
+    return (building_gold_cap + building_food_cap) / 2 / (median_army_size)
 
 
 def get_troop_size_by_center_level(level: int) -> int:
@@ -98,7 +108,8 @@ def get_capital_tiles_interval() -> int:
     Growth: Constant
     Gist: 9 tiles - avg tiles - max tiles => calculate with (avg - init) / (intervals/2)
     """
-    return math.floor(((game_instance.total_tile_count/game_instance.expected_player_count) - game_instance.init_player_tile_count) / ((game_instance.max_capital_level - 1) / 2))
+    # divided by 2 to enhance tile restriction
+    return math.floor(((game_instance.total_tile_count/game_instance.expected_player_count) - game_instance.init_player_tile_count) / ((game_instance.max_capital_level - 1) / 2)) / 2
 
 
 def get_building_base_hourly_yield(building_type: Building) -> np.array:
@@ -167,8 +178,9 @@ def get_barbarian_reward(level: int) -> np.array:
     barbarian_count = get_barbarian_count_by_level(level)
     goldcost_per_troop = game_instance.resource_weight_light
     foodcost_per_troop = game_instance.resource_weight_heavy
-    total_goldcost = barbarian_count * goldcost_per_troop
-    total_foodcost = barbarian_count * foodcost_per_troop
+    # Increase cost bc barbarians are strengthened
+    total_goldcost = barbarian_count * goldcost_per_troop * 4
+    total_foodcost = barbarian_count * foodcost_per_troop * 4
     # actual reward = base reward * exponential curve (level as x)
     gold_reward = total_goldcost * game_instance.barbarian_reward_to_cost_coefficient * fast_exponential_curve(
         game_instance.max_capital_level * game_instance.capital_level_to_building_level)(level) / fast_exponential_curve(9)(1)
@@ -280,7 +292,7 @@ def get_tile_upgrade_cooldown_in_second(level: int) -> int:
 
 
 def expected_gold_density() -> float:
-    return 0.1
+    return 0.2
 
 
 def expected_farm_density() -> float:
@@ -482,7 +494,7 @@ class Game:
             self.barbarian_reward_to_cost_coefficient = 4
             self.tile_to_barbarian_strength_ratio = 1.5
             self.tile_troop_discount = 0.5
-            self.barbarian_to_army_difficulty_constant = 40
+            self.barbarian_to_army_difficulty_constant = 60
             self.gather_rate_to_resource_rate = 50
             self.capital_migration_cooldown_ratio = 15
             self.building_upgrade_cooldown_ratio = 10
@@ -490,7 +502,6 @@ class Game:
              self.resource_weight_high, self.resource_weight_heavy) = (1, 3, 4, 5, 16)
             self.chaos_period_in_seconds = 120
             self.super_tile_init_time_in_hour = 0
-
         if mode == GameMode.TEN_PLAYER_SHORT_TEST:
             self.total_tile_count = 15*15
             self.expected_player_count = 10
@@ -515,7 +526,6 @@ class Game:
              self.resource_weight_high, self.resource_weight_heavy) = (1, 3, 4, 5, 16)
             self.chaos_period_in_seconds = 120
             self.super_tile_init_time_in_hour = 0
-
         if mode == GameMode.FIVE_PLAYER_SHORT_TEST:
             self.total_tile_count = 12*12
             self.expected_player_count = 5
@@ -540,6 +550,78 @@ class Game:
              self.resource_weight_high, self.resource_weight_heavy) = (1, 3, 4, 5, 16)
             self.chaos_period_in_seconds = 120
             self.super_tile_init_time_in_hour = 0
+        if mode == GameMode.SIX_PLAYER_LONG_TEST:
+            self.total_tile_count = 13*13
+            self.expected_player_count = 6
+            self.init_player_tile_count = 1
+            self.expected_play_time_in_hour = 72
+            self.upgrade_time_to_expected_play_time_ratio = 1/3
+            self.init_player_goldmine_count = 1
+            self.init_player_farm_count = 1
+            self.player_login_interval_in_minutes = 80
+            self.max_capital_level = 6
+            self.capital_level_to_building_level = 3
+            self.new_player_action_in_seconds = 100
+            self.base_troop_training_in_seconds = 0.4
+            self.barbarian_reward_to_cost_coefficient = 4
+            self.tile_to_barbarian_strength_ratio = 1.5
+            self.tile_troop_discount = 0.5
+            self.barbarian_to_army_difficulty_constant = 40
+            self.gather_rate_to_resource_rate = 50
+            self.capital_migration_cooldown_ratio = 15
+            self.building_upgrade_cooldown_ratio = 15
+            (self.resource_weight_light, self.resource_weight_low, self.resource_weight_medium,
+             self.resource_weight_high, self.resource_weight_heavy) = (1, 3, 4, 5, 16)
+            self.chaos_period_in_seconds = 900
+            self.super_tile_init_time_in_hour = 0
+        if mode == GameMode.SIX_PLAYER_SHORT_TEST:
+            self.total_tile_count = 13*13
+            self.expected_player_count = 6
+            self.init_player_tile_count = 1
+            self.expected_play_time_in_hour = 1
+            self.upgrade_time_to_expected_play_time_ratio = 1/3
+            self.init_player_goldmine_count = 1
+            self.init_player_farm_count = 1
+            self.player_login_interval_in_minutes = 15
+            self.max_capital_level = 5
+            self.capital_level_to_building_level = 3
+            self.new_player_action_in_seconds = 100
+            self.base_troop_training_in_seconds = 0.4
+            self.barbarian_reward_to_cost_coefficient = 4
+            self.tile_to_barbarian_strength_ratio = 1.5
+            self.tile_troop_discount = 0.5
+            self.barbarian_to_army_difficulty_constant = 40
+            self.gather_rate_to_resource_rate = 50
+            self.capital_migration_cooldown_ratio = 15
+            self.building_upgrade_cooldown_ratio = 15
+            (self.resource_weight_light, self.resource_weight_low, self.resource_weight_medium,
+             self.resource_weight_high, self.resource_weight_heavy) = (1, 3, 4, 5, 16)
+            self.chaos_period_in_seconds = 120
+            self.super_tile_init_time_in_hour = 0
+        if mode == GameMode.INTERNAL_PLAYTEST:
+            self.total_tile_count = 17*17
+            self.expected_player_count = 9
+            self.init_player_tile_count = 1
+            self.expected_play_time_in_hour = 60
+            self.upgrade_time_to_expected_play_time_ratio = 1/2
+            self.init_player_goldmine_count = 1
+            self.init_player_farm_count = 1
+            self.player_login_interval_in_minutes = 60
+            self.max_capital_level = 6
+            self.capital_level_to_building_level = 3
+            self.new_player_action_in_seconds = 100
+            self.base_troop_training_in_seconds = 0.5
+            self.barbarian_reward_to_cost_coefficient = 4
+            self.tile_to_barbarian_strength_ratio = 1.5
+            self.tile_troop_discount = 4
+            self.barbarian_to_army_difficulty_constant = 40
+            self.gather_rate_to_resource_rate = 10
+            self.capital_migration_cooldown_ratio = 15
+            self.building_upgrade_cooldown_ratio = 15
+            (self.resource_weight_light, self.resource_weight_low, self.resource_weight_medium,
+             self.resource_weight_high, self.resource_weight_heavy) = (1, 3, 4, 5, 25)
+            self.chaos_period_in_seconds = 900
+            self.super_tile_init_time_in_hour = 0
 
     """
     Constant format:
@@ -562,6 +644,8 @@ class Game:
             self.capital_level_to_building_level)
         world_parameters["secondsToTrainAThousandTroops"] = int(
             self.base_troop_training_in_seconds * 1000)
+        game_parameters.append({"subject": "InnerLayer", "object": "Tile", "componentName": "Size",
+                               "level": 0, "functionName": "initializeTile", "value": 1920})
         game_parameters.append({"subject": "Army", "componentName": "Rate", "object": "Gold", "level": 0,
                                "functionName": "gather", "value": int(get_hourly_gather_rate_per_army(Resource.GOLD) * 1000 / 3600)})
         game_parameters.append({"subject": "Army", "componentName": "Rate", "object": "Food", "level": 0,
@@ -576,6 +660,18 @@ class Game:
                                "object": "", "level": 0, "functionName": "", "value": 1000000000})
         game_parameters.append({"subject": "Barbarian", "componentName": "Cooldown",
                                "object": "", "level": 0, "functionName": "", "value": 30})
+        game_parameters.append({"subject": "Capital", "componentName": "Cap",
+                               "object": "Army", "level": 1, "functionName": "", "value": 2})
+        game_parameters.append({"subject": "Capital", "componentName": "Cap",
+                               "object": "Army", "level": 2, "functionName": "", "value": 3})
+        game_parameters.append({"subject": "Capital", "componentName": "Cap",
+                               "object": "Army", "level": 3, "functionName": "", "value": 4})
+        game_parameters.append({"subject": "Capital", "componentName": "Cap",
+                               "object": "Army", "level": 4, "functionName": "", "value": 5})
+        game_parameters.append({"subject": "Capital", "componentName": "Cap",
+                               "object": "Army", "level": 5, "functionName": "", "value": 6})
+        game_parameters.append({"subject": "Capital", "componentName": "Cap",
+                               "object": "Army", "level": 6, "functionName": "", "value": 7})
 
         # Building Stats
         for bt in [Building.GOLDMINE, Building.FARM, Building.CAPITAL]:
@@ -621,9 +717,9 @@ class Game:
                     game_parameters.append({"subject": "Capital", "componentName": "Load", "object": "Troop",
                                            "level": curr_level, "functionName": "", "value": 999999999})  # FIXME: hardcoded
                     game_parameters.append({"subject": "Capital", "componentName": "Cost", "object": "Gold",
-                                           "level": curr_level, "functionName": "Move", "value": 0})  # FIXME: hardcoded, attention @Modeo
+                                           "level": curr_level, "functionName": "Move", "value": gold_upgrade_cost / 4})  # FIXME: hardcoded, attention @Modeo
                     game_parameters.append({"subject": "Capital", "componentName": "Cost", "object": "Food",
-                                           "level": curr_level, "functionName": "Move", "value": 0})  # FIXME: hardcoded, attention @Modeo
+                                           "level": curr_level, "functionName": "Move", "value": gold_upgrade_cost / 4})  # FIXME: hardcoded, attention @Modeo
                     game_parameters.append({"subject": "Capital", "componentName": "Cooldown", "object": "",
                                            "level": curr_level, "functionName": "Chaos", "value": self.chaos_period_in_seconds})  # FIXME: hardcoded, attention @Modeo
 
@@ -643,7 +739,7 @@ class Game:
             curr_level += 1
 
         # Tile Stats
-        curr_level = 0
+        curr_level = 1
         max_tile_level = self.max_capital_level * \
             self.capital_level_to_building_level
 
@@ -673,8 +769,13 @@ class Game:
         while curr_level <= max_building_level:
             game_parameters.append({"subject": "Army", "componentName": "Amount", "object": "Troop",
                                    "level": curr_level, "functionName": "", "value": get_troop_size_by_center_level(curr_level)})
-            game_parameters.append({"subject": "Nation", "componentName": "Amount", "object": "Tile", "level": curr_level,
-                                   "functionName": "", "value": self.init_player_tile_count + (curr_level - 1) * int(get_capital_tiles_interval())})
+            # todo: refactor; tile count too low for beginner (lv1 capital upgrade too expensive)
+            if (curr_level == 1):
+                game_parameters.append({"subject": "Nation", "componentName": "Amount", "object": "Tile", "level": curr_level,
+                                        "functionName": "", "value": 3})
+            else:
+                game_parameters.append({"subject": "Nation", "componentName": "Amount", "object": "Tile", "level": curr_level,
+                                        "functionName": "", "value": self.init_player_tile_count + (curr_level - 1) * int(get_capital_tiles_interval())})
             curr_level += 1
 
         # For Foundry:
@@ -698,9 +799,100 @@ class Game:
             outfile.write(json.dumps(game_parameters, indent=4))
         with open("tasks/world_parameters.json", "w+") as outfile:
             outfile.write(json.dumps(world_parameters, indent=4))
-        print('GodOS: generated and exported parameters')
+        print('GodOS: generated and exported parameters into json')
+
+    def export_excel_parameters(self):
+        # Tile Stats
+        # Initialize tile_stats as an empty DataFrame
+        tile_stats = pd.DataFrame(columns=[
+                                  'Level', 'Cooldown: Upgrade', 'Cooldown: moveCapital', 'Cost: Gold', 'Cost: Food', 'Amount: Guard'])
+
+        # Assign the maximum level of the tile
+        max_tile_level = self.max_capital_level * \
+            self.capital_level_to_building_level
+
+        # Initialize curr_level
+        curr_level = 1
+
+        # Loop through all the levels of the tile
+        while curr_level <= max_tile_level:
+            level = 'lv' + str(curr_level)
+            (cost_gold, cost_food) = get_tile_upgrade_cost(curr_level)
+
+            tile_stats = tile_stats.append({
+                'Level': level,
+                'Cooldown: Upgrade': get_tile_upgrade_cooldown_in_second(curr_level),
+                'Cooldown: moveCapital': get_move_capital_cooldown_in_hour(curr_level),
+                'Cost: Gold': cost_gold,
+                'Cost: Food': cost_food,
+                'Amount: Guard': get_tile_troop_count(curr_level)},
+                ignore_index=True)
+
+            curr_level += 1
+
+        # Building Stats
+        # Initialize building_stats as an empty DataFrame
+        capital_stats = pd.DataFrame(columns=['Level', 'Cooldown: Upgrade', 'Cooldown: moveCapital',
+                                     'Upgrade Cost: Gold', 'Upgrade Cost: Food', 'Yield: Gold', 'Yield: Food', 'Cap: Food', 'Cap: Gold'])
+        goldmine_stats = pd.DataFrame(columns=['Level', 'Cooldown: Upgrade', 'Upgrade Cost: Gold',
+                                      'Upgrade Cost: Food', 'Yield: Gold', 'Yield: Food', 'Cap: Food', 'Cap: Gold'])
+        farm_stats = pd.DataFrame(columns=['Level', 'Cooldown: Upgrade', 'Upgrade Cost: Gold',
+                                  'Upgrade Cost: Food', 'Yield: Gold', 'Yield: Food', 'Cap: Food', 'Cap: Gold'])
+
+        for bt in [Building.GOLDMINE, Building.FARM, Building.CAPITAL]:
+            max_building_level = 1
+            building_type = bt
+            if bt == Building.GOLDMINE:
+                max_building_level = self.max_capital_level * \
+                    self.capital_level_to_building_level
+            elif bt == Building.FARM:
+                max_building_level = self.max_capital_level * \
+                    self.capital_level_to_building_level
+            elif bt == Building.CAPITAL:
+                max_building_level = self.max_capital_level
+
+            curr_level = 0
+
+            level = 'lv' + str(curr_level)
+            while curr_level <= max_building_level:
+                (gold_upgrade_cost, food_upgrade_cost) = get_building_upgrade_cost(
+                    curr_level, building_type)
+                (gold_hourly_yield, food_hourly_yield) = get_building_hourly_yield_by_level(
+                    curr_level, building_type)
+                (gold_cap, food_cap) = get_building_resource_cap(
+                    curr_level, building_type)
+            if bt == Building.CAPITAL:
+                capital_stats = capital_stats.append({
+                    'Level': level,
+                    'Cooldown: Upgrade': get_building_upgrade_cooldown_in_hour(curr_level, building_type),
+                    'Cooldown: moveCapital': get_move_capital_cooldown_in_hour(curr_level),
+                    'Cost: Gold': gold_upgrade_cost,
+                    'Cost: Food': food_upgrade_cost,
+                    'Yield: Gold': gold_hourly_yield,
+                    'Yield: Food': food_hourly_yield,
+                    'Cap: Food': food_cap,
+                    'Cap: Gold': gold_cap},
+                    ignore_index=True)
+
+            curr_level += 1
+
+        # Export tile_stats into an excel file
+        filepath = os.path.join(os.path.expanduser('~'), 'Desktop')
+        filename = 'treaty_stats.xlsx'
+        file_path = os.path.join(filepath, filename)
+
+        # Create an ExcelWriter object
+        writer = pd.ExcelWriter(file_path, engine='xlsxwriter')
+
+        # Write the DataFrame 'tile_stats' to sheet 'Tile'
+        tile_stats.to_excel(writer, sheet_name='Tile', index=False)
+
+        # Save the excel file
+        writer.save()
+        print('GodOS: generated and exported parameters into excel')
 
 
 # change here when switching game mode
-game_instance = Game(GameMode.TEN_PLAYER_SHORT_TEST)
+game_instance = Game(GameMode.INTERNAL_PLAYTEST)
 game_instance.export_json_parameters()
+# game_instance.export_excel_parameters()

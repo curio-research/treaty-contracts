@@ -181,7 +181,7 @@ contract DiamondDeployTest is Test {
         // Initialize map either with either `_generateNewMap()` or `_fetchLastDeployedMap()`
         // Note: if fetching deployed map, check for map size
         {
-            uint256[][] memory map = _generateNewMap(worldConstants.worldWidth, worldConstants.worldHeight);
+            uint256[][] memory map = _generateNewMap(worldConstants.worldWidth, worldConstants.worldHeight, worldConstants.tileWidth);
             uint256[][] memory encodedColumnBatches = _encodeTileMap(map, worldConstants.numInitTerrainTypes, 200 / worldConstants.numInitTerrainTypes);
             admin.storeEncodedColumnBatches(encodedColumnBatches);
             _initializeMap();
@@ -189,22 +189,30 @@ contract DiamondDeployTest is Test {
         }
 
         // Initialize treaties
-        allianceTemplate = new Alliance(diamond);
-        allianceTemplateID = admin.registerTreatyTemplate(address(allianceTemplate), "sample ABI", "sample metadata");
-        testTreatyTemplate = new TestTreaty(diamond);
-        testTreatyTemplateID = admin.registerTreatyTemplate(address(testTreatyTemplate), "sample ABI", "sample metadata");
-        collectiveDefenseFundTemplate = new CollectiveDefenseFund(diamond);
-        collectiveDefenseFundTemplateID = admin.registerTreatyTemplate(address(collectiveDefenseFundTemplate), "sample ABI", "sample metadata");
-        embargoTemplate = new Embargo(diamond);
-        embargoTemplateID = admin.registerTreatyTemplate(address(embargoTemplate), "sample ABI", "sample metadata");
-        nonAggressionPactTemplate = new NonAggressionPact(diamond);
-        nonAggressionPactTemplateID = admin.registerTreatyTemplate(address(nonAggressionPactTemplate), "sample ABI", "sample metadata");
-        otcContractTemplate = new SimpleOTC(diamond);
-        otcContractTemplateID = admin.registerTreatyTemplate(address(otcContractTemplate), "sample ABI", "sample metadata");
-        handshakeDealTemplate = new HandshakeDeal(diamond);
-        handshakeDealTemplateID = admin.registerTreatyTemplate(address(handshakeDealTemplate), "sample ABI", "sample metadata");
-        mercenaryLeagueTemplate = new MercenaryLeague(diamond);
-        mercenaryLeagueTemplateID = admin.registerTreatyTemplate(address(mercenaryLeagueTemplate), "sample ABI", "sample metadata");
+        allianceTemplate = new Alliance();
+        allianceTemplate.init(diamond);
+        allianceTemplateID = game.registerTreatyTemplate(address(allianceTemplate), "sample ABI", "sample metadata");
+        testTreatyTemplate = new TestTreaty();
+        testTreatyTemplate.init(diamond);
+        testTreatyTemplateID = game.registerTreatyTemplate(address(testTreatyTemplate), "sample ABI", "sample metadata");
+        collectiveDefenseFundTemplate = new CollectiveDefenseFund();
+        collectiveDefenseFundTemplate.init(diamond);
+        collectiveDefenseFundTemplateID = game.registerTreatyTemplate(address(collectiveDefenseFundTemplate), "sample ABI", "sample metadata");
+        embargoTemplate = new Embargo();
+        embargoTemplate.init(diamond);
+        embargoTemplateID = game.registerTreatyTemplate(address(embargoTemplate), "sample ABI", "sample metadata");
+        nonAggressionPactTemplate = new NonAggressionPact();
+        nonAggressionPactTemplate.init(diamond);
+        nonAggressionPactTemplateID = game.registerTreatyTemplate(address(nonAggressionPactTemplate), "sample ABI", "sample metadata");
+        otcContractTemplate = new SimpleOTC();
+        otcContractTemplate.init(diamond);
+        otcContractTemplateID = game.registerTreatyTemplate(address(otcContractTemplate), "sample ABI", "sample metadata");
+        handshakeDealTemplate = new HandshakeDeal();
+        handshakeDealTemplate.init(diamond);
+        handshakeDealTemplateID = game.registerTreatyTemplate(address(handshakeDealTemplate), "sample ABI", "sample metadata");
+        mercenaryLeagueTemplate = new MercenaryLeague();
+        mercenaryLeagueTemplate.init(diamond);
+        mercenaryLeagueTemplateID = game.registerTreatyTemplate(address(mercenaryLeagueTemplate), "sample ABI", "sample metadata");
         console.log(">>> Treaties initialized");
 
         // Whitelist all players
@@ -429,7 +437,6 @@ contract DiamondDeployTest is Test {
                 capitalLevelToEntityLevelRatio: 3,
                 gameLengthInSeconds: 3600,
                 gameMode: GameMode.REGULAR,
-                maxArmyCountPerNation: 2,
                 maxCapitalLevel: 3,
                 maxNationCount: 20,
                 // maxTransferDistance: 100
@@ -453,21 +460,21 @@ contract DiamondDeployTest is Test {
     }
 
     /// @dev Second way to get map: initialize a new one
-    function _generateNewMap(uint256 _width, uint256 _height) private view returns (uint256[][] memory) {
-        uint256[] memory _plainCol = new uint256[](_height);
+    function _generateNewMap(uint256 _width, uint256 _height, uint256 _tileWidth) private view returns (uint256[][] memory) {
+        uint256[] memory _plainCol = new uint256[](_height / _tileWidth);
 
         // set individual columns
-        for (uint256 y = 0; y < _height; y++) {
+        for (uint256 y = 0; y < _height / _tileWidth; y++) {
             _plainCol[y] = 0;
         }
 
         // set whole map
-        uint256[][] memory _map = new uint256[][](_width);
-        for (uint256 x = 0; x < _width; x += 1) {
+        uint256[][] memory _map = new uint256[][](_width / _tileWidth);
+        for (uint256 x = 0; x < _width / _tileWidth; x += 1) {
             _map[x] = _plainCol;
         }
 
-        _map[barbarinaTilePos.x][barbarinaTilePos.y] = 4;
+        _map[barbarinaTilePos.x / _tileWidth][barbarinaTilePos.y / _tileWidth] = 4;
 
         return _map;
     }

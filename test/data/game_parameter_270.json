@@ -1,8 +1,8 @@
 {
-    "componentName": "Cost",
-    "functionName": "Move",
-    "level": 3,
+    "componentName": "Yield",
+    "functionName": "",
+    "level": 18,
     "object": "Gold",
-    "subject": "Capital",
+    "subject": "Farm",
     "value": 0
 }

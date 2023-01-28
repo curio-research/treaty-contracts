@@ -27,7 +27,6 @@ export interface CollectiveDefenseFundInterface extends utils.Interface {
   functions: {
     "addToCouncil(uint256)": FunctionFragment;
     "addToWhitelist(uint256)": FunctionFragment;
-    "admin()": FunctionFragment;
     "approveBattle(uint256,bytes)": FunctionFragment;
     "approveClaimTile(uint256,bytes)": FunctionFragment;
     "approveDelegateGameFunction(uint256,bytes)": FunctionFragment;
@@ -59,14 +58,13 @@ export interface CollectiveDefenseFundInterface extends utils.Interface {
     "foodFee()": FunctionFragment;
     "foodToken()": FunctionFragment;
     "foodWithdrawQuota()": FunctionFragment;
-    "game()": FunctionFragment;
-    "getter()": FunctionFragment;
+    "getCouncilMembers()": FunctionFragment;
     "goldFee()": FunctionFragment;
     "goldToken()": FunctionFragment;
     "goldWithdrawQuota()": FunctionFragment;
+    "init(address)": FunctionFragment;
     "lastPaid(uint256)": FunctionFragment;
     "lastWithdrawn(uint256)": FunctionFragment;
-    "minimumStayCheck(uint256,uint256)": FunctionFragment;
     "name()": FunctionFragment;
     "payMembershipFee()": FunctionFragment;
     "removeAllOverdueMembers()": FunctionFragment;
@@ -86,7 +84,6 @@ export interface CollectiveDefenseFundInterface extends utils.Interface {
     nameOrSignatureOrTopic:
       | "addToCouncil"
       | "addToWhitelist"
-      | "admin"
       | "approveBattle"
       | "approveClaimTile"
       | "approveDelegateGameFunction"
@@ -118,14 +115,13 @@ export interface CollectiveDefenseFundInterface extends utils.Interface {
       | "foodFee"
       | "foodToken"
       | "foodWithdrawQuota"
-      | "game"
-      | "getter"
+      | "getCouncilMembers"
       | "goldFee"
       | "goldToken"
       | "goldWithdrawQuota"
+      | "init"
       | "lastPaid"
       | "lastWithdrawn"
-      | "minimumStayCheck"
       | "name"
       | "payMembershipFee"
       | "removeAllOverdueMembers"
@@ -149,7 +145,6 @@ export interface CollectiveDefenseFundInterface extends utils.Interface {
     functionFragment: "addToWhitelist",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
-  encodeFunctionData(functionFragment: "admin", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "approveBattle",
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BytesLike>]
@@ -266,13 +261,19 @@ export interface CollectiveDefenseFundInterface extends utils.Interface {
     functionFragment: "foodWithdrawQuota",
     values?: undefined
   ): string;
-  encodeFunctionData(functionFragment: "game", values?: undefined): string;
-  encodeFunctionData(functionFragment: "getter", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "getCouncilMembers",
+    values?: undefined
+  ): string;
   encodeFunctionData(functionFragment: "goldFee", values?: undefined): string;
   encodeFunctionData(functionFragment: "goldToken", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "goldWithdrawQuota",
     values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "init",
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "lastPaid",
@@ -281,10 +282,6 @@ export interface CollectiveDefenseFundInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "lastWithdrawn",
     values: [PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "minimumStayCheck",
-    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(functionFragment: "name", values?: undefined): string;
   encodeFunctionData(
@@ -348,7 +345,6 @@ export interface CollectiveDefenseFundInterface extends utils.Interface {
     functionFragment: "addToWhitelist",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "admin", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "approveBattle",
     data: BytesLike
@@ -461,21 +457,20 @@ export interface CollectiveDefenseFundInterface extends utils.Interface {
     functionFragment: "foodWithdrawQuota",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "game", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "getter", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "getCouncilMembers",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "goldFee", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "goldToken", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "goldWithdrawQuota",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "init", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "lastPaid", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "lastWithdrawn",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "minimumStayCheck",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
@@ -561,8 +556,6 @@ export interface CollectiveDefenseFund extends BaseContract {
       _nationID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
-
-    admin(overrides?: CallOverrides): Promise<[string]>;
 
     approveBattle(
       _nationID: PromiseOrValue<BigNumberish>,
@@ -723,15 +716,18 @@ export interface CollectiveDefenseFund extends BaseContract {
 
     foodWithdrawQuota(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    game(overrides?: CallOverrides): Promise<[string]>;
-
-    getter(overrides?: CallOverrides): Promise<[string]>;
+    getCouncilMembers(overrides?: CallOverrides): Promise<[BigNumber[]]>;
 
     goldFee(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     goldToken(overrides?: CallOverrides): Promise<[string]>;
 
     goldWithdrawQuota(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    init(
+      _diamond: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
 
     lastPaid(
       arg0: PromiseOrValue<BigNumberish>,
@@ -742,12 +738,6 @@ export interface CollectiveDefenseFund extends BaseContract {
       arg0: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
-
-    minimumStayCheck(
-      _nationID: PromiseOrValue<BigNumberish>,
-      _duration: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
 
     name(overrides?: CallOverrides): Promise<[string]>;
 
@@ -817,8 +807,6 @@ export interface CollectiveDefenseFund extends BaseContract {
     _nationID: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
-
-  admin(overrides?: CallOverrides): Promise<string>;
 
   approveBattle(
     _nationID: PromiseOrValue<BigNumberish>,
@@ -979,15 +967,18 @@ export interface CollectiveDefenseFund extends BaseContract {
 
   foodWithdrawQuota(overrides?: CallOverrides): Promise<BigNumber>;
 
-  game(overrides?: CallOverrides): Promise<string>;
-
-  getter(overrides?: CallOverrides): Promise<string>;
+  getCouncilMembers(overrides?: CallOverrides): Promise<BigNumber[]>;
 
   goldFee(overrides?: CallOverrides): Promise<BigNumber>;
 
   goldToken(overrides?: CallOverrides): Promise<string>;
 
   goldWithdrawQuota(overrides?: CallOverrides): Promise<BigNumber>;
+
+  init(
+    _diamond: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
 
   lastPaid(
     arg0: PromiseOrValue<BigNumberish>,
@@ -998,12 +989,6 @@ export interface CollectiveDefenseFund extends BaseContract {
     arg0: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
-
-  minimumStayCheck(
-    _nationID: PromiseOrValue<BigNumberish>,
-    _duration: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
 
   name(overrides?: CallOverrides): Promise<string>;
 
@@ -1073,8 +1058,6 @@ export interface CollectiveDefenseFund extends BaseContract {
       _nationID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
-
-    admin(overrides?: CallOverrides): Promise<string>;
 
     approveBattle(
       _nationID: PromiseOrValue<BigNumberish>,
@@ -1235,15 +1218,18 @@ export interface CollectiveDefenseFund extends BaseContract {
 
     foodWithdrawQuota(overrides?: CallOverrides): Promise<BigNumber>;
 
-    game(overrides?: CallOverrides): Promise<string>;
-
-    getter(overrides?: CallOverrides): Promise<string>;
+    getCouncilMembers(overrides?: CallOverrides): Promise<BigNumber[]>;
 
     goldFee(overrides?: CallOverrides): Promise<BigNumber>;
 
     goldToken(overrides?: CallOverrides): Promise<string>;
 
     goldWithdrawQuota(overrides?: CallOverrides): Promise<BigNumber>;
+
+    init(
+      _diamond: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     lastPaid(
       arg0: PromiseOrValue<BigNumberish>,
@@ -1254,12 +1240,6 @@ export interface CollectiveDefenseFund extends BaseContract {
       arg0: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
-
-    minimumStayCheck(
-      _nationID: PromiseOrValue<BigNumberish>,
-      _duration: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
 
     name(overrides?: CallOverrides): Promise<string>;
 
@@ -1324,8 +1304,6 @@ export interface CollectiveDefenseFund extends BaseContract {
       _nationID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
-
-    admin(overrides?: CallOverrides): Promise<BigNumber>;
 
     approveBattle(
       _nationID: PromiseOrValue<BigNumberish>,
@@ -1486,15 +1464,18 @@ export interface CollectiveDefenseFund extends BaseContract {
 
     foodWithdrawQuota(overrides?: CallOverrides): Promise<BigNumber>;
 
-    game(overrides?: CallOverrides): Promise<BigNumber>;
-
-    getter(overrides?: CallOverrides): Promise<BigNumber>;
+    getCouncilMembers(overrides?: CallOverrides): Promise<BigNumber>;
 
     goldFee(overrides?: CallOverrides): Promise<BigNumber>;
 
     goldToken(overrides?: CallOverrides): Promise<BigNumber>;
 
     goldWithdrawQuota(overrides?: CallOverrides): Promise<BigNumber>;
+
+    init(
+      _diamond: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
 
     lastPaid(
       arg0: PromiseOrValue<BigNumberish>,
@@ -1503,12 +1484,6 @@ export interface CollectiveDefenseFund extends BaseContract {
 
     lastWithdrawn(
       arg0: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    minimumStayCheck(
-      _nationID: PromiseOrValue<BigNumberish>,
-      _duration: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1581,8 +1556,6 @@ export interface CollectiveDefenseFund extends BaseContract {
       _nationID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
-
-    admin(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     approveBattle(
       _nationID: PromiseOrValue<BigNumberish>,
@@ -1745,15 +1718,18 @@ export interface CollectiveDefenseFund extends BaseContract {
 
     foodWithdrawQuota(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    game(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    getter(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    getCouncilMembers(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     goldFee(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     goldToken(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     goldWithdrawQuota(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    init(
+      _diamond: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
 
     lastPaid(
       arg0: PromiseOrValue<BigNumberish>,
@@ -1762,12 +1738,6 @@ export interface CollectiveDefenseFund extends BaseContract {
 
     lastWithdrawn(
       arg0: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    minimumStayCheck(
-      _nationID: PromiseOrValue<BigNumberish>,
-      _duration: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

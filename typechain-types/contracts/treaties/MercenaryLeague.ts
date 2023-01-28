@@ -26,7 +26,6 @@ import type {
 export interface MercenaryLeagueInterface extends utils.Interface {
   functions: {
     "addToWarCouncil(uint256)": FunctionFragment;
-    "admin()": FunctionFragment;
     "approveBattle(uint256,bytes)": FunctionFragment;
     "approveClaimTile(uint256,bytes)": FunctionFragment;
     "approveDelegateGameFunction(uint256,bytes)": FunctionFragment;
@@ -54,12 +53,11 @@ export interface MercenaryLeagueInterface extends utils.Interface {
     "conscriptionDuration()": FunctionFragment;
     "description()": FunctionFragment;
     "diamond()": FunctionFragment;
-    "game()": FunctionFragment;
-    "getter()": FunctionFragment;
+    "getWarCouncilMembers()": FunctionFragment;
     "goldToken()": FunctionFragment;
+    "init(address)": FunctionFragment;
     "memberConscriptionStartTime(uint256)": FunctionFragment;
     "memberToConscriptionFee(uint256)": FunctionFragment;
-    "minimumStayCheck(uint256,uint256)": FunctionFragment;
     "name()": FunctionFragment;
     "removeFromWarCouncil(uint256)": FunctionFragment;
     "revokeArmies()": FunctionFragment;
@@ -74,7 +72,6 @@ export interface MercenaryLeagueInterface extends utils.Interface {
   getFunction(
     nameOrSignatureOrTopic:
       | "addToWarCouncil"
-      | "admin"
       | "approveBattle"
       | "approveClaimTile"
       | "approveDelegateGameFunction"
@@ -102,12 +99,11 @@ export interface MercenaryLeagueInterface extends utils.Interface {
       | "conscriptionDuration"
       | "description"
       | "diamond"
-      | "game"
-      | "getter"
+      | "getWarCouncilMembers"
       | "goldToken"
+      | "init"
       | "memberConscriptionStartTime"
       | "memberToConscriptionFee"
-      | "minimumStayCheck"
       | "name"
       | "removeFromWarCouncil"
       | "revokeArmies"
@@ -123,7 +119,6 @@ export interface MercenaryLeagueInterface extends utils.Interface {
     functionFragment: "addToWarCouncil",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
-  encodeFunctionData(functionFragment: "admin", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "approveBattle",
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BytesLike>]
@@ -229,9 +224,15 @@ export interface MercenaryLeagueInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "diamond", values?: undefined): string;
-  encodeFunctionData(functionFragment: "game", values?: undefined): string;
-  encodeFunctionData(functionFragment: "getter", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "getWarCouncilMembers",
+    values?: undefined
+  ): string;
   encodeFunctionData(functionFragment: "goldToken", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "init",
+    values: [PromiseOrValue<string>]
+  ): string;
   encodeFunctionData(
     functionFragment: "memberConscriptionStartTime",
     values: [PromiseOrValue<BigNumberish>]
@@ -239,10 +240,6 @@ export interface MercenaryLeagueInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "memberToConscriptionFee",
     values: [PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "minimumStayCheck",
-    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(functionFragment: "name", values?: undefined): string;
   encodeFunctionData(
@@ -286,7 +283,6 @@ export interface MercenaryLeagueInterface extends utils.Interface {
     functionFragment: "addToWarCouncil",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "admin", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "approveBattle",
     data: BytesLike
@@ -392,19 +388,18 @@ export interface MercenaryLeagueInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "diamond", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "game", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "getter", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "getWarCouncilMembers",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "goldToken", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "init", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "memberConscriptionStartTime",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "memberToConscriptionFee",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "minimumStayCheck",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
@@ -469,8 +464,6 @@ export interface MercenaryLeague extends BaseContract {
       _nationID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
-
-    admin(overrides?: CallOverrides): Promise<[string]>;
 
     approveBattle(
       _nationID: PromiseOrValue<BigNumberish>,
@@ -621,11 +614,14 @@ export interface MercenaryLeague extends BaseContract {
 
     diamond(overrides?: CallOverrides): Promise<[string]>;
 
-    game(overrides?: CallOverrides): Promise<[string]>;
-
-    getter(overrides?: CallOverrides): Promise<[string]>;
+    getWarCouncilMembers(overrides?: CallOverrides): Promise<[BigNumber[]]>;
 
     goldToken(overrides?: CallOverrides): Promise<[string]>;
+
+    init(
+      _diamond: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
 
     memberConscriptionStartTime(
       arg0: PromiseOrValue<BigNumberish>,
@@ -636,12 +632,6 @@ export interface MercenaryLeague extends BaseContract {
       arg0: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
-
-    minimumStayCheck(
-      _nationID: PromiseOrValue<BigNumberish>,
-      _duration: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
 
     name(overrides?: CallOverrides): Promise<[string]>;
 
@@ -686,8 +676,6 @@ export interface MercenaryLeague extends BaseContract {
     _nationID: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
-
-  admin(overrides?: CallOverrides): Promise<string>;
 
   approveBattle(
     _nationID: PromiseOrValue<BigNumberish>,
@@ -838,11 +826,14 @@ export interface MercenaryLeague extends BaseContract {
 
   diamond(overrides?: CallOverrides): Promise<string>;
 
-  game(overrides?: CallOverrides): Promise<string>;
-
-  getter(overrides?: CallOverrides): Promise<string>;
+  getWarCouncilMembers(overrides?: CallOverrides): Promise<BigNumber[]>;
 
   goldToken(overrides?: CallOverrides): Promise<string>;
+
+  init(
+    _diamond: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
 
   memberConscriptionStartTime(
     arg0: PromiseOrValue<BigNumberish>,
@@ -853,12 +844,6 @@ export interface MercenaryLeague extends BaseContract {
     arg0: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
-
-  minimumStayCheck(
-    _nationID: PromiseOrValue<BigNumberish>,
-    _duration: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
 
   name(overrides?: CallOverrides): Promise<string>;
 
@@ -903,8 +888,6 @@ export interface MercenaryLeague extends BaseContract {
       _nationID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
-
-    admin(overrides?: CallOverrides): Promise<string>;
 
     approveBattle(
       _nationID: PromiseOrValue<BigNumberish>,
@@ -1055,11 +1038,14 @@ export interface MercenaryLeague extends BaseContract {
 
     diamond(overrides?: CallOverrides): Promise<string>;
 
-    game(overrides?: CallOverrides): Promise<string>;
-
-    getter(overrides?: CallOverrides): Promise<string>;
+    getWarCouncilMembers(overrides?: CallOverrides): Promise<BigNumber[]>;
 
     goldToken(overrides?: CallOverrides): Promise<string>;
+
+    init(
+      _diamond: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     memberConscriptionStartTime(
       arg0: PromiseOrValue<BigNumberish>,
@@ -1070,12 +1056,6 @@ export interface MercenaryLeague extends BaseContract {
       arg0: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
-
-    minimumStayCheck(
-      _nationID: PromiseOrValue<BigNumberish>,
-      _duration: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
 
     name(overrides?: CallOverrides): Promise<string>;
 
@@ -1117,8 +1097,6 @@ export interface MercenaryLeague extends BaseContract {
       _nationID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
-
-    admin(overrides?: CallOverrides): Promise<BigNumber>;
 
     approveBattle(
       _nationID: PromiseOrValue<BigNumberish>,
@@ -1269,11 +1247,14 @@ export interface MercenaryLeague extends BaseContract {
 
     diamond(overrides?: CallOverrides): Promise<BigNumber>;
 
-    game(overrides?: CallOverrides): Promise<BigNumber>;
-
-    getter(overrides?: CallOverrides): Promise<BigNumber>;
+    getWarCouncilMembers(overrides?: CallOverrides): Promise<BigNumber>;
 
     goldToken(overrides?: CallOverrides): Promise<BigNumber>;
+
+    init(
+      _diamond: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
 
     memberConscriptionStartTime(
       arg0: PromiseOrValue<BigNumberish>,
@@ -1282,12 +1263,6 @@ export interface MercenaryLeague extends BaseContract {
 
     memberToConscriptionFee(
       arg0: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    minimumStayCheck(
-      _nationID: PromiseOrValue<BigNumberish>,
-      _duration: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1335,8 +1310,6 @@ export interface MercenaryLeague extends BaseContract {
       _nationID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
-
-    admin(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     approveBattle(
       _nationID: PromiseOrValue<BigNumberish>,
@@ -1489,11 +1462,16 @@ export interface MercenaryLeague extends BaseContract {
 
     diamond(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    game(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    getter(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    getWarCouncilMembers(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     goldToken(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    init(
+      _diamond: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
 
     memberConscriptionStartTime(
       arg0: PromiseOrValue<BigNumberish>,
@@ -1502,12 +1480,6 @@ export interface MercenaryLeague extends BaseContract {
 
     memberToConscriptionFee(
       arg0: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    minimumStayCheck(
-      _nationID: PromiseOrValue<BigNumberish>,
-      _duration: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
