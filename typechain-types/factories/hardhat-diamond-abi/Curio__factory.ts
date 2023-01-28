@@ -2285,6 +2285,11 @@ const _abi = [
           },
           {
             internalType: "uint256",
+            name: "innerRadiusByTileCount",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
             name: "maxCapitalLevel",
             type: "uint256",
           },

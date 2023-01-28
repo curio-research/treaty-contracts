@@ -672,6 +672,8 @@ class Game:
                                "object": "Army", "level": 5, "functionName": "", "value": 6})
         game_parameters.append({"subject": "Capital", "componentName": "Cap",
                                "object": "Army", "level": 6, "functionName": "", "value": 7})
+        game_parameters.append({"subject": "Inner Tile", "componentName": "Level",
+                               "object": "", "level": 0, "functionName": "", "value": 5})
 
         # Building Stats
         for bt in [Building.GOLDMINE, Building.FARM, Building.CAPITAL]:

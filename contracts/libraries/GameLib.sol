@@ -141,6 +141,9 @@ library GameLib {
                 guardToken.dripToken(tileAddress, supertileGuardAmount);
 
                 return tileID;
+            } else if (isInnerTile(_startPosition)) {
+                // Set inner tile level to not necessarily 1
+                ECSLib.setUint("Level", tileID, getGameParameter("Inner Tile", "", "Level", "", 0));
             }
         }
 
@@ -875,6 +878,15 @@ library GameLib {
         return result;
     }
 
+    function isInnerTile(Position memory _tilePosition) internal view returns (bool) {
+        Position memory center = getMapCenterTilePosition();
+        uint256 radius = gs().worldConstants.innerRadiusByTileCount * gs().worldConstants.tileWidth;
+
+        uint256 xDiff = diff(_tilePosition.x, center.x);
+        uint256 yDiff = diff(_tilePosition.y, center.y);
+        return xDiff <= radius && yDiff <= radius;
+    }
+
     function getNationTileCountByLevel(uint256 _level) internal pure returns (uint256) {
         require(_level >= 1, "CURIO: Nation level must be at least 1");
         return ((_level + 1) * (_level + 2)) / 2 + 6;
@@ -1075,5 +1087,9 @@ library GameLib {
 
     function max(uint256 x, uint256 y) internal pure returns (uint256) {
         return x > y ? x : y;
+    }
+
+    function diff(uint256 x, uint256 y) internal pure returns (uint256) {
+        return x >= y ? x - y : y - x;
     }
 }

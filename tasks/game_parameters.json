@@ -112,6 +112,14 @@
         "value": 7
     },
     {
+        "componentName": "Level",
+        "functionName": "",
+        "level": 0,
+        "object": "",
+        "subject": "Inner Tile",
+        "value": 5
+    },
+    {
         "componentName": "Yield",
         "functionName": "",
         "level": 0,
