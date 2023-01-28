@@ -1,8 +1,8 @@
 {
-    "componentName": "LastRecovered",
+    "componentName": "Amount",
     "functionName": "",
     "level": 18,
-    "object": "",
-    "subject": "SuperTile",
-    "value": 0
+    "object": "Guard",
+    "subject": "Barbarian",
+    "value": 535
 }

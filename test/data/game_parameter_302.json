@@ -1,8 +1,8 @@
 {
-    "componentName": "Cost",
-    "functionName": "Upgrade",
+    "componentName": "Load",
+    "functionName": "",
     "level": 2,
-    "object": "Gold",
+    "object": "Food",
     "subject": "Capital",
-    "value": 48722327
+    "value": 30887000
 }

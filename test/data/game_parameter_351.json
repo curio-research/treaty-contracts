@@ -1,8 +1,8 @@
 {
-    "componentName": "Cost",
-    "functionName": "Move",
+    "componentName": "Load",
+    "functionName": "",
     "level": 6,
-    "object": "Gold",
+    "object": "Troop",
     "subject": "Capital",
-    "value": 39303
+    "value": 999999999
 }
