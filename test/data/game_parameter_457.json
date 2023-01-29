@@ -1,8 +1,8 @@
 {
-    "componentName": "Cooldown",
-    "functionName": "Upgrade",
-    "level": 11,
-    "object": "",
+    "componentName": "Amount",
+    "functionName": "",
+    "level": 15,
+    "object": "Guard",
     "subject": "Tile",
-    "value": 191
+    "value": 597
 }

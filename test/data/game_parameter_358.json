@@ -1,8 +1,8 @@
 {
-    "componentName": "Reward",
+    "componentName": "Amount",
     "functionName": "",
-    "level": 4,
-    "object": "Food",
+    "level": 9,
+    "object": "Guard",
     "subject": "Barbarian",
-    "value": 1358901
+    "value": 197
 }

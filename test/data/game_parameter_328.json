@@ -1,8 +1,8 @@
 {
-    "componentName": "Yield",
+    "componentName": "Load",
     "functionName": "",
-    "level": 5,
-    "object": "Gold",
+    "level": 6,
+    "object": "Troop",
     "subject": "Capital",
-    "value": 1469
+    "value": 999999999
 }
