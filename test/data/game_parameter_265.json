@@ -1,17 +1,8 @@
 {
-<<<<<<< HEAD
     "componentName": "Cost",
     "functionName": "Upgrade",
-    "level": 16,
+    "level": 15,
     "object": "Food",
     "subject": "Farm",
-    "value": 29751453
-=======
-    "componentName": "Yield",
-    "functionName": "",
-    "level": 17,
-    "object": "Food",
-    "subject": "Farm",
-    "value": 18793
->>>>>>> develop
+    "value": 25596192
 }

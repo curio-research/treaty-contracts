@@ -1,15 +1,8 @@
 {
-    "componentName": "Amount",
-    "functionName": "",
-<<<<<<< HEAD
-    "level": 12,
-    "object": "Guard",
+    "componentName": "Cost",
+    "functionName": "Upgrade",
+    "level": 10,
+    "object": "Food",
     "subject": "Tile",
-    "value": 13083
-=======
-    "level": 5,
-    "object": "Troop",
-    "subject": "Army",
-    "value": 995
->>>>>>> develop
+    "value": 114088457
 }

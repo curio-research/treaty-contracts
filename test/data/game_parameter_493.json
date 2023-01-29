@@ -1,15 +1,8 @@
 {
-    "componentName": "Cost",
-    "functionName": "Upgrade",
-<<<<<<< HEAD
-    "level": 9,
-    "object": "Food",
+    "componentName": "Cooldown",
+    "functionName": "Recover",
+    "level": 8,
+    "object": "",
     "subject": "Tile",
-    "value": 150238170
-=======
-    "level": 17,
-    "object": "Food",
-    "subject": "Tile",
-    "value": 14242976
->>>>>>> develop
+    "value": 5773
 }

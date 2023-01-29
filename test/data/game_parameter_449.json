@@ -1,17 +1,8 @@
 {
-<<<<<<< HEAD
-    "componentName": "LastRecovered",
+    "componentName": "Amount",
     "functionName": "",
-    "level": 21,
-    "object": "",
-    "subject": "SuperTile",
-    "value": 0
-=======
-    "componentName": "Cooldown",
-    "functionName": "Upgrade",
-    "level": 8,
-    "object": "",
-    "subject": "Tile",
-    "value": 128
->>>>>>> develop
+    "level": 19,
+    "object": "Guard",
+    "subject": "Barbarian",
+    "value": 18144
 }

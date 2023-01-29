@@ -1,15 +1,8 @@
 {
-    "componentName": "Cooldown",
+    "componentName": "Cost",
     "functionName": "Upgrade",
-<<<<<<< HEAD
-    "level": 3,
-    "object": "",
+    "level": 2,
+    "object": "Gold",
     "subject": "Tile",
-    "value": 3330
-=======
-    "level": 11,
-    "object": "",
-    "subject": "Tile",
-    "value": 191
->>>>>>> develop
+    "value": 4369241
 }

@@ -1,15 +1,8 @@
 {
     "componentName": "Cap",
     "functionName": "",
-<<<<<<< HEAD
-    "level": 1,
-    "object": "Gold",
-    "subject": "Goldmine",
-    "value": 8603333
-=======
     "level": 3,
     "object": "Army",
     "subject": "Capital",
-    "value": 4
->>>>>>> develop
+    "value": 2
 }

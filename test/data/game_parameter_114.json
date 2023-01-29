@@ -1,11 +1,7 @@
 {
     "componentName": "Yield",
     "functionName": "",
-<<<<<<< HEAD
-    "level": 16,
-=======
-    "level": 14,
->>>>>>> develop
+    "level": 15,
     "object": "Food",
     "subject": "Goldmine",
     "value": 0

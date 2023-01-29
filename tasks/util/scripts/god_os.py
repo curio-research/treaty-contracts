@@ -5,6 +5,7 @@ from types import LambdaType
 import numpy as np
 import json
 from pathlib import Path
+import pandas as pd
 import os
 
 
@@ -186,8 +187,7 @@ def get_barbarian_reward(level: int) -> np.array:
     total_goldcost = barbarian_count * goldcost_per_troop * 4
     total_foodcost = barbarian_count * foodcost_per_troop * 4
     # actual reward = base reward * exponential curve (level as x)
-    gold_reward = total_goldcost * game_instance.barbarian_reward_to_cost_coefficient * fast_exponential_curve(
-        game_instance.max_capital_level * game_instance.capital_level_to_building_level)(level) / fast_exponential_curve(9)(1) * \
+    gold_reward = total_goldcost * game_instance.barbarian_reward_to_cost_coefficient * \
             (game_instance.resource_weight_high/game_instance.resource_weight_light)
     # food burn for troop is super heavy while food mint for barbarians is low
     food_reward = total_foodcost * game_instance.barbarian_reward_to_cost_coefficient * \
@@ -661,8 +661,8 @@ class Game:
             self.capital_level_to_building_level = 3
             self.player_action_in_seconds = 2000
             self.base_troop_training_in_seconds = 1
-            self.barbarian_reward_to_cost_coefficient = 4
-            self.tile_to_barbarian_strength_ratio = 1.4
+            self.barbarian_reward_to_cost_coefficient = 0.12 # temporarily problematic
+            self.tile_to_barbarian_strength_ratio = 1
             self.tile_troop_discount = 4
             self.barbarian_to_army_difficulty_constant = 70
             self.capital_migration_cooldown_ratio = 15
@@ -673,8 +673,8 @@ class Game:
             self.super_tile_init_time_in_hour = 0
             self.move_capital_to_upgrade_cost_ratio = 0.2
             self.troop_cap_to_buildings_cap_ratio = 0.08
-            self.troop_gathering_bonus = 2
-            self.barbarian_cooldown = 100
+            self.troop_gathering_bonus = 1.2
+            self.barbarian_cooldown = 300
     """
     Constant format:
     "subject": "Farm",
@@ -715,17 +715,17 @@ class Game:
         game_parameters.append({"subject": "Capital", "componentName": "Cap",
                                "object": "Army", "level": 1, "functionName": "", "value": 2})
         game_parameters.append({"subject": "Capital", "componentName": "Cap",
-                               "object": "Army", "level": 2, "functionName": "", "value": 3})
+                               "object": "Army", "level": 2, "functionName": "", "value": 2})
         game_parameters.append({"subject": "Capital", "componentName": "Cap",
-                               "object": "Army", "level": 3, "functionName": "", "value": 4})
+                               "object": "Army", "level": 3, "functionName": "", "value": 2})
         game_parameters.append({"subject": "Capital", "componentName": "Cap",
-                               "object": "Army", "level": 4, "functionName": "", "value": 5})
+                               "object": "Army", "level": 4, "functionName": "", "value": 3})
         game_parameters.append({"subject": "Capital", "componentName": "Cap",
-                               "object": "Army", "level": 5, "functionName": "", "value": 6})
+                               "object": "Army", "level": 5, "functionName": "", "value": 3})
         game_parameters.append({"subject": "Capital", "componentName": "Cap",
-                               "object": "Army", "level": 6, "functionName": "", "value": 7})
+                               "object": "Army", "level": 6, "functionName": "", "value": 3})
         game_parameters.append({"subject": "Inner Tile", "componentName": "Level",
-                               "object": "", "level": 0, "functionName": "", "value": 10})
+                               "object": "", "level": 0, "functionName": "", "value": 3})
 
         # Building Stats
         for bt in [Building.GOLDMINE, Building.FARM, Building.CAPITAL]:
@@ -1013,8 +1013,9 @@ class Game:
 
             curr_level += 1
         
-        barbarian_stats = pd.DataFrame(columns=['Capital Level', '# Defeats to Upgrade'])            
-        (reward_gold, reward_food) = get_barbarian_reward(max_tile_level / 2)
+        barbarian_stats = pd.DataFrame(columns=['Capital Level', '# Defeats to Upgrade'])
+        # Note: barbarians are always 4 or 8 levels in this version           
+        (reward_gold, reward_food) = get_barbarian_reward(6)
             
         curr_level = 1
         while curr_level < self.max_capital_level:

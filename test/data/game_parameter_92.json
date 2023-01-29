@@ -1,15 +1,8 @@
 {
     "componentName": "Yield",
     "functionName": "",
-<<<<<<< HEAD
-    "level": 13,
+    "level": 12,
     "object": "Gold",
     "subject": "Goldmine",
-    "value": 3684
-=======
-    "level": 11,
-    "object": "Gold",
-    "subject": "Goldmine",
-    "value": 1956
->>>>>>> develop
+    "value": 3584
 }

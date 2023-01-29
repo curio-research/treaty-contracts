@@ -1,8 +1,8 @@
 {
-    "componentName": "Cost",
-    "functionName": "Upgrade",
-    "level": 14,
-    "object": "Gold",
+    "componentName": "Amount",
+    "functionName": "",
+    "level": 13,
+    "object": "Guard",
     "subject": "Tile",
-    "value": 12752860
+    "value": 10383
 }

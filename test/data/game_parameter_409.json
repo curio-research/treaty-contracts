@@ -1,15 +1,8 @@
 {
-    "componentName": "LastRecovered",
+    "componentName": "Reward",
     "functionName": "",
-<<<<<<< HEAD
-    "level": 8,
-    "object": "Guard",
+    "level": 6,
+    "object": "Food",
     "subject": "Barbarian",
-    "value": 5773
-=======
-    "level": 18,
-    "object": "",
-    "subject": "SuperTile",
-    "value": 0
->>>>>>> develop
+    "value": 6177621
 }

@@ -1,17 +1,8 @@
 {
-<<<<<<< HEAD
-    "componentName": "Reward",
-    "functionName": "",
-    "level": 2,
-    "object": "Food",
-    "subject": "Barbarian",
-    "value": 87177251
-=======
-    "componentName": "Amount",
-    "functionName": "",
-    "level": 12,
-    "object": "Guard",
-    "subject": "Barbarian",
-    "value": 287
->>>>>>> develop
+    "componentName": "Cost",
+    "functionName": "Move",
+    "level": 7,
+    "object": "Gold",
+    "subject": "Capital",
+    "value": 26015000
 }
