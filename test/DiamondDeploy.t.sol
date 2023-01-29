@@ -112,7 +112,7 @@ contract DiamondDeployTest is Test {
     bytes4[] OWNERSHIP_SELECTORS = [bytes4(0xf2fde38b), 0x8da5cb5b];
     bytes4[] LOUPE_SELECTORS = [bytes4(0xcdffacc6), 0x52ef6b2c, 0xadfca15e, 0x7a0ed627, 0x01ffc9a7];
 
-    function setUp() public {
+    function setUp() public virtual {
         vm.startPrank(deployer);
         console.log("==================== SETUP BEGINS =====================");
 
@@ -293,7 +293,7 @@ contract DiamondDeployTest is Test {
     }
 
     function _registerFunctionNames() private {
-        string[] memory gameFunctionNames = new string[](21);
+        string[] memory gameFunctionNames = new string[](22);
         gameFunctionNames[0] = "JoinGame";
         gameFunctionNames[1] = "UpgradeCapital";
         gameFunctionNames[2] = "MoveCapital";
@@ -302,19 +302,20 @@ contract DiamondDeployTest is Test {
         gameFunctionNames[5] = "RecoverTile";
         gameFunctionNames[6] = "DisownTile";
         gameFunctionNames[7] = "StartTroopProduction";
-        gameFunctionNames[8] = "EndTroopProduction";
-        gameFunctionNames[9] = "Move";
-        gameFunctionNames[10] = "OrganizeArmy";
-        gameFunctionNames[11] = "DisbandArmy";
-        gameFunctionNames[12] = "StartGather";
-        gameFunctionNames[13] = "EndGather";
-        gameFunctionNames[14] = "UnloadResources";
-        gameFunctionNames[15] = "HarvestResource";
-        gameFunctionNames[16] = "HarvestResourcesFromCapital";
-        gameFunctionNames[17] = "UpgradeResource";
-        gameFunctionNames[18] = "Battle";
-        gameFunctionNames[19] = "DelegateGameFunction";
-        gameFunctionNames[20] = "DeployTreaty";
+        gameFunctionNames[8] = "StopTroopProduction";
+        gameFunctionNames[9] = "EndTroopProduction";
+        gameFunctionNames[10] = "Move";
+        gameFunctionNames[11] = "OrganizeArmy";
+        gameFunctionNames[12] = "DisbandArmy";
+        gameFunctionNames[13] = "StartGather";
+        gameFunctionNames[14] = "EndGather";
+        gameFunctionNames[15] = "UnloadResources";
+        gameFunctionNames[16] = "HarvestResource";
+        gameFunctionNames[17] = "HarvestResourcesFromCapital";
+        gameFunctionNames[18] = "UpgradeResource";
+        gameFunctionNames[19] = "Battle";
+        gameFunctionNames[20] = "DelegateGameFunction";
+        gameFunctionNames[21] = "DeployTreaty";
         admin.registerFunctionNames(gameFunctionNames);
     }
 
@@ -442,6 +443,7 @@ contract DiamondDeployTest is Test {
                 capitalLevelToEntityLevelRatio: 3,
                 gameLengthInSeconds: 3600,
                 gameMode: GameMode.REGULAR,
+                innerRadiusByTileCount: 0,
                 maxCapitalLevel: 3,
                 maxNationCount: 20,
                 // maxTransferDistance: 100
@@ -455,7 +457,7 @@ contract DiamondDeployTest is Test {
     }
 
     /// @dev First way to get map: fetch them from last deployment
-    function _fetchLastDeployedMap() private view returns (uint256[][] memory) {
+    function _fetchLastDeployedMap() private returns (uint256[][] memory) {
         string memory root = vm.projectRoot();
         string memory path = string(abi.encodePacked(root, "/test/data/map.json"));
         bytes memory rawJson = vm.parseJson(vm.readFile(path));

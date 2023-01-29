@@ -78,11 +78,10 @@ export const uploadABI = async (hre: HardhatRuntimeEnvironment, contractName: st
 };
 
 export const deployTreatyTemplate = async (name: string, admin: Signer, hre: HardhatRuntimeEnvironment, diamond: Curio, gasLimit: number) => {
-  const args = [diamond.address];
-
   // Deploy treaty template
   await sleep(50);
-  const treaty = await deployProxy<any>(name, admin, hre, args);
+  const treaty = await deployProxy<any>(name, admin, hre, []);
+  treaty.init(diamond.address);
 
   // Upload contract ABI and metadata (contract descriptions)
   const abiHash = await uploadABI(hre, name);
@@ -133,6 +132,7 @@ export const initializeGame = async (hre: HardhatRuntimeEnvironment, worldConsta
     'RecoverTile',
     'DisownTile',
     'StartTroopProduction',
+    'StopTroopProduction',
     'EndTroopProduction',
     'Move',
     'OrganizeArmy',

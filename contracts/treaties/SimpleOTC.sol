@@ -88,5 +88,8 @@ contract SimpleOTC is CurioTreaty {
         address sellerCapitalAddress = getter.getAddress(getter.getCapital(getter.getEntityByAddress(_seller)));
         sellToken.transferFrom(sellerCapitalAddress, buyerCapitalAddress, targetOrder.sellAmount);
         buyToken.transferFrom(buyerCapitalAddress, sellerCapitalAddress, targetOrder.buyAmount);
+
+        // Remove order
+        addressToOrder[_seller] = emptyOrder;
     }
 }

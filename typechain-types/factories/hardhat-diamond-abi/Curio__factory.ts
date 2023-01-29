@@ -1404,6 +1404,19 @@ const _abi = [
     inputs: [
       {
         internalType: "uint256",
+        name: "_capitalID",
+        type: "uint256",
+      },
+    ],
+    name: "stopTroopProduction",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
         name: "_armyID",
         type: "uint256",
       },
@@ -2282,6 +2295,11 @@ const _abi = [
             internalType: "enum GameMode",
             name: "gameMode",
             type: "uint8",
+          },
+          {
+            internalType: "uint256",
+            name: "innerRadiusByTileCount",
+            type: "uint256",
           },
           {
             internalType: "uint256",

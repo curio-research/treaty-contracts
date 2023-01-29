@@ -16,4 +16,9 @@ tasks/signers
 
 .env
 .env.pnm
+
+#PNM files
+crashes
+reports
+pnm-cov.json
 /curio-vault/

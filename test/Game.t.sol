@@ -27,6 +27,7 @@ contract GameTest is Test, DiamondDeployTest {
     // - [x] disownTile
     // Production:
     // - [x] startTroopProduction
+    // - [x] stopTroopProduction
     // - [x] endTroopProduction
     // Army:
     // - [x] move
@@ -718,8 +719,19 @@ contract GameTest is Test, DiamondDeployTest {
         game.endTroopProduction(nation1CapitalID);
         assertEq(horsemanToken.balanceOf(nation1CapitalAddr), 0);
 
+        // Nation 1 stops troop production
+        game.stopTroopProduction(nation1CapitalID);
+        assertEq(horsemanToken.balanceOf(nation1CapitalAddr), 0);
+        vm.expectRevert("CURIO: No ongoing production");
+        game.endTroopProduction(nation1CapitalID);
+
+        // Nation 1 again starts production
+        time += 1;
+        vm.warp(time);
+        game.startTroopProduction(nation1CapitalID, horsemanTemplateID, 1000);
+
         // Nation 1 ends troop production
-        time += time += worldConstants.secondsToTrainAThousandTroops / 2 + 1;
+        time += worldConstants.secondsToTrainAThousandTroops + 1;
         vm.warp(time);
         game.endTroopProduction(nation1CapitalID);
         assertEq(horsemanToken.balanceOf(nation1CapitalAddr), 1000);
