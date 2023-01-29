@@ -89,6 +89,9 @@ contract GameFacet is UseStorage {
 
         // Set last action time
         ECSLib.setUint("LastActed", nationID, block.timestamp);
+
+        // Initialized with some resources
+        GameLib.initializeResource(capitalAddress);
     }
 
     /**

@@ -43,6 +43,7 @@ export interface HandshakeDealInterface extends utils.Interface {
     "approveRecoverTile(uint256,bytes)": FunctionFragment;
     "approveStartGather(uint256,bytes)": FunctionFragment;
     "approveStartTroopProduction(uint256,bytes)": FunctionFragment;
+    "approveStopTroopProduction(uint256,bytes)": FunctionFragment;
     "approveTransfer(uint256,bytes)": FunctionFragment;
     "approveUnloadResources(uint256,bytes)": FunctionFragment;
     "approveUpgradeCapital(uint256,bytes)": FunctionFragment;
@@ -85,6 +86,7 @@ export interface HandshakeDealInterface extends utils.Interface {
       | "approveRecoverTile"
       | "approveStartGather"
       | "approveStartTroopProduction"
+      | "approveStopTroopProduction"
       | "approveTransfer"
       | "approveUnloadResources"
       | "approveUpgradeCapital"
@@ -177,6 +179,10 @@ export interface HandshakeDealInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "approveStartTroopProduction",
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BytesLike>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "approveStopTroopProduction",
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
@@ -340,6 +346,10 @@ export interface HandshakeDealInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "approveStartTroopProduction",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "approveStopTroopProduction",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -535,6 +545,12 @@ export interface HandshakeDeal extends BaseContract {
     ): Promise<[boolean]>;
 
     approveStartTroopProduction(
+      _nationID: PromiseOrValue<BigNumberish>,
+      _encodedParams: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
+    approveStopTroopProduction(
       _nationID: PromiseOrValue<BigNumberish>,
       _encodedParams: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
@@ -761,6 +777,12 @@ export interface HandshakeDeal extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
+  approveStopTroopProduction(
+    _nationID: PromiseOrValue<BigNumberish>,
+    _encodedParams: PromiseOrValue<BytesLike>,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
   approveTransfer(
     _nationID: PromiseOrValue<BigNumberish>,
     _encodedParams: PromiseOrValue<BytesLike>,
@@ -977,6 +999,12 @@ export interface HandshakeDeal extends BaseContract {
     ): Promise<boolean>;
 
     approveStartTroopProduction(
+      _nationID: PromiseOrValue<BigNumberish>,
+      _encodedParams: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    approveStopTroopProduction(
       _nationID: PromiseOrValue<BigNumberish>,
       _encodedParams: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
@@ -1202,6 +1230,12 @@ export interface HandshakeDeal extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    approveStopTroopProduction(
+      _nationID: PromiseOrValue<BigNumberish>,
+      _encodedParams: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     approveTransfer(
       _nationID: PromiseOrValue<BigNumberish>,
       _encodedParams: PromiseOrValue<BytesLike>,
@@ -1410,6 +1444,12 @@ export interface HandshakeDeal extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     approveStartTroopProduction(
+      _nationID: PromiseOrValue<BigNumberish>,
+      _encodedParams: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    approveStopTroopProduction(
       _nationID: PromiseOrValue<BigNumberish>,
       _encodedParams: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides

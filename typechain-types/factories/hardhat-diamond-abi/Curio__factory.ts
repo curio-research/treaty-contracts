@@ -1404,6 +1404,19 @@ const _abi = [
     inputs: [
       {
         internalType: "uint256",
+        name: "_capitalID",
+        type: "uint256",
+      },
+    ],
+    name: "stopTroopProduction",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
         name: "_armyID",
         type: "uint256",
       },
