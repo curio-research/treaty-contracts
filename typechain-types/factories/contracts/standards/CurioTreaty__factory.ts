@@ -11,19 +11,6 @@ import type {
 
 const _abi = [
   {
-    inputs: [],
-    name: "admin",
-    outputs: [
-      {
-        internalType: "contract AdminFacet",
-        name: "",
-        type: "address",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
     inputs: [
       {
         internalType: "uint256",
@@ -468,6 +455,30 @@ const _abi = [
         type: "bytes",
       },
     ],
+    name: "approveStopTroopProduction",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "_nationID",
+        type: "uint256",
+      },
+      {
+        internalType: "bytes",
+        name: "_encodedParams",
+        type: "bytes",
+      },
+    ],
     name: "approveTransfer",
     outputs: [
       {
@@ -602,53 +613,16 @@ const _abi = [
     type: "function",
   },
   {
-    inputs: [],
-    name: "game",
-    outputs: [
-      {
-        internalType: "contract GameFacet",
-        name: "",
-        type: "address",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "getter",
-    outputs: [
-      {
-        internalType: "contract GetterFacet",
-        name: "",
-        type: "address",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
     inputs: [
       {
-        internalType: "uint256",
-        name: "_nationID",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "_duration",
-        type: "uint256",
+        internalType: "address",
+        name: "_diamond",
+        type: "address",
       },
     ],
-    name: "minimumStayCheck",
-    outputs: [
-      {
-        internalType: "bool",
-        name: "",
-        type: "bool",
-      },
-    ],
-    stateMutability: "view",
+    name: "init",
+    outputs: [],
+    stateMutability: "nonpayable",
     type: "function",
   },
   {

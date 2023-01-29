@@ -53,8 +53,10 @@ export interface GameFacetInterface extends utils.Interface {
     "moveCapital(uint256,(uint256,uint256))": FunctionFragment;
     "organizeArmy(uint256,uint256[],uint256[])": FunctionFragment;
     "recoverTile(uint256)": FunctionFragment;
+    "registerTreatyTemplate(address,string,string)": FunctionFragment;
     "startGather(uint256,uint256)": FunctionFragment;
     "startTroopProduction(uint256,uint256,uint256)": FunctionFragment;
+    "stopTroopProduction(uint256)": FunctionFragment;
     "unloadResources(uint256)": FunctionFragment;
     "upgradeCapital(uint256)": FunctionFragment;
     "upgradeResource(uint256)": FunctionFragment;
@@ -81,8 +83,10 @@ export interface GameFacetInterface extends utils.Interface {
       | "moveCapital"
       | "organizeArmy"
       | "recoverTile"
+      | "registerTreatyTemplate"
       | "startGather"
       | "startTroopProduction"
+      | "stopTroopProduction"
       | "unloadResources"
       | "upgradeCapital"
       | "upgradeResource"
@@ -176,6 +180,14 @@ export interface GameFacetInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
+    functionFragment: "registerTreatyTemplate",
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<string>
+    ]
+  ): string;
+  encodeFunctionData(
     functionFragment: "startGather",
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
   ): string;
@@ -186,6 +198,10 @@ export interface GameFacetInterface extends utils.Interface {
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>
     ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "stopTroopProduction",
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "unloadResources",
@@ -259,11 +275,19 @@ export interface GameFacetInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "registerTreatyTemplate",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "startGather",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "startTroopProduction",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "stopTroopProduction",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -417,6 +441,13 @@ export interface GameFacet extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    registerTreatyTemplate(
+      _address: PromiseOrValue<string>,
+      _abiHash: PromiseOrValue<string>,
+      _metadataLink: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     startGather(
       _armyID: PromiseOrValue<BigNumberish>,
       _resourceID: PromiseOrValue<BigNumberish>,
@@ -427,6 +458,11 @@ export interface GameFacet extends BaseContract {
       _capitalID: PromiseOrValue<BigNumberish>,
       _templateID: PromiseOrValue<BigNumberish>,
       _amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    stopTroopProduction(
+      _capitalID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -555,6 +591,13 @@ export interface GameFacet extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  registerTreatyTemplate(
+    _address: PromiseOrValue<string>,
+    _abiHash: PromiseOrValue<string>,
+    _metadataLink: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   startGather(
     _armyID: PromiseOrValue<BigNumberish>,
     _resourceID: PromiseOrValue<BigNumberish>,
@@ -565,6 +608,11 @@ export interface GameFacet extends BaseContract {
     _capitalID: PromiseOrValue<BigNumberish>,
     _templateID: PromiseOrValue<BigNumberish>,
     _amount: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  stopTroopProduction(
+    _capitalID: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -693,6 +741,13 @@ export interface GameFacet extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    registerTreatyTemplate(
+      _address: PromiseOrValue<string>,
+      _abiHash: PromiseOrValue<string>,
+      _metadataLink: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     startGather(
       _armyID: PromiseOrValue<BigNumberish>,
       _resourceID: PromiseOrValue<BigNumberish>,
@@ -705,6 +760,11 @@ export interface GameFacet extends BaseContract {
       _amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    stopTroopProduction(
+      _capitalID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     unloadResources(
       _armyID: PromiseOrValue<BigNumberish>,
@@ -834,6 +894,13 @@ export interface GameFacet extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    registerTreatyTemplate(
+      _address: PromiseOrValue<string>,
+      _abiHash: PromiseOrValue<string>,
+      _metadataLink: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     startGather(
       _armyID: PromiseOrValue<BigNumberish>,
       _resourceID: PromiseOrValue<BigNumberish>,
@@ -844,6 +911,11 @@ export interface GameFacet extends BaseContract {
       _capitalID: PromiseOrValue<BigNumberish>,
       _templateID: PromiseOrValue<BigNumberish>,
       _amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    stopTroopProduction(
+      _capitalID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -973,6 +1045,13 @@ export interface GameFacet extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
+    registerTreatyTemplate(
+      _address: PromiseOrValue<string>,
+      _abiHash: PromiseOrValue<string>,
+      _metadataLink: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
     startGather(
       _armyID: PromiseOrValue<BigNumberish>,
       _resourceID: PromiseOrValue<BigNumberish>,
@@ -983,6 +1062,11 @@ export interface GameFacet extends BaseContract {
       _capitalID: PromiseOrValue<BigNumberish>,
       _templateID: PromiseOrValue<BigNumberish>,
       _amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    stopTroopProduction(
+      _capitalID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

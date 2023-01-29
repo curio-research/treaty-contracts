@@ -1,8 +1,8 @@
 {
-    "componentName": "Reward",
-    "functionName": "",
-    "level": 14,
+    "componentName": "Cost",
+    "functionName": "Move",
+    "level": 4,
     "object": "Gold",
-    "subject": "Barbarian",
-    "value": 21217439
+    "subject": "Capital",
+    "value": 23691
 }
