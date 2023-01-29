@@ -6,7 +6,6 @@ import {GetterFacet} from "contracts/facets/GetterFacet.sol";
 import {Set} from "contracts/Set.sol";
 import {console} from "forge-std/console.sol";
 
-/// @notice Each player has one active sell order at most
 contract LoanAgreement is CurioTreaty {
     /**
     Outline:
