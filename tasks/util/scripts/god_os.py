@@ -674,7 +674,7 @@ class Game:
             self.move_capital_to_upgrade_cost_ratio = 0.2
             self.troop_cap_to_buildings_cap_ratio = 0.08
             self.troop_gathering_bonus = 1.2
-            self.barbarian_cooldown = 300
+            self.barbarian_cooldown = 600
     """
     Constant format:
     "subject": "Farm",
