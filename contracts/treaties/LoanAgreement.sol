@@ -35,7 +35,7 @@ contract LoanAgreement is CurioTreaty {
         uint256 collateralAmount;
         string loanTokenName;
         uint256 loanAmount;
-        uint256 hourlyInterestRate;
+        uint256 totalInterestPercentage; // in percentage
         uint256 duration; // in seconds
         uint256 lenderID; // must be a nation
         uint256 borrowerID; // must be a nation
@@ -56,7 +56,7 @@ contract LoanAgreement is CurioTreaty {
             collateralAmount: 0,
             loanTokenName: "",
             loanAmount: 0,
-            hourlyInterestRate: 0,
+            totalInterestPercentage: 0,
             duration: 0,
             lenderID: 0,
             borrowerID: 0,
@@ -96,14 +96,15 @@ contract LoanAgreement is CurioTreaty {
      * @param _collateralAmount amount of the Token To use as collateral
      * @param _loanTokenName name of the Token To borrow
      * @param _loanAmount amount of the Token To borrow
-     * @param _hourlyInterestRate interest rate per hour
+     * @param _totalInterestPercentage total interest percentage
+     * @param _duration duration of the loan in seconds
      */
     function createLoan(
         string memory _collateralTokenName,
         uint256 _collateralAmount,
         string memory _loanTokenName,
         uint256 _loanAmount,
-        uint256 _hourlyInterestRate,
+        uint256 _totalInterestPercentage,
         uint256 _duration
     ) public {
         GetterFacet getter = GetterFacet(address(diamond));
@@ -126,7 +127,7 @@ contract LoanAgreement is CurioTreaty {
             collateralAmount: _collateralAmount,
             loanTokenName: _loanTokenName,
             loanAmount: _loanAmount,
-            hourlyInterestRate: _hourlyInterestRate,
+            totalInterestPercentage: _totalInterestPercentage,
             duration: _duration,
             lenderID: callerID,
             borrowerID: 0, // meaningless until loan is taken
@@ -208,7 +209,7 @@ contract LoanAgreement is CurioTreaty {
 
         // Pay principle + interests
         uint256 principle = loan.loanAmount;
-        uint256 interests = ((block.timestamp - loan.effectiveAt) * loan.duration * principle * loan.hourlyInterestRate) / 3600;
+        uint256 interests = ((block.timestamp - loan.effectiveAt) * loan.duration * principle * loan.totalInterestPercentage) / 3600 / 100;
         loanToken.transferFrom(borrowerCapitalAddr, lenderCapitalAddr, principle + interests);
 
         // Return collateral
