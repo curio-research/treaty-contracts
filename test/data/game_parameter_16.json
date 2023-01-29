@@ -1,8 +1,8 @@
 {
-    "componentName": "Yield",
-    "functionName": "",
-    "level": 1,
+    "componentName": "Amount",
+    "functionName": "JoinGame",
+    "level": 0,
     "object": "Gold",
-    "subject": "Goldmine",
-    "value": 1433
+    "subject": "Capital",
+    "value": 47296
 }

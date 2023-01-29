@@ -743,10 +743,10 @@ class Game:
                                "object": "Army", "level": 7, "functionName": "", "value": 4})
         game_parameters.append({"subject": "Inner Tile", "componentName": "Level",
                                "object": "", "level": 0, "functionName": "", "value": 7})
-        # game_parameters.append({"subject": "Initial Resource", "componentName": "Amount", "object": "Gold",
-        #                                "level": 0, "functionName": "", "value": get_building_upgrade_cost(1, Building.CAPITAL)/2})
-        # game_parameters.append({"subject": "Initial Resource", "componentName": "Amount", "object": "Food",
-        #                                "level": 0, "functionName": "", "value": get_troop_size_by_center_level(1) * game_instance.resource_weight_heavy})
+        game_parameters.append({"subject": "Capital", "componentName": "Amount", "object": "Gold",
+                                "level": 0, "functionName": "JoinGame", "value": get_building_upgrade_cost(1, Building.CAPITAL)[0]/2})
+        game_parameters.append({"subject": "Capital", "componentName": "Amount", "object": "Food",
+                                "level": 0, "functionName": "JoinGame", "value": get_troop_size_by_center_level(1) * game_instance.resource_weight_heavy})
 
         # Building Stats
         for bt in [Building.GOLDMINE, Building.FARM, Building.CAPITAL]:

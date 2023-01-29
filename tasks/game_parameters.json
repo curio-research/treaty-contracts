@@ -128,6 +128,22 @@
         "value": 7
     },
     {
+        "componentName": "Amount",
+        "functionName": "JoinGame",
+        "level": 0,
+        "object": "Gold",
+        "subject": "Capital",
+        "value": 47296
+    },
+    {
+        "componentName": "Amount",
+        "functionName": "JoinGame",
+        "level": 0,
+        "object": "Food",
+        "subject": "Capital",
+        "value": 54378
+    },
+    {
         "componentName": "Yield",
         "functionName": "",
         "level": 1,

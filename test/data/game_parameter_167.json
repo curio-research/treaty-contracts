@@ -1,8 +1,8 @@
 {
-    "componentName": "Cost",
-    "functionName": "Upgrade",
+    "componentName": "Load",
+    "functionName": "",
     "level": 1,
     "object": "Gold",
     "subject": "Farm",
-    "value": 3360524
+    "value": 0
 }

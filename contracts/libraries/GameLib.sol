@@ -175,16 +175,6 @@ library GameLib {
         return tileID;
     }
 
-    function initializeResource(address _capitalAddress) external {
-        // Fetch token contract
-        CurioERC20 goldToken = getTokenContract("Gold");
-        CurioERC20 foodToken = getTokenContract("Food");
-
-        // Gift resources
-        goldToken.dripToken(_capitalAddress, getGameParameter("Initial Resource", "Gold", "Amount", "", 0));
-        foodToken.dripToken(_capitalAddress, getGameParameter("Initial Resource", "Food", "Amount", "", 0));
-    }
-
     function removeNation(uint256 _nationID) internal {
         // Remove nation's capital
         uint256 capitalID = getCapital(_nationID);

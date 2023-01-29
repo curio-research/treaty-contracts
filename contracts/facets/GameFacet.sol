@@ -91,7 +91,8 @@ contract GameFacet is UseStorage {
         ECSLib.setUint("LastActed", nationID, block.timestamp);
 
         // Initialized with some resources
-        GameLib.initializeResource(capitalAddress);
+        GameLib.getTokenContract("Gold").dripToken(capitalAddress, GameLib.getGameParameter("Capital", "Gold", "Amount", "JoinGame", 0));
+        GameLib.getTokenContract("Food").dripToken(capitalAddress, GameLib.getGameParameter("Capital", "Food", "Amount", "JoinGame", 0));
     }
 
     /**

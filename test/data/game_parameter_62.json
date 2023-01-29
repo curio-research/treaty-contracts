@@ -1,8 +1,8 @@
 {
-    "componentName": "Cost",
-    "functionName": "Upgrade",
+    "componentName": "Load",
+    "functionName": "",
     "level": 7,
     "object": "Gold",
     "subject": "Goldmine",
-    "value": 8978055
+    "value": 17713333
 }

@@ -1,8 +1,8 @@
 {
-    "componentName": "Yield",
-    "functionName": "",
-    "level": 21,
-    "object": "Food",
+    "componentName": "Cooldown",
+    "functionName": "Upgrade",
+    "level": 20,
+    "object": "",
     "subject": "Farm",
-    "value": 22952
+    "value": 2199
 }

@@ -1,8 +1,8 @@
 {
-    "componentName": "Cost",
-    "functionName": "Upgrade",
+    "componentName": "Cooldown",
+    "functionName": "Recover",
     "level": 16,
-    "object": "Food",
+    "object": "",
     "subject": "Tile",
-    "value": 164732184
+    "value": 13908
 }
