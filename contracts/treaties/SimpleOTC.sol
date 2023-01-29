@@ -90,6 +90,6 @@ contract SimpleOTC is CurioTreaty {
         buyToken.transferFrom(buyerCapitalAddress, sellerCapitalAddress, targetOrder.buyAmount);
 
         // Remove order
-        addressToOrder[_seller] = emptyOrder;
+        sellerToOrder[_seller] = emptyOrder;
     }
 }
