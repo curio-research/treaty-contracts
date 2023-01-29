@@ -2,9 +2,11 @@
 /* tslint:disable */
 /* eslint-disable */
 export type { Alliance } from "./Alliance";
+export type { Bounty } from "./Bounty";
 export type { CollectiveDefenseFund } from "./CollectiveDefenseFund";
 export type { Embargo } from "./Embargo";
 export type { HandshakeDeal } from "./HandshakeDeal";
+export type { LoanAgreement } from "./LoanAgreement";
 export type { MercenaryLeague } from "./MercenaryLeague";
 export type { NonAggressionPact } from "./NonAggressionPact";
 export type { SimpleOTC } from "./SimpleOTC";

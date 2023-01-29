@@ -6,7 +6,7 @@ import {GetterFacet} from "contracts/facets/GetterFacet.sol";
 import {Set} from "contracts/Set.sol";
 import {console} from "forge-std/console.sol";
 
-contract Bounty is CurioTreaty {
+abstract contract Bounty is CurioTreaty {
     // WIP
     struct Offer {
         uint256 targetNationID;
@@ -17,5 +17,4 @@ contract Bounty is CurioTreaty {
         uint256 signedAt;
         uint256 effectiveDuration;
     }
-
 }

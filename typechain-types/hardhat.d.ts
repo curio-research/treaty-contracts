@@ -101,6 +101,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Alliance__factory>;
     getContractFactory(
+      name: "Bounty",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.Bounty__factory>;
+    getContractFactory(
       name: "CollectiveDefenseFund",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.CollectiveDefenseFund__factory>;
@@ -112,6 +116,10 @@ declare module "hardhat/types/runtime" {
       name: "HandshakeDeal",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.HandshakeDeal__factory>;
+    getContractFactory(
+      name: "LoanAgreement",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.LoanAgreement__factory>;
     getContractFactory(
       name: "MercenaryLeague",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -284,6 +292,11 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.Alliance>;
     getContractAt(
+      name: "Bounty",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.Bounty>;
+    getContractAt(
       name: "CollectiveDefenseFund",
       address: string,
       signer?: ethers.Signer
@@ -298,6 +311,11 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.HandshakeDeal>;
+    getContractAt(
+      name: "LoanAgreement",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.LoanAgreement>;
     getContractAt(
       name: "MercenaryLeague",
       address: string,

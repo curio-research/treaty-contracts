@@ -25,7 +25,6 @@ import type {
 
 export interface SimpleOTCInterface extends utils.Interface {
   functions: {
-    "addressToOrder(address)": FunctionFragment;
     "approveBattle(uint256,bytes)": FunctionFragment;
     "approveClaimTile(uint256,bytes)": FunctionFragment;
     "approveDelegateGameFunction(uint256,bytes)": FunctionFragment;
@@ -57,6 +56,7 @@ export interface SimpleOTCInterface extends utils.Interface {
     "emptyOrder()": FunctionFragment;
     "init(address)": FunctionFragment;
     "name()": FunctionFragment;
+    "sellerToOrder(address)": FunctionFragment;
     "takeOrder(address)": FunctionFragment;
     "treatyDelegateGameFunction(string,uint256,bool)": FunctionFragment;
     "treatyJoin()": FunctionFragment;
@@ -65,7 +65,6 @@ export interface SimpleOTCInterface extends utils.Interface {
 
   getFunction(
     nameOrSignatureOrTopic:
-      | "addressToOrder"
       | "approveBattle"
       | "approveClaimTile"
       | "approveDelegateGameFunction"
@@ -97,16 +96,13 @@ export interface SimpleOTCInterface extends utils.Interface {
       | "emptyOrder"
       | "init"
       | "name"
+      | "sellerToOrder"
       | "takeOrder"
       | "treatyDelegateGameFunction"
       | "treatyJoin"
       | "treatyLeave"
   ): FunctionFragment;
 
-  encodeFunctionData(
-    functionFragment: "addressToOrder",
-    values: [PromiseOrValue<string>]
-  ): string;
   encodeFunctionData(
     functionFragment: "approveBattle",
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BytesLike>]
@@ -231,6 +227,10 @@ export interface SimpleOTCInterface extends utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "name", values?: undefined): string;
   encodeFunctionData(
+    functionFragment: "sellerToOrder",
+    values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "takeOrder",
     values: [PromiseOrValue<string>]
   ): string;
@@ -251,10 +251,6 @@ export interface SimpleOTCInterface extends utils.Interface {
     values?: undefined
   ): string;
 
-  decodeFunctionResult(
-    functionFragment: "addressToOrder",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(
     functionFragment: "approveBattle",
     data: BytesLike
@@ -367,6 +363,10 @@ export interface SimpleOTCInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "emptyOrder", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "init", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "sellerToOrder",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "takeOrder", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "treatyDelegateGameFunction",
@@ -408,19 +408,6 @@ export interface SimpleOTC extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    addressToOrder(
-      arg0: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<
-      [string, BigNumber, string, BigNumber, BigNumber] & {
-        sellTokenName: string;
-        sellAmount: BigNumber;
-        buyTokenName: string;
-        buyAmount: BigNumber;
-        createdAt: BigNumber;
-      }
-    >;
-
     approveBattle(
       _nationID: PromiseOrValue<BigNumberish>,
       _encodedParams: PromiseOrValue<BytesLike>,
@@ -600,6 +587,19 @@ export interface SimpleOTC extends BaseContract {
 
     name(overrides?: CallOverrides): Promise<[string]>;
 
+    sellerToOrder(
+      arg0: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<
+      [string, BigNumber, string, BigNumber, BigNumber] & {
+        sellTokenName: string;
+        sellAmount: BigNumber;
+        buyTokenName: string;
+        buyAmount: BigNumber;
+        createdAt: BigNumber;
+      }
+    >;
+
     takeOrder(
       _seller: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -620,19 +620,6 @@ export interface SimpleOTC extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
   };
-
-  addressToOrder(
-    arg0: PromiseOrValue<string>,
-    overrides?: CallOverrides
-  ): Promise<
-    [string, BigNumber, string, BigNumber, BigNumber] & {
-      sellTokenName: string;
-      sellAmount: BigNumber;
-      buyTokenName: string;
-      buyAmount: BigNumber;
-      createdAt: BigNumber;
-    }
-  >;
 
   approveBattle(
     _nationID: PromiseOrValue<BigNumberish>,
@@ -813,6 +800,19 @@ export interface SimpleOTC extends BaseContract {
 
   name(overrides?: CallOverrides): Promise<string>;
 
+  sellerToOrder(
+    arg0: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<
+    [string, BigNumber, string, BigNumber, BigNumber] & {
+      sellTokenName: string;
+      sellAmount: BigNumber;
+      buyTokenName: string;
+      buyAmount: BigNumber;
+      createdAt: BigNumber;
+    }
+  >;
+
   takeOrder(
     _seller: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -834,19 +834,6 @@ export interface SimpleOTC extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
-    addressToOrder(
-      arg0: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<
-      [string, BigNumber, string, BigNumber, BigNumber] & {
-        sellTokenName: string;
-        sellAmount: BigNumber;
-        buyTokenName: string;
-        buyAmount: BigNumber;
-        createdAt: BigNumber;
-      }
-    >;
-
     approveBattle(
       _nationID: PromiseOrValue<BigNumberish>,
       _encodedParams: PromiseOrValue<BytesLike>,
@@ -1024,6 +1011,19 @@ export interface SimpleOTC extends BaseContract {
 
     name(overrides?: CallOverrides): Promise<string>;
 
+    sellerToOrder(
+      arg0: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<
+      [string, BigNumber, string, BigNumber, BigNumber] & {
+        sellTokenName: string;
+        sellAmount: BigNumber;
+        buyTokenName: string;
+        buyAmount: BigNumber;
+        createdAt: BigNumber;
+      }
+    >;
+
     takeOrder(
       _seller: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -1044,11 +1044,6 @@ export interface SimpleOTC extends BaseContract {
   filters: {};
 
   estimateGas: {
-    addressToOrder(
-      arg0: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     approveBattle(
       _nationID: PromiseOrValue<BigNumberish>,
       _encodedParams: PromiseOrValue<BytesLike>,
@@ -1218,6 +1213,11 @@ export interface SimpleOTC extends BaseContract {
 
     name(overrides?: CallOverrides): Promise<BigNumber>;
 
+    sellerToOrder(
+      arg0: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     takeOrder(
       _seller: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -1240,11 +1240,6 @@ export interface SimpleOTC extends BaseContract {
   };
 
   populateTransaction: {
-    addressToOrder(
-      arg0: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     approveBattle(
       _nationID: PromiseOrValue<BigNumberish>,
       _encodedParams: PromiseOrValue<BytesLike>,
@@ -1413,6 +1408,11 @@ export interface SimpleOTC extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     name(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    sellerToOrder(
+      arg0: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     takeOrder(
       _seller: PromiseOrValue<string>,

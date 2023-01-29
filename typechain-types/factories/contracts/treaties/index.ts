@@ -2,9 +2,11 @@
 /* tslint:disable */
 /* eslint-disable */
 export { Alliance__factory } from "./Alliance__factory";
+export { Bounty__factory } from "./Bounty__factory";
 export { CollectiveDefenseFund__factory } from "./CollectiveDefenseFund__factory";
 export { Embargo__factory } from "./Embargo__factory";
 export { HandshakeDeal__factory } from "./HandshakeDeal__factory";
+export { LoanAgreement__factory } from "./LoanAgreement__factory";
 export { MercenaryLeague__factory } from "./MercenaryLeague__factory";
 export { NonAggressionPact__factory } from "./NonAggressionPact__factory";
 export { SimpleOTC__factory } from "./SimpleOTC__factory";
