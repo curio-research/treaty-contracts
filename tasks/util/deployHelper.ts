@@ -192,7 +192,7 @@ export const initializeGame = async (hre: HardhatRuntimeEnvironment, worldConsta
 
   // Initialize map
   startTime = performance.now();
-  const encodedTileMap = encodeTileMap(tileMap, worldConstants.numInitTerrainTypes, Math.floor(200 / worldConstants.numInitTerrainTypes));
+  const encodedTileMap = encodeTileMap(tileMap, worldConstants.numInitTerrainTypes, Math.floor(50 / worldConstants.numInitTerrainTypes));
   await confirmTx(await diamond.storeEncodedColumnBatches(encodedTileMap, { gasLimit }), hre);
   console.log(`✦ Lazy setting ${tileMap.length}x${tileMap[0].length} map took ${Math.floor(performance.now() - startTime)} ms`);
 
