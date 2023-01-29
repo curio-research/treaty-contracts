@@ -113,7 +113,7 @@ export const initializeGame = async (hre: HardhatRuntimeEnvironment, worldConsta
   const diamondAddr = await deployDiamond(hre, admin, [worldConstants]);
   const diamond = await getDiamond(hre, diamondAddr);
   const facets = [
-    { name: 'GameFacet', libraries: { ECSLib: ecsLib.address, Templates: templates.address } },
+    { name: 'GameFacet', libraries: { ECSLib: ecsLib.address, GameLib: gameLib.address, Templates: templates.address } },
     { name: 'GetterFacet', libraries: { ECSLib: ecsLib.address, Templates: templates.address } },
     { name: 'AdminFacet', libraries: { ECSLib: ecsLib.address, GameLib: gameLib.address, Templates: templates.address } },
   ];
@@ -205,7 +205,7 @@ export const initializeGame = async (hre: HardhatRuntimeEnvironment, worldConsta
     })
   );
   startTime = performance.now();
-  const bulkTileUploadSize = 10;
+  const bulkTileUploadSize = 200;
   for (let i = 0; i < allTilePositions.length; i += bulkTileUploadSize) {
     console.log(chalk.dim(`✦ Initializing special tiles ${i} to ${i + bulkTileUploadSize}`));
     await confirmTx(await diamond.bulkInitializeTiles(allTilePositions.slice(i, i + bulkTileUploadSize), { gasLimit }), hre);

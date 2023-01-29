@@ -392,7 +392,7 @@ const _abi = [
     stateMutability: "nonpayable",
     type: "function",
   },
-];
+] as const;
 
 export class CurioERC721__factory {
   static readonly abi = _abi;
