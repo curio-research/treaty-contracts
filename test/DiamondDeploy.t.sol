@@ -109,7 +109,7 @@ contract DiamondDeployTest is Test {
     bytes4[] OWNERSHIP_SELECTORS = [bytes4(0xf2fde38b), 0x8da5cb5b];
     bytes4[] LOUPE_SELECTORS = [bytes4(0xcdffacc6), 0x52ef6b2c, 0xadfca15e, 0x7a0ed627, 0x01ffc9a7];
 
-    function setUp() public {
+    function setUp() public virtual {
         vm.startPrank(deployer);
         console.log("==================== SETUP BEGINS =====================");
 
@@ -451,7 +451,7 @@ contract DiamondDeployTest is Test {
     }
 
     /// @dev First way to get map: fetch them from last deployment
-    function _fetchLastDeployedMap() private view returns (uint256[][] memory) {
+    function _fetchLastDeployedMap() private returns (uint256[][] memory) {
         string memory root = vm.projectRoot();
         string memory path = string(abi.encodePacked(root, "/test/data/map.json"));
         bytes memory rawJson = vm.parseJson(vm.readFile(path));

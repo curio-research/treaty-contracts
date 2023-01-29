@@ -721,6 +721,63 @@ contract TreatyTest is Test, DiamondDeployTest {
         vm.stopPrank();
     }
 
+    // From PNM
+    function testSimpleOTC(
+        uint256 goldAmount,
+        uint256 foodAmount,
+        uint256 sellAmount,
+        uint256 buyAmount
+    ) public {
+        /**
+        Outline
+        - p1 deploys contracts and puts on an order to sell 100 gold for 200 food
+        - p2 talks to p1 and decides to purchase from p1
+         */
+        uint256 time = block.timestamp + 500;
+        vm.warp(time);
+
+        // Player1 deploys Simple OTC
+        vm.startPrank(player1);
+        SimpleOTC otcContract = SimpleOTC(game.deployTreaty(nation1ID, otcContractTemplate.name()));
+        vm.stopPrank();
+
+        // Deployer registers Simple OTC treaty & assigns tokens to p1 and p2
+        vm.startPrank(deployer);
+        admin.dripToken(nation1CapitalAddr, "Gold", goldAmount);
+        admin.dripToken(nation1CapitalAddr, "Food", foodAmount);
+
+        admin.dripToken(nation2CapitalAddr, "Gold", goldAmount);
+        admin.dripToken(nation2CapitalAddr, "Food", foodAmount);
+        vm.stopPrank();
+
+        // Player1 approves tokens
+        vm.startPrank(player1);
+        CurioWallet(nation1CapitalAddr).executeTx(address(goldToken), abi.encodeWithSignature("approve(address,uint256)", address(otcContract), 1000));
+        CurioWallet(nation1CapitalAddr).executeTx(address(foodToken), abi.encodeWithSignature("approve(address,uint256)", address(otcContract), 1000));
+        vm.stopPrank();
+
+        // Player 2 approves tokens
+        vm.startPrank(player2);
+        CurioWallet(nation2CapitalAddr).executeTx(address(goldToken), abi.encodeWithSignature("approve(address,uint256)", address(otcContract), 1000));
+        CurioWallet(nation2CapitalAddr).executeTx(address(foodToken), abi.encodeWithSignature("approve(address,uint256)", address(otcContract), 1000));
+        vm.stopPrank();
+
+        // When order is created, no tokens are transferred
+        vm.startPrank(player1);
+        otcContract.createOrder("Gold", sellAmount, "Food", buyAmount);
+        assertEq(goldToken.balanceOf(nation1CapitalAddr), goldAmount);
+        assertEq(foodToken.balanceOf(nation1CapitalAddr), foodAmount);
+        vm.stopPrank();
+
+        // Player 2 takes order
+        vm.startPrank(player2);
+        otcContract.takeOrder(player1);
+        assertEq(goldToken.balanceOf(nation1CapitalAddr), goldAmount - sellAmount);
+        assertEq(foodToken.balanceOf(nation1CapitalAddr), foodAmount + buyAmount);
+        assertEq(goldToken.balanceOf(nation2CapitalAddr), goldAmount + sellAmount);
+        assertEq(foodToken.balanceOf(nation2CapitalAddr), foodAmount - buyAmount);
+    }
+
     function testSimpleOTC() public {
         /**
         Outline
