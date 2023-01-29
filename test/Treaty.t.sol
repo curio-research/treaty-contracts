@@ -924,10 +924,8 @@ contract TreatyTest is Test, DiamondDeployTest {
         vm.startPrank(player2)
         vm.expectRevert("Loan: Loan no longer exists");
         la.payBackLoan(2);
-        vm.stopPrank();
 
-        // Player 2 creates a loan and 
+        // Player 2 creates a loan and cancel it immediately
+        
     }
-
-
 }
