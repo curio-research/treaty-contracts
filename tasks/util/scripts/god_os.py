@@ -8,8 +8,6 @@ import pandas as pd
 from pathlib import Path
 import os
 
-
-
 import sys
 
 stdout_origin = sys.stdout
@@ -67,9 +65,9 @@ def get_hourly_gather_rate_per_army(resource_type: Resource) -> int:
         game_instance.resource_weight_heavy * game_instance.resource_weight_medium
 
     if (resource_type == Resource.GOLD):
-        return gold_gather_rate
+        return gold_gather_rate * game_instance.troop_gathering_bonus
     if (resource_type == Resource.FOOD):
-        return food_gather_rate
+        return food_gather_rate * game_instance.troop_gathering_bonus
 
 
 def resource_cap_per_troop() -> int:
@@ -86,7 +84,7 @@ def resource_cap_per_troop() -> int:
     median_army_size = get_troop_size_by_center_level(
         math.ceil((game_instance.max_capital_level + 1) / 2))
     # no difference btw resources, so take the avg
-    return (building_gold_cap + building_food_cap) / 2 / (median_army_size)
+    return (building_gold_cap + building_food_cap) / 2 / (median_army_size) * game_instance.troop_cap_to_buildings_cap_ratio
 
 
 def get_troop_size_by_center_level(level: int) -> int:
@@ -227,7 +225,6 @@ def building_level_based_on_center_level(level: int) -> int:
     """
     return (2 * (level) - 1) * game_instance.capital_level_to_building_level / 2
 
-
 def get_building_upgrade_cost(level: int, building_type: Building) -> np.array:
     """
     Growth: fast exponential
@@ -332,14 +329,15 @@ def payback_period_curve_in_hour(max_level: int) -> LambdaType:
 
 def gold_payback_period_curve_in_hour(max_level: int) -> LambdaType:
     """
-    Growth: normal exponential
+    Growth: very fast exponential
+    Note: sum from f(1) to f(9) is 19.757. Leap of faith: assume this is reasonable for 72 hr gameplay
     Note: max_level not only affects x value but also total gameplay time -> need to make sure sum of y(x) is below 1/3 of all upgrades
     Gist: the function makes sure upgrade from (n_max - 1) to n_max is reasonable 
     """
     upgrade_hour_sum = 0
     # only need to tune here; just look at a chart while tuning; don't need to care about max_level or the sum
     def payback_curve(fraction): return lambda level: (
-        (math.e)**((level / max_level * 5)/4) - 0.9) * 3 / fraction
+        (math.e)**((level / max_level * 9)/4) - 0.9) * 3 / fraction
     for level in range(0, max_level):
         upgrade_hour_sum += payback_curve(1)(level)
     # make sure that upgrades for all levels account for only a certain fraction of total playtime
@@ -473,6 +471,9 @@ class Game:
     """
 
     move_capital_to_upgrade_cost_ratio = 0.2
+    troop_cap_to_buildings_cap_ratio = 0.3
+    troop_gathering_bonus = 10
+    barbarian_cooldown = 100
 
     # Gold:
     #   Mint: Harvest (low), Gather (medium), Barbarians (high)
@@ -509,6 +510,9 @@ class Game:
             self.chaos_period_in_seconds = 120
             self.super_tile_init_time_in_hour = 0
             self.move_capital_to_upgrade_cost_ratio = 0.2
+            self.troop_cap_to_buildings_cap_ratio = 0.3
+            self.troop_gathering_bonus = 10
+            self.barbarian_cooldown = 100
         if mode == GameMode.TEN_PLAYER_SHORT_TEST:
             self.total_tile_count = 15*15
             self.expected_player_count = 10
@@ -533,6 +537,9 @@ class Game:
             self.chaos_period_in_seconds = 120
             self.super_tile_init_time_in_hour = 0
             self.move_capital_to_upgrade_cost_ratio = 0.2
+            self.troop_cap_to_buildings_cap_ratio = 0.3
+            self.troop_gathering_bonus = 10
+            self.barbarian_cooldown = 100
         if mode == GameMode.FIVE_PLAYER_SHORT_TEST:
             self.total_tile_count = 12*12
             self.expected_player_count = 5
@@ -557,6 +564,9 @@ class Game:
             self.chaos_period_in_seconds = 120
             self.super_tile_init_time_in_hour = 0
             self.move_capital_to_upgrade_cost_ratio = 0.2
+            self.troop_cap_to_buildings_cap_ratio = 0.3
+            self.troop_gathering_bonus = 10
+            self.barbarian_cooldown = 100
         if mode == GameMode.SIX_PLAYER_LONG_TEST:
             self.total_tile_count = 13*13
             self.expected_player_count = 6
@@ -581,6 +591,9 @@ class Game:
             self.chaos_period_in_seconds = 900
             self.super_tile_init_time_in_hour = 0
             self.move_capital_to_upgrade_cost_ratio = 0.2
+            self.troop_cap_to_buildings_cap_ratio = 0.3
+            self.troop_gathering_bonus = 10
+            self.barbarian_cooldown = 100
         if mode == GameMode.SIX_PLAYER_SHORT_TEST:
             self.total_tile_count = 13*13
             self.expected_player_count = 6
@@ -605,6 +618,9 @@ class Game:
             self.chaos_period_in_seconds = 120
             self.super_tile_init_time_in_hour = 0
             self.move_capital_to_upgrade_cost_ratio = 0.2
+            self.troop_cap_to_buildings_cap_ratio = 0.3
+            self.troop_gathering_bonus = 10
+            self.barbarian_cooldown = 100
         if mode == GameMode.INTERNAL_PLAYTEST:
             self.total_tile_count = 17*17
             self.expected_player_count = 9
@@ -629,21 +645,24 @@ class Game:
             self.chaos_period_in_seconds = 900
             self.super_tile_init_time_in_hour = 0
             self.move_capital_to_upgrade_cost_ratio = 0.2
+            self.troop_cap_to_buildings_cap_ratio = 0.3
+            self.troop_gathering_bonus = 10
+            self.barbarian_cooldown = 100
         if mode == GameMode.PUBLIC_LAUNCH:
             self.total_tile_count = 50 * 50
             self.expected_player_count = 100
             self.init_player_tile_count = 3
             self.expected_play_time_in_hour = 120
-            self.upgrade_time_to_expected_play_time_ratio = 2/5
+            self.upgrade_time_to_expected_play_time_ratio = 1/4
             self.init_player_goldmine_count = 1
             self.init_player_farm_count = 1
             self.player_login_interval_in_minutes = 100
             self.max_capital_level = 7
             self.capital_level_to_building_level = 3
-            self.player_action_in_seconds = 1500
+            self.player_action_in_seconds = 2000
             self.base_troop_training_in_seconds = 1
             self.barbarian_reward_to_cost_coefficient = 4
-            self.tile_to_barbarian_strength_ratio = 1.5
+            self.tile_to_barbarian_strength_ratio = 1.4
             self.tile_troop_discount = 4
             self.barbarian_to_army_difficulty_constant = 70
             self.capital_migration_cooldown_ratio = 15
@@ -653,7 +672,9 @@ class Game:
             self.chaos_period_in_seconds = 900
             self.super_tile_init_time_in_hour = 0
             self.move_capital_to_upgrade_cost_ratio = 0.2
-
+            self.troop_cap_to_buildings_cap_ratio = 0.08
+            self.troop_gathering_bonus = 2
+            self.barbarian_cooldown = 100
     """
     Constant format:
     "subject": "Farm",
@@ -689,7 +710,7 @@ class Game:
         game_parameters.append({"subject": "Settler", "componentName": "Health",
                                "object": "", "level": 0, "functionName": "", "value": 1000000000})
         game_parameters.append({"subject": "Barbarian", "componentName": "Cooldown",
-                               "object": "", "level": 0, "functionName": "", "value": 30})
+                               "object": "", "level": 0, "functionName": "", "value": self.barbarian_cooldown})
 
         # Building Stats
         for bt in [Building.GOLDMINE, Building.FARM, Building.CAPITAL]:
@@ -976,7 +997,23 @@ class Game:
             }, ignore_index=True)
 
             curr_level += 1
-                        
+        
+        barbarian_stats = pd.DataFrame(columns=['Capital Level', '# Defeats to Upgrade'])            
+        (reward_gold, reward_food) = get_barbarian_reward(max_tile_level / 2)
+            
+        curr_level = 1
+        while curr_level < self.max_capital_level:
+            level = 'lv' + str(curr_level)
+            (gold_upgrade_cost, food_upgrade_cost) = get_building_upgrade_cost(
+                curr_level, Building.CAPITAL)
+
+            barbarian_stats = barbarian_stats.append({
+                'Capital Level': level,
+                '# Defeats to Upgrade': gold_upgrade_cost / reward_gold
+            }, ignore_index = True)
+
+            curr_level += 1
+
         # Export tile_stats into an excel file
         filepath = os.path.join(os.path.expanduser('~'),'Desktop')
         filename = 'treaty_raw_stats.xlsx'
@@ -992,6 +1029,7 @@ class Game:
         farm_stats.to_excel(writer, sheet_name='Farms', index=False)
         payback_stats.to_excel(writer, sheet_name='Payback Stats', index=False)
         gather_stats.to_excel(writer, sheet_name='Gather Stats', index=False)
+        barbarian_stats.to_excel(writer, sheet_name='Barbarian Stats', index=False)
 
         # Save the excel file
         writer.save()
