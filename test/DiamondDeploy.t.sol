@@ -22,6 +22,7 @@ import {Embargo} from "contracts/treaties/Embargo.sol";
 import {CollectiveDefenseFund} from "contracts/treaties/CollectiveDefenseFund.sol";
 import {SimpleOTC} from "contracts/treaties/SimpleOTC.sol";
 import {HandshakeDeal} from "contracts/treaties/HandshakeDeal.sol";
+import {LoanAgreement} from "contracts/treaties/LoanAgreement.sol";
 import {CurioERC20} from "contracts/standards/CurioERC20.sol";
 import {console} from "forge-std/console.sol";
 import {stdJson} from "forge-std/StdJson.sol";
@@ -54,6 +55,7 @@ contract DiamondDeployTest is Test {
     SimpleOTC public otcContractTemplate;
     HandshakeDeal public handshakeDealTemplate;
     MercenaryLeague public mercenaryLeagueTemplate;
+    LoanAgreement public loanAgreementTemplate;
 
     uint256 public allianceTemplateID;
     uint256 public testTreatyTemplateID;
@@ -63,6 +65,7 @@ contract DiamondDeployTest is Test {
     uint256 public otcContractTemplateID;
     uint256 public handshakeDealTemplateID;
     uint256 public mercenaryLeagueTemplateID;
+    uint256 public loanAgreementTemplateID;
 
     // Players (nations)
     address public deployer = address(0);
@@ -213,6 +216,10 @@ contract DiamondDeployTest is Test {
         mercenaryLeagueTemplate = new MercenaryLeague();
         mercenaryLeagueTemplate.init(diamond);
         mercenaryLeagueTemplateID = game.registerTreatyTemplate(address(mercenaryLeagueTemplate), "sample ABI", "sample metadata");
+        loanAgreementTemplate = new LoanAgreement();
+        loanAgreementTemplate.init(diamond);
+        loanAgreementTemplateID = game.registerTreatyTemplate(address(loanAgreementTemplate), "sample ABI", "sample metadata");
+
         console.log(">>> Treaties initialized");
 
         // Whitelist all players
