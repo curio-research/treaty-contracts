@@ -28,7 +28,7 @@ export type WorldConstantsStruct = {
   capitalLevelToEntityLevelRatio: PromiseOrValue<BigNumberish>;
   gameLengthInSeconds: PromiseOrValue<BigNumberish>;
   gameMode: PromiseOrValue<BigNumberish>;
-  maxArmyCountPerNation: PromiseOrValue<BigNumberish>;
+  innerRadiusByTileCount: PromiseOrValue<BigNumberish>;
   maxCapitalLevel: PromiseOrValue<BigNumberish>;
   maxNationCount: PromiseOrValue<BigNumberish>;
   numInitTerrainTypes: PromiseOrValue<BigNumberish>;
@@ -56,7 +56,7 @@ export type WorldConstantsStructOutput = [
   capitalLevelToEntityLevelRatio: BigNumber;
   gameLengthInSeconds: BigNumber;
   gameMode: number;
-  maxArmyCountPerNation: BigNumber;
+  innerRadiusByTileCount: BigNumber;
   maxCapitalLevel: BigNumber;
   maxNationCount: BigNumber;
   numInitTerrainTypes: BigNumber;

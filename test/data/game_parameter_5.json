@@ -4,5 +4,9 @@
     "level": 0,
     "object": "Food",
     "subject": "Troop Production",
+<<<<<<< HEAD
     "value": 16000
+=======
+    "value": 25000
+>>>>>>> develop
 }

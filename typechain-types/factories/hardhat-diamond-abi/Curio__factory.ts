@@ -385,6 +385,42 @@ const _abi = [
   {
     inputs: [
       {
+        internalType: "uint256",
+        name: "_nationID",
+        type: "uint256",
+      },
+      {
+        components: [
+          {
+            internalType: "uint256",
+            name: "x",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "y",
+            type: "uint256",
+          },
+        ],
+        internalType: "struct Position",
+        name: "_position",
+        type: "tuple",
+      },
+    ],
+    name: "giftNewArmy",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "armyID",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
         components: [
           {
             internalType: "uint256",
@@ -544,35 +580,6 @@ const _abi = [
     ],
     name: "registerTemplateShortcuts",
     outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "_address",
-        type: "address",
-      },
-      {
-        internalType: "string",
-        name: "_abiHash",
-        type: "string",
-      },
-      {
-        internalType: "string",
-        name: "_metadataLink",
-        type: "string",
-      },
-    ],
-    name: "registerTreatyTemplate",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "treatyTemplateID",
-        type: "uint256",
-      },
-    ],
     stateMutability: "nonpayable",
     type: "function",
   },
@@ -1314,6 +1321,35 @@ const _abi = [
     ],
     name: "recoverTile",
     outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "_address",
+        type: "address",
+      },
+      {
+        internalType: "string",
+        name: "_abiHash",
+        type: "string",
+      },
+      {
+        internalType: "string",
+        name: "_metadataLink",
+        type: "string",
+      },
+    ],
+    name: "registerTreatyTemplate",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "treatyTemplateID",
+        type: "uint256",
+      },
+    ],
     stateMutability: "nonpayable",
     type: "function",
   },
@@ -2249,7 +2285,7 @@ const _abi = [
           },
           {
             internalType: "uint256",
-            name: "maxArmyCountPerNation",
+            name: "innerRadiusByTileCount",
             type: "uint256",
           },
           {
@@ -2460,19 +2496,6 @@ const _abi = [
     name: "transferOwnership",
     outputs: [],
     stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "uselessFunction",
-    outputs: [
-      {
-        internalType: "string",
-        name: "",
-        type: "string",
-      },
-    ],
-    stateMutability: "pure",
     type: "function",
   },
   {

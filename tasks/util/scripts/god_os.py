@@ -4,9 +4,9 @@ from enum import Enum
 from types import LambdaType
 import numpy as np
 import json
-import pandas as pd
 from pathlib import Path
 import os
+
 
 import sys
 
@@ -696,7 +696,8 @@ class Game:
             self.capital_level_to_building_level)
         world_parameters["secondsToTrainAThousandTroops"] = int(
             self.base_troop_training_in_seconds * 1000)
-        game_parameters.append({"subject": "InnerLayer", "object": "Tile", "componentName": "Size", "level": 0, "functionName": "initializeTile", "value": 1920})
+        game_parameters.append({"subject": "InnerLayer", "object": "Tile", "componentName": "Size",
+                               "level": 0, "functionName": "initializeTile", "value": 1920})
         game_parameters.append({"subject": "Army", "componentName": "Rate", "object": "Gold", "level": 0,
                                "functionName": "gather", "value": int(get_hourly_gather_rate_per_army(Resource.GOLD) * 1000 / 3600)})
         game_parameters.append({"subject": "Army", "componentName": "Rate", "object": "Food", "level": 0,
@@ -710,7 +711,21 @@ class Game:
         game_parameters.append({"subject": "Settler", "componentName": "Health",
                                "object": "", "level": 0, "functionName": "", "value": 1000000000})
         game_parameters.append({"subject": "Barbarian", "componentName": "Cooldown",
-                               "object": "", "level": 0, "functionName": "", "value": self.barbarian_cooldown})
+                               "object": "", "level": 0, "functionName": "", "value": 30})
+        game_parameters.append({"subject": "Capital", "componentName": "Cap",
+                               "object": "Army", "level": 1, "functionName": "", "value": 2})
+        game_parameters.append({"subject": "Capital", "componentName": "Cap",
+                               "object": "Army", "level": 2, "functionName": "", "value": 3})
+        game_parameters.append({"subject": "Capital", "componentName": "Cap",
+                               "object": "Army", "level": 3, "functionName": "", "value": 4})
+        game_parameters.append({"subject": "Capital", "componentName": "Cap",
+                               "object": "Army", "level": 4, "functionName": "", "value": 5})
+        game_parameters.append({"subject": "Capital", "componentName": "Cap",
+                               "object": "Army", "level": 5, "functionName": "", "value": 6})
+        game_parameters.append({"subject": "Capital", "componentName": "Cap",
+                               "object": "Army", "level": 6, "functionName": "", "value": 7})
+        game_parameters.append({"subject": "Inner Tile", "componentName": "Level",
+                               "object": "", "level": 0, "functionName": "", "value": 10})
 
         # Building Stats
         for bt in [Building.GOLDMINE, Building.FARM, Building.CAPITAL]:

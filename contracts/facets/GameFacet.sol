@@ -18,7 +18,7 @@ contract GameFacet is UseStorage {
     uint256 private constant NULL = 0;
 
     // ----------------------------------------------------------
-    // NATION/CAPITAL
+    // GLOBAL FUNCTIONS (CAN BE CALLED BY ANY ADDRESS)
     // ----------------------------------------------------------
 
     /// @dev Link your main account and burner account
@@ -90,6 +90,39 @@ contract GameFacet is UseStorage {
         // Set last action time
         ECSLib.setUint("LastActed", nationID, block.timestamp);
     }
+
+    /**
+     * @dev Register a new treaty template for the game.
+     * @param _address deployed treaty address
+     * @param _abiHash treaty abi hash
+     * @param _metadataLink treaty metadata link
+     * @return treatyTemplateID registered treaty template entity
+     * @notice Both admin and players can call this function.
+     *         There is currently no notion of "creator" for treaty templates.
+     */
+    function registerTreatyTemplate(
+        address _address,
+        string memory _abiHash,
+        string memory _metadataLink
+    ) external returns (uint256 treatyTemplateID) {
+        // Basic checks
+        GameLib.ongoingGameCheck();
+
+        // Fetch treaty name and description
+        CurioTreaty treaty = CurioTreaty(_address);
+        string memory _name = treaty.name();
+        string memory _description = treaty.description();
+        require(!GameLib.strEq(_name, ""), "CURIO: Treaty name cannot be empty");
+        require(gs().templates[_name] == 0, "CURIO: A treaty with this name already exists, try renaming");
+
+        // Register treaty template
+        treatyTemplateID = Templates.addTreatyTemplate(_address, _name, _description, _abiHash, _metadataLink);
+        gs().templates[_name] = treatyTemplateID;
+    }
+
+    // ----------------------------------------------------------
+    // CAPITAL
+    // ----------------------------------------------------------
 
     /**
      * @dev Upgrade your capital.
@@ -296,6 +329,7 @@ contract GameFacet is UseStorage {
         // Transfer ownership of resource
         uint256 resourceID = GameLib.getResourceAt(tilePosition);
         ECSLib.setUint("Nation", resourceID, nationID);
+        ECSLib.setUint("LastHarvested", resourceID, block.timestamp);
 
         // Set last action time
         ECSLib.setUint("LastActed", nationID, block.timestamp);
@@ -328,7 +362,7 @@ contract GameFacet is UseStorage {
         // Require nations to fully recover the tile before upgrade
         address tileAddress = ECSLib.getAddress("Address", _tileID);
         CurioERC20 guardToken = GameLib.getTokenContract("Guard");
-        uint256 guardAmount = ECSLib.getUint("Amount", GameLib.getInventory(nationID, gs().templates["Guard"]));
+        uint256 guardAmount = ECSLib.getUint("Amount", GameLib.getInventory(_tileID, gs().templates["Guard"]));
         require(GameLib.getGameParameter("Tile", "Guard", "Amount", "", tileLevel) == guardAmount, "CURIO: You must recover tile before upgrading");
 
         // check if upgrade is in process
@@ -395,8 +429,8 @@ contract GameFacet is UseStorage {
 
             for (uint256 i = 0; i < resourceTemplateIDs.length; i++) {
                 CurioERC20 resourceToken = CurioERC20(ECSLib.getAddress("Address", resourceTemplateIDs[i]));
-                uint256 balance = ECSLib.getUint("Amount", GameLib.getInventory(nationID, resourceTemplateIDs[i]));
-                uint256 totalRecoverCost = GameLib.getGameParameter("Tile", ECSLib.getString("Name", resourceTemplateIDs[i]), "Cost", "Upgrade", 0) * lostGuardAmount;
+                uint256 balance = ECSLib.getUint("Amount", GameLib.getInventory(GameLib.getCapital(nationID), resourceTemplateIDs[i]));
+                uint256 totalRecoverCost = (GameLib.getGameParameter("Troop Production", ECSLib.getString("Name", resourceTemplateIDs[i]), "Cost", "", 0) * lostGuardAmount) / 1000;
                 require(balance >= totalRecoverCost, "CURIO: Insufficient balance");
 
                 resourceToken.destroyToken(capitalAddress, totalRecoverCost);
@@ -513,6 +547,30 @@ contract GameFacet is UseStorage {
 
         // Start production
         productionID = Templates.addTroopProduction(_capitalID, _templateID, _amount, (gs().worldConstants.secondsToTrainAThousandTroops * _amount) / 1000);
+
+        // Set last action time
+        ECSLib.setUint("LastActed", nationID, block.timestamp);
+    }
+
+    function stopTroopProduction(uint256 _capitalID) external {
+        // Basic checks
+        GameLib.ongoingGameCheck();
+        GameLib.validEntityCheck(_capitalID);
+        uint256 nationID = ECSLib.getUint("Nation", _capitalID);
+
+        // Permission checks
+        if (msg.sender != address(this)) {
+            uint256 callerID = GameLib.getEntityByAddress(msg.sender);
+            GameLib.nationDelegationCheck("StopTroopProduction", nationID, callerID, _capitalID);
+            GameLib.treatyApprovalCheck("StopTroopProduction", nationID, abi.encode(callerID, _capitalID));
+        }
+
+        // Find production
+        uint256 productionID = GameLib.getBuildingProduction(_capitalID);
+        require(productionID != NULL, "CURIO: No ongoing production");
+
+        // Delete production
+        ECSLib.removeEntity(productionID);
 
         // Set last action time
         ECSLib.setUint("LastActed", nationID, block.timestamp);
@@ -648,14 +706,20 @@ contract GameFacet is UseStorage {
         GameLib.capitalSackRecoveryCheck(_capitalID);
 
         // Check army cap
-        require(GameLib.getNationArmies(nationID).length < gs().worldConstants.maxArmyCountPerNation, "CURIO: Max number of armies reached");
+        require(GameLib.getNationArmies(nationID).length < GameLib.getGameParameter("Capital", "Army", "Cap", "", ECSLib.getUint("Level", _capitalID)), "CURIO: Max number of armies reached");
+
+        // Check total troop amount
+        uint256 totalTroopAmount = GameLib.sum(_amounts);
+        require(
+            totalTroopAmount <= GameLib.getGameParameter("Army", "Troop", "Amount", "", ECSLib.getUint("Level", _capitalID)), // STYLING: DO NOT REMOVE
+            "CURIO: This exceeds the max army size limit. Try forming with less troops"
+        );
 
         // Add army
         address armyAddress = address(new CurioWallet(address(this)));
         armyID = Templates.addArmy(2, 1, 2, gs().worldConstants.tileWidth, nationID, midPosition, tilePosition, armyAddress);
 
         // Collect army traits from individual troop types & transfer troops from nation
-        uint256 load = 0; // sum
         address capitalAddress = ECSLib.getAddress("Address", _capitalID);
 
         require(_templateIDs.length == _amounts.length, "CURIO: Input lengths do not match");
@@ -664,13 +728,11 @@ contract GameFacet is UseStorage {
         // Transfer troops from capital to army
         for (uint256 i = 0; i < _templateIDs.length; i++) {
             CurioERC20 troopToken = CurioERC20(ECSLib.getAddress("Address", _templateIDs[i]));
-
-            load += ECSLib.getUint("Load", _templateIDs[i]) * _amounts[i];
             troopToken.transferFrom(capitalAddress, armyAddress, _amounts[i]);
         }
 
         // Edit army traits
-        ECSLib.setUint("Load", armyID, load);
+        ECSLib.setUint("Load", armyID, (GameLib.getGameParameter("Troop", "Resource", "Load", "", 0) * totalTroopAmount) / 1000);
 
         // Set last action time
         ECSLib.setUint("LastActed", nationID, block.timestamp);

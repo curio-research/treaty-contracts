@@ -1,8 +1,15 @@
 {
     "componentName": "Amount",
     "functionName": "",
+<<<<<<< HEAD
     "level": 1,
     "object": "Guard",
     "subject": "Tile",
     "value": 1801
+=======
+    "level": 9,
+    "object": "Guard",
+    "subject": "Tile",
+    "value": 296
+>>>>>>> develop
 }

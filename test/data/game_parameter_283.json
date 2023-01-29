@@ -1,8 +1,15 @@
 {
     "componentName": "Load",
     "functionName": "",
+<<<<<<< HEAD
     "level": 19,
     "object": "Gold",
     "subject": "Farm",
     "value": 0
+=======
+    "level": 0,
+    "object": "Troop",
+    "subject": "Capital",
+    "value": 999999999
+>>>>>>> develop
 }

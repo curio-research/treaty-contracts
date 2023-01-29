@@ -1,8 +1,14 @@
 {
-    "componentName": "Yield",
+    "componentName": "Cap",
     "functionName": "",
     "level": 1,
+<<<<<<< HEAD
     "object": "Gold",
     "subject": "Goldmine",
     "value": 1433
+=======
+    "object": "Army",
+    "subject": "Capital",
+    "value": 2
+>>>>>>> develop
 }

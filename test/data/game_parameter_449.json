@@ -1,8 +1,17 @@
 {
+<<<<<<< HEAD
     "componentName": "LastRecovered",
     "functionName": "",
     "level": 21,
     "object": "",
     "subject": "SuperTile",
     "value": 0
+=======
+    "componentName": "Cooldown",
+    "functionName": "Upgrade",
+    "level": 8,
+    "object": "",
+    "subject": "Tile",
+    "value": 128
+>>>>>>> develop
 }

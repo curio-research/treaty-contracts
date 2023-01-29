@@ -1,8 +1,15 @@
 {
     "componentName": "Cost",
     "functionName": "Upgrade",
+<<<<<<< HEAD
     "level": 5,
     "object": "Gold",
     "subject": "Goldmine",
     "value": 4038821
+=======
+    "level": 3,
+    "object": "Gold",
+    "subject": "Goldmine",
+    "value": 1519075
+>>>>>>> develop
 }

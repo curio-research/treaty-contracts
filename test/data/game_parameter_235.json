@@ -1,8 +1,17 @@
 {
+<<<<<<< HEAD
     "componentName": "Load",
     "functionName": "",
     "level": 12,
     "object": "Food",
     "subject": "Farm",
     "value": 114718333
+=======
+    "componentName": "Cooldown",
+    "functionName": "Upgrade",
+    "level": 12,
+    "object": "",
+    "subject": "Farm",
+    "value": 1220
+>>>>>>> develop
 }

@@ -1,8 +1,17 @@
 {
+<<<<<<< HEAD
     "componentName": "Reward",
     "functionName": "",
     "level": 19,
     "object": "Gold",
     "subject": "Barbarian",
     "value": 18952849174
+=======
+    "componentName": "Amount",
+    "functionName": "",
+    "level": 7,
+    "object": "Guard",
+    "subject": "Tile",
+    "value": 221
+>>>>>>> develop
 }

@@ -1,3 +1,4 @@
+import { putObject } from '../../api/api';
 import { ContractReceipt, ContractTransaction } from '@ethersproject/contracts';
 import { Signer, Contract } from 'ethers';
 import { FactoryOptions, HardhatRuntimeEnvironment } from 'hardhat/types';
@@ -14,7 +15,6 @@ import { encodeTileMap } from './mapHelper';
 import GAME_PARAMETERS from '../game_parameters.json';
 import chalk from 'chalk';
 import { Curio } from '../../typechain-types/hardhat-diamond-abi/Curio';
-import pinataSDK from '@pinata/sdk';
 
 // deploy proxy used in hre
 export const deployProxy = async <C extends Contract>(contractName: string, signer: Signer, hre: HardhatRuntimeEnvironment, contractArgs: unknown[], libs?: FactoryOptions['libraries']): Promise<C> => {
@@ -64,41 +64,28 @@ export const saveMapToLocal = async (tileMap: any) => {
   console.log(`✦ Map saved locally at: ${mapPath}`);
 };
 
-export const uploadAbiToIpfs = async (hre: HardhatRuntimeEnvironment, contractName: string): Promise<string> => {
-  const pinata = pinataSDK(process.env.PINATA_API_KEY!, process.env.PINATA_API_SECRET!);
+export const uploadABI = async (hre: HardhatRuntimeEnvironment, contractName: string): Promise<string> => {
   try {
-    await pinata.testAuthentication();
     const abi = (await hre.artifacts.readArtifact(contractName)).abi;
-    const response = await pinata.pinJSONToIPFS(abi);
-    return response.IpfsHash;
+
+    const objectId = await putObject(JSON.stringify(abi));
+
+    return objectId;
   } catch (error) {
-    console.log(chalk.bgRed('✦ Pinata error: ' + error));
+    console.log(chalk.bgRed('✦ Upload ABI error: ' + error));
     return '';
   }
 };
 
-export const uploadToIpfs = async (content: any): Promise<string> => {
-  const pinata = pinataSDK(process.env.PINATA_API_KEY!, process.env.PINATA_API_SECRET!);
-  try {
-    const response = await pinata.pinJSONToIPFS(content);
-    return response.IpfsHash;
-  } catch (error) {
-    console.log(chalk.bgRed('✦ Pinata error: ' + error));
-    return '';
-  }
-};
-
-// Retrieve at https://gateway.pinata.cloud/ipfs/<hash>
 export const deployTreatyTemplate = async (name: string, admin: Signer, hre: HardhatRuntimeEnvironment, diamond: Curio, gasLimit: number) => {
-  const args = [diamond.address];
-
   // Deploy treaty template
   await sleep(50);
-  const treaty = await deployProxy<any>(name, admin, hre, args);
+  const treaty = await deployProxy<any>(name, admin, hre, []);
+  treaty.init(diamond.address);
 
-  // Upload ABI and metadata to IPFS
-  const abiHash = await uploadAbiToIpfs(hre, name);
-  const metadataUrl = await uploadToIpfs(treatyDescriptions[name] || {});
+  // Upload contract ABI and metadata (contract descriptions)
+  const abiHash = await uploadABI(hre, name);
+  const metadataUrl = await putObject(JSON.stringify(treatyDescriptions[name] || {}));
 
   // Register treaty template
   await sleep(50);
@@ -145,6 +132,7 @@ export const initializeGame = async (hre: HardhatRuntimeEnvironment, worldConsta
     'RecoverTile',
     'DisownTile',
     'StartTroopProduction',
+    'StopTroopProduction',
     'EndTroopProduction',
     'Move',
     'OrganizeArmy',
