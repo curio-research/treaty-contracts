@@ -1,8 +1,8 @@
 {
-    "componentName": "Cost",
-    "functionName": "Upgrade",
-    "level": 13,
-    "object": "Gold",
+    "componentName": "Cooldown",
+    "functionName": "Recover",
+    "level": 8,
+    "object": "",
     "subject": "Tile",
-    "value": 8568209
+    "value": 5773
 }

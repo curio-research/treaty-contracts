@@ -1,8 +1,8 @@
 {
-    "componentName": "Cost",
-    "functionName": "Upgrade",
-    "level": 5,
+    "componentName": "Reward",
+    "functionName": "",
+    "level": 21,
     "object": "Food",
-    "subject": "Tile",
-    "value": 84002927
+    "subject": "Barbarian",
+    "value": 30862628
 }

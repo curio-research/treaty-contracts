@@ -1,8 +1,8 @@
 {
-    "componentName": "Amount",
-    "functionName": "",
-    "level": 5,
-    "object": "Troop",
-    "subject": "Army",
-    "value": 18087
+    "componentName": "Cooldown",
+    "functionName": "Upgrade",
+    "level": 17,
+    "object": "",
+    "subject": "Tile",
+    "value": 15234
 }

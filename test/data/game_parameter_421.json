@@ -1,8 +1,8 @@
 {
-    "componentName": "Reward",
-    "functionName": "",
-    "level": 9,
-    "object": "Food",
-    "subject": "Barbarian",
-    "value": 9484215
+    "componentName": "Cooldown",
+    "functionName": "Chaos",
+    "level": 7,
+    "object": "",
+    "subject": "Capital",
+    "value": 900
 }
