@@ -15,4 +15,5 @@ tasks/signers
 *whitelist.json
 
 .env
+.env.pnm
 /curio-vault/

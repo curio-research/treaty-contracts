@@ -15,6 +15,7 @@ import {TestTreaty} from "contracts/treaties/TestTreaty.sol";
 import {CustomTreaty} from "test/CustomTreaty.sol";
 import {CurioWallet} from "contracts/standards/CurioWallet.sol";
 import {Position} from "contracts/libraries/Types.sol";
+import {LoanAgreement} from "contracts/treaties/LoanAgreement.sol";
 import {console} from "forge-std/console.sol";
 
 contract TreatyTest is Test, DiamondDeployTest {
@@ -858,74 +859,62 @@ contract TreatyTest is Test, DiamondDeployTest {
         - p2 takes the loan
         - p2 repays the loan
          */
-
         uint256 time = block.timestamp + 1000;
         vm.warp(time);
-
         // assigns tokens to p1 and p2
         vm.startPrank(deployer);
         admin.dripToken(nation1CapitalAddr, "Gold", 1000);
         admin.dripToken(nation1CapitalAddr, "Food", 1000);
-
         admin.dripToken(nation2CapitalAddr, "Gold", 1000);
         admin.dripToken(nation2CapitalAddr, "Food", 1000);
         vm.stopPrank();
-
         // Player1 deploys loanAgreement
         vm.startPrank(player1);
         LoanAgreement la = LoanAgreement(game.deployTreaty(nation1ID, "LoanAgreement"));
-        
         // Player1 places two loans: id => 1, id => 2, gold as collateral token, food as loan token
         la.createLoan("Gold", 100, "Food", 100, 10, 3600);
         la.createLoan("Gold", 100, "Food", 100, 10, 3600);
         vm.stopPrank();
-
         // Player2 borrows the loan
         vm.startPrank(player2);
-        la.borrowLoan(1);
-        la.borrowLoan(2);
+        la.takeLoan(1);
+        la.takeLoan(2);
         vm.stopPrank();
-
         // Verify that treaty gets the collateral, lender loses the loan, and borrower gets the loan
         assertEq(goldToken.balanceOf(address(la)), 200);
         assertEq(foodToken.balanceOf(nation1CapitalAddr), 1000 - 200);
         assertEq(foodToken.balanceOf(nation2CapitalAddr), 1000 + 200);
-
         // Player1 fails to retrieve collateral before due;
         vm.startPrank(player1);
         time += 3600;
         vm.warp(time);
         vm.expectRevert("Loan: Loan is not due yet");
-        la.retrieveCollateral(1);
-
+        la.liquidateCollateral(1);
         // Player2 pays back loan 1 (but not loan 2); p1 should earn 10 food as interest
         time += 1;
         vm.warp(time);
-        la.payBackLoan(1);
+        la.payLoan(1);
         vm.stopPrank();
         // Player2 gets his collateral back and loses principle + interest
         assertEq(goldToken.balanceOf(address(la)), 100);
         assertEq(goldToken.balanceOf(nation2CapitalAddr), 900);
         // 1200 - 100 (principle) - 10 (interest)
         assertEq(foodToken.balanceOf(nation2CapitalAddr), 1090);
-
         // Since Player2 forgets to pay back loan 2 in time, p1 retrieves collateral
         vm.startPrank(player1);
-        la.retrieveCollateral(2);
+        la.liquidateCollateral(2);
         // Player 1 now has 1000 + 100 food; treaty has none
-        assertEq(food.balanceOf(nation1CapitalAddr), 1000 + 100);
-        assertEq(food.balanceOf(address(la), 0));
-
-        // Player 1 tries canceling loan2 but it doesn't work (bc collateral retrieved)
-        vm.expectRevert("Loan: Loan no longer exists");
+        assertEq(foodToken.balanceOf(nation1CapitalAddr), 1000 + 100);
+        assertEq(foodToken.balanceOf(address(la)), 0);
+        // Player 1 tries canceling loan2 but it doesn’t work (bc collateral retrieved)
+        vm.expectRevert("Loan: Loan does not exist");
         la.cancelLoan(2);
         vm.stopPrank();
-        // Player 2 tries repaying loan2 but it doesn't work (bc collateral retrieved)
-        vm.startPrank(player2)
-        vm.expectRevert("Loan: Loan no longer exists");
-        la.payBackLoan(2);
-
-        // Player 2 creates a loan and cancel it immediately
-        
+        // Player 2 tries repaying loan2 but it doesn’t work (bc collateral retrieved)
+        vm.startPrank(player2);
+        vm.expectRevert("Loan: Loan does not exist");
+        la.payLoan(2);
+        vm.stopPrank();
+        // Player 2 creates a loan and
     }
 }

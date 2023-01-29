@@ -219,7 +219,6 @@ contract DiamondDeployTest is Test {
         loanAgreementTemplate = new LoanAgreement();
         loanAgreementTemplate.init(diamond);
         loanAgreementTemplateID = game.registerTreatyTemplate(address(loanAgreementTemplate), "sample ABI", "sample metadata");
-
         console.log(">>> Treaties initialized");
 
         // Whitelist all players
