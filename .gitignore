@@ -15,6 +15,7 @@ tasks/signers
 *whitelist.json
 
 .env
+.env.pnm
 
 #PNM files
 crashes
