@@ -1,8 +1,8 @@
 {
-    "componentName": "Cost",
-    "functionName": "Upgrade",
-    "level": 13,
-    "object": "Gold",
-    "subject": "Tile",
-    "value": 428130
+    "componentName": "LastRecovered",
+    "functionName": "",
+    "level": 21,
+    "object": "",
+    "subject": "SuperTile",
+    "value": 0
 }

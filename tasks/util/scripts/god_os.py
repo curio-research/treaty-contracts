@@ -127,7 +127,7 @@ def get_building_base_hourly_yield(building_type: Building) -> np.array:
     food_cost_per_troop = game_instance.resource_weight_heavy
     total_goldcost = total_troop * gold_cost_per_troop
     total_foodcost = total_troop * food_cost_per_troop
-    total_seconds = game_instance.new_player_action_in_seconds * \
+    total_seconds = game_instance.player_action_in_seconds * \
         (1 + game_instance.tile_to_barbarian_strength_ratio)
 
     # Food Mint: Harvest (heavy), Food Burn: Troop (heavy); also need to consider density level
@@ -166,8 +166,7 @@ def get_capital_level_to_building_level() -> int:
     return game_instance.capital_level_to_building_level
 
 def get_PvE_troop_base_count() -> int:
-    return game_instance.new_player_action_in_seconds * game_instance.base_troop_training_in_seconds
-
+    return game_instance.player_action_in_seconds * game_instance.base_troop_training_in_seconds
 
 def get_barbarian_count_by_level(level: int) -> int:
     """
@@ -192,9 +191,9 @@ def get_barbarian_reward(level: int) -> np.array:
     gold_reward = total_goldcost * game_instance.barbarian_reward_to_cost_coefficient * fast_exponential_curve(
         game_instance.max_capital_level * game_instance.capital_level_to_building_level)(level) / fast_exponential_curve(9)(1) * \
             (game_instance.resource_weight_high/game_instance.resource_weight_light)
-    # food burn for troop is heavy while food mint for barbarians is low
+    # food burn for troop is super heavy while food mint for barbarians is low
     food_reward = total_foodcost * game_instance.barbarian_reward_to_cost_coefficient * \
-        (game_instance.resource_weight_light/game_instance.resource_weight_heavy)
+        (game_instance.resource_weight_low/game_instance.resource_weight_heavy)
     return np.array([gold_reward, food_reward])
 
 
@@ -333,15 +332,14 @@ def payback_period_curve_in_hour(max_level: int) -> LambdaType:
 
 def gold_payback_period_curve_in_hour(max_level: int) -> LambdaType:
     """
-    Growth: very fast exponential
-    Note: sum from f(1) to f(9) is 19.757. Leap of faith: assume this is reasonable for 72 hr gameplay
+    Growth: normal exponential
     Note: max_level not only affects x value but also total gameplay time -> need to make sure sum of y(x) is below 1/3 of all upgrades
     Gist: the function makes sure upgrade from (n_max - 1) to n_max is reasonable 
     """
     upgrade_hour_sum = 0
     # only need to tune here; just look at a chart while tuning; don't need to care about max_level or the sum
     def payback_curve(fraction): return lambda level: (
-        (math.e)**((level / max_level * 9)/4) - 0.9) * 3 / fraction
+        (math.e)**((level / max_level * 5)/4) - 0.9) * 3 / fraction
     for level in range(0, max_level):
         upgrade_hour_sum += payback_curve(1)(level)
     # make sure that upgrades for all levels account for only a certain fraction of total playtime
@@ -421,7 +419,7 @@ class Game:
     Building levels that each capital level upgrade unlocks. NOTE: same constant is used for barbarians & tiles
     """
 
-    new_player_action_in_seconds = 100
+    player_action_in_seconds = 100
     """
     time for new player to train enough troops to defeat lv1 barbarians
     note: this is already kinda fast, but might still feel slow. If so, we can initialize some resources
@@ -454,11 +452,6 @@ class Game:
     Example: player capital is lv3, then its army should equal lv7 - 9 barbarians (avg is 8) if constant is 100
     """
 
-    gather_rate_to_resource_rate = 40
-    """
-    Gather rate should be much faster than harvest yield rate
-    """
-
     capital_migration_cooldown_ratio = 10
     """
     Determine the cooldown time to migrate a capital. It's x% relative to the upgrade payback period
@@ -486,7 +479,7 @@ class Game:
     #   Burn: Build (heavy), Troop (light)
     # Food:
     #   Mint: Harvest (heavy), Gather (medium), Barbarians (low)
-    #   Burn: Build (low), Troop (heavy)
+    #   Burn: Build (low), Troop (super heavy)
 
     (resource_weight_light, resource_weight_low, resource_weight_medium,
      resource_weight_high, resource_weight_heavy) = (1, 3, 4, 5, 16)
@@ -503,17 +496,16 @@ class Game:
             self.player_login_interval_in_minutes = 15
             self.max_capital_level = 5
             self.capital_level_to_building_level = 3
-            self.new_player_action_in_seconds = 100
+            self.player_action_in_seconds = 100
             self.base_troop_training_in_seconds = 0.4
             self.barbarian_reward_to_cost_coefficient = 4
             self.tile_to_barbarian_strength_ratio = 1.5
             self.tile_troop_discount = 0.5
             self.barbarian_to_army_difficulty_constant = 60
-            self.gather_rate_to_resource_rate = 50
             self.capital_migration_cooldown_ratio = 15
             self.building_upgrade_cooldown_ratio = 10
-            (self.resource_weight_light, self.resource_weight_low, self.resource_weight_medium,
-             self.resource_weight_high, self.resource_weight_heavy) = (1, 3, 4, 5, 16)
+            (resource_weight_light, resource_weight_low, resource_weight_medium,
+            resource_weight_high, resource_weight_heavy) = (1, 3, 4, 5, 16)
             self.chaos_period_in_seconds = 120
             self.super_tile_init_time_in_hour = 0
             self.move_capital_to_upgrade_cost_ratio = 0.2
@@ -528,17 +520,16 @@ class Game:
             self.player_login_interval_in_minutes = 15
             self.max_capital_level = 5
             self.capital_level_to_building_level = 3
-            self.new_player_action_in_seconds = 100
+            self.player_action_in_seconds = 100
             self.base_troop_training_in_seconds = 0.4
             self.barbarian_reward_to_cost_coefficient = 4
             self.tile_to_barbarian_strength_ratio = 1.5
             self.tile_troop_discount = 0.5
             self.barbarian_to_army_difficulty_constant = 40
-            self.gather_rate_to_resource_rate = 50
             self.capital_migration_cooldown_ratio = 15
             self.building_upgrade_cooldown_ratio = 15
-            (self.resource_weight_light, self.resource_weight_low, self.resource_weight_medium,
-             self.resource_weight_high, self.resource_weight_heavy) = (1, 3, 4, 5, 16)
+            (resource_weight_light, resource_weight_low, resource_weight_medium,
+            resource_weight_high, resource_weight_heavy) = (1, 3, 4, 5, 16)
             self.chaos_period_in_seconds = 120
             self.super_tile_init_time_in_hour = 0
             self.move_capital_to_upgrade_cost_ratio = 0.2
@@ -553,17 +544,16 @@ class Game:
             self.player_login_interval_in_minutes = 15
             self.max_capital_level = 5
             self.capital_level_to_building_level = 3
-            self.new_player_action_in_seconds = 100
+            self.player_action_in_seconds = 100
             self.base_troop_training_in_seconds = 0.4
             self.barbarian_reward_to_cost_coefficient = 4
             self.tile_to_barbarian_strength_ratio = 1.5
             self.tile_troop_discount = 0.5
             self.barbarian_to_army_difficulty_constant = 40
-            self.gather_rate_to_resource_rate = 50
             self.capital_migration_cooldown_ratio = 15
             self.building_upgrade_cooldown_ratio = 15
-            (self.resource_weight_light, self.resource_weight_low, self.resource_weight_medium,
-             self.resource_weight_high, self.resource_weight_heavy) = (1, 3, 4, 5, 16)
+            (resource_weight_light, resource_weight_low, resource_weight_medium,
+            resource_weight_high, resource_weight_heavy) = (1, 3, 4, 5, 16)
             self.chaos_period_in_seconds = 120
             self.super_tile_init_time_in_hour = 0
             self.move_capital_to_upgrade_cost_ratio = 0.2
@@ -578,17 +568,16 @@ class Game:
             self.player_login_interval_in_minutes = 80
             self.max_capital_level = 6
             self.capital_level_to_building_level = 3
-            self.new_player_action_in_seconds = 100
+            self.player_action_in_seconds = 100
             self.base_troop_training_in_seconds = 0.4
             self.barbarian_reward_to_cost_coefficient = 4
             self.tile_to_barbarian_strength_ratio = 1.5
             self.tile_troop_discount = 0.5
             self.barbarian_to_army_difficulty_constant = 40
-            self.gather_rate_to_resource_rate = 50
             self.capital_migration_cooldown_ratio = 15
             self.building_upgrade_cooldown_ratio = 15
-            (self.resource_weight_light, self.resource_weight_low, self.resource_weight_medium,
-             self.resource_weight_high, self.resource_weight_heavy) = (1, 3, 4, 5, 16)
+            (resource_weight_light, resource_weight_low, resource_weight_medium,
+            resource_weight_high, resource_weight_heavy) = (1, 3, 4, 5, 16)
             self.chaos_period_in_seconds = 900
             self.super_tile_init_time_in_hour = 0
             self.move_capital_to_upgrade_cost_ratio = 0.2
@@ -603,17 +592,16 @@ class Game:
             self.player_login_interval_in_minutes = 15
             self.max_capital_level = 5
             self.capital_level_to_building_level = 3
-            self.new_player_action_in_seconds = 100
+            self.player_action_in_seconds = 100
             self.base_troop_training_in_seconds = 0.4
             self.barbarian_reward_to_cost_coefficient = 4
             self.tile_to_barbarian_strength_ratio = 1.5
             self.tile_troop_discount = 0.5
             self.barbarian_to_army_difficulty_constant = 40
-            self.gather_rate_to_resource_rate = 50
             self.capital_migration_cooldown_ratio = 15
             self.building_upgrade_cooldown_ratio = 15
-            (self.resource_weight_light, self.resource_weight_low, self.resource_weight_medium,
-             self.resource_weight_high, self.resource_weight_heavy) = (1, 3, 4, 5, 16)
+            (resource_weight_light, resource_weight_low, resource_weight_medium,
+            resource_weight_high, resource_weight_heavy) = (1, 3, 4, 5, 16)
             self.chaos_period_in_seconds = 120
             self.super_tile_init_time_in_hour = 0
             self.move_capital_to_upgrade_cost_ratio = 0.2
@@ -628,42 +616,40 @@ class Game:
             self.player_login_interval_in_minutes = 60
             self.max_capital_level = 6
             self.capital_level_to_building_level = 3
-            self.new_player_action_in_seconds = 100
+            self.player_action_in_seconds = 100
             self.base_troop_training_in_seconds = 0.5
             self.barbarian_reward_to_cost_coefficient = 4
             self.tile_to_barbarian_strength_ratio = 1.5
             self.tile_troop_discount = 4
             self.barbarian_to_army_difficulty_constant = 40
-            self.gather_rate_to_resource_rate = 10
             self.capital_migration_cooldown_ratio = 15
             self.building_upgrade_cooldown_ratio = 15
-            (self.resource_weight_light, self.resource_weight_low, self.resource_weight_medium,
-             self.resource_weight_high, self.resource_weight_heavy) = (1, 3, 4, 5, 25)
+            (resource_weight_light, resource_weight_low, resource_weight_medium,
+            resource_weight_high, resource_weight_heavy) = (1, 3, 4, 5, 16)
             self.chaos_period_in_seconds = 900
             self.super_tile_init_time_in_hour = 0
             self.move_capital_to_upgrade_cost_ratio = 0.2
         if mode == GameMode.PUBLIC_LAUNCH:
-            self.total_tile_count = 17*17
-            self.expected_player_count = 9
+            self.total_tile_count = 50 * 50
+            self.expected_player_count = 100
             self.init_player_tile_count = 3
-            self.expected_play_time_in_hour = 60
-            self.upgrade_time_to_expected_play_time_ratio = 1/2
+            self.expected_play_time_in_hour = 120
+            self.upgrade_time_to_expected_play_time_ratio = 2/5
             self.init_player_goldmine_count = 1
             self.init_player_farm_count = 1
-            self.player_login_interval_in_minutes = 60
-            self.max_capital_level = 6
+            self.player_login_interval_in_minutes = 100
+            self.max_capital_level = 7
             self.capital_level_to_building_level = 3
-            self.new_player_action_in_seconds = 100
-            self.base_troop_training_in_seconds = 0.5
+            self.player_action_in_seconds = 1500
+            self.base_troop_training_in_seconds = 1
             self.barbarian_reward_to_cost_coefficient = 4
             self.tile_to_barbarian_strength_ratio = 1.5
             self.tile_troop_discount = 4
-            self.barbarian_to_army_difficulty_constant = 40
-            self.gather_rate_to_resource_rate = 10
+            self.barbarian_to_army_difficulty_constant = 70
             self.capital_migration_cooldown_ratio = 15
             self.building_upgrade_cooldown_ratio = 15
-            (self.resource_weight_light, self.resource_weight_low, self.resource_weight_medium,
-             self.resource_weight_high, self.resource_weight_heavy) = (1, 3, 4, 5, 25)
+            (resource_weight_light, resource_weight_low, resource_weight_medium,
+            resource_weight_high, resource_weight_heavy) = (1, 3, 4, 5, 16)
             self.chaos_period_in_seconds = 900
             self.super_tile_init_time_in_hour = 0
             self.move_capital_to_upgrade_cost_ratio = 0.2
@@ -957,7 +943,7 @@ class Game:
 
             curr_level += 1
         
-        gather_stats = pd.DataFrame(columns=['Capital Level', 'Army Size', '# Gatherings to Upgrade', '# (hr) Maximal Troop Production'])
+        gather_stats = pd.DataFrame(columns=['Capital Level', 'Army Size', '# Gatherings to Upgrade', 'Gold Gathering Time (s)', 'Food Gathering Time (s)','# (hr) Maximal Troop Production'])
 
         curr_level = 1
         tile_count_limit = 3
@@ -977,10 +963,15 @@ class Game:
                     get_capital_level_to_building_level() * curr_level, Building.FARM)
             projected_max_food_hourly_yield = projected_farm_count * food_yield
 
+            gold_gathering_rate = get_hourly_gather_rate_per_army(Resource.GOLD)
+            food_gathering_rate = get_hourly_gather_rate_per_army(Resource.FOOD)
+
             gather_stats = gather_stats.append({
                 'Capital Level': level,
                 'Army Size': army_size,
                 '# Gatherings to Upgrade': times_gathering_to_upgrade,
+                'Gold Gathering Time (s)': gathering_capacity / gold_gathering_rate * 3600,
+                'Food Gathering Time (s)': gathering_capacity / food_gathering_rate * 3600,
                 '# (hr) Maximal Troop Production': projected_max_food_hourly_yield / game_instance.resource_weight_heavy
             }, ignore_index=True)
 
@@ -1007,6 +998,6 @@ class Game:
         print('GodOS: generated and exported parameters into excel')
 
 # change here when switching game mode
-game_instance = Game(GameMode.INTERNAL_PLAYTEST)
+game_instance = Game(GameMode.PUBLIC_LAUNCH)
 game_instance.export_json_parameters()
 game_instance.export_excel_parameters()

@@ -1,8 +1,8 @@
 {
-    "componentName": "Cooldown",
-    "functionName": "Recover",
-    "level": 11,
-    "object": "",
-    "subject": "Tile",
-    "value": 191
+    "componentName": "Reward",
+    "functionName": "",
+    "level": 18,
+    "object": "Food",
+    "subject": "Barbarian",
+    "value": 599222432
 }

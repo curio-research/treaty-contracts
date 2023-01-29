@@ -207,7 +207,7 @@ library GameLib {
 
         // Gather
         uint256 gatherAmount = (block.timestamp - ECSLib.getUint("InitTimestamp", gatherID)) * getGameParameter("Army", ECSLib.getString("Name", templateID), "Rate", "gather", 0);
-        uint256 gatherLoad = (getGameParameter("Troop", "Resource", "Load", "", 0) * getArmyTroopCount(_armyID)) / 1000;
+        uint256 gatherLoad = (getGameParameter("Troop", "Resource", "Load", "", 0) * getArmyTroopCount(_armyID));
         uint256 armyInventoryBalance = resourceToken.balanceOf(armyAddress);
         resourceToken.dripToken(armyAddress, min(gatherAmount, gatherLoad - armyInventoryBalance));
 

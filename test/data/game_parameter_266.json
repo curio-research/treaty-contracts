@@ -1,8 +1,8 @@
 {
     "componentName": "Cooldown",
     "functionName": "Upgrade",
-    "level": 1,
+    "level": 16,
     "object": "",
-    "subject": "Capital",
-    "value": 678
+    "subject": "Farm",
+    "value": 2147
 }

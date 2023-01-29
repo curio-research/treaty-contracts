@@ -1,5 +1,5 @@
 {
     "capitalLevelToEntityLevelRatio": 3,
-    "maxCapitalLevel": 6,
-    "secondsToTrainAThousandTroops": 500
+    "maxCapitalLevel": 7,
+    "secondsToTrainAThousandTroops": 1000
 }

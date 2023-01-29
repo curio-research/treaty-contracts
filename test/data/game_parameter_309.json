@@ -1,8 +1,8 @@
 {
-    "componentName": "Yield",
-    "functionName": "",
-    "level": 5,
-    "object": "Food",
+    "componentName": "Cooldown",
+    "functionName": "Move",
+    "level": 1,
+    "object": "",
     "subject": "Capital",
-    "value": 12248
+    "value": 771
 }
