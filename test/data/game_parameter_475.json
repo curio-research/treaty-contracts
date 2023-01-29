@@ -2,7 +2,7 @@
     "componentName": "Cost",
     "functionName": "Upgrade",
     "level": 4,
-    "object": "Food",
+    "object": "Gold",
     "subject": "Tile",
-    "value": 79014166
+    "value": 4938385
 }

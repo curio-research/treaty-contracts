@@ -269,7 +269,7 @@ def get_building_upgrade_cost(level: int, building_type: Building) -> np.array:
         #     game_instance.max_capital_level * game_instance.capital_level_to_building_level)(level + game_instance.capital_level_to_building_level)
 
         # FIXME: tax_gold hardcoded to * 10
-        return np.array([goldmine_goldcost + farm_goldcost + 10 * tax_gold, goldmine_foodcost + farm_foodcost])
+        return np.array([goldmine_goldcost + farm_goldcost + game_instance.capital_gold_tax_factor * tax_gold, goldmine_foodcost + farm_foodcost])
 
 def get_move_capital_cost(level: int) -> np.array:
     (gold_upgrade_cost, food_upgrade_cost) = get_building_upgrade_cost(
@@ -300,7 +300,7 @@ def get_tile_upgrade_cooldown_in_second(level: int) -> int:
 
 
 def expected_gold_density() -> float:
-    return 0.2
+    return 0.25
 
 
 def expected_farm_density() -> float:
@@ -329,7 +329,7 @@ def payback_period_curve_in_hour(max_level: int) -> LambdaType:
 
 def gold_payback_period_curve_in_hour(max_level: int) -> LambdaType:
     """
-    Growth: very fast exponential
+    Growth: slow exponential
     Note: sum from f(1) to f(9) is 19.757. Leap of faith: assume this is reasonable for 72 hr gameplay
     Note: max_level not only affects x value but also total gameplay time -> need to make sure sum of y(x) is below 1/3 of all upgrades
     Gist: the function makes sure upgrade from (n_max - 1) to n_max is reasonable 
@@ -337,7 +337,7 @@ def gold_payback_period_curve_in_hour(max_level: int) -> LambdaType:
     upgrade_hour_sum = 0
     # only need to tune here; just look at a chart while tuning; don't need to care about max_level or the sum
     def payback_curve(fraction): return lambda level: (
-        (math.e)**((level / max_level * 9)/4) - 0.9) * 3 / fraction
+        (math.e)**((level / max_level * 9)/7) - 0.9) * 3 / fraction
     for level in range(0, max_level):
         upgrade_hour_sum += payback_curve(1)(level)
     # make sure that upgrades for all levels account for only a certain fraction of total playtime
@@ -474,6 +474,7 @@ class Game:
     troop_cap_to_buildings_cap_ratio = 0.3
     troop_gathering_bonus = 10
     barbarian_cooldown = 100
+    capital_gold_tax_factor = 30
 
     # Gold:
     #   Mint: Harvest (low), Gather (medium), Barbarians (high)
@@ -513,6 +514,7 @@ class Game:
             self.troop_cap_to_buildings_cap_ratio = 0.3
             self.troop_gathering_bonus = 10
             self.barbarian_cooldown = 100
+            self.capital_gold_tax_factor = 30
         if mode == GameMode.TEN_PLAYER_SHORT_TEST:
             self.total_tile_count = 15*15
             self.expected_player_count = 10
@@ -540,6 +542,7 @@ class Game:
             self.troop_cap_to_buildings_cap_ratio = 0.3
             self.troop_gathering_bonus = 10
             self.barbarian_cooldown = 100
+            self.capital_gold_tax_factor = 30
         if mode == GameMode.FIVE_PLAYER_SHORT_TEST:
             self.total_tile_count = 12*12
             self.expected_player_count = 5
@@ -567,6 +570,7 @@ class Game:
             self.troop_cap_to_buildings_cap_ratio = 0.3
             self.troop_gathering_bonus = 10
             self.barbarian_cooldown = 100
+            self.capital_gold_tax_factor = 30
         if mode == GameMode.SIX_PLAYER_LONG_TEST:
             self.total_tile_count = 13*13
             self.expected_player_count = 6
@@ -594,6 +598,7 @@ class Game:
             self.troop_cap_to_buildings_cap_ratio = 0.3
             self.troop_gathering_bonus = 10
             self.barbarian_cooldown = 100
+            self.capital_gold_tax_factor = 30
         if mode == GameMode.SIX_PLAYER_SHORT_TEST:
             self.total_tile_count = 13*13
             self.expected_player_count = 6
@@ -621,6 +626,7 @@ class Game:
             self.troop_cap_to_buildings_cap_ratio = 0.3
             self.troop_gathering_bonus = 10
             self.barbarian_cooldown = 100
+            self.capital_gold_tax_factor = 30
         if mode == GameMode.INTERNAL_PLAYTEST:
             self.total_tile_count = 17*17
             self.expected_player_count = 9
@@ -648,9 +654,10 @@ class Game:
             self.troop_cap_to_buildings_cap_ratio = 0.3
             self.troop_gathering_bonus = 10
             self.barbarian_cooldown = 100
+            self.capital_gold_tax_factor = 30
         if mode == GameMode.PUBLIC_LAUNCH:
-            self.total_tile_count = 50 * 50
-            self.expected_player_count = 100
+            self.total_tile_count = 51 * 51
+            self.expected_player_count = 80
             self.init_player_tile_count = 3
             self.expected_play_time_in_hour = 120
             self.upgrade_time_to_expected_play_time_ratio = 1/4
@@ -675,6 +682,7 @@ class Game:
             self.troop_cap_to_buildings_cap_ratio = 0.08
             self.troop_gathering_bonus = 1.2
             self.barbarian_cooldown = 600
+            self.capital_gold_tax_factor = 20
     """
     Constant format:
     "subject": "Farm",
@@ -724,12 +732,14 @@ class Game:
                                "object": "Army", "level": 5, "functionName": "", "value": 3})
         game_parameters.append({"subject": "Capital", "componentName": "Cap",
                                "object": "Army", "level": 6, "functionName": "", "value": 3})
+        game_parameters.append({"subject": "Capital", "componentName": "Cap",
+                               "object": "Army", "level": 7, "functionName": "", "value": 4})
         game_parameters.append({"subject": "Inner Tile", "componentName": "Level",
-                               "object": "", "level": 0, "functionName": "", "value": 3})
-        game_parameters.append({"subject": "Initial Resource", "componentName": "Amount", "object": "Gold",
-                                       "level": 0, "functionName": "", "value": get_building_upgrade_cost(1, Building.CAPITAL)/2})
-        game_parameters.append({"subject": "Initial Resource", "componentName": "Amount", "object": "Food",
-                                       "level": 0, "functionName": "", "value": get_troop_size_by_center_level(1) * game_instance.resource_weight_heavy})
+                               "object": "", "level": 0, "functionName": "", "value": 7})
+        # game_parameters.append({"subject": "Initial Resource", "componentName": "Amount", "object": "Gold",
+        #                                "level": 0, "functionName": "", "value": get_building_upgrade_cost(1, Building.CAPITAL)/2})
+        # game_parameters.append({"subject": "Initial Resource", "componentName": "Amount", "object": "Food",
+        #                                "level": 0, "functionName": "", "value": get_troop_size_by_center_level(1) * game_instance.resource_weight_heavy})
 
         # Building Stats
         for bt in [Building.GOLDMINE, Building.FARM, Building.CAPITAL]:

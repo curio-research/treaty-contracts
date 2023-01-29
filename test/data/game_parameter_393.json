@@ -1,8 +1,8 @@
 {
-    "componentName": "Reward",
-    "functionName": "",
-    "level": 1,
-    "object": "Gold",
-    "subject": "Barbarian",
-    "value": 3088203
+    "componentName": "Cooldown",
+    "functionName": "Chaos",
+    "level": 7,
+    "object": "",
+    "subject": "Capital",
+    "value": 900
 }

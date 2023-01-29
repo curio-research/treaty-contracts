@@ -2,7 +2,7 @@
     "componentName": "Cost",
     "functionName": "Move",
     "level": 3,
-    "object": "Food",
+    "object": "Gold",
     "subject": "Capital",
-    "value": 403000
+    "value": 38105000
 }

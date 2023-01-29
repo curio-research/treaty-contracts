@@ -1,8 +1,8 @@
 {
-    "componentName": "Cooldown",
+    "componentName": "Cost",
     "functionName": "Upgrade",
     "level": 19,
-    "object": "",
+    "object": "Food",
     "subject": "Farm",
-    "value": 1949
+    "value": 45658023
 }
