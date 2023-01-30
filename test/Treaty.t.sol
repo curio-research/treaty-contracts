@@ -925,18 +925,6 @@ contract TreatyTest is Test, DiamondDeployTest {
         uint256 nationInitialGold = goldToken.balanceOf(nation1CapitalAddr);
         uint256 nationInitialFood = foodToken.balanceOf(nation1CapitalAddr);
 
-        // Player 1 approves tokens
-        vm.startPrank(nation1CapitalAddr);
-        goldToken.approve(address(loanAgreement), 1000);
-        foodToken.approve(address(loanAgreement), 1000);
-        vm.stopPrank();
-
-        // Player 2 approves tokens
-        vm.startPrank(nation2CapitalAddr);
-        goldToken.approve(address(loanAgreement), 1000);
-        foodToken.approve(address(loanAgreement), 1000);
-        vm.stopPrank();
-
         // When loan is created, no tokens are transferred
         vm.startPrank(player1);
         uint256 loanID = loanAgreement.createLoan("Gold", 500, "Food", 100, 50, 100);

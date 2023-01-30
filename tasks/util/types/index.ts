@@ -46,3 +46,8 @@ export interface SetGameParameterArgs extends HardhatArguments {
   identifier: string;
   value: string;
 }
+
+export interface RemoveIdlePlayersArgs extends HardhatArguments {
+  diamond: string;
+  duration: number;
+}

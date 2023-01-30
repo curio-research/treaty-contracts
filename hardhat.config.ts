@@ -15,6 +15,7 @@ import './tasks/loadTest';
 import './tasks/unlockTiles';
 import './tasks/whitelistPlayer';
 import './tasks/setGameParameter';
+import './tasks/removeIdlePlayers';
 
 // to get the file size of each smart contract, run:
 // yarn run hardhat size-contracts
