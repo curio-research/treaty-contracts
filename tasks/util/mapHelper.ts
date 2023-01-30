@@ -73,7 +73,7 @@ export const generateMap = (mapInput: MapInput): TileMap => {
   const innerDiameterByTileCount = innerRadiusByTileCount ? innerRadiusByTileCount * 2 + 1 : 0;
 
   // specify outer density
-  const level1GoldMineDensity = 0.3;
+  const level1GoldMineDensity = 0.2;
   const level1BarbarianDensity = 0.06; // restore to 0.02
   const level2BarbarianDensity = 0.04; // restore to 0.02
 
