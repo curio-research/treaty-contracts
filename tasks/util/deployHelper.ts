@@ -80,14 +80,13 @@ export const uploadABI = async (hre: HardhatRuntimeEnvironment, contractName: st
 export const deployTreatyTemplate = async (name: string, admin: Signer, hre: HardhatRuntimeEnvironment, diamond: Curio, gasLimit: number) => {
   // Deploy treaty template
   const treaty = await deployProxy<any>(name, admin, hre, []);
-  treaty.init(diamond.address);
+  await (await treaty.init(diamond.address)).wait();
 
   // Upload contract ABI and metadata (contract descriptions)
   const abiHash = await uploadABI(hre, name);
   const metadataUrl = await putObject(JSON.stringify(treatyDescriptions[name] || {}));
 
   // Register treaty template
-  await sleep(20);
   await (await diamond.connect(admin).registerTreatyTemplate(treaty.address, abiHash, metadataUrl, { gasLimit })).wait();
 
   console.log(chalk.dim(`✦ Treaty ${name} deployed and ABI uploaded to IPFS at hash=${abiHash}`));
@@ -214,10 +213,9 @@ export const initializeGame = async (hre: HardhatRuntimeEnvironment, worldConsta
 
   // Deploy treaty templates
   startTime = performance.now();
-  const treatyTemplateNames = ['Alliance', 'NonAggressionPact', 'Embargo', 'CollectiveDefenseFund', 'SimpleOTC', 'HandshakeDeal', 'MercenaryLeague'];
+  const treatyTemplateNames = ['Alliance', 'NonAggressionPact', 'Embargo', 'CollectiveDefenseFund', 'SimpleOTC', 'HandshakeDeal', 'MercenaryLeague', 'LoanAgreement'];
   for (const name of treatyTemplateNames) {
     await deployTreatyTemplate(name, admin, hre, diamond, gasLimit);
-    await sleep(20);
   }
   console.log(`✦ Treaty template deployment took ${Math.floor(performance.now() - startTime)} ms`);
 
@@ -228,9 +226,7 @@ export const initializeGame = async (hre: HardhatRuntimeEnvironment, worldConsta
     const centerTilePos = { x: Math.floor(tileMap.length / 2) * worldConstants.tileWidth, y: Math.floor(tileMap[0].length / 2) * worldConstants.tileWidth };
     const region = { xMin: centerTilePos.x - regionWidth, xMax: centerTilePos.x + regionWidth, yMin: centerTilePos.y - regionWidth, yMax: centerTilePos.y + regionWidth };
     const regionTiles = allTilePositions.filter((pos) => pos.x >= region.xMin && pos.x <= region.xMax && pos.y >= region.yMin && pos.y <= region.yMax);
-    await sleep(50);
     await confirmTx(await diamond.disallowHostCapital(regionTiles, { gasLimit }), hre);
-    await sleep(50);
     await confirmTx(await diamond.lockTiles(regionTiles, { gasLimit }), hre);
     console.log(`✦ Battle royale setup took ${Math.floor(performance.now() - startTime)} ms`);
   }
