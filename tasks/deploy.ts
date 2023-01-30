@@ -86,7 +86,7 @@ task('deploy', 'deploy contracts')
         network: hre.network.name,
         deploymentId: deploymentId,
         indexerUrl: indexerUrl,
-        map: scaleMap(tileMap, Number(worldConstants.tileWidth)),
+        map: tileMap, // scaleMap(tileMap, Number(worldConstants.tileWidth)),
         time: new Date(),
       };
 

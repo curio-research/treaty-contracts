@@ -1,8 +1,8 @@
 {
-    "componentName": "Amount",
-    "functionName": "",
-    "level": 9,
-    "object": "Guard",
-    "subject": "Barbarian",
-    "value": 197
+    "componentName": "Cooldown",
+    "functionName": "Move",
+    "level": 4,
+    "object": "",
+    "subject": "Capital",
+    "value": 2735
 }

@@ -7,24 +7,6 @@ import {GetterFacet} from "contracts/facets/GetterFacet.sol";
 import {Position} from "contracts/libraries/Types.sol";
 
 contract HandshakeDeal is CurioTreaty {
-    enum ApprovalFunctionType {
-        approveUpgradeCapital,
-        approveMoveCapital,
-        approveClaimTile,
-        approveUpgradeTile,
-        approveRecoverTile,
-        approveDisownTile,
-        approveStartTroopProduction,
-        approveMove,
-        approveStartGather,
-        approveEndGather,
-        approveUnloadResources,
-        approveHarvestResource,
-        approveHarvestResourcesFromCapital,
-        approveUpgradeResource,
-        approveBattle
-    }
-
     struct Deal {
         uint256 dealID;
         uint256 proposerID;
