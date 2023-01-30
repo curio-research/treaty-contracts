@@ -1,8 +1,8 @@
 {
-    "componentName": "Yield",
+    "componentName": "Level",
     "functionName": "",
     "level": 0,
-    "object": "Gold",
-    "subject": "Goldmine",
-    "value": 484
+    "object": "",
+    "subject": "Inner Tile",
+    "value": 7
 }

@@ -73,7 +73,7 @@ export const generateMap = (mapInput: MapInput): TileMap => {
   const innerDiameterByTileCount = innerRadiusByTileCount ? innerRadiusByTileCount * 2 + 1 : 0;
 
   // specify outer density
-  const level1GoldMineDensity = 0.15; // restore to 0.1
+  const level1GoldMineDensity = 0.3;
   const level1BarbarianDensity = 0.06; // restore to 0.02
   const level2BarbarianDensity = 0.04; // restore to 0.02
 
@@ -94,9 +94,9 @@ export const generateMap = (mapInput: MapInput): TileMap => {
     }
   } else {
     // specify inner density
-    const level1GoldMineDensityInner = 0.3;
+    const level1GoldMineDensityInner = 0.15;
     const level1BarbarianDensityInner = 0.02;
-    const level2BarbarianDensityInner = 0.02;
+    const level2BarbarianDensityInner = 0.02; //@yijia they're level4 and level8 barbarians right?
 
     // add inner gold mines and barbarians
     const totalTileCountInner = innerDiameterByTileCount * innerDiameterByTileCount;

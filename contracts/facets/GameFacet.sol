@@ -87,6 +87,10 @@ contract GameFacet is UseStorage {
             Templates.addDelegation(functionNames[i], nationID, nationID, 0);
         }
 
+        // Initialized with some resources
+        GameLib.getTokenContract("Gold").dripToken(capitalAddress, GameLib.getGameParameter("Capital", "Gold", "Amount", "JoinGame", 0));
+        GameLib.getTokenContract("Food").dripToken(capitalAddress, GameLib.getGameParameter("Capital", "Food", "Amount", "JoinGame", 0));
+
         // Set last action time
         ECSLib.setUint("LastActed", nationID, block.timestamp);
     }

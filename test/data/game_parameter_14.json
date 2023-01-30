@@ -1,8 +1,8 @@
 {
-    "componentName": "Level",
+    "componentName": "Cap",
     "functionName": "",
-    "level": 0,
-    "object": "",
-    "subject": "Inner Tile",
-    "value": 10
+    "level": 7,
+    "object": "Army",
+    "subject": "Capital",
+    "value": 4
 }
