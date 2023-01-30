@@ -3,12 +3,14 @@ pragma solidity ^0.8.13;
 
 import {Test} from "forge-std/Test.sol";
 import {DiamondDeployTest} from "test/DiamondDeploy.t.sol";
+import {UpgradedFacet} from "test/UpgradedFacet.sol";
 import {Component} from "contracts/Component.sol";
 import {AddressComponent, BoolComponent, IntComponent, PositionComponent, StringComponent, UintComponent} from "contracts/TypedComponents.sol";
 import {Position} from "contracts/libraries/Types.sol";
 import {Set} from "contracts/Set.sol";
 import {CurioWallet} from "contracts/standards/CurioWallet.sol";
 import {CurioTreaty} from "contracts/standards/CurioTreaty.sol";
+import {IDiamondCut} from "contracts/interfaces/IDiamondCut.sol";
 import {console} from "forge-std/console.sol";
 import {Strings} from "openzeppelin-contracts/contracts/utils/Strings.sol";
 
@@ -949,5 +951,17 @@ contract GameTest is Test, DiamondDeployTest {
         vm.expectRevert("CURIO: Not delegated to call UpgradeCapital");
         game.upgradeCapital(nation1CapitalID);
         vm.stopPrank();
+    }
+
+    function testDiamondUpgrade() public {
+        UpgradedFacet newFacet = new UpgradedFacet();
+        bytes4[] memory functionSelectors = new bytes4[](1); 
+        functionSelectors[0] = newFacet.SELECTOR();
+
+        vm.startPrank(deployer);
+        IDiamondCut.FacetCut[] memory cuts = new IDiamondCut.FacetCut[](1);
+        cuts[0] = IDiamondCut.FacetCut({facetAddress: address(newFacet), action: IDiamondCut.FacetCutAction.Add, functionSelectors: functionSelectors});
+        IDiamondCut(diamond).diamondCut(cuts, address(0), "");
+        assertEq(UpgradedFacet(diamond).upgradedFacetFunction(5), 7);
     }
 }
