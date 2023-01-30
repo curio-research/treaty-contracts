@@ -165,15 +165,16 @@ export const treatyDescriptions: Record<string, Record<string, string>> = {
     headerImage: 'https://static.independent.co.uk/s3fs-public/thumbnails/image/2017/02/21/11/trump-handshake-1.jpg?quality=75&width=990&auto=webp&crop=982:726,smart',
     treatyLeave: 'Leave the HandshakeDeal treaty.',
     treatyJoin: 'Join the HandshakeDeal treaty.',
-    proposeDeal1: 'Propose a deal to another nation. Agreement will be mutual. Note that the valid deal types are "approveUpgradeCapital", "approveUpgradeTile", "approveRecoverTile", "approveDisownTile", "approveEndGather", "approveUnloadResources", "approveHarvestResource", "approveHarvestResourcesFromCapital", "approveUpgradeResource". _uint256Param stands for the capitalID, tileID, or resourceID.',
+    proposeDeal1:
+      'Propose a deal to another nation. Agreement will be mutual. Note that the valid deal types are "approveUpgradeCapital", "approveUpgradeTile", "approveRecoverTile", "approveDisownTile", "approveEndGather", "approveUnloadResources", "approveHarvestResource", "approveHarvestResourcesFromCapital", "approveUpgradeResource". _uint256Param stands for the capitalID, tileID, or resourceID.',
     proposeDeal2: 'Propose a deal to another nation. Agreement will be mutual. Note that the valid deal types are "approveStartTroopProduction", "approveStartGather", "approveHarvestResource", "approveBattle". Check out what _uint256Param1 and _uint256Param2 stand for in our opensourced codebase.',
     proposeDeal3: 'Propose a deal to another nation. Agreement will be mutual. Note that the valid deal types are "approveMoveCapital", "approveClaimTile", and "approveMove". _uint256Param stands for capitalID, tileID, or armyID. x_pos and y_pos inputs the position for the function.',
     signDeal: 'Sign a deal that you have been proposed. Find the deal in nationIDToDealIDs and read it using idToDeal',
   },
   LoanAgreement: {
     headerImage: 'https://cdn.shopify.com/s/files/1/0572/0847/1751/products/image_7a02ee3a-fc12-40c4-9298-16dbd4c36266.png?v=1659290557&width=1100',
-    treatyLeave: 'Leave the HandshakeDeal treaty.',
-    treatyJoin: 'Join the HandshakeDeal treaty.',
+    treatyLeave: 'Leave the LoanAgreement treaty.',
+    treatyJoin: 'Join the LoanAgreement treaty.',
     getLenderLoanIDs: 'Get the list of loan IDs that a nation has lended. Read loan info in loanIDToLoan',
     getBorrowerLoanIDs: 'Get the list of loan IDs that a nation has borrowed. Read loan info in loanIDToLoan',
     createLoan: 'Create a loan. The tokens will be automatically transfered to the borrower once it is borrowed.',
@@ -181,5 +182,5 @@ export const treatyDescriptions: Record<string, Record<string, string>> = {
     takeLoan: 'Take a loan by typing in the loanID. Look up loan info in loanIDToLoan beforehand',
     payOffLoan: 'Pay off principle and interest of the loan. The borrower will get the collateral back.',
     liquidateCollateral: 'Liquidate the collateral of a loan if the borrower defaults. The collateral will be transfered to the lender.',
-  }
+  },
 };
