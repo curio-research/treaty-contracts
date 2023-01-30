@@ -504,7 +504,9 @@ library GameLib {
             uint256
         )
     {
-        uint256 entityID = ECSLib.getAddressComponent("Address").getEntitiesWithValue(_entityAddress)[0];
+        uint256[] memory res = ECSLib.getAddressComponent("Address").getEntitiesWithValue(_entityAddress);
+        require(res.length == 1, "CURIO: Entity duplicated or not found");
+        uint256 entityID = res[0];
         uint256 templateID = gs().templates[_resourceType];
         string memory entityTag = ECSLib.getString("Tag", entityID);
 

@@ -4,7 +4,6 @@ import {CurioTreaty} from "contracts/standards/CurioTreaty.sol";
 import {CurioERC20} from "contracts/standards/CurioERC20.sol";
 import {GetterFacet} from "contracts/facets/GetterFacet.sol";
 import {Set} from "contracts/Set.sol";
-import {console} from "forge-std/console.sol";
 
 contract LoanAgreement is CurioTreaty {
     /**
@@ -65,25 +64,23 @@ contract LoanAgreement is CurioTreaty {
         loanNonce = 1;
     }
 
-    // ----------------------------------------------------------
-    // Owner functions
-    // ----------------------------------------------------------
-    function name() external pure override returns (string memory) {
+    function name() public pure override returns (string memory) {
         return "LoanAgreement";
     }
 
-    function description() external pure override returns (string memory) {
+    function description() public pure override returns (string memory) {
         return "Contract for lending and borrowing";
     }
 
     // ----------------------------------------------------------
     // Set getters
     // ----------------------------------------------------------
-    function getLenderLoanIDs(uint256 _lenderID) external view returns (uint256[] memory) {
+
+    function getLenderLoanIDs(uint256 _lenderID) public view returns (uint256[] memory) {
         return lenderIDToLoanIDs[_lenderID].getAll();
     }
 
-    function getBorrowerLoanIDs(uint256 _borrowerID) external view returns (uint256[] memory) {
+    function getBorrowerLoanIDs(uint256 _borrowerID) public view returns (uint256[] memory) {
         return borrowerIDToLoanIDs[_borrowerID].getAll();
     }
 
@@ -92,10 +89,10 @@ contract LoanAgreement is CurioTreaty {
     // ----------------------------------------------------------
     /**
      * @dev Create a loan. Must be called by a nation.
-     * @param _collateralTokenName name of the Token To use as collateral
-     * @param _collateralAmount amount of the Token To use as collateral
-     * @param _loanTokenName name of the Token To borrow
-     * @param _loanAmount amount of the Token To borrow
+     * @param _collateralTokenName name of the token to use as collateral
+     * @param _collateralAmount amount of the token to use as collateral
+     * @param _loanTokenName name of the Token to borrow
+     * @param _loanAmount amount of the Token to borrow
      * @param _totalInterestPercentage total interest percentage
      * @param _duration duration of the loan in seconds
      */
@@ -106,7 +103,7 @@ contract LoanAgreement is CurioTreaty {
         uint256 _loanAmount,
         uint256 _totalInterestPercentage,
         uint256 _duration
-    ) public {
+    ) public returns (uint256 loanID) {
         GetterFacet getter = GetterFacet(address(diamond));
 
         // Validity checks
@@ -121,8 +118,9 @@ contract LoanAgreement is CurioTreaty {
         }
 
         // Create loan
+        loanID = loanNonce;
         Loan memory newLoan = Loan({
-            loanID: loanNonce, // FORMATTING: DO NOT REMOVE THIS COMMENT
+            loanID: loanID, // FORMATTING: DO NOT REMOVE THIS COMMENT
             collateralTokenName: _collateralTokenName,
             collateralAmount: _collateralAmount,
             loanTokenName: _loanTokenName,
@@ -133,32 +131,23 @@ contract LoanAgreement is CurioTreaty {
             borrowerID: 0, // meaningless until loan is taken
             effectiveAt: 0 // meaningless until loan is taken
         });
-        loanIDToLoan[loanNonce] = newLoan;
+        loanIDToLoan[loanID] = newLoan;
+        loanNonce++;
 
         // Add loan to lender's set
-        lenderIDToLoanIDs[callerID].add(loanNonce);
-
-        // Increment nonce
-        loanNonce++;
+        lenderIDToLoanIDs[callerID].add(loanID);
     }
 
-    /**
-     * @dev Cancel a loan.
-     * Note: By calling this function, lender agrees not to claim the collateral, principle, or interests.
-     */
     function cancelLoan(uint256 _loanID) public {
         // Validity checks
         GetterFacet getter = GetterFacet(address(diamond));
         require(loanIDToLoan[_loanID].lenderID == getter.getEntityByAddress(msg.sender), "Loan: Only lender can cancel loan");
+        require(loanIDToLoan[_loanID].borrowerID == 0, "Loan: A loan which is taken cannot be cancelled");
 
         // Remove loan
         _removeLoan(_loanID);
     }
 
-    /**
-     * @dev Take a loan. Must be called by a nation.
-     * @param _loanID id of the loan
-     */
     function takeLoan(uint256 _loanID) public {
         // Validity checks
         GetterFacet getter = GetterFacet(diamond);
@@ -176,6 +165,11 @@ contract LoanAgreement is CurioTreaty {
         // Add loan to borrower's set
         borrowerIDToLoanIDs[callerID].add(_loanID);
 
+        // Activate loan
+        loan.borrowerID = callerID;
+        loan.effectiveAt = block.timestamp;
+        loanIDToLoan[_loanID] = loan;
+
         // Fetch data
         CurioERC20 collateralToken = CurioERC20(getter.getTokenContract(loan.collateralTokenName));
         CurioERC20 loanToken = CurioERC20(getter.getTokenContract(loan.loanTokenName));
@@ -187,19 +181,14 @@ contract LoanAgreement is CurioTreaty {
 
         // Transfer loan
         loanToken.transferFrom(lenderCapitalAddr, borrowerCapitalAddr, loan.loanAmount);
-
-        // Activate loan
-        loan.borrowerID = callerID;
-        loan.effectiveAt = block.timestamp;
-        loanIDToLoan[_loanID] = loan;
     }
 
-    function payLoan(uint256 _loanID) public {
+    function payOffLoan(uint256 _loanID) public {
         // Validity checks
         GetterFacet getter = GetterFacet(diamond);
         Loan memory loan = loanIDToLoan[_loanID];
         require(loan.loanAmount > 0, "Loan: Loan does not exist");
-        require(loan.borrowerID == getter.getEntityByAddress(msg.sender), "Loan: Only borrower can pay loan");
+        require(loan.borrowerID == getter.getEntityByAddress(msg.sender), "Loan: Only borrower can pay off loan");
 
         // Fetch data
         CurioERC20 collateralToken = CurioERC20(getter.getTokenContract(loan.collateralTokenName));
@@ -207,10 +196,9 @@ contract LoanAgreement is CurioTreaty {
         address lenderCapitalAddr = _getCapitalAddress(loan.lenderID);
         address borrowerCapitalAddr = _getCapitalAddress(loan.borrowerID);
 
-        // Pay principle + interests
-        uint256 principle = loan.loanAmount;
-        uint256 interests = ((block.timestamp - loan.effectiveAt) * loan.duration * principle * loan.totalInterestPercentage) / 3600 / 100;
-        loanToken.transferFrom(borrowerCapitalAddr, lenderCapitalAddr, principle + interests);
+        // Pay principle + interest
+        uint256 totalDue = (loan.loanAmount * (100 + loan.totalInterestPercentage)) / 100;
+        loanToken.transferFrom(borrowerCapitalAddr, lenderCapitalAddr, totalDue);
 
         // Return collateral
         collateralToken.transfer(borrowerCapitalAddr, loan.collateralAmount);
@@ -224,7 +212,7 @@ contract LoanAgreement is CurioTreaty {
         GetterFacet getter = GetterFacet(diamond);
         Loan memory loan = loanIDToLoan[_loanID];
         require(loan.loanAmount > 0, "Loan: Loan does not exist");
-        require(block.timestamp > loan.effectiveAt + loan.duration, "Loan: Loan is not due yet");
+        require(block.timestamp > loan.effectiveAt + loan.duration, "Loan: Loan not yet due");
 
         // Fetch data
         CurioERC20 collateralToken = CurioERC20(getter.getTokenContract(loan.collateralTokenName));

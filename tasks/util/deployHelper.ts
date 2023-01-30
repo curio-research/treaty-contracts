@@ -205,10 +205,11 @@ export const initializeGame = async (hre: HardhatRuntimeEnvironment, worldConsta
     })
   );
   startTime = performance.now();
-  const bulkTileUploadSize = 100; // Note: if part or all of the map is not initialized, make this smaller
+  const bulkTileUploadSize = 20; // Note: if part or all of the map is not initialized, make this smaller
   for (let i = 0 * bulkTileUploadSize; i < allTilePositions.length; i += bulkTileUploadSize) {
     console.log(chalk.dim(`✦ Initializing tiles ${i} to ${i + bulkTileUploadSize}`));
     await confirmTx(await diamond.bulkInitializeTiles(allTilePositions.slice(i, i + bulkTileUploadSize), { gasLimit }), hre);
+    await sleep(20);
   }
   console.log(`✦ Special tile bulk initialization took ${Math.floor(performance.now() - startTime)} ms`);
 

@@ -43,6 +43,7 @@ export interface LoanAgreementInterface extends utils.Interface {
     "approveRecoverTile(uint256,bytes)": FunctionFragment;
     "approveStartGather(uint256,bytes)": FunctionFragment;
     "approveStartTroopProduction(uint256,bytes)": FunctionFragment;
+    "approveStopTroopProduction(uint256,bytes)": FunctionFragment;
     "approveTransfer(uint256,bytes)": FunctionFragment;
     "approveUnloadResources(uint256,bytes)": FunctionFragment;
     "approveUpgradeCapital(uint256,bytes)": FunctionFragment;
@@ -62,7 +63,7 @@ export interface LoanAgreementInterface extends utils.Interface {
     "loanIDToLoan(uint256)": FunctionFragment;
     "loanNonce()": FunctionFragment;
     "name()": FunctionFragment;
-    "payLoan(uint256)": FunctionFragment;
+    "payOffLoan(uint256)": FunctionFragment;
     "takeLoan(uint256)": FunctionFragment;
     "treatyDelegateGameFunction(string,uint256,bool)": FunctionFragment;
     "treatyJoin()": FunctionFragment;
@@ -89,6 +90,7 @@ export interface LoanAgreementInterface extends utils.Interface {
       | "approveRecoverTile"
       | "approveStartGather"
       | "approveStartTroopProduction"
+      | "approveStopTroopProduction"
       | "approveTransfer"
       | "approveUnloadResources"
       | "approveUpgradeCapital"
@@ -108,7 +110,7 @@ export interface LoanAgreementInterface extends utils.Interface {
       | "loanIDToLoan"
       | "loanNonce"
       | "name"
-      | "payLoan"
+      | "payOffLoan"
       | "takeLoan"
       | "treatyDelegateGameFunction"
       | "treatyJoin"
@@ -188,6 +190,10 @@ export interface LoanAgreementInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
+    functionFragment: "approveStopTroopProduction",
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BytesLike>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "approveTransfer",
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BytesLike>]
   ): string;
@@ -259,7 +265,7 @@ export interface LoanAgreementInterface extends utils.Interface {
   encodeFunctionData(functionFragment: "loanNonce", values?: undefined): string;
   encodeFunctionData(functionFragment: "name", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "payLoan",
+    functionFragment: "payOffLoan",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
@@ -356,6 +362,10 @@ export interface LoanAgreementInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "approveStopTroopProduction",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "approveTransfer",
     data: BytesLike
   ): Result;
@@ -410,7 +420,7 @@ export interface LoanAgreementInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "loanNonce", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "payLoan", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "payOffLoan", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "takeLoan", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "treatyDelegateGameFunction",
@@ -560,6 +570,12 @@ export interface LoanAgreement extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
+    approveStopTroopProduction(
+      _nationID: PromiseOrValue<BigNumberish>,
+      _encodedParams: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
     approveTransfer(
       _nationID: PromiseOrValue<BigNumberish>,
       _encodedParams: PromiseOrValue<BytesLike>,
@@ -605,7 +621,7 @@ export interface LoanAgreement extends BaseContract {
       _collateralAmount: PromiseOrValue<BigNumberish>,
       _loanTokenName: PromiseOrValue<string>,
       _loanAmount: PromiseOrValue<BigNumberish>,
-      _hourlyInterestRate: PromiseOrValue<BigNumberish>,
+      _totalInterestPercentage: PromiseOrValue<BigNumberish>,
       _duration: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
@@ -634,7 +650,7 @@ export interface LoanAgreement extends BaseContract {
         collateralAmount: BigNumber;
         loanTokenName: string;
         loanAmount: BigNumber;
-        hourlyInterestRate: BigNumber;
+        totalInterestPercentage: BigNumber;
         duration: BigNumber;
         lenderID: BigNumber;
         borrowerID: BigNumber;
@@ -688,7 +704,7 @@ export interface LoanAgreement extends BaseContract {
         collateralAmount: BigNumber;
         loanTokenName: string;
         loanAmount: BigNumber;
-        hourlyInterestRate: BigNumber;
+        totalInterestPercentage: BigNumber;
         duration: BigNumber;
         lenderID: BigNumber;
         borrowerID: BigNumber;
@@ -700,7 +716,7 @@ export interface LoanAgreement extends BaseContract {
 
     name(overrides?: CallOverrides): Promise<[string]>;
 
-    payLoan(
+    payOffLoan(
       _loanID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
@@ -834,6 +850,12 @@ export interface LoanAgreement extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
+  approveStopTroopProduction(
+    _nationID: PromiseOrValue<BigNumberish>,
+    _encodedParams: PromiseOrValue<BytesLike>,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
   approveTransfer(
     _nationID: PromiseOrValue<BigNumberish>,
     _encodedParams: PromiseOrValue<BytesLike>,
@@ -879,7 +901,7 @@ export interface LoanAgreement extends BaseContract {
     _collateralAmount: PromiseOrValue<BigNumberish>,
     _loanTokenName: PromiseOrValue<string>,
     _loanAmount: PromiseOrValue<BigNumberish>,
-    _hourlyInterestRate: PromiseOrValue<BigNumberish>,
+    _totalInterestPercentage: PromiseOrValue<BigNumberish>,
     _duration: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
@@ -908,7 +930,7 @@ export interface LoanAgreement extends BaseContract {
       collateralAmount: BigNumber;
       loanTokenName: string;
       loanAmount: BigNumber;
-      hourlyInterestRate: BigNumber;
+      totalInterestPercentage: BigNumber;
       duration: BigNumber;
       lenderID: BigNumber;
       borrowerID: BigNumber;
@@ -962,7 +984,7 @@ export interface LoanAgreement extends BaseContract {
       collateralAmount: BigNumber;
       loanTokenName: string;
       loanAmount: BigNumber;
-      hourlyInterestRate: BigNumber;
+      totalInterestPercentage: BigNumber;
       duration: BigNumber;
       lenderID: BigNumber;
       borrowerID: BigNumber;
@@ -974,7 +996,7 @@ export interface LoanAgreement extends BaseContract {
 
   name(overrides?: CallOverrides): Promise<string>;
 
-  payLoan(
+  payOffLoan(
     _loanID: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
@@ -1108,6 +1130,12 @@ export interface LoanAgreement extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
+    approveStopTroopProduction(
+      _nationID: PromiseOrValue<BigNumberish>,
+      _encodedParams: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
     approveTransfer(
       _nationID: PromiseOrValue<BigNumberish>,
       _encodedParams: PromiseOrValue<BytesLike>,
@@ -1153,10 +1181,10 @@ export interface LoanAgreement extends BaseContract {
       _collateralAmount: PromiseOrValue<BigNumberish>,
       _loanTokenName: PromiseOrValue<string>,
       _loanAmount: PromiseOrValue<BigNumberish>,
-      _hourlyInterestRate: PromiseOrValue<BigNumberish>,
+      _totalInterestPercentage: PromiseOrValue<BigNumberish>,
       _duration: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<void>;
+    ): Promise<BigNumber>;
 
     description(overrides?: CallOverrides): Promise<string>;
 
@@ -1182,7 +1210,7 @@ export interface LoanAgreement extends BaseContract {
         collateralAmount: BigNumber;
         loanTokenName: string;
         loanAmount: BigNumber;
-        hourlyInterestRate: BigNumber;
+        totalInterestPercentage: BigNumber;
         duration: BigNumber;
         lenderID: BigNumber;
         borrowerID: BigNumber;
@@ -1236,7 +1264,7 @@ export interface LoanAgreement extends BaseContract {
         collateralAmount: BigNumber;
         loanTokenName: string;
         loanAmount: BigNumber;
-        hourlyInterestRate: BigNumber;
+        totalInterestPercentage: BigNumber;
         duration: BigNumber;
         lenderID: BigNumber;
         borrowerID: BigNumber;
@@ -1248,7 +1276,7 @@ export interface LoanAgreement extends BaseContract {
 
     name(overrides?: CallOverrides): Promise<string>;
 
-    payLoan(
+    payOffLoan(
       _loanID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
@@ -1381,6 +1409,12 @@ export interface LoanAgreement extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    approveStopTroopProduction(
+      _nationID: PromiseOrValue<BigNumberish>,
+      _encodedParams: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     approveTransfer(
       _nationID: PromiseOrValue<BigNumberish>,
       _encodedParams: PromiseOrValue<BytesLike>,
@@ -1426,7 +1460,7 @@ export interface LoanAgreement extends BaseContract {
       _collateralAmount: PromiseOrValue<BigNumberish>,
       _loanTokenName: PromiseOrValue<string>,
       _loanAmount: PromiseOrValue<BigNumberish>,
-      _hourlyInterestRate: PromiseOrValue<BigNumberish>,
+      _totalInterestPercentage: PromiseOrValue<BigNumberish>,
       _duration: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
@@ -1471,7 +1505,7 @@ export interface LoanAgreement extends BaseContract {
 
     name(overrides?: CallOverrides): Promise<BigNumber>;
 
-    payLoan(
+    payOffLoan(
       _loanID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
@@ -1606,6 +1640,12 @@ export interface LoanAgreement extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    approveStopTroopProduction(
+      _nationID: PromiseOrValue<BigNumberish>,
+      _encodedParams: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     approveTransfer(
       _nationID: PromiseOrValue<BigNumberish>,
       _encodedParams: PromiseOrValue<BytesLike>,
@@ -1651,7 +1691,7 @@ export interface LoanAgreement extends BaseContract {
       _collateralAmount: PromiseOrValue<BigNumberish>,
       _loanTokenName: PromiseOrValue<string>,
       _loanAmount: PromiseOrValue<BigNumberish>,
-      _hourlyInterestRate: PromiseOrValue<BigNumberish>,
+      _totalInterestPercentage: PromiseOrValue<BigNumberish>,
       _duration: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
@@ -1696,7 +1736,7 @@ export interface LoanAgreement extends BaseContract {
 
     name(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    payLoan(
+    payOffLoan(
       _loanID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;

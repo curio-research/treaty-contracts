@@ -908,70 +908,90 @@ contract TreatyTest is Test, DiamondDeployTest {
         game.upgradeCapital(nation2CapitalID);
     }
 
-    // function testLoanAgreement() public {
-    //     /**
-    //     Outline:
-    //     - p1 starts loanAgreement
-    //     - p1 places a loan
-    //     - p2 takes the loan
-    //     - p2 repays the loan
-    //      */
-    //     uint256 time = block.timestamp + 1000;
-    //     vm.warp(time);
-    //     // assigns tokens to p1 and p2
-    //     vm.startPrank(deployer);
-    //     admin.dripToken(nation1CapitalAddr, "Gold", 1000);
-    //     admin.dripToken(nation1CapitalAddr, "Food", 1000);
-    //     admin.dripToken(nation2CapitalAddr, "Gold", 1000);
-    //     admin.dripToken(nation2CapitalAddr, "Food", 1000);
-    //     vm.stopPrank();
-    //     // Player1 deploys loanAgreement
-    //     vm.startPrank(player1);
-    //     LoanAgreement la = LoanAgreement(game.deployTreaty(nation1ID, "LoanAgreement"));
-    //     // Player1 places two loans: id => 1, id => 2, gold as collateral token, food as loan token
-    //     la.createLoan("Gold", 100, "Food", 100, 10, 3600);
-    //     la.createLoan("Gold", 100, "Food", 100, 10, 3600);
-    //     vm.stopPrank();
-    //     // Player2 borrows the loan
-    //     vm.startPrank(player2);
-    //     la.takeLoan(1);
-    //     la.takeLoan(2);
-    //     vm.stopPrank();
-    //     // Verify that treaty gets the collateral, lender loses the loan, and borrower gets the loan
-    //     assertEq(goldToken.balanceOf(address(la)), 200);
-    //     assertEq(foodToken.balanceOf(nation1CapitalAddr), 1000 - 200);
-    //     assertEq(foodToken.balanceOf(nation2CapitalAddr), 1000 + 200);
-    //     // Player1 fails to retrieve collateral before due;
-    //     vm.startPrank(player1);
-    //     time += 3600;
-    //     vm.warp(time);
-    //     vm.expectRevert("Loan: Loan is not due yet");
-    //     la.liquidateCollateral(1);
-    //     // Player2 pays back loan 1 (but not loan 2); p1 should earn 10 food as interest
-    //     time += 1;
-    //     vm.warp(time);
-    //     la.payLoan(1);
-    //     vm.stopPrank();
-    //     // Player2 gets his collateral back and loses principle + interest
-    //     assertEq(goldToken.balanceOf(address(la)), 100);
-    //     assertEq(goldToken.balanceOf(nation2CapitalAddr), 900);
-    //     // 1200 - 100 (principle) - 10 (interest)
-    //     assertEq(foodToken.balanceOf(nation2CapitalAddr), 1090);
-    //     // Since Player2 forgets to pay back loan 2 in time, p1 retrieves collateral
-    //     vm.startPrank(player1);
-    //     la.liquidateCollateral(2);
-    //     // Player 1 now has 1000 + 100 food; treaty has none
-    //     assertEq(foodToken.balanceOf(nation1CapitalAddr), 1000 + 100);
-    //     assertEq(foodToken.balanceOf(address(la)), 0);
-    //     // Player 1 tries canceling loan2 but it doesn’t work (bc collateral retrieved)
-    //     vm.expectRevert("Loan: Loan does not exist");
-    //     la.cancelLoan(2);
-    //     vm.stopPrank();
-    //     // Player 2 tries repaying loan2 but it doesn’t work (bc collateral retrieved)
-    //     vm.startPrank(player2);
-    //     vm.expectRevert("Loan: Loan does not exist");
-    //     la.payLoan(2);
-    //     vm.stopPrank();
-    //     // Player 2 creates a loan and
-    // }
+    function testLoanAgreement() public {
+        uint256 time = block.timestamp + 1000;
+        vm.warp(time);
+        vm.startPrank(player1);
+        LoanAgreement loanAgreement = LoanAgreement(game.deployTreaty(nation1ID, loanAgreementTemplate.name()));
+        vm.stopPrank();
+
+        // Deployer drips tokens to player 1 and player 2
+        vm.startPrank(deployer);
+        admin.dripToken(nation1CapitalAddr, "Gold", 1000);
+        admin.dripToken(nation1CapitalAddr, "Food", 1000);
+        admin.dripToken(nation2CapitalAddr, "Gold", 1000);
+        admin.dripToken(nation2CapitalAddr, "Food", 1000);
+        vm.stopPrank();
+        uint256 nationInitialGold = goldToken.balanceOf(nation1CapitalAddr);
+        uint256 nationInitialFood = foodToken.balanceOf(nation1CapitalAddr);
+
+        // Player 1 approves tokens
+        vm.startPrank(nation1CapitalAddr);
+        goldToken.approve(address(loanAgreement), 1000);
+        foodToken.approve(address(loanAgreement), 1000);
+        vm.stopPrank();
+
+        // Player 2 approves tokens
+        vm.startPrank(nation2CapitalAddr);
+        goldToken.approve(address(loanAgreement), 1000);
+        foodToken.approve(address(loanAgreement), 1000);
+        vm.stopPrank();
+
+        // When loan is created, no tokens are transferred
+        vm.startPrank(player1);
+        uint256 loanID = loanAgreement.createLoan("Gold", 500, "Food", 100, 50, 100);
+        vm.stopPrank();
+
+        // Player 2 takes loan
+        time += 100;
+        vm.warp(time);
+        vm.startPrank(player2);
+        loanAgreement.takeLoan(loanID);
+        vm.stopPrank();
+        assertEq(goldToken.balanceOf(nation1CapitalAddr), nationInitialGold);
+        assertEq(foodToken.balanceOf(nation1CapitalAddr), nationInitialFood - 100);
+        assertEq(goldToken.balanceOf(nation2CapitalAddr), nationInitialGold - 500);
+        assertEq(foodToken.balanceOf(nation2CapitalAddr), nationInitialFood + 100);
+        assertEq(goldToken.balanceOf(address(loanAgreement)), 500);
+        assertEq(foodToken.balanceOf(address(loanAgreement)), 0);
+
+        // Player 1 attempts to liquidate collateral
+        time += 50;
+        vm.warp(time);
+        vm.startPrank(player1);
+        vm.expectRevert("Loan: Loan not yet due");
+        loanAgreement.liquidateCollateral(loanID);
+        vm.stopPrank();
+
+        // Player 3 attempts to pay off loan for player 2
+        vm.startPrank(player3);
+        vm.expectRevert("Loan: Only borrower can pay off loan");
+        loanAgreement.payOffLoan(loanID);
+        vm.stopPrank();
+
+        // Player 2 attempts to cancel loan so she does not have to pay it back
+        vm.startPrank(player2);
+        vm.expectRevert("Loan: Only lender can cancel loan");
+        loanAgreement.cancelLoan(loanID);
+        vm.stopPrank();
+
+        // Player 2 pays off loan
+        time += 60;
+        vm.warp(time);
+        vm.startPrank(player2);
+        loanAgreement.payOffLoan(loanID);
+        vm.stopPrank();
+        assertEq(goldToken.balanceOf(nation1CapitalAddr), nationInitialGold);
+        assertEq(foodToken.balanceOf(nation1CapitalAddr), nationInitialFood + 50);
+        assertEq(goldToken.balanceOf(nation2CapitalAddr), nationInitialGold);
+        assertEq(foodToken.balanceOf(nation2CapitalAddr), nationInitialFood - 50);
+        assertEq(goldToken.balanceOf(address(loanAgreement)), 0);
+        assertEq(foodToken.balanceOf(address(loanAgreement)), 0);
+
+        // Player 1 attempts to liquidate collateral
+        vm.startPrank(player1);
+        vm.expectRevert("Loan: Loan does not exist");
+        loanAgreement.liquidateCollateral(loanID);
+        vm.stopPrank();
+    }
 }
