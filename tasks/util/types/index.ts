@@ -51,3 +51,8 @@ export interface RemoveIdlePlayersArgs extends HardhatArguments {
   diamond: string;
   duration: number;
 }
+
+export interface AddTreatyTemplateArgs extends HardhatArguments {
+  diamond: string;
+  name: string;
+}
