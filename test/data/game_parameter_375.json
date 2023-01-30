@@ -1,8 +1,8 @@
 {
-    "componentName": "Yield",
-    "functionName": "",
-    "level": 4,
+    "componentName": "Cost",
+    "functionName": "Move",
+    "level": 3,
     "object": "Food",
     "subject": "Capital",
-    "value": 12695
+    "value": 256000
 }

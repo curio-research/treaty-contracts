@@ -6,7 +6,7 @@ import numpy as np
 import json
 from pathlib import Path
 import os
-
+import pandas as pd
 
 import sys
 
@@ -307,7 +307,7 @@ def get_tile_upgrade_cooldown_in_second(level: int) -> int:
 
 
 def expected_gold_density() -> float:
-    return 0.25
+    return 0.13
 
 
 def expected_farm_density() -> float:
@@ -666,16 +666,16 @@ class Game:
             self.total_tile_count = 51 * 51
             self.expected_player_count = 80
             self.init_player_tile_count = 3
-            self.expected_play_time_in_hour = 120
-            self.upgrade_time_to_expected_play_time_ratio = 1/4
+            self.expected_play_time_in_hour = 144
+            self.upgrade_time_to_expected_play_time_ratio = 0.3
             self.init_player_goldmine_count = 1
             self.init_player_farm_count = 1
             self.player_login_interval_in_minutes = 100
             self.max_capital_level = 7
             self.capital_level_to_building_level = 3
             self.player_action_in_seconds = 2000
-            self.base_troop_training_in_seconds = 1
-            self.barbarian_reward_to_cost_coefficient = 0.12  # temporarily problematic
+            self.base_troop_training_in_seconds = 0.4
+            self.barbarian_reward_to_cost_coefficient = 0.5  # temporarily problematic
             self.tile_to_barbarian_strength_ratio = 1
             self.tile_troop_discount = 4
             self.barbarian_to_army_difficulty_constant = 70
@@ -686,10 +686,10 @@ class Game:
             self.chaos_period_in_seconds = 900
             self.super_tile_init_time_in_hour = 0
             self.move_capital_to_upgrade_cost_ratio = 0.2
-            self.troop_cap_to_buildings_cap_ratio = 0.08
-            self.troop_gathering_bonus = 1.2
+            self.troop_cap_to_buildings_cap_ratio = 0.13
+            self.troop_gathering_bonus = 1.4
             self.barbarian_cooldown = 600
-            self.capital_gold_tax_factor = 20
+            self.capital_gold_tax_factor = 25
     """
     Constant format:
     "subject": "Farm",
@@ -744,9 +744,15 @@ class Game:
         game_parameters.append({"subject": "Inner Tile", "componentName": "Level",
                                "object": "", "level": 0, "functionName": "", "value": 7})
         game_parameters.append({"subject": "Capital", "componentName": "Amount", "object": "Gold",
-                                "level": 0, "functionName": "JoinGame", "value": get_building_upgrade_cost(1, Building.CAPITAL)[0]/2})
+                                "level": 0, "functionName": "JoinGame", "value": 1000 * get_building_upgrade_cost(1, Building.CAPITAL)[0]/2})
         game_parameters.append({"subject": "Capital", "componentName": "Amount", "object": "Food",
-                                "level": 0, "functionName": "JoinGame", "value": get_troop_size_by_center_level(1) * game_instance.resource_weight_heavy})
+                                "level": 0, "functionName": "JoinGame", "value": 1000 * get_troop_size_by_center_level(1) * game_instance.resource_weight_heavy})
+        game_parameters.append({"subject": "Capital", "componentName": "Amount", "object": "Horseman",
+                                "level": 0, "functionName": "JoinGame", "value": get_troop_size_by_center_level(1) * 1 / 3})
+        game_parameters.append({"subject": "Capital", "componentName": "Amount", "object": "Warrior",
+                                "level": 0, "functionName": "JoinGame", "value": get_troop_size_by_center_level(1) * 1 / 3})
+        game_parameters.append({"subject": "Capital", "componentName": "Amount", "object": "Slinger",
+                                "level": 0, "functionName": "JoinGame", "value": get_troop_size_by_center_level(1) * 1 / 3})
 
         # Building Stats
         for bt in [Building.GOLDMINE, Building.FARM, Building.CAPITAL]:
@@ -878,214 +884,215 @@ class Game:
             outfile.write(json.dumps(world_parameters, indent=4))
         print('GodOS: generated and exported parameters into json')
 
-    # def export_excel_parameters(self):
-    #     # Tile Stats
-    #     # Initialize tile_stats as an empty DataFrame
-    #     tile_stats = pd.DataFrame(columns=[
-    #                               'Level', 'Cooldown(s): Upgrade', 'Cost: Gold', 'Cost: Food', 'Amount: Guard'])
+    def export_excel_parameters(self):
+        # Tile Stats
+        # Initialize tile_stats as an empty DataFrame
+        tile_stats = pd.DataFrame(columns=[
+                                  'Level', 'Cooldown(s): Upgrade', 'Cost: Gold', 'Cost: Food', 'Amount: Guard'])
 
-    #     # Assign the maximum level of the tile
-    #     max_tile_level = self.max_capital_level * \
-    #         self.capital_level_to_building_level
+        # Assign the maximum level of the tile
+        max_tile_level = self.max_capital_level * \
+            self.capital_level_to_building_level
 
-    #     # Initialize curr_level
-    #     curr_level = 1
+        # Initialize curr_level
+        curr_level = 1
 
-    #     # Loop through all the levels of the tile
-    #     while curr_level <= max_tile_level:
-    #         level = 'lv' + str(curr_level)
-    #         (cost_gold, cost_food) = get_tile_upgrade_cost(curr_level)
+        # Loop through all the levels of the tile
+        while curr_level <= max_tile_level:
+            level = 'lv' + str(curr_level)
+            (cost_gold, cost_food) = get_tile_upgrade_cost(curr_level)
 
-    #         tile_stats = tile_stats.append({
-    #             'Level': level,
-    #             'Cooldown(s): Upgrade': int(get_tile_upgrade_cooldown_in_second(curr_level)),
-    #             'Cost: Gold': int(cost_gold * 1000),
-    #             'Cost: Food': int(cost_food * 1000),
-    #             'Amount: Guard': int(get_tile_troop_count(curr_level))},
-    #             ignore_index=True)
+            tile_stats = tile_stats.append({
+                'Level': level,
+                'Cooldown(s): Upgrade': int(get_tile_upgrade_cooldown_in_second(curr_level)),
+                'Cost: Gold': int(cost_gold * 1000),
+                'Cost: Food': int(cost_food * 1000),
+                'Amount: Guard': int(get_tile_troop_count(curr_level))},
+                ignore_index=True)
 
-    #         curr_level += 1
+            curr_level += 1
 
-    #     # Building Stats
-    #     # Initialize building_stats as an empty DataFrame
-    #     capital_stats = pd.DataFrame(columns=['Level', 'Cooldown(s): Upgrade', 'Upgrade Cost: Gold', 'Upgrade Cost: Food', 'Cooldown(s): moveCapital',
-    #                                  'Move Cost: Gold', 'Move Cost: Food', 'Yield(s): Gold', 'Yield(s): Food', 'Cap: Food', 'Cap: Gold', 'Army Size', 'Tile Count'])
-    #     goldmine_stats = pd.DataFrame(columns=[
-    #                                   'Level', 'Cooldown(s): Upgrade', 'Upgrade Cost: Gold', 'Upgrade Cost: Food', 'Yield(s): Gold', 'Cap: Gold'])
-    #     farm_stats = pd.DataFrame(columns=['Level', 'Cooldown(s): Upgrade',
-    #                               'Upgrade Cost: Gold', 'Upgrade Cost: Food', 'Yield(s): Food', 'Cap: Food'])
+        # Building Stats
+        # Initialize building_stats as an empty DataFrame
+        capital_stats = pd.DataFrame(columns=['Level', 'Cooldown(s): Upgrade', 'Upgrade Cost: Gold', 'Upgrade Cost: Food', 'Cooldown(s): moveCapital',
+                                     'Move Cost: Gold', 'Move Cost: Food', 'Yield(s): Gold', 'Yield(s): Food', 'Cap: Food', 'Cap: Gold', 'Army Size', 'Tile Count'])
+        goldmine_stats = pd.DataFrame(columns=[
+                                      'Level', 'Cooldown(s): Upgrade', 'Upgrade Cost: Gold', 'Upgrade Cost: Food', 'Yield(s): Gold', 'Cap: Gold'])
+        farm_stats = pd.DataFrame(columns=['Level', 'Cooldown(s): Upgrade',
+                                  'Upgrade Cost: Gold', 'Upgrade Cost: Food', 'Yield(s): Food', 'Cap: Food'])
 
-    #     for bt in [Building.GOLDMINE, Building.FARM, Building.CAPITAL]:
-    #         max_building_level = 1
-    #         building_type = bt
-    #         if bt == Building.GOLDMINE:
-    #             max_building_level = self.max_capital_level * \
-    #                 self.capital_level_to_building_level
-    #         elif bt == Building.FARM:
-    #             max_building_level = self.max_capital_level * \
-    #                 self.capital_level_to_building_level
-    #         elif bt == Building.CAPITAL:
-    #             max_building_level = self.max_capital_level
+        for bt in [Building.GOLDMINE, Building.FARM, Building.CAPITAL]:
+            max_building_level = 1
+            building_type = bt
+            if bt == Building.GOLDMINE:
+                max_building_level = self.max_capital_level * \
+                    self.capital_level_to_building_level
+            elif bt == Building.FARM:
+                max_building_level = self.max_capital_level * \
+                    self.capital_level_to_building_level
+            elif bt == Building.CAPITAL:
+                max_building_level = self.max_capital_level
 
-    #         curr_level = 1
+            curr_level = 1
 
-    #         while curr_level <= max_building_level:
-    #             level = 'lv' + str(curr_level)
-    #             (gold_upgrade_cost, food_upgrade_cost) = get_building_upgrade_cost(
-    #                 curr_level, building_type)
-    #             (gold_hourly_yield, food_hourly_yield) = get_building_hourly_yield_by_level(
-    #                 curr_level, building_type)
-    #             (gold_cap, food_cap) = get_building_resource_cap(
-    #                 curr_level, building_type)
-    #             if bt == Building.CAPITAL and curr_level > 0:
-    #                 tile_count = self.init_player_tile_count + \
-    #                     (curr_level - 1) * get_capital_tiles_interval()
-    #                 (move_cost_gold, move_cost_food) = get_move_capital_cost(curr_level)
-    #                 capital_stats = capital_stats.append({
-    #                     'Level': level,
-    #                     'Cooldown(s): Upgrade': int((get_building_upgrade_cooldown_in_hour(curr_level, building_type) * 3600)),
-    #                     'Upgrade Cost: Gold': int(gold_upgrade_cost * 1000),
-    #                     'Upgrade Cost: Food': int(food_upgrade_cost * 1000),
-    #                     'Cooldown(s): moveCapital': int(get_move_capital_cooldown_in_hour(curr_level) * 3600),
-    #                     'Move Cost: Gold': int(move_cost_gold * 1000),
-    #                     'Move Cost: Food': int(move_cost_food * 1000),
-    #                     'Yield(s): Gold': int(gold_hourly_yield * 1000 / 3600),
-    #                     'Yield(s): Food': int(food_hourly_yield * 1000 / 3600),
-    #                     'Cap: Food': int(food_cap * 1000),
-    #                     'Cap: Gold': int(gold_cap * 1000),
-    #                     'Army Size': int(get_troop_size_by_center_level(curr_level)),
-    #                     'Tile Count': int(tile_count)},
-    #                     ignore_index=True)
-    #             if bt == Building.GOLDMINE:
-    #                 goldmine_stats = goldmine_stats.append({
-    #                     'Level': level,
-    #                     'Cooldown(s): Upgrade': int(get_building_upgrade_cooldown_in_hour(curr_level, building_type) * 3600),
-    #                     'Upgrade Cost: Gold': int(gold_upgrade_cost * 1000),
-    #                     'Upgrade Cost: Food': int(food_upgrade_cost * 1000),
-    #                     'Yield(s): Gold': int(gold_hourly_yield),
-    #                     'Cap: Gold': int(gold_cap * 1000)},
-    #                     ignore_index=True)
-    #             if bt == Building.FARM:
-    #                 farm_stats = farm_stats.append({
-    #                     'Level': level,
-    #                     'Cooldown(s): Upgrade': int(get_building_upgrade_cooldown_in_hour(curr_level, building_type) * 3600),
-    #                     'Upgrade Cost: Gold': int(gold_upgrade_cost * 1000),
-    #                     'Upgrade Cost: Food': int(food_upgrade_cost * 1000),
-    #                     'Yield(s): Food': int(food_hourly_yield * 1000 / 3600),
-    #                     'Cap: Food': int(food_cap * 1000)},
-    #                     ignore_index=True)
+            while curr_level <= max_building_level:
+                level = 'lv' + str(curr_level)
+                (gold_upgrade_cost, food_upgrade_cost) = get_building_upgrade_cost(
+                    curr_level, building_type)
+                (gold_hourly_yield, food_hourly_yield) = get_building_hourly_yield_by_level(
+                    curr_level, building_type)
+                (gold_cap, food_cap) = get_building_resource_cap(
+                    curr_level, building_type)
+                if bt == Building.CAPITAL and curr_level > 0:
+                    tile_count = self.init_player_tile_count + \
+                        (curr_level - 1) * get_capital_tiles_interval()
+                    (move_cost_gold, move_cost_food) = get_move_capital_cost(curr_level)
+                    capital_stats = capital_stats.append({
+                        'Level': level,
+                        'Cooldown(s): Upgrade': int((get_building_upgrade_cooldown_in_hour(curr_level, building_type) * 3600)),
+                        'Upgrade Cost: Gold': int(gold_upgrade_cost * 1000),
+                        'Upgrade Cost: Food': int(food_upgrade_cost * 1000),
+                        'Cooldown(s): moveCapital': int(get_move_capital_cooldown_in_hour(curr_level) * 3600),
+                        'Move Cost: Gold': int(move_cost_gold * 1000),
+                        'Move Cost: Food': int(move_cost_food * 1000),
+                        'Yield(s): Gold': int(gold_hourly_yield * 1000 / 3600),
+                        'Yield(s): Food': int(food_hourly_yield * 1000 / 3600),
+                        'Cap: Food': int(food_cap * 1000),
+                        'Cap: Gold': int(gold_cap * 1000),
+                        'Army Size': int(get_troop_size_by_center_level(curr_level)),
+                        'Tile Count': int(tile_count)},
+                        ignore_index=True)
+                if bt == Building.GOLDMINE:
+                    goldmine_stats = goldmine_stats.append({
+                        'Level': level,
+                        'Cooldown(s): Upgrade': int(get_building_upgrade_cooldown_in_hour(curr_level, building_type) * 3600),
+                        'Upgrade Cost: Gold': int(gold_upgrade_cost * 1000),
+                        'Upgrade Cost: Food': int(food_upgrade_cost * 1000),
+                        'Yield(s): Gold': int(gold_hourly_yield),
+                        'Cap: Gold': int(gold_cap * 1000)},
+                        ignore_index=True)
+                if bt == Building.FARM:
+                    farm_stats = farm_stats.append({
+                        'Level': level,
+                        'Cooldown(s): Upgrade': int(get_building_upgrade_cooldown_in_hour(curr_level, building_type) * 3600),
+                        'Upgrade Cost: Gold': int(gold_upgrade_cost * 1000),
+                        'Upgrade Cost: Food': int(food_upgrade_cost * 1000),
+                        'Yield(s): Food': int(food_hourly_yield * 1000 / 3600),
+                        'Cap: Food': int(food_cap * 1000)},
+                        ignore_index=True)
 
-    #             curr_level += 1
+                curr_level += 1
 
-    #     # Stats for Analytics
-    #     payback_stats = pd.DataFrame(
-    #         columns=['Level', 'Goldmine PB (hr)', 'Farm PB (hr)'])
+        # Stats for Analytics
+        payback_stats = pd.DataFrame(
+            columns=['Level', 'Goldmine PB (hr)', 'Farm PB (hr)'])
 
-    #     curr_level = 1
-    #     max_building_level = self.max_capital_level * \
-    #         self.capital_level_to_building_level
-    #     while curr_level < max_building_level:
-    #         level = 'lv' + str(curr_level)
-    #         (goldmine_gold_upgrade_cost, a) = get_building_upgrade_cost(
-    #             curr_level, Building.GOLDMINE)
-    #         (a, farm_food_upgrade_cost) = get_building_upgrade_cost(
-    #             curr_level, Building.FARM)
+        curr_level = 1
+        max_building_level = self.max_capital_level * \
+            self.capital_level_to_building_level
+        while curr_level < max_building_level:
+            level = 'lv' + str(curr_level)
+            (goldmine_gold_upgrade_cost, a) = get_building_upgrade_cost(
+                curr_level, Building.GOLDMINE)
+            (a, farm_food_upgrade_cost) = get_building_upgrade_cost(
+                curr_level, Building.FARM)
 
-    #         (goldmine_gold_nextlv_yield, a) = get_building_hourly_yield_by_level(
-    #             curr_level + 1, Building.GOLDMINE)
-    #         (a, farm_food_nextlv_yield) = get_building_hourly_yield_by_level(
-    #             curr_level + 1, Building.FARM)
+            (goldmine_gold_nextlv_yield, a) = get_building_hourly_yield_by_level(
+                curr_level + 1, Building.GOLDMINE)
+            (a, farm_food_nextlv_yield) = get_building_hourly_yield_by_level(
+                curr_level + 1, Building.FARM)
 
-    #         mine_pay_back_hrs = goldmine_gold_upgrade_cost / goldmine_gold_nextlv_yield
-    #         farm_pay_back_hrs = farm_food_upgrade_cost / farm_food_nextlv_yield
+            mine_pay_back_hrs = goldmine_gold_upgrade_cost / goldmine_gold_nextlv_yield
+            farm_pay_back_hrs = farm_food_upgrade_cost / farm_food_nextlv_yield
 
-    #         payback_stats = payback_stats.append({
-    #             'Level': level,
-    #             'Goldmine PB (hr)': mine_pay_back_hrs,
-    #             'Farm PB (hr)': farm_pay_back_hrs},
-    #             ignore_index=True)
+            payback_stats = payback_stats.append({
+                'Level': level,
+                'Goldmine PB (hr)': mine_pay_back_hrs,
+                'Farm PB (hr)': farm_pay_back_hrs},
+                ignore_index=True)
 
-    #         curr_level += 1
+            curr_level += 1
 
-    #     gather_stats = pd.DataFrame(columns=['Capital Level', 'Army Size', '# Gatherings to Upgrade',
-    #                                 'Gold Gathering Time (s)', 'Food Gathering Time (s)', '# (hr) Maximal Troop Production'])
+        gather_stats = pd.DataFrame(columns=['Capital Level', 'Army Size', '# Gatherings to Upgrade',
+                                    'Gold Gathering Time (s)', 'Food Gathering Time (s)', '# (hr) Maximal Troop Production'])
 
-    #     curr_level = 1
-    #     tile_count_limit = 3
-    #     while curr_level < self.max_capital_level:
-    #         level = 'lv' + str(curr_level)
-    #         army_size = get_troop_size_by_center_level(curr_level)
-    #         gathering_capacity = army_size * resource_cap_per_troop()
-    #         # only consider gold cost
-    #         (gold_upgrade_cost, food_upgrade_cost) = get_building_upgrade_cost(
-    #             curr_level, Building.CAPITAL)
+        curr_level = 1
+        tile_count_limit = 3
+        while curr_level < self.max_capital_level:
+            level = 'lv' + str(curr_level)
+            army_size = get_troop_size_by_center_level(curr_level)
+            gathering_capacity = army_size * resource_cap_per_troop()
+            # only consider gold cost
+            (gold_upgrade_cost, food_upgrade_cost) = get_building_upgrade_cost(
+                curr_level, Building.CAPITAL)
 
-    #         times_gathering_to_upgrade = gold_upgrade_cost / gathering_capacity
+            times_gathering_to_upgrade = gold_upgrade_cost / gathering_capacity
 
-    #         tile_count_limit += get_capital_tiles_interval()
-    #         projected_farm_count = expected_farm_density() * tile_count_limit
-    #         (gold_yield, food_yield) = get_building_hourly_yield_by_level(
-    #             get_capital_level_to_building_level() * curr_level, Building.FARM)
-    #         projected_max_food_hourly_yield = projected_farm_count * food_yield
+            tile_count_limit += get_capital_tiles_interval()
+            projected_farm_count = expected_farm_density() * tile_count_limit
+            (gold_yield, food_yield) = get_building_hourly_yield_by_level(
+                get_capital_level_to_building_level() * curr_level, Building.FARM)
+            projected_max_food_hourly_yield = projected_farm_count * food_yield
 
-    #         gold_gathering_rate = get_hourly_gather_rate_per_army(
-    #             Resource.GOLD)
-    #         food_gathering_rate = get_hourly_gather_rate_per_army(
-    #             Resource.FOOD)
+            gold_gathering_rate = get_hourly_gather_rate_per_army(
+                Resource.GOLD)
+            food_gathering_rate = get_hourly_gather_rate_per_army(
+                Resource.FOOD)
 
-    #         gather_stats = gather_stats.append({
-    #             'Capital Level': level,
-    #             'Army Size': army_size,
-    #             '# Gatherings to Upgrade': times_gathering_to_upgrade,
-    #             'Gold Gathering Time (s)': gathering_capacity / gold_gathering_rate * 3600,
-    #             'Food Gathering Time (s)': gathering_capacity / food_gathering_rate * 3600,
-    #             '# (hr) Maximal Troop Production': projected_max_food_hourly_yield / game_instance.resource_weight_heavy
-    #         }, ignore_index=True)
+            gather_stats = gather_stats.append({
+                'Capital Level': level,
+                'Army Size': army_size,
+                '# Gatherings to Upgrade': times_gathering_to_upgrade,
+                'Gold Gathering Time (s)': gathering_capacity / gold_gathering_rate * 3600,
+                'Food Gathering Time (s)': gathering_capacity / food_gathering_rate * 3600,
+                '# (hr) Maximal Troop Production': projected_max_food_hourly_yield / game_instance.resource_weight_heavy
+            }, ignore_index=True)
 
-    #         curr_level += 1
+            curr_level += 1
 
-    #     barbarian_stats = pd.DataFrame(
-    #         columns=['Capital Level', '# Defeats to Upgrade'])
-    #     # Note: barbarians are always 4 or 8 levels in this version
-    #     (reward_gold, reward_food) = get_barbarian_reward(6)
+        barbarian_stats = pd.DataFrame(
+            columns=['Capital Level', '# Defeats to Upgrade', '# Full Harvest to Upgrade'])
+        # Note: barbarians are always 4 or 8 levels in this version
+        (reward_gold, reward_food) = get_barbarian_reward(6)
 
-    #     curr_level = 1
-    #     while curr_level < self.max_capital_level:
-    #         level = 'lv' + str(curr_level)
-    #         (gold_upgrade_cost, food_upgrade_cost) = get_building_upgrade_cost(
-    #             curr_level, Building.CAPITAL)
+        curr_level = 1
+        while curr_level < self.max_capital_level:
+            level = 'lv' + str(curr_level)
+            (gold_upgrade_cost, food_upgrade_cost) = get_building_upgrade_cost(
+                curr_level, Building.CAPITAL)
 
-    #         barbarian_stats = barbarian_stats.append({
-    #             'Capital Level': level,
-    #             '# Defeats to Upgrade': gold_upgrade_cost / reward_gold
-    #         }, ignore_index=True)
+            barbarian_stats = barbarian_stats.append({
+                'Capital Level': level,
+                '# Defeats to Upgrade': gold_upgrade_cost / reward_gold,
+                '# Full Harvest to Upgrade': gold_upgrade_cost / get_building_resource_cap(curr_level*3, Building.GOLDMINE)[0]
+            }, ignore_index=True)
 
-    #         curr_level += 1
+            curr_level += 1
 
-    #     # Export tile_stats into an excel file
-    #     filepath = os.path.join(os.path.expanduser('~'), 'Desktop')
-    #     filename = 'treaty_raw_stats.xlsx'
-    #     file_path = os.path.join(filepath, filename)
+        # Export tile_stats into an excel file
+        filepath = os.path.join(os.path.expanduser('~'), 'Desktop')
+        filename = 'treaty_raw_stats.xlsx'
+        file_path = os.path.join(filepath, filename)
 
-    #     # Create an ExcelWriter object
-    #     writer = pd.ExcelWriter(file_path, engine='xlsxwriter')
+        # Create an ExcelWriter object
+        writer = pd.ExcelWriter(file_path, engine='xlsxwriter')
 
-    #     # Write the DataFrame 'tile_stats' to sheet 'Tile'
-    #     tile_stats.to_excel(writer, sheet_name='Tile', index=False)
-    #     capital_stats.to_excel(writer, sheet_name='Capital', index=False)
-    #     goldmine_stats.to_excel(writer, sheet_name='Gold Mine', index=False)
-    #     farm_stats.to_excel(writer, sheet_name='Farms', index=False)
-    #     payback_stats.to_excel(writer, sheet_name='Payback Stats', index=False)
-    #     gather_stats.to_excel(writer, sheet_name='Gather Stats', index=False)
-    #     barbarian_stats.to_excel(
-    #         writer, sheet_name='Barbarian Stats', index=False)
+        # Write the DataFrame 'tile_stats' to sheet 'Tile'
+        tile_stats.to_excel(writer, sheet_name='Tile', index=False)
+        capital_stats.to_excel(writer, sheet_name='Capital', index=False)
+        goldmine_stats.to_excel(writer, sheet_name='Gold Mine', index=False)
+        farm_stats.to_excel(writer, sheet_name='Farms', index=False)
+        payback_stats.to_excel(writer, sheet_name='Payback Stats', index=False)
+        gather_stats.to_excel(writer, sheet_name='Gather Stats', index=False)
+        barbarian_stats.to_excel(
+            writer, sheet_name='Barbarian Stats', index=False)
 
-    #     # Save the excel file
-    #     writer.save()
-    #     print('GodOS: generated and exported parameters into excel')
+        # Save the excel file
+        writer.save()
+        print('GodOS: generated and exported parameters into excel')
 
 
 # change here when switching game mode
 game_instance = Game(GameMode.PUBLIC_LAUNCH)
 game_instance.export_json_parameters()
-# game_instance.export_excel_parameters()
+game_instance.export_excel_parameters()

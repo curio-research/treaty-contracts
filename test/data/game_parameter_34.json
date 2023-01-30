@@ -1,8 +1,8 @@
 {
-    "componentName": "Load",
-    "functionName": "",
-    "level": 2,
-    "object": "Gold",
+    "componentName": "Cooldown",
+    "functionName": "Upgrade",
+    "level": 1,
+    "object": "",
     "subject": "Goldmine",
-    "value": 10925000
+    "value": 88
 }

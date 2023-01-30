@@ -1,8 +1,8 @@
 {
-    "componentName": "Cooldown",
-    "functionName": "Chaos",
+    "componentName": "Load",
+    "functionName": "",
     "level": 2,
-    "object": "",
+    "object": "Troop",
     "subject": "Capital",
-    "value": 900
+    "value": 999999999
 }

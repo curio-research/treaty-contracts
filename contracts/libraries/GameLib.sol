@@ -211,7 +211,7 @@ library GameLib {
 
         // Gather
         uint256 gatherAmount = (block.timestamp - ECSLib.getUint("InitTimestamp", gatherID)) * getGameParameter("Army", ECSLib.getString("Name", templateID), "Rate", "gather", 0);
-        uint256 gatherLoad = (getGameParameter("Troop", "Resource", "Load", "", 0) * getArmyTroopCount(_armyID));
+        uint256 gatherLoad = getGameParameter("Troop", "Resource", "Load", "", 0) * getArmyTroopCount(_armyID);
         uint256 armyInventoryBalance = resourceToken.balanceOf(armyAddress);
         resourceToken.dripToken(armyAddress, min(gatherAmount, gatherLoad - armyInventoryBalance));
 
@@ -315,8 +315,8 @@ library GameLib {
                     {
                         uint256 troopTypeBonus = getAttackBonus(troopTemplateIDs[i], troopTemplateIDs[j]);
                         loss =
-                            (troopTypeBonus * (sqrt(offenderTroopAmount) * ECSLib.getUint("Attack", troopTemplateIDs[i]) * 2)) / //
-                            (ECSLib.getUint("Defense", troopTemplateIDs[j]) * ECSLib.getUint("Health", troopTemplateIDs[j]));
+                            ((troopTypeBonus * (sqrt(offenderTroopAmount) * ECSLib.getUint("Attack", troopTemplateIDs[i]) * 2)) * 4) / //
+                            (ECSLib.getUint("Defense", troopTemplateIDs[j]) * ECSLib.getUint("Health", troopTemplateIDs[j])); // FIXME: 4 is temporary
                     }
 
                     loss = min(loss, ECSLib.getUint("Amount", defenderTroopInventoryID));
