@@ -4,7 +4,6 @@ import {CurioTreaty} from "contracts/standards/CurioTreaty.sol";
 import {CurioERC20} from "contracts/standards/CurioERC20.sol";
 import {GetterFacet} from "contracts/facets/GetterFacet.sol";
 import {Set} from "contracts/Set.sol";
-import {console} from "forge-std/console.sol";
 
 abstract contract Bounty is CurioTreaty {
     // WIP

@@ -91,6 +91,10 @@ contract GetterFacet is UseStorage {
         return GameLib.getTreatyWhitelisted(_nationID, _treatyID) != NULL;
     }
 
+    function getTreatyWhitelist(uint256 _treatyID) external view returns (uint256[] memory) {
+        return GameLib.getTreatyWhitelist(_treatyID);
+    }
+
     // ----------------------------------------------------------
     // LOGIC GETTERS
     // ----------------------------------------------------------

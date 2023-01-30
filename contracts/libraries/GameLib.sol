@@ -211,7 +211,7 @@ library GameLib {
 
         // Gather
         uint256 gatherAmount = (block.timestamp - ECSLib.getUint("InitTimestamp", gatherID)) * getGameParameter("Army", ECSLib.getString("Name", templateID), "Rate", "gather", 0);
-        uint256 gatherLoad = (getGameParameter("Troop", "Resource", "Load", "", 0) * getArmyTroopCount(_armyID)) / 1000;
+        uint256 gatherLoad = (getGameParameter("Troop", "Resource", "Load", "", 0) * getArmyTroopCount(_armyID));
         uint256 armyInventoryBalance = resourceToken.balanceOf(armyAddress);
         resourceToken.dripToken(armyAddress, min(gatherAmount, gatherLoad - armyInventoryBalance));
 
@@ -635,6 +635,14 @@ library GameLib {
         QueryCondition[] memory query = new QueryCondition[](2);
         query[0] = ECSLib.queryChunk(QueryType.Has, Component(gs().components["Speed"]), new bytes(0));
         query[1] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["StartPosition"]), abi.encode(_startPosition));
+        return ECSLib.query(query);
+    }
+
+    function getTreatyWhitelist(uint256 _treatyID) internal view returns (uint256[] memory) {
+        QueryCondition[] memory query = new QueryCondition[](2);
+        query[0] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Tag"]), abi.encode("TreatyWhitelisted"));
+        query[1] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Treaty"]), abi.encode(_treatyID));
+
         return ECSLib.query(query);
     }
 

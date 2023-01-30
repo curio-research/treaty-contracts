@@ -90,6 +90,12 @@ contract GameFacet is UseStorage {
         // Initialized with some resources
         GameLib.getTokenContract("Gold").dripToken(capitalAddress, GameLib.getGameParameter("Capital", "Gold", "Amount", "JoinGame", 0));
         GameLib.getTokenContract("Food").dripToken(capitalAddress, GameLib.getGameParameter("Capital", "Food", "Amount", "JoinGame", 0));
+        // GameLib.getTokenContract("Horseman").dripToken(capitalAddress, GameLib.getGameParameter("Capital", "Horseman", "Amount", "JoinGame", 0));
+        // GameLib.getTokenContract("Warrior").dripToken(capitalAddress, GameLib.getGameParameter("Capital", "Warrior", "Amount", "JoinGame", 0));
+        // GameLib.getTokenContract("Slinger").dripToken(capitalAddress, GameLib.getGameParameter("Capital", "Slinger", "Amount", "JoinGame", 0));
+        GameLib.getTokenContract("Horseman").dripToken(capitalAddress, 300);
+        GameLib.getTokenContract("Warrior").dripToken(capitalAddress, 300);
+        GameLib.getTokenContract("Slinger").dripToken(capitalAddress, 300);
 
         // Set last action time
         ECSLib.setUint("LastActed", nationID, block.timestamp);
@@ -434,7 +440,7 @@ contract GameFacet is UseStorage {
             for (uint256 i = 0; i < resourceTemplateIDs.length; i++) {
                 CurioERC20 resourceToken = CurioERC20(ECSLib.getAddress("Address", resourceTemplateIDs[i]));
                 uint256 balance = ECSLib.getUint("Amount", GameLib.getInventory(GameLib.getCapital(nationID), resourceTemplateIDs[i]));
-                uint256 totalRecoverCost = (GameLib.getGameParameter("Troop Production", ECSLib.getString("Name", resourceTemplateIDs[i]), "Cost", "", 0) * lostGuardAmount) / 1000;
+                uint256 totalRecoverCost = GameLib.getGameParameter("Troop Production", ECSLib.getString("Name", resourceTemplateIDs[i]), "Cost", "", 0) * lostGuardAmount;
                 require(balance >= totalRecoverCost, "CURIO: Insufficient balance");
 
                 resourceToken.destroyToken(capitalAddress, totalRecoverCost);
@@ -736,7 +742,7 @@ contract GameFacet is UseStorage {
         }
 
         // Edit army traits
-        ECSLib.setUint("Load", armyID, (GameLib.getGameParameter("Troop", "Resource", "Load", "", 0) * totalTroopAmount) / 1000);
+        ECSLib.setUint("Load", armyID, (GameLib.getGameParameter("Troop", "Resource", "Load", "", 0) * totalTroopAmount));
 
         // Set last action time
         ECSLib.setUint("LastActed", nationID, block.timestamp);
