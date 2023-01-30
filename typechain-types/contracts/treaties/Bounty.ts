@@ -23,7 +23,7 @@ import type {
   PromiseOrValue,
 } from "../../common";
 
-export interface SimpleOTCInterface extends utils.Interface {
+export interface BountyInterface extends utils.Interface {
   functions: {
     "approveBattle(uint256,bytes)": FunctionFragment;
     "approveClaimTile(uint256,bytes)": FunctionFragment;
@@ -49,15 +49,10 @@ export interface SimpleOTCInterface extends utils.Interface {
     "approveUpgradeCapital(uint256,bytes)": FunctionFragment;
     "approveUpgradeResource(uint256,bytes)": FunctionFragment;
     "approveUpgradeTile(uint256,bytes)": FunctionFragment;
-    "cancelOrder()": FunctionFragment;
-    "createOrder(string,uint256,string,uint256)": FunctionFragment;
     "description()": FunctionFragment;
     "diamond()": FunctionFragment;
-    "emptyOrder()": FunctionFragment;
     "init(address)": FunctionFragment;
     "name()": FunctionFragment;
-    "sellerToOrder(address)": FunctionFragment;
-    "takeOrder(address)": FunctionFragment;
     "treatyDelegateGameFunction(string,uint256,bool)": FunctionFragment;
     "treatyJoin()": FunctionFragment;
     "treatyLeave()": FunctionFragment;
@@ -89,15 +84,10 @@ export interface SimpleOTCInterface extends utils.Interface {
       | "approveUpgradeCapital"
       | "approveUpgradeResource"
       | "approveUpgradeTile"
-      | "cancelOrder"
-      | "createOrder"
       | "description"
       | "diamond"
-      | "emptyOrder"
       | "init"
       | "name"
-      | "sellerToOrder"
-      | "takeOrder"
       | "treatyDelegateGameFunction"
       | "treatyJoin"
       | "treatyLeave"
@@ -200,40 +190,15 @@ export interface SimpleOTCInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
-    functionFragment: "cancelOrder",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "createOrder",
-    values: [
-      PromiseOrValue<string>,
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<string>,
-      PromiseOrValue<BigNumberish>
-    ]
-  ): string;
-  encodeFunctionData(
     functionFragment: "description",
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "diamond", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "emptyOrder",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
     functionFragment: "init",
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(functionFragment: "name", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "sellerToOrder",
-    values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "takeOrder",
-    values: [PromiseOrValue<string>]
-  ): string;
   encodeFunctionData(
     functionFragment: "treatyDelegateGameFunction",
     values: [
@@ -348,26 +313,12 @@ export interface SimpleOTCInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "cancelOrder",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "createOrder",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "description",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "diamond", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "emptyOrder", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "init", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "sellerToOrder",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "takeOrder", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "treatyDelegateGameFunction",
     data: BytesLike
@@ -381,12 +332,12 @@ export interface SimpleOTCInterface extends utils.Interface {
   events: {};
 }
 
-export interface SimpleOTC extends BaseContract {
+export interface Bounty extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: SimpleOTCInterface;
+  interface: BountyInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
@@ -552,33 +503,9 @@ export interface SimpleOTC extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
-    cancelOrder(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    createOrder(
-      _sellTokenName: PromiseOrValue<string>,
-      _sellAmount: PromiseOrValue<BigNumberish>,
-      _buyTokenName: PromiseOrValue<string>,
-      _buyAmount: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
     description(overrides?: CallOverrides): Promise<[string]>;
 
     diamond(overrides?: CallOverrides): Promise<[string]>;
-
-    emptyOrder(
-      overrides?: CallOverrides
-    ): Promise<
-      [string, BigNumber, string, BigNumber, BigNumber] & {
-        sellTokenName: string;
-        sellAmount: BigNumber;
-        buyTokenName: string;
-        buyAmount: BigNumber;
-        createdAt: BigNumber;
-      }
-    >;
 
     init(
       _diamond: PromiseOrValue<string>,
@@ -586,24 +513,6 @@ export interface SimpleOTC extends BaseContract {
     ): Promise<ContractTransaction>;
 
     name(overrides?: CallOverrides): Promise<[string]>;
-
-    sellerToOrder(
-      arg0: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<
-      [string, BigNumber, string, BigNumber, BigNumber] & {
-        sellTokenName: string;
-        sellAmount: BigNumber;
-        buyTokenName: string;
-        buyAmount: BigNumber;
-        createdAt: BigNumber;
-      }
-    >;
-
-    takeOrder(
-      _seller: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
 
     treatyDelegateGameFunction(
       _functionName: PromiseOrValue<string>,
@@ -765,33 +674,9 @@ export interface SimpleOTC extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
-  cancelOrder(
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  createOrder(
-    _sellTokenName: PromiseOrValue<string>,
-    _sellAmount: PromiseOrValue<BigNumberish>,
-    _buyTokenName: PromiseOrValue<string>,
-    _buyAmount: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
   description(overrides?: CallOverrides): Promise<string>;
 
   diamond(overrides?: CallOverrides): Promise<string>;
-
-  emptyOrder(
-    overrides?: CallOverrides
-  ): Promise<
-    [string, BigNumber, string, BigNumber, BigNumber] & {
-      sellTokenName: string;
-      sellAmount: BigNumber;
-      buyTokenName: string;
-      buyAmount: BigNumber;
-      createdAt: BigNumber;
-    }
-  >;
 
   init(
     _diamond: PromiseOrValue<string>,
@@ -799,24 +684,6 @@ export interface SimpleOTC extends BaseContract {
   ): Promise<ContractTransaction>;
 
   name(overrides?: CallOverrides): Promise<string>;
-
-  sellerToOrder(
-    arg0: PromiseOrValue<string>,
-    overrides?: CallOverrides
-  ): Promise<
-    [string, BigNumber, string, BigNumber, BigNumber] & {
-      sellTokenName: string;
-      sellAmount: BigNumber;
-      buyTokenName: string;
-      buyAmount: BigNumber;
-      createdAt: BigNumber;
-    }
-  >;
-
-  takeOrder(
-    _seller: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
 
   treatyDelegateGameFunction(
     _functionName: PromiseOrValue<string>,
@@ -978,31 +845,9 @@ export interface SimpleOTC extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    cancelOrder(overrides?: CallOverrides): Promise<void>;
-
-    createOrder(
-      _sellTokenName: PromiseOrValue<string>,
-      _sellAmount: PromiseOrValue<BigNumberish>,
-      _buyTokenName: PromiseOrValue<string>,
-      _buyAmount: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     description(overrides?: CallOverrides): Promise<string>;
 
     diamond(overrides?: CallOverrides): Promise<string>;
-
-    emptyOrder(
-      overrides?: CallOverrides
-    ): Promise<
-      [string, BigNumber, string, BigNumber, BigNumber] & {
-        sellTokenName: string;
-        sellAmount: BigNumber;
-        buyTokenName: string;
-        buyAmount: BigNumber;
-        createdAt: BigNumber;
-      }
-    >;
 
     init(
       _diamond: PromiseOrValue<string>,
@@ -1010,24 +855,6 @@ export interface SimpleOTC extends BaseContract {
     ): Promise<void>;
 
     name(overrides?: CallOverrides): Promise<string>;
-
-    sellerToOrder(
-      arg0: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<
-      [string, BigNumber, string, BigNumber, BigNumber] & {
-        sellTokenName: string;
-        sellAmount: BigNumber;
-        buyTokenName: string;
-        buyAmount: BigNumber;
-        createdAt: BigNumber;
-      }
-    >;
-
-    takeOrder(
-      _seller: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
 
     treatyDelegateGameFunction(
       _functionName: PromiseOrValue<string>,
@@ -1188,23 +1015,9 @@ export interface SimpleOTC extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    cancelOrder(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    createOrder(
-      _sellTokenName: PromiseOrValue<string>,
-      _sellAmount: PromiseOrValue<BigNumberish>,
-      _buyTokenName: PromiseOrValue<string>,
-      _buyAmount: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
     description(overrides?: CallOverrides): Promise<BigNumber>;
 
     diamond(overrides?: CallOverrides): Promise<BigNumber>;
-
-    emptyOrder(overrides?: CallOverrides): Promise<BigNumber>;
 
     init(
       _diamond: PromiseOrValue<string>,
@@ -1212,16 +1025,6 @@ export interface SimpleOTC extends BaseContract {
     ): Promise<BigNumber>;
 
     name(overrides?: CallOverrides): Promise<BigNumber>;
-
-    sellerToOrder(
-      arg0: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    takeOrder(
-      _seller: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
 
     treatyDelegateGameFunction(
       _functionName: PromiseOrValue<string>,
@@ -1384,23 +1187,9 @@ export interface SimpleOTC extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    cancelOrder(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    createOrder(
-      _sellTokenName: PromiseOrValue<string>,
-      _sellAmount: PromiseOrValue<BigNumberish>,
-      _buyTokenName: PromiseOrValue<string>,
-      _buyAmount: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
     description(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     diamond(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    emptyOrder(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     init(
       _diamond: PromiseOrValue<string>,
@@ -1408,16 +1197,6 @@ export interface SimpleOTC extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     name(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    sellerToOrder(
-      arg0: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    takeOrder(
-      _seller: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
 
     treatyDelegateGameFunction(
       _functionName: PromiseOrValue<string>,

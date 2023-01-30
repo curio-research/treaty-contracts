@@ -122,21 +122,22 @@ contract CurioERC20 is IERC20 {
         address _to,
         uint256 _amount
     ) public override returns (bool) {
-        // FIXME: temporarily disabled for playtesters
-        // // Transfers from diamond, owner, or a treaty are exempt from allowance
-        // if (
-        //     msg.sender != diamond && // FORMATTING: DO NOT REMOVE
-        //     GetterFacet(diamond).getEntityByAddress(msg.sender) != GetterFacet(diamond).getNation(GetterFacet(diamond).getEntityByAddress(_from)) &&
-        //     !_strEq(abi.decode(GetterFacet(diamond).getComponent("Tag").getBytesValue(GetterFacet(diamond).getEntityByAddress(msg.sender)), (string)), "Treaty")
-        // ) {
-        //     uint256 ownerID = GetterFacet(diamond).getEntityByAddress(_from);
-        //     uint256 spenderID = GetterFacet(diamond).getEntityByAddress(msg.sender);
+        GetterFacet getter = GetterFacet(diamond);
 
-        //     uint256 allowanceID = GetterFacet(diamond).getAllowance(name, ownerID, spenderID);
-        //     uint256 allowed = abi.decode(GetterFacet(diamond).getComponent("Amount").getBytesValue(allowanceID), (uint256));
-        //     require(allowed >= _amount, "CurioERC20: Insufficient allowance");
-        //     if (allowed != type(uint256).max) AdminFacet(diamond).setComponentValue("Amount", allowanceID, abi.encode(allowed - _amount));
-        // }
+        // Transfers from diamond, owner, or a treaty are exempt from allowance
+        if (
+            msg.sender != diamond && // FORMATTING: DO NOT REMOVE
+            getter.getEntityByAddress(msg.sender) != getter.getNation(getter.getEntityByAddress(_from)) &&
+            !_strEq(abi.decode(getter.getComponent("Tag").getBytesValue(getter.getEntityByAddress(msg.sender)), (string)), "Treaty")
+        ) {
+            uint256 ownerID = getter.getEntityByAddress(_from);
+            uint256 spenderID = getter.getEntityByAddress(msg.sender);
+
+            uint256 allowanceID = getter.getAllowance(name, ownerID, spenderID);
+            uint256 allowed = abi.decode(getter.getComponent("Amount").getBytesValue(allowanceID), (uint256));
+            require(allowed >= _amount, "CurioERC20: Insufficient allowance");
+            if (allowed != type(uint256).max) AdminFacet(diamond).setComponentValue("Amount", allowanceID, abi.encode(allowed - _amount));
+        }
 
         _transferHelper(_from, _to, _amount);
 

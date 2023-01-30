@@ -69,7 +69,10 @@ contract GetterFacet is UseStorage {
     }
 
     function getEntityByAddress(address _entityAddress) external view returns (uint256) {
-        return ECSLib.getAddressComponent("Address").getEntitiesWithValue(_entityAddress)[0];
+        uint256[] memory res = ECSLib.getAddressComponent("Address").getEntitiesWithValue(_entityAddress);
+        require(res.length == 1, "CURIO: Entity not found or has duplicate");
+
+        return res[0];
     }
 
     function getABIHash(uint256 _treatyID) external view returns (string memory) {
@@ -86,6 +89,10 @@ contract GetterFacet is UseStorage {
 
     function isWhitelistedByTreaty(uint256 _nationID, uint256 _treatyID) external view returns (bool) {
         return GameLib.getTreatyWhitelisted(_nationID, _treatyID) != NULL;
+    }
+
+    function getTreatyWhitelist(uint256 _treatyID) external view returns (uint256[] memory) {
+        return GameLib.getTreatyWhitelist(_treatyID);
     }
 
     // ----------------------------------------------------------
