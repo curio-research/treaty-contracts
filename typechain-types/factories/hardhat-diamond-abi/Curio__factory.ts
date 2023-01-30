@@ -2271,6 +2271,25 @@ const _abi = [
     type: "function",
   },
   {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "_treatyID",
+        type: "uint256",
+      },
+    ],
+    name: "getTreatyWhitelist",
+    outputs: [
+      {
+        internalType: "uint256[]",
+        name: "",
+        type: "uint256[]",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
     inputs: [],
     name: "getWorldConstants",
     outputs: [

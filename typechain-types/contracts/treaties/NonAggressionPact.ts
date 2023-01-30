@@ -52,10 +52,12 @@ export interface NonAggressionPactInterface extends utils.Interface {
     "approveUpgradeTile(uint256,bytes)": FunctionFragment;
     "description()": FunctionFragment;
     "diamond()": FunctionFragment;
+    "effectiveDuration()": FunctionFragment;
     "init(address)": FunctionFragment;
     "name()": FunctionFragment;
     "removeFromWhitelist(uint256)": FunctionFragment;
     "removeMember(uint256)": FunctionFragment;
+    "setEffectiveDuration(uint256)": FunctionFragment;
     "treatyDelegateGameFunction(string,uint256,bool)": FunctionFragment;
     "treatyJoin()": FunctionFragment;
     "treatyLeave()": FunctionFragment;
@@ -90,10 +92,12 @@ export interface NonAggressionPactInterface extends utils.Interface {
       | "approveUpgradeTile"
       | "description"
       | "diamond"
+      | "effectiveDuration"
       | "init"
       | "name"
       | "removeFromWhitelist"
       | "removeMember"
+      | "setEffectiveDuration"
       | "treatyDelegateGameFunction"
       | "treatyJoin"
       | "treatyLeave"
@@ -205,6 +209,10 @@ export interface NonAggressionPactInterface extends utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "diamond", values?: undefined): string;
   encodeFunctionData(
+    functionFragment: "effectiveDuration",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "init",
     values: [PromiseOrValue<string>]
   ): string;
@@ -215,6 +223,10 @@ export interface NonAggressionPactInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "removeMember",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setEffectiveDuration",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
@@ -339,6 +351,10 @@ export interface NonAggressionPactInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "diamond", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "effectiveDuration",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "init", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
   decodeFunctionResult(
@@ -347,6 +363,10 @@ export interface NonAggressionPactInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "removeMember",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setEffectiveDuration",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -542,6 +562,8 @@ export interface NonAggressionPact extends BaseContract {
 
     diamond(overrides?: CallOverrides): Promise<[string]>;
 
+    effectiveDuration(overrides?: CallOverrides): Promise<[BigNumber]>;
+
     init(
       _diamond: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -556,6 +578,11 @@ export interface NonAggressionPact extends BaseContract {
 
     removeMember(
       _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    setEffectiveDuration(
+      _duration: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -728,6 +755,8 @@ export interface NonAggressionPact extends BaseContract {
 
   diamond(overrides?: CallOverrides): Promise<string>;
 
+  effectiveDuration(overrides?: CallOverrides): Promise<BigNumber>;
+
   init(
     _diamond: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -742,6 +771,11 @@ export interface NonAggressionPact extends BaseContract {
 
   removeMember(
     _nationID: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  setEffectiveDuration(
+    _duration: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -914,6 +948,8 @@ export interface NonAggressionPact extends BaseContract {
 
     diamond(overrides?: CallOverrides): Promise<string>;
 
+    effectiveDuration(overrides?: CallOverrides): Promise<BigNumber>;
+
     init(
       _diamond: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -928,6 +964,11 @@ export interface NonAggressionPact extends BaseContract {
 
     removeMember(
       _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setEffectiveDuration(
+      _duration: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1099,6 +1140,8 @@ export interface NonAggressionPact extends BaseContract {
 
     diamond(overrides?: CallOverrides): Promise<BigNumber>;
 
+    effectiveDuration(overrides?: CallOverrides): Promise<BigNumber>;
+
     init(
       _diamond: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -1113,6 +1156,11 @@ export interface NonAggressionPact extends BaseContract {
 
     removeMember(
       _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    setEffectiveDuration(
+      _duration: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -1286,6 +1334,8 @@ export interface NonAggressionPact extends BaseContract {
 
     diamond(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    effectiveDuration(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     init(
       _diamond: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -1300,6 +1350,11 @@ export interface NonAggressionPact extends BaseContract {
 
     removeMember(
       _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setEffectiveDuration(
+      _duration: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

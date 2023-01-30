@@ -237,6 +237,7 @@ export interface CurioInterface extends utils.Interface {
     "getTotalSupply(string)": FunctionFragment;
     "getTreatyByName(string)": FunctionFragment;
     "getTreatySigners(uint256)": FunctionFragment;
+    "getTreatyWhitelist(uint256)": FunctionFragment;
     "getWorldConstants()": FunctionFragment;
     "isPlayerInitialized(address)": FunctionFragment;
     "isPlayerWhitelistedByGame(address)": FunctionFragment;
@@ -375,6 +376,7 @@ export interface CurioInterface extends utils.Interface {
       | "getTotalSupply"
       | "getTreatyByName"
       | "getTreatySigners"
+      | "getTreatyWhitelist"
       | "getWorldConstants"
       | "isPlayerInitialized"
       | "isPlayerWhitelistedByGame"
@@ -882,6 +884,10 @@ export interface CurioInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
+    functionFragment: "getTreatyWhitelist",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "getWorldConstants",
     values?: undefined
   ): string;
@@ -1349,6 +1355,10 @@ export interface CurioInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "getTreatySigners",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getTreatyWhitelist",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -2146,6 +2156,11 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber[]]>;
 
+    getTreatyWhitelist(
+      _treatyID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber[]]>;
+
     getWorldConstants(
       overrides?: CallOverrides
     ): Promise<[WorldConstantsStructOutput]>;
@@ -2864,6 +2879,11 @@ export interface Curio extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber[]>;
 
+  getTreatyWhitelist(
+    _treatyID: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber[]>;
+
   getWorldConstants(
     overrides?: CallOverrides
   ): Promise<WorldConstantsStructOutput>;
@@ -3570,6 +3590,11 @@ export interface Curio extends BaseContract {
     ): Promise<BigNumber>;
 
     getTreatySigners(
+      _treatyID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber[]>;
+
+    getTreatyWhitelist(
       _treatyID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber[]>;
@@ -4347,6 +4372,11 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    getTreatyWhitelist(
+      _treatyID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     getWorldConstants(overrides?: CallOverrides): Promise<BigNumber>;
 
     isPlayerInitialized(
@@ -5060,6 +5090,11 @@ export interface Curio extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     getTreatySigners(
+      _treatyID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getTreatyWhitelist(
       _treatyID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
