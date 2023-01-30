@@ -675,7 +675,7 @@ class Game:
             self.capital_level_to_building_level = 3
             self.player_action_in_seconds = 2000
             self.base_troop_training_in_seconds = 0.4
-            self.barbarian_reward_to_cost_coefficient = 0.12  # temporarily problematic
+            self.barbarian_reward_to_cost_coefficient = 0.5  # temporarily problematic
             self.tile_to_barbarian_strength_ratio = 1
             self.tile_troop_discount = 4
             self.barbarian_to_army_difficulty_constant = 70
@@ -686,8 +686,8 @@ class Game:
             self.chaos_period_in_seconds = 900
             self.super_tile_init_time_in_hour = 0
             self.move_capital_to_upgrade_cost_ratio = 0.2
-            self.troop_cap_to_buildings_cap_ratio = 0.11
-            self.troop_gathering_bonus = 1.45
+            self.troop_cap_to_buildings_cap_ratio = 0.13
+            self.troop_gathering_bonus = 1.4
             self.barbarian_cooldown = 600
             self.capital_gold_tax_factor = 25
     """

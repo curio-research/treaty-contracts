@@ -13,7 +13,7 @@
         "level": 0,
         "object": "Gold",
         "subject": "Army",
-        "value": 7620
+        "value": 7357
     },
     {
         "componentName": "Rate",
@@ -21,7 +21,7 @@
         "level": 0,
         "object": "Food",
         "subject": "Army",
-        "value": 34718
+        "value": 33521
     },
     {
         "componentName": "Load",
@@ -29,7 +29,7 @@
         "level": 0,
         "object": "Resource",
         "subject": "Troop",
-        "value": 535
+        "value": 633
     },
     {
         "componentName": "Cost",
@@ -3381,7 +3381,7 @@
         "level": 1,
         "object": "Gold",
         "subject": "Barbarian",
-        "value": 1235281
+        "value": 5147005
     },
     {
         "componentName": "Reward",
@@ -3389,7 +3389,7 @@
         "level": 1,
         "object": "Food",
         "subject": "Barbarian",
-        "value": 741168
+        "value": 3088203
     },
     {
         "componentName": "Amount",
@@ -3405,7 +3405,7 @@
         "level": 2,
         "object": "Gold",
         "subject": "Barbarian",
-        "value": 1743545
+        "value": 7264770
     },
     {
         "componentName": "Reward",
@@ -3413,7 +3413,7 @@
         "level": 2,
         "object": "Food",
         "subject": "Barbarian",
-        "value": 1046127
+        "value": 4358862
     },
     {
         "componentName": "Amount",
@@ -3429,7 +3429,7 @@
         "level": 3,
         "object": "Gold",
         "subject": "Barbarian",
-        "value": 2283899
+        "value": 9516247
     },
     {
         "componentName": "Reward",
@@ -3437,7 +3437,7 @@
         "level": 3,
         "object": "Food",
         "subject": "Barbarian",
-        "value": 1370339
+        "value": 5709748
     },
     {
         "componentName": "Amount",
@@ -3453,7 +3453,7 @@
         "level": 4,
         "object": "Gold",
         "subject": "Barbarian",
-        "value": 2858370
+        "value": 11909875
     },
     {
         "componentName": "Reward",
@@ -3461,7 +3461,7 @@
         "level": 4,
         "object": "Food",
         "subject": "Barbarian",
-        "value": 1715022
+        "value": 7145925
     },
     {
         "componentName": "Amount",
@@ -3477,7 +3477,7 @@
         "level": 5,
         "object": "Gold",
         "subject": "Barbarian",
-        "value": 3469111
+        "value": 14454632
     },
     {
         "componentName": "Reward",
@@ -3485,7 +3485,7 @@
         "level": 5,
         "object": "Food",
         "subject": "Barbarian",
-        "value": 2081467
+        "value": 8672779
     },
     {
         "componentName": "Amount",
@@ -3501,7 +3501,7 @@
         "level": 6,
         "object": "Gold",
         "subject": "Barbarian",
-        "value": 4118414
+        "value": 17160058
     },
     {
         "componentName": "Reward",
@@ -3509,7 +3509,7 @@
         "level": 6,
         "object": "Food",
         "subject": "Barbarian",
-        "value": 2471048
+        "value": 10296035
     },
     {
         "componentName": "Amount",
@@ -3525,7 +3525,7 @@
         "level": 7,
         "object": "Gold",
         "subject": "Barbarian",
-        "value": 4808711
+        "value": 20036299
     },
     {
         "componentName": "Reward",
@@ -3533,7 +3533,7 @@
         "level": 7,
         "object": "Food",
         "subject": "Barbarian",
-        "value": 2885227
+        "value": 12021779
     },
     {
         "componentName": "Amount",
@@ -3549,7 +3549,7 @@
         "level": 8,
         "object": "Gold",
         "subject": "Barbarian",
-        "value": 5542593
+        "value": 23094138
     },
     {
         "componentName": "Reward",
@@ -3557,7 +3557,7 @@
         "level": 8,
         "object": "Food",
         "subject": "Barbarian",
-        "value": 3325555
+        "value": 13856482
     },
     {
         "componentName": "Amount",
@@ -3573,7 +3573,7 @@
         "level": 9,
         "object": "Gold",
         "subject": "Barbarian",
-        "value": 6322810
+        "value": 26345041
     },
     {
         "componentName": "Reward",
@@ -3581,7 +3581,7 @@
         "level": 9,
         "object": "Food",
         "subject": "Barbarian",
-        "value": 3793686
+        "value": 15807025
     },
     {
         "componentName": "Amount",
@@ -3597,7 +3597,7 @@
         "level": 10,
         "object": "Gold",
         "subject": "Barbarian",
-        "value": 7152287
+        "value": 29801199
     },
     {
         "componentName": "Reward",
@@ -3605,7 +3605,7 @@
         "level": 10,
         "object": "Food",
         "subject": "Barbarian",
-        "value": 4291372
+        "value": 17880719
     },
     {
         "componentName": "Amount",
@@ -3621,7 +3621,7 @@
         "level": 11,
         "object": "Gold",
         "subject": "Barbarian",
-        "value": 8034136
+        "value": 33475570
     },
     {
         "componentName": "Reward",
@@ -3629,7 +3629,7 @@
         "level": 11,
         "object": "Food",
         "subject": "Barbarian",
-        "value": 4820482
+        "value": 20085342
     },
     {
         "componentName": "Amount",
@@ -3645,7 +3645,7 @@
         "level": 12,
         "object": "Gold",
         "subject": "Barbarian",
-        "value": 8971663
+        "value": 37381932
     },
     {
         "componentName": "Reward",
@@ -3653,7 +3653,7 @@
         "level": 12,
         "object": "Food",
         "subject": "Barbarian",
-        "value": 5382998
+        "value": 22429159
     },
     {
         "componentName": "Amount",
@@ -3669,7 +3669,7 @@
         "level": 13,
         "object": "Gold",
         "subject": "Barbarian",
-        "value": 9968383
+        "value": 41534931
     },
     {
         "componentName": "Reward",
@@ -3677,7 +3677,7 @@
         "level": 13,
         "object": "Food",
         "subject": "Barbarian",
-        "value": 5981030
+        "value": 24920959
     },
     {
         "componentName": "Amount",
@@ -3693,7 +3693,7 @@
         "level": 14,
         "object": "Gold",
         "subject": "Barbarian",
-        "value": 11028034
+        "value": 45950142
     },
     {
         "componentName": "Reward",
@@ -3701,7 +3701,7 @@
         "level": 14,
         "object": "Food",
         "subject": "Barbarian",
-        "value": 6616820
+        "value": 27570085
     },
     {
         "componentName": "Amount",
@@ -3717,7 +3717,7 @@
         "level": 15,
         "object": "Gold",
         "subject": "Barbarian",
-        "value": 12154588
+        "value": 50644117
     },
     {
         "componentName": "Reward",
@@ -3725,7 +3725,7 @@
         "level": 15,
         "object": "Food",
         "subject": "Barbarian",
-        "value": 7292752
+        "value": 30386470
     },
     {
         "componentName": "Amount",
@@ -3741,7 +3741,7 @@
         "level": 16,
         "object": "Gold",
         "subject": "Barbarian",
-        "value": 13352270
+        "value": 55634459
     },
     {
         "componentName": "Reward",
@@ -3749,7 +3749,7 @@
         "level": 16,
         "object": "Food",
         "subject": "Barbarian",
-        "value": 8011362
+        "value": 33380675
     },
     {
         "componentName": "Amount",
@@ -3765,7 +3765,7 @@
         "level": 17,
         "object": "Gold",
         "subject": "Barbarian",
-        "value": 14625571
+        "value": 60939879
     },
     {
         "componentName": "Reward",
@@ -3773,7 +3773,7 @@
         "level": 17,
         "object": "Food",
         "subject": "Barbarian",
-        "value": 8775342
+        "value": 36563927
     },
     {
         "componentName": "Amount",
@@ -3789,7 +3789,7 @@
         "level": 18,
         "object": "Gold",
         "subject": "Barbarian",
-        "value": 15979264
+        "value": 66580270
     },
     {
         "componentName": "Reward",
@@ -3797,7 +3797,7 @@
         "level": 18,
         "object": "Food",
         "subject": "Barbarian",
-        "value": 9587558
+        "value": 39948162
     },
     {
         "componentName": "Amount",
@@ -3813,7 +3813,7 @@
         "level": 19,
         "object": "Gold",
         "subject": "Barbarian",
-        "value": 17418427
+        "value": 72576781
     },
     {
         "componentName": "Reward",
@@ -3821,7 +3821,7 @@
         "level": 19,
         "object": "Food",
         "subject": "Barbarian",
-        "value": 10451056
+        "value": 43546069
     },
     {
         "componentName": "Amount",
@@ -3837,7 +3837,7 @@
         "level": 20,
         "object": "Gold",
         "subject": "Barbarian",
-        "value": 18948455
+        "value": 78951898
     },
     {
         "componentName": "Reward",
@@ -3845,7 +3845,7 @@
         "level": 20,
         "object": "Food",
         "subject": "Barbarian",
-        "value": 11369073
+        "value": 47371138
     },
     {
         "componentName": "Amount",
@@ -3861,7 +3861,7 @@
         "level": 21,
         "object": "Gold",
         "subject": "Barbarian",
-        "value": 20575085
+        "value": 85729523
     },
     {
         "componentName": "Reward",
@@ -3869,7 +3869,7 @@
         "level": 21,
         "object": "Food",
         "subject": "Barbarian",
-        "value": 12345051
+        "value": 51437714
     },
     {
         "componentName": "Amount",
