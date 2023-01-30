@@ -25,7 +25,7 @@ contract HandshakeDeal is CurioTreaty {
     }
 
     function description() external pure override returns (string memory) {
-        return "Flexible handshake agreement between nations";
+        return "Flexible handshake mutual agreement between nations";
     }
 
     function _strEq(string memory _s1, string memory _s2) internal pure returns (bool) {

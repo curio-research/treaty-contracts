@@ -49,7 +49,7 @@ contract LoanAgreement is CurioTreaty {
     }
 
     function description() public pure override returns (string memory) {
-        return "Contract for lending and borrowing";
+        return "Co-author: Sa1L & Cometshock. Contract for lending and borrowing";
     }
 
     // ----------------------------------------------------------
