@@ -79,7 +79,6 @@ export const uploadABI = async (hre: HardhatRuntimeEnvironment, contractName: st
 
 export const deployTreatyTemplate = async (name: string, admin: Signer, hre: HardhatRuntimeEnvironment, diamond: Curio, gasLimit: number) => {
   // Deploy treaty template
-  await sleep(50);
   const treaty = await deployProxy<any>(name, admin, hre, []);
   treaty.init(diamond.address);
 
@@ -88,7 +87,7 @@ export const deployTreatyTemplate = async (name: string, admin: Signer, hre: Har
   const metadataUrl = await putObject(JSON.stringify(treatyDescriptions[name] || {}));
 
   // Register treaty template
-  await sleep(50);
+  await sleep(20);
   await (await diamond.connect(admin).registerTreatyTemplate(treaty.address, abiHash, metadataUrl, { gasLimit })).wait();
 
   console.log(chalk.dim(`✦ Treaty ${name} deployed and ABI uploaded to IPFS at hash=${abiHash}`));
@@ -218,6 +217,7 @@ export const initializeGame = async (hre: HardhatRuntimeEnvironment, worldConsta
   const treatyTemplateNames = ['Alliance', 'NonAggressionPact', 'Embargo', 'CollectiveDefenseFund', 'SimpleOTC', 'HandshakeDeal', 'MercenaryLeague'];
   for (const name of treatyTemplateNames) {
     await deployTreatyTemplate(name, admin, hre, diamond, gasLimit);
+    await sleep(20);
   }
   console.log(`✦ Treaty template deployment took ${Math.floor(performance.now() - startTime)} ms`);
 

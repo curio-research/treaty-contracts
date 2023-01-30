@@ -5,41 +5,20 @@ import {CurioERC20} from "contracts/standards/CurioERC20.sol";
 import {GetterFacet} from "contracts/facets/GetterFacet.sol";
 import {Set} from "contracts/Set.sol";
 
+struct Loan {
+    uint256 loanID;
+    string collateralTokenName;
+    uint256 collateralAmount;
+    string loanTokenName;
+    uint256 loanAmount;
+    uint256 totalInterestPercentage; // in percentage
+    uint256 duration; // in seconds
+    uint256 lenderID; // must be a nation
+    uint256 borrowerID; // must be a nation
+    uint256 effectiveAt; // when the loan is taken
+}
+
 contract LoanAgreement is CurioTreaty {
-    /**
-    Outline:
-    1. Lender puts up loan
-        - loan has id
-        - loan id is added To the lenderIDToLoanIDs (set) mapping
-        - loan is mapped To loan id
-    2. At any time (before or after loan is taken), lender can cancel loan
-        - loan is removed from lenderIDToLoanIDs set
-        - loan is removed from borrowerIDToLoanIDs set (if it’s taken)
-        - loanID mapped To emptyLoan
-    3. Borrower takes loan
-        - collateral deposited To Token contract
-        - loan id is added To the borrowerIDToLoanIDs (set) mapping
-    4. Borrower pays the loan along with principle
-        - (principle + interests) amount of Token transfered To lender
-        - collateral returned To borrower
-        - removeLoan
-        - Note: borrower can pay back loan earlier than the due date
-    5. Lender can take out collateral if borrower doesn’t pay loan ahead of time
-        - collateral transfered To lender
-        - removeLoan
-     */
-    struct Loan {
-        uint256 loanID;
-        string collateralTokenName;
-        uint256 collateralAmount;
-        string loanTokenName;
-        uint256 loanAmount;
-        uint256 totalInterestPercentage; // in percentage
-        uint256 duration; // in seconds
-        uint256 lenderID; // must be a nation
-        uint256 borrowerID; // must be a nation
-        uint256 effectiveAt; // when the loan is taken
-    }
     uint256 public loanNonce;
     mapping(uint256 => Set) public lenderIDToLoanIDs;
     mapping(uint256 => Set) public borrowerIDToLoanIDs;
@@ -87,14 +66,17 @@ contract LoanAgreement is CurioTreaty {
     // ----------------------------------------------------------
     // Player functions
     // ----------------------------------------------------------
+
     /**
-     * @dev Create a loan. Must be called by a nation.
+     * @dev Create a loan.
      * @param _collateralTokenName name of the token to use as collateral
      * @param _collateralAmount amount of the token to use as collateral
      * @param _loanTokenName name of the Token to borrow
      * @param _loanAmount amount of the Token to borrow
      * @param _totalInterestPercentage total interest percentage
      * @param _duration duration of the loan in seconds
+     * @return loanID ID of the loan
+     * @notice Only callable by a nation
      */
     function createLoan(
         string memory _collateralTokenName,
@@ -138,6 +120,7 @@ contract LoanAgreement is CurioTreaty {
         lenderIDToLoanIDs[callerID].add(loanID);
     }
 
+    /// @notice Only callable by the lender
     function cancelLoan(uint256 _loanID) public {
         // Validity checks
         GetterFacet getter = GetterFacet(address(diamond));
@@ -148,6 +131,7 @@ contract LoanAgreement is CurioTreaty {
         _removeLoan(_loanID);
     }
 
+    /// @notice Only callable by a nation that is not the lender
     function takeLoan(uint256 _loanID) public {
         // Validity checks
         GetterFacet getter = GetterFacet(diamond);
@@ -155,6 +139,7 @@ contract LoanAgreement is CurioTreaty {
         require(loan.loanAmount > 0, "Loan: Loan does not exist");
         require(loan.borrowerID == 0 && loan.effectiveAt == 0, "Loan: Loan is already taken");
         uint256 callerID = getter.getEntityByAddress(msg.sender);
+        require(callerID != loan.lenderID, "Loan: Lender cannot take own loan");
         require(_strEq(abi.decode(getter.getComponent("Tag").getBytesValue(callerID), (string)), "Nation"), "Loan: Must be called by a nation");
 
         // Create new set if borrower doesn't have one
@@ -183,6 +168,7 @@ contract LoanAgreement is CurioTreaty {
         loanToken.transferFrom(lenderCapitalAddr, borrowerCapitalAddr, loan.loanAmount);
     }
 
+    /// @notice Only callable by the borrower
     function payOffLoan(uint256 _loanID) public {
         // Validity checks
         GetterFacet getter = GetterFacet(diamond);
@@ -207,6 +193,7 @@ contract LoanAgreement is CurioTreaty {
         _removeLoan(_loanID);
     }
 
+    /// @notice Only callable by the lender
     function liquidateCollateral(uint256 _loanID) public {
         // Validity checks
         GetterFacet getter = GetterFacet(diamond);
