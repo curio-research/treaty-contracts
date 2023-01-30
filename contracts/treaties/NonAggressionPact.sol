@@ -8,33 +8,38 @@ import {AdminFacet} from "contracts/facets/AdminFacet.sol";
 import {Position} from "contracts/libraries/Types.sol";
 
 contract NonAggressionPact is CurioTreaty {
-    function name() external pure override returns (string memory) {
+    uint256 public effectiveDuration;
+
+    function name() external pure virtual override returns (string memory) {
         return "Non-Aggression Pact";
     }
 
-    function description() external pure override returns (string memory) {
-        return "Member nations cannot battle armies or tiles of one another";
+    function description() external pure virtual override returns (string memory) {
+        return "Member nations cannot battle armies or tiles of one another for a period of time";
     }
 
     // ----------------------------------------------------------
-    // Set getters
+    // Owner functions
     // ----------------------------------------------------------
 
-    // ----------------------------------------------------------
-    // Owner functionos
-    // ----------------------------------------------------------
+    function setEffectiveDuration(uint256 _duration) public virtual onlyOwner {
+        require(effectiveDuration == 0, "NonAggressionPact: Duration can only be set once");
+        require(_duration > 0, "NonAggressionPact: Duration must be greater than 0");
 
-    function addToWhitelist(uint256 _nationID) public onlyOwner {
+        effectiveDuration = _duration;
+    }
+
+    function addToWhitelist(uint256 _nationID) public virtual onlyOwner {
         AdminFacet admin = AdminFacet(diamond);
         admin.addToTreatyWhitelist(_nationID);
     }
 
-    function removeFromWhitelist(uint256 _nationID) public onlyOwner {
+    function removeFromWhitelist(uint256 _nationID) public virtual onlyOwner {
         AdminFacet admin = AdminFacet(diamond);
         admin.removeFromTreatyWhitelist(_nationID);
     }
 
-    function removeMember(uint256 _nationID) public onlyOwner {
+    function removeMember(uint256 _nationID) public virtual onlyOwner {
         AdminFacet admin = AdminFacet(diamond);
         admin.removeFromTreatyWhitelist(_nationID); // need to be whitelisted again for joining
         admin.removeSigner(_nationID);
@@ -44,11 +49,11 @@ contract NonAggressionPact is CurioTreaty {
     // Player functionos
     // ----------------------------------------------------------
 
-    function treatyJoin() public override onlyWhitelist {
+    function treatyJoin() public virtual override onlyWhitelist {
         super.treatyJoin();
     }
 
-    function treatyLeave() public override minimumStay(30) {
+    function treatyLeave() public virtual override minimumStay(effectiveDuration) {
         GetterFacet getter = GetterFacet(diamond);
 
         // Remove nation from whitelist
@@ -63,14 +68,17 @@ contract NonAggressionPact is CurioTreaty {
     // Permission Functions
     // ----------------------------------------------------------
 
-    function approveBattle(uint256 _nationID, bytes memory _encodedParams) public view override returns (bool) {
+    function approveBattle(uint256 _nationID, bytes memory _encodedParams) public view virtual override returns (bool) {
         GetterFacet getter = GetterFacet(diamond);
-
-        // Disapprove if target nation is part of pact
-        (, , uint256 battleTargetID) = abi.decode(_encodedParams, (uint256, uint256, uint256));
-        uint256 targetNationID = getter.getNation(battleTargetID);
         uint256 treatyID = getter.getEntityByAddress(address(this));
-        if (getter.getNationTreatySignature(targetNationID, treatyID) != 0) return false;
+        uint256 initTimestamp = abi.decode(getter.getComponent("InitTimestamp").getBytesValue(treatyID), (uint256));
+
+        // Disapprove if target nation is part of pact and pact is still effective
+        if (effectiveDuration == 0 || block.timestamp <= initTimestamp + effectiveDuration) {
+            (, , uint256 battleTargetID) = abi.decode(_encodedParams, (uint256, uint256, uint256));
+            uint256 targetNationID = getter.getNation(battleTargetID);
+            if (getter.getNationTreatySignature(targetNationID, treatyID) != 0) return false;
+        }
 
         return super.approveBattle(_nationID, _encodedParams);
     }

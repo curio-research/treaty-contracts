@@ -23,7 +23,7 @@ import type {
   PromiseOrValue,
 } from "../../common";
 
-export interface SimpleOTCInterface extends utils.Interface {
+export interface LoanAgreementInterface extends utils.Interface {
   functions: {
     "approveBattle(uint256,bytes)": FunctionFragment;
     "approveClaimTile(uint256,bytes)": FunctionFragment;
@@ -49,15 +49,22 @@ export interface SimpleOTCInterface extends utils.Interface {
     "approveUpgradeCapital(uint256,bytes)": FunctionFragment;
     "approveUpgradeResource(uint256,bytes)": FunctionFragment;
     "approveUpgradeTile(uint256,bytes)": FunctionFragment;
-    "cancelOrder()": FunctionFragment;
-    "createOrder(string,uint256,string,uint256)": FunctionFragment;
+    "borrowerIDToLoanIDs(uint256)": FunctionFragment;
+    "cancelLoan(uint256)": FunctionFragment;
+    "createLoan(string,uint256,string,uint256,uint256,uint256)": FunctionFragment;
     "description()": FunctionFragment;
     "diamond()": FunctionFragment;
-    "emptyOrder()": FunctionFragment;
+    "emptyLoan()": FunctionFragment;
+    "getBorrowerLoanIDs(uint256)": FunctionFragment;
+    "getLenderLoanIDs(uint256)": FunctionFragment;
     "init(address)": FunctionFragment;
+    "lenderIDToLoanIDs(uint256)": FunctionFragment;
+    "liquidateCollateral(uint256)": FunctionFragment;
+    "loanIDToLoan(uint256)": FunctionFragment;
+    "loanNonce()": FunctionFragment;
     "name()": FunctionFragment;
-    "sellerToOrder(address)": FunctionFragment;
-    "takeOrder(address)": FunctionFragment;
+    "payOffLoan(uint256)": FunctionFragment;
+    "takeLoan(uint256)": FunctionFragment;
     "treatyDelegateGameFunction(string,uint256,bool)": FunctionFragment;
     "treatyJoin()": FunctionFragment;
     "treatyLeave()": FunctionFragment;
@@ -89,15 +96,22 @@ export interface SimpleOTCInterface extends utils.Interface {
       | "approveUpgradeCapital"
       | "approveUpgradeResource"
       | "approveUpgradeTile"
-      | "cancelOrder"
-      | "createOrder"
+      | "borrowerIDToLoanIDs"
+      | "cancelLoan"
+      | "createLoan"
       | "description"
       | "diamond"
-      | "emptyOrder"
+      | "emptyLoan"
+      | "getBorrowerLoanIDs"
+      | "getLenderLoanIDs"
       | "init"
+      | "lenderIDToLoanIDs"
+      | "liquidateCollateral"
+      | "loanIDToLoan"
+      | "loanNonce"
       | "name"
-      | "sellerToOrder"
-      | "takeOrder"
+      | "payOffLoan"
+      | "takeLoan"
       | "treatyDelegateGameFunction"
       | "treatyJoin"
       | "treatyLeave"
@@ -200,15 +214,21 @@ export interface SimpleOTCInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
-    functionFragment: "cancelOrder",
-    values?: undefined
+    functionFragment: "borrowerIDToLoanIDs",
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
-    functionFragment: "createOrder",
+    functionFragment: "cancelLoan",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "createLoan",
     values: [
       PromiseOrValue<string>,
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>
     ]
   ): string;
@@ -217,22 +237,40 @@ export interface SimpleOTCInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "diamond", values?: undefined): string;
+  encodeFunctionData(functionFragment: "emptyLoan", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "emptyOrder",
-    values?: undefined
+    functionFragment: "getBorrowerLoanIDs",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getLenderLoanIDs",
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "init",
     values: [PromiseOrValue<string>]
   ): string;
-  encodeFunctionData(functionFragment: "name", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "sellerToOrder",
-    values: [PromiseOrValue<string>]
+    functionFragment: "lenderIDToLoanIDs",
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
-    functionFragment: "takeOrder",
-    values: [PromiseOrValue<string>]
+    functionFragment: "liquidateCollateral",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "loanIDToLoan",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(functionFragment: "loanNonce", values?: undefined): string;
+  encodeFunctionData(functionFragment: "name", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "payOffLoan",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "takeLoan",
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "treatyDelegateGameFunction",
@@ -348,26 +386,42 @@ export interface SimpleOTCInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "cancelOrder",
+    functionFragment: "borrowerIDToLoanIDs",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "createOrder",
-    data: BytesLike
-  ): Result;
+  decodeFunctionResult(functionFragment: "cancelLoan", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "createLoan", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "description",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "diamond", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "emptyOrder", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "init", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "emptyLoan", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "sellerToOrder",
+    functionFragment: "getBorrowerLoanIDs",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "takeOrder", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "getLenderLoanIDs",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "init", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "lenderIDToLoanIDs",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "liquidateCollateral",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "loanIDToLoan",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "loanNonce", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "payOffLoan", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "takeLoan", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "treatyDelegateGameFunction",
     data: BytesLike
@@ -381,12 +435,12 @@ export interface SimpleOTCInterface extends utils.Interface {
   events: {};
 }
 
-export interface SimpleOTC extends BaseContract {
+export interface LoanAgreement extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: SimpleOTCInterface;
+  interface: LoanAgreementInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
@@ -552,15 +606,23 @@ export interface SimpleOTC extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
-    cancelOrder(
+    borrowerIDToLoanIDs(
+      arg0: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
+
+    cancelLoan(
+      _loanID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    createOrder(
-      _sellTokenName: PromiseOrValue<string>,
-      _sellAmount: PromiseOrValue<BigNumberish>,
-      _buyTokenName: PromiseOrValue<string>,
-      _buyAmount: PromiseOrValue<BigNumberish>,
+    createLoan(
+      _collateralTokenName: PromiseOrValue<string>,
+      _collateralAmount: PromiseOrValue<BigNumberish>,
+      _loanTokenName: PromiseOrValue<string>,
+      _loanAmount: PromiseOrValue<BigNumberish>,
+      _totalInterestPercentage: PromiseOrValue<BigNumberish>,
+      _duration: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -568,40 +630,99 @@ export interface SimpleOTC extends BaseContract {
 
     diamond(overrides?: CallOverrides): Promise<[string]>;
 
-    emptyOrder(
+    emptyLoan(
       overrides?: CallOverrides
     ): Promise<
-      [string, BigNumber, string, BigNumber, BigNumber] & {
-        sellTokenName: string;
-        sellAmount: BigNumber;
-        buyTokenName: string;
-        buyAmount: BigNumber;
-        createdAt: BigNumber;
+      [
+        BigNumber,
+        string,
+        BigNumber,
+        string,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber
+      ] & {
+        loanID: BigNumber;
+        collateralTokenName: string;
+        collateralAmount: BigNumber;
+        loanTokenName: string;
+        loanAmount: BigNumber;
+        totalInterestPercentage: BigNumber;
+        duration: BigNumber;
+        lenderID: BigNumber;
+        borrowerID: BigNumber;
+        effectiveAt: BigNumber;
       }
     >;
+
+    getBorrowerLoanIDs(
+      _borrowerID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber[]]>;
+
+    getLenderLoanIDs(
+      _lenderID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber[]]>;
 
     init(
       _diamond: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    name(overrides?: CallOverrides): Promise<[string]>;
+    lenderIDToLoanIDs(
+      arg0: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
 
-    sellerToOrder(
-      arg0: PromiseOrValue<string>,
+    liquidateCollateral(
+      _loanID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    loanIDToLoan(
+      arg0: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<
-      [string, BigNumber, string, BigNumber, BigNumber] & {
-        sellTokenName: string;
-        sellAmount: BigNumber;
-        buyTokenName: string;
-        buyAmount: BigNumber;
-        createdAt: BigNumber;
+      [
+        BigNumber,
+        string,
+        BigNumber,
+        string,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber
+      ] & {
+        loanID: BigNumber;
+        collateralTokenName: string;
+        collateralAmount: BigNumber;
+        loanTokenName: string;
+        loanAmount: BigNumber;
+        totalInterestPercentage: BigNumber;
+        duration: BigNumber;
+        lenderID: BigNumber;
+        borrowerID: BigNumber;
+        effectiveAt: BigNumber;
       }
     >;
 
-    takeOrder(
-      _seller: PromiseOrValue<string>,
+    loanNonce(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    name(overrides?: CallOverrides): Promise<[string]>;
+
+    payOffLoan(
+      _loanID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    takeLoan(
+      _loanID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -765,15 +886,23 @@ export interface SimpleOTC extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
-  cancelOrder(
+  borrowerIDToLoanIDs(
+    arg0: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<string>;
+
+  cancelLoan(
+    _loanID: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  createOrder(
-    _sellTokenName: PromiseOrValue<string>,
-    _sellAmount: PromiseOrValue<BigNumberish>,
-    _buyTokenName: PromiseOrValue<string>,
-    _buyAmount: PromiseOrValue<BigNumberish>,
+  createLoan(
+    _collateralTokenName: PromiseOrValue<string>,
+    _collateralAmount: PromiseOrValue<BigNumberish>,
+    _loanTokenName: PromiseOrValue<string>,
+    _loanAmount: PromiseOrValue<BigNumberish>,
+    _totalInterestPercentage: PromiseOrValue<BigNumberish>,
+    _duration: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -781,40 +910,99 @@ export interface SimpleOTC extends BaseContract {
 
   diamond(overrides?: CallOverrides): Promise<string>;
 
-  emptyOrder(
+  emptyLoan(
     overrides?: CallOverrides
   ): Promise<
-    [string, BigNumber, string, BigNumber, BigNumber] & {
-      sellTokenName: string;
-      sellAmount: BigNumber;
-      buyTokenName: string;
-      buyAmount: BigNumber;
-      createdAt: BigNumber;
+    [
+      BigNumber,
+      string,
+      BigNumber,
+      string,
+      BigNumber,
+      BigNumber,
+      BigNumber,
+      BigNumber,
+      BigNumber,
+      BigNumber
+    ] & {
+      loanID: BigNumber;
+      collateralTokenName: string;
+      collateralAmount: BigNumber;
+      loanTokenName: string;
+      loanAmount: BigNumber;
+      totalInterestPercentage: BigNumber;
+      duration: BigNumber;
+      lenderID: BigNumber;
+      borrowerID: BigNumber;
+      effectiveAt: BigNumber;
     }
   >;
+
+  getBorrowerLoanIDs(
+    _borrowerID: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber[]>;
+
+  getLenderLoanIDs(
+    _lenderID: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber[]>;
 
   init(
     _diamond: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  name(overrides?: CallOverrides): Promise<string>;
+  lenderIDToLoanIDs(
+    arg0: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<string>;
 
-  sellerToOrder(
-    arg0: PromiseOrValue<string>,
+  liquidateCollateral(
+    _loanID: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  loanIDToLoan(
+    arg0: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<
-    [string, BigNumber, string, BigNumber, BigNumber] & {
-      sellTokenName: string;
-      sellAmount: BigNumber;
-      buyTokenName: string;
-      buyAmount: BigNumber;
-      createdAt: BigNumber;
+    [
+      BigNumber,
+      string,
+      BigNumber,
+      string,
+      BigNumber,
+      BigNumber,
+      BigNumber,
+      BigNumber,
+      BigNumber,
+      BigNumber
+    ] & {
+      loanID: BigNumber;
+      collateralTokenName: string;
+      collateralAmount: BigNumber;
+      loanTokenName: string;
+      loanAmount: BigNumber;
+      totalInterestPercentage: BigNumber;
+      duration: BigNumber;
+      lenderID: BigNumber;
+      borrowerID: BigNumber;
+      effectiveAt: BigNumber;
     }
   >;
 
-  takeOrder(
-    _seller: PromiseOrValue<string>,
+  loanNonce(overrides?: CallOverrides): Promise<BigNumber>;
+
+  name(overrides?: CallOverrides): Promise<string>;
+
+  payOffLoan(
+    _loanID: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  takeLoan(
+    _loanID: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -978,54 +1166,123 @@ export interface SimpleOTC extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    cancelOrder(overrides?: CallOverrides): Promise<void>;
+    borrowerIDToLoanIDs(
+      arg0: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<string>;
 
-    createOrder(
-      _sellTokenName: PromiseOrValue<string>,
-      _sellAmount: PromiseOrValue<BigNumberish>,
-      _buyTokenName: PromiseOrValue<string>,
-      _buyAmount: PromiseOrValue<BigNumberish>,
+    cancelLoan(
+      _loanID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    createLoan(
+      _collateralTokenName: PromiseOrValue<string>,
+      _collateralAmount: PromiseOrValue<BigNumberish>,
+      _loanTokenName: PromiseOrValue<string>,
+      _loanAmount: PromiseOrValue<BigNumberish>,
+      _totalInterestPercentage: PromiseOrValue<BigNumberish>,
+      _duration: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     description(overrides?: CallOverrides): Promise<string>;
 
     diamond(overrides?: CallOverrides): Promise<string>;
 
-    emptyOrder(
+    emptyLoan(
       overrides?: CallOverrides
     ): Promise<
-      [string, BigNumber, string, BigNumber, BigNumber] & {
-        sellTokenName: string;
-        sellAmount: BigNumber;
-        buyTokenName: string;
-        buyAmount: BigNumber;
-        createdAt: BigNumber;
+      [
+        BigNumber,
+        string,
+        BigNumber,
+        string,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber
+      ] & {
+        loanID: BigNumber;
+        collateralTokenName: string;
+        collateralAmount: BigNumber;
+        loanTokenName: string;
+        loanAmount: BigNumber;
+        totalInterestPercentage: BigNumber;
+        duration: BigNumber;
+        lenderID: BigNumber;
+        borrowerID: BigNumber;
+        effectiveAt: BigNumber;
       }
     >;
+
+    getBorrowerLoanIDs(
+      _borrowerID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber[]>;
+
+    getLenderLoanIDs(
+      _lenderID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber[]>;
 
     init(
       _diamond: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    name(overrides?: CallOverrides): Promise<string>;
+    lenderIDToLoanIDs(
+      arg0: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<string>;
 
-    sellerToOrder(
-      arg0: PromiseOrValue<string>,
+    liquidateCollateral(
+      _loanID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    loanIDToLoan(
+      arg0: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<
-      [string, BigNumber, string, BigNumber, BigNumber] & {
-        sellTokenName: string;
-        sellAmount: BigNumber;
-        buyTokenName: string;
-        buyAmount: BigNumber;
-        createdAt: BigNumber;
+      [
+        BigNumber,
+        string,
+        BigNumber,
+        string,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber
+      ] & {
+        loanID: BigNumber;
+        collateralTokenName: string;
+        collateralAmount: BigNumber;
+        loanTokenName: string;
+        loanAmount: BigNumber;
+        totalInterestPercentage: BigNumber;
+        duration: BigNumber;
+        lenderID: BigNumber;
+        borrowerID: BigNumber;
+        effectiveAt: BigNumber;
       }
     >;
 
-    takeOrder(
-      _seller: PromiseOrValue<string>,
+    loanNonce(overrides?: CallOverrides): Promise<BigNumber>;
+
+    name(overrides?: CallOverrides): Promise<string>;
+
+    payOffLoan(
+      _loanID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    takeLoan(
+      _loanID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1188,15 +1445,23 @@ export interface SimpleOTC extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    cancelOrder(
+    borrowerIDToLoanIDs(
+      arg0: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    cancelLoan(
+      _loanID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    createOrder(
-      _sellTokenName: PromiseOrValue<string>,
-      _sellAmount: PromiseOrValue<BigNumberish>,
-      _buyTokenName: PromiseOrValue<string>,
-      _buyAmount: PromiseOrValue<BigNumberish>,
+    createLoan(
+      _collateralTokenName: PromiseOrValue<string>,
+      _collateralAmount: PromiseOrValue<BigNumberish>,
+      _loanTokenName: PromiseOrValue<string>,
+      _loanAmount: PromiseOrValue<BigNumberish>,
+      _totalInterestPercentage: PromiseOrValue<BigNumberish>,
+      _duration: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -1204,22 +1469,49 @@ export interface SimpleOTC extends BaseContract {
 
     diamond(overrides?: CallOverrides): Promise<BigNumber>;
 
-    emptyOrder(overrides?: CallOverrides): Promise<BigNumber>;
+    emptyLoan(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getBorrowerLoanIDs(
+      _borrowerID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getLenderLoanIDs(
+      _lenderID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     init(
       _diamond: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    name(overrides?: CallOverrides): Promise<BigNumber>;
-
-    sellerToOrder(
-      arg0: PromiseOrValue<string>,
+    lenderIDToLoanIDs(
+      arg0: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    takeOrder(
-      _seller: PromiseOrValue<string>,
+    liquidateCollateral(
+      _loanID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    loanIDToLoan(
+      arg0: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    loanNonce(overrides?: CallOverrides): Promise<BigNumber>;
+
+    name(overrides?: CallOverrides): Promise<BigNumber>;
+
+    payOffLoan(
+      _loanID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    takeLoan(
+      _loanID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -1384,15 +1676,23 @@ export interface SimpleOTC extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    cancelOrder(
+    borrowerIDToLoanIDs(
+      arg0: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    cancelLoan(
+      _loanID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    createOrder(
-      _sellTokenName: PromiseOrValue<string>,
-      _sellAmount: PromiseOrValue<BigNumberish>,
-      _buyTokenName: PromiseOrValue<string>,
-      _buyAmount: PromiseOrValue<BigNumberish>,
+    createLoan(
+      _collateralTokenName: PromiseOrValue<string>,
+      _collateralAmount: PromiseOrValue<BigNumberish>,
+      _loanTokenName: PromiseOrValue<string>,
+      _loanAmount: PromiseOrValue<BigNumberish>,
+      _totalInterestPercentage: PromiseOrValue<BigNumberish>,
+      _duration: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1400,22 +1700,49 @@ export interface SimpleOTC extends BaseContract {
 
     diamond(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    emptyOrder(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    emptyLoan(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    getBorrowerLoanIDs(
+      _borrowerID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getLenderLoanIDs(
+      _lenderID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     init(
       _diamond: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    name(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    sellerToOrder(
-      arg0: PromiseOrValue<string>,
+    lenderIDToLoanIDs(
+      arg0: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    takeOrder(
-      _seller: PromiseOrValue<string>,
+    liquidateCollateral(
+      _loanID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    loanIDToLoan(
+      arg0: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    loanNonce(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    name(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    payOffLoan(
+      _loanID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    takeLoan(
+      _loanID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

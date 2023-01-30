@@ -15,7 +15,7 @@ struct Order {
 
 /// @notice Each player has one active sell order at most
 contract SimpleOTC is CurioTreaty {
-    mapping(address => Order) public addressToOrder;
+    mapping(address => Order) public sellerToOrder;
     Order public emptyOrder;
 
     function init(address _diamond) public override {
@@ -47,10 +47,10 @@ contract SimpleOTC is CurioTreaty {
         string memory _buyTokenName,
         uint256 _buyAmount
     ) public {
-        require(addressToOrder[msg.sender].sellAmount == 0, "OTC: You have an existing order");
+        require(sellerToOrder[msg.sender].sellAmount == 0, "OTC: You have an existing order");
         require(_sellAmount > 0 && _buyAmount > 0, "OTC: Amounts must be greater than 0");
 
-        addressToOrder[msg.sender] = Order({
+        sellerToOrder[msg.sender] = Order({
             sellTokenName: _sellTokenName, // FORMATTING: DO NOT REMOVE THIS COMMENT
             sellAmount: _sellAmount,
             buyTokenName: _buyTokenName,
@@ -63,11 +63,11 @@ contract SimpleOTC is CurioTreaty {
      * @dev Cancel an order. Must be called by a nation.
      */
     function cancelOrder() public {
-        require(addressToOrder[msg.sender].sellAmount > 0, "OTC: You have no existing order");
-        require(block.timestamp > addressToOrder[msg.sender].createdAt + 120, "OTC: Can only cancel after 2 minutes");
+        require(sellerToOrder[msg.sender].sellAmount > 0, "OTC: You have no existing order");
+        require(block.timestamp > sellerToOrder[msg.sender].createdAt + 120, "OTC: Can only cancel after 2 minutes");
 
         // Set order to empty
-        addressToOrder[msg.sender] = emptyOrder;
+        sellerToOrder[msg.sender] = emptyOrder;
     }
 
     /**
@@ -76,10 +76,10 @@ contract SimpleOTC is CurioTreaty {
      */
     function takeOrder(address _seller) public {
         GetterFacet getter = GetterFacet(diamond);
-        require(addressToOrder[_seller].sellAmount > 0, "OTC: Seller has no existing order");
+        require(sellerToOrder[_seller].sellAmount > 0, "OTC: Seller has no existing order");
 
         // Fetch token pair
-        Order memory targetOrder = addressToOrder[_seller];
+        Order memory targetOrder = sellerToOrder[_seller];
         CurioERC20 sellToken = getter.getTokenContract(targetOrder.sellTokenName);
         CurioERC20 buyToken = getter.getTokenContract(targetOrder.buyTokenName);
 
@@ -90,6 +90,6 @@ contract SimpleOTC is CurioTreaty {
         buyToken.transferFrom(buyerCapitalAddress, sellerCapitalAddress, targetOrder.buyAmount);
 
         // Remove order
-        addressToOrder[_seller] = emptyOrder;
+        sellerToOrder[_seller] = emptyOrder;
     }
 }
