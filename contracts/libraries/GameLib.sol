@@ -315,8 +315,8 @@ library GameLib {
                     {
                         uint256 troopTypeBonus = getAttackBonus(troopTemplateIDs[i], troopTemplateIDs[j]);
                         loss =
-                            (troopTypeBonus * (sqrt(offenderTroopAmount) * ECSLib.getUint("Attack", troopTemplateIDs[i]) * 2)) / //
-                            (ECSLib.getUint("Defense", troopTemplateIDs[j]) * ECSLib.getUint("Health", troopTemplateIDs[j]));
+                            ((troopTypeBonus * (sqrt(offenderTroopAmount) * ECSLib.getUint("Attack", troopTemplateIDs[i]) * 2)) * 4) / //
+                            (ECSLib.getUint("Defense", troopTemplateIDs[j]) * ECSLib.getUint("Health", troopTemplateIDs[j])); // FIXME: 4 is temporary
                     }
 
                     loss = min(loss, ECSLib.getUint("Amount", defenderTroopInventoryID));
