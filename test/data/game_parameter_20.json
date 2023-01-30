@@ -1,8 +1,8 @@
 {
-    "componentName": "Load",
-    "functionName": "",
+    "componentName": "Amount",
+    "functionName": "JoinGame",
     "level": 0,
-    "object": "Gold",
-    "subject": "Goldmine",
-    "value": 2178333
+    "object": "Slinger",
+    "subject": "Capital",
+    "value": 453
 }

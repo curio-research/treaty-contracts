@@ -307,7 +307,7 @@ def get_tile_upgrade_cooldown_in_second(level: int) -> int:
 
 
 def expected_gold_density() -> float:
-    return 0.18
+    return 0.13
 
 
 def expected_farm_density() -> float:
@@ -747,6 +747,12 @@ class Game:
                                 "level": 0, "functionName": "JoinGame", "value": 1000 * get_building_upgrade_cost(1, Building.CAPITAL)[0]/2})
         game_parameters.append({"subject": "Capital", "componentName": "Amount", "object": "Food",
                                 "level": 0, "functionName": "JoinGame", "value": 1000 * get_troop_size_by_center_level(1) * game_instance.resource_weight_heavy})
+        game_parameters.append({"subject": "Capital", "componentName": "Amount", "object": "Horseman",
+                                "level": 0, "functionName": "JoinGame", "value": get_troop_size_by_center_level(1) * 1 / 3})
+        game_parameters.append({"subject": "Capital", "componentName": "Amount", "object": "Warrior",
+                                "level": 0, "functionName": "JoinGame", "value": get_troop_size_by_center_level(1) * 1 / 3})
+        game_parameters.append({"subject": "Capital", "componentName": "Amount", "object": "Slinger",
+                                "level": 0, "functionName": "JoinGame", "value": get_troop_size_by_center_level(1) * 1 / 3})
 
         # Building Stats
         for bt in [Building.GOLDMINE, Building.FARM, Building.CAPITAL]:

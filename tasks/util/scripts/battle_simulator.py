@@ -69,7 +69,7 @@ def battle(army_a: Army, army_b: Army) -> None:
             if not troop_count:
                 continue
             for i in range(len(army_a.troops)):
-                loss = (troop_count * army_b.troops[j].attack * get_damage_bonus(army_b.troops[j].troop_type, army_a.troops[i].troop_type) / army_a.troops[i].defense / army_a.troops[i].health) * 2 * math.sqrt(10000 / troop_count)
+                loss = 5 * (troop_count * army_b.troops[j].attack * get_damage_bonus(army_b.troops[j].troop_type, army_a.troops[i].troop_type) / army_a.troops[i].defense / army_a.troops[i].health) * 2 * math.sqrt(10000 / troop_count)
                 army_a.amounts[i] -= min(loss, army_a.amounts[i])
 
         for i in range(len(army_a.troops)):

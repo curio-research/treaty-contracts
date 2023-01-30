@@ -90,12 +90,9 @@ contract GameFacet is UseStorage {
         // Initialized with some resources
         GameLib.getTokenContract("Gold").dripToken(capitalAddress, GameLib.getGameParameter("Capital", "Gold", "Amount", "JoinGame", 0));
         GameLib.getTokenContract("Food").dripToken(capitalAddress, GameLib.getGameParameter("Capital", "Food", "Amount", "JoinGame", 0));
-        // GameLib.getTokenContract("Horseman").dripToken(capitalAddress, GameLib.getGameParameter("Capital", "Horseman", "Amount", "JoinGame", 0));
-        // GameLib.getTokenContract("Warrior").dripToken(capitalAddress, GameLib.getGameParameter("Capital", "Warrior", "Amount", "JoinGame", 0));
-        // GameLib.getTokenContract("Slinger").dripToken(capitalAddress, GameLib.getGameParameter("Capital", "Slinger", "Amount", "JoinGame", 0));
-        GameLib.getTokenContract("Horseman").dripToken(capitalAddress, 300);
-        GameLib.getTokenContract("Warrior").dripToken(capitalAddress, 300);
-        GameLib.getTokenContract("Slinger").dripToken(capitalAddress, 300);
+        GameLib.getTokenContract("Horseman").dripToken(capitalAddress, GameLib.getGameParameter("Capital", "Horseman", "Amount", "JoinGame", 0));
+        GameLib.getTokenContract("Warrior").dripToken(capitalAddress, GameLib.getGameParameter("Capital", "Warrior", "Amount", "JoinGame", 0));
+        GameLib.getTokenContract("Slinger").dripToken(capitalAddress, GameLib.getGameParameter("Capital", "Slinger", "Amount", "JoinGame", 0));
 
         // Set last action time
         ECSLib.setUint("LastActed", nationID, block.timestamp);

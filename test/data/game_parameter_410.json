@@ -1,8 +1,8 @@
 {
-    "componentName": "Yield",
-    "functionName": "",
-    "level": 7,
+    "componentName": "Cost",
+    "functionName": "Move",
+    "level": 6,
     "object": "Gold",
     "subject": "Capital",
-    "value": 1180
+    "value": 28526000
 }
