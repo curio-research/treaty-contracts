@@ -2,7 +2,7 @@
     "componentName": "Cost",
     "functionName": "Upgrade",
     "level": 14,
-    "object": "Gold",
-    "subject": "Goldmine",
+    "object": "Crystal",
+    "subject": "Crystalmine",
     "value": 15173355
 }

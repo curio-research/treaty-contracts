@@ -61,9 +61,9 @@ export const createTemplates = async (diamond: Curio, tokenAddrs: string[], gasL
 
   let entity = Number(await diamond.getEntity()) + 1;
 
-  // Gold
+  // Crystal
   await confirmTx(await diamond.addResourceTemplate(tokenAddrIter.next().value, { gasLimit }), hre);
-  templateNames.push(InventoryTypeOptions.Gold);
+  templateNames.push(InventoryTypeOptions.Crystal);
   templateIDs.push(entity++);
 
   // Food
@@ -103,7 +103,7 @@ export const createTemplates = async (diamond: Curio, tokenAddrs: string[], gasL
 export const treatyDescriptions: Record<string, Record<string, string>> = {
   Alliance: {
     headerImage: 'https://www.militarytimes.com/resizer/RhWHiePxZUim5AvA2jEFR6zExdM=/arc-photo-archetype/arc3-prod/public/M3G7VLLKZ5F7DKNTREOSANBWIE.jpg',
-    treatyJoin: 'Pay 1000 gold tokens to join the alliance and be granted protection.',
+    treatyJoin: 'Pay 1000 crystal tokens to join the alliance and be granted protection.',
     treatyLeave: 'Leave the alliance and lose protection.',
     getTreatySigners: 'Get the list of treaty signers.',
     treatyBesiege: 'Battle a target army belonging to a non-ally nation with all nearby ally armies.',
@@ -111,7 +111,7 @@ export const treatyDescriptions: Record<string, Record<string, string>> = {
   CollectiveDefenseFund: {
     headerImage: 'https://ik.imagekit.io/po8th4g4eqj/prod/tr:w-1168/nato-flags-1168x440.jpg',
     getCouncilMembers: 'Get the list of council members.',
-    treatyJoin: 'Pay for the fund membership and be granted protection. View the membership fee by clicking on "Food Fee" and "Gold Fee".',
+    treatyJoin: 'Pay for the fund membership and be granted protection. View the membership fee by clicking on "Food Fee" and "Crystal Fee".',
     treatyLeave: 'Leave the fund and lose protection. Once you leave, you will have to be whitelisted again to join the fund.',
     payMembershipFee: 'Pay the membership fee to keep your membership active. You have to pay it regularly (see time depositTimeInterval) or you might be removed from the fund.',
     addToWhiteList: 'Add a nation to the whitelist.',
@@ -119,9 +119,9 @@ export const treatyDescriptions: Record<string, Record<string, string>> = {
     addToCouncil: 'Add a nation to the council that can manage the fund with you.',
     removeFromCouncil: 'Remove a nation from the council.',
     updateFoodFee: 'Update the food fee.',
-    updateGoldFee: 'Update the gold fee.',
+    updateCrystalFee: 'Update the crystal fee.',
     removeMember: 'Remove a member from the fund.',
-    withDraw: 'Withdraw from the funds. Look up goldWithdrawQuota and foodWithdrawQuota to see how much you can withdraw.',
+    withDraw: 'Withdraw from the funds. Look up crystalWithdrawQuota and foodWithdrawQuota to see how much you can withdraw.',
     removeAllOverdueMembers: 'Remove all overdue members who have not paid their membership fee.',
     distributeFund: 'Distribute the fund (collected by fees) to a certain entity.',
   },

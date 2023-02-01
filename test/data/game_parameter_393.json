@@ -2,7 +2,7 @@
     "componentName": "Cost",
     "functionName": "Upgrade",
     "level": 5,
-    "object": "Gold",
+    "object": "Crystal",
     "subject": "Capital",
     "value": 117785760
 }

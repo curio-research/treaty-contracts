@@ -52,6 +52,9 @@ export interface CollectiveDefenseFundInterface extends utils.Interface {
     "approveUpgradeResource(uint256,bytes)": FunctionFragment;
     "approveUpgradeTile(uint256,bytes)": FunctionFragment;
     "council()": FunctionFragment;
+    "crystalFee()": FunctionFragment;
+    "crystalToken()": FunctionFragment;
+    "crystalWithdrawQuota()": FunctionFragment;
     "depositTimeInterval()": FunctionFragment;
     "description()": FunctionFragment;
     "diamond()": FunctionFragment;
@@ -60,9 +63,6 @@ export interface CollectiveDefenseFundInterface extends utils.Interface {
     "foodToken()": FunctionFragment;
     "foodWithdrawQuota()": FunctionFragment;
     "getCouncilMembers()": FunctionFragment;
-    "goldFee()": FunctionFragment;
-    "goldToken()": FunctionFragment;
-    "goldWithdrawQuota()": FunctionFragment;
     "init(address)": FunctionFragment;
     "lastPaid(uint256)": FunctionFragment;
     "lastWithdrawn(uint256)": FunctionFragment;
@@ -75,8 +75,8 @@ export interface CollectiveDefenseFundInterface extends utils.Interface {
     "treatyDelegateGameFunction(string,uint256,bool)": FunctionFragment;
     "treatyJoin()": FunctionFragment;
     "treatyLeave()": FunctionFragment;
+    "updateCrystalFee(uint256)": FunctionFragment;
     "updateFoodFee(uint256)": FunctionFragment;
-    "updateGoldFee(uint256)": FunctionFragment;
     "withdraw(uint256,uint256)": FunctionFragment;
     "withdrawTimeInterval()": FunctionFragment;
   };
@@ -110,6 +110,9 @@ export interface CollectiveDefenseFundInterface extends utils.Interface {
       | "approveUpgradeResource"
       | "approveUpgradeTile"
       | "council"
+      | "crystalFee"
+      | "crystalToken"
+      | "crystalWithdrawQuota"
       | "depositTimeInterval"
       | "description"
       | "diamond"
@@ -118,9 +121,6 @@ export interface CollectiveDefenseFundInterface extends utils.Interface {
       | "foodToken"
       | "foodWithdrawQuota"
       | "getCouncilMembers"
-      | "goldFee"
-      | "goldToken"
-      | "goldWithdrawQuota"
       | "init"
       | "lastPaid"
       | "lastWithdrawn"
@@ -133,8 +133,8 @@ export interface CollectiveDefenseFundInterface extends utils.Interface {
       | "treatyDelegateGameFunction"
       | "treatyJoin"
       | "treatyLeave"
+      | "updateCrystalFee"
       | "updateFoodFee"
-      | "updateGoldFee"
       | "withdraw"
       | "withdrawTimeInterval"
   ): FunctionFragment;
@@ -245,6 +245,18 @@ export interface CollectiveDefenseFundInterface extends utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "council", values?: undefined): string;
   encodeFunctionData(
+    functionFragment: "crystalFee",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "crystalToken",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "crystalWithdrawQuota",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "depositTimeInterval",
     values?: undefined
   ): string;
@@ -269,12 +281,6 @@ export interface CollectiveDefenseFundInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "getCouncilMembers",
-    values?: undefined
-  ): string;
-  encodeFunctionData(functionFragment: "goldFee", values?: undefined): string;
-  encodeFunctionData(functionFragment: "goldToken", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "goldWithdrawQuota",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -327,11 +333,11 @@ export interface CollectiveDefenseFundInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "updateFoodFee",
+    functionFragment: "updateCrystalFee",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
-    functionFragment: "updateGoldFee",
+    functionFragment: "updateFoodFee",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
@@ -448,6 +454,15 @@ export interface CollectiveDefenseFundInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "council", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "crystalFee", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "crystalToken",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "crystalWithdrawQuota",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "depositTimeInterval",
     data: BytesLike
@@ -469,12 +484,6 @@ export interface CollectiveDefenseFundInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "getCouncilMembers",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "goldFee", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "goldToken", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "goldWithdrawQuota",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "init", data: BytesLike): Result;
@@ -514,11 +523,11 @@ export interface CollectiveDefenseFundInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "updateFoodFee",
+    functionFragment: "updateCrystalFee",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "updateGoldFee",
+    functionFragment: "updateFoodFee",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "withdraw", data: BytesLike): Result;
@@ -713,6 +722,12 @@ export interface CollectiveDefenseFund extends BaseContract {
 
     council(overrides?: CallOverrides): Promise<[string]>;
 
+    crystalFee(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    crystalToken(overrides?: CallOverrides): Promise<[string]>;
+
+    crystalWithdrawQuota(overrides?: CallOverrides): Promise<[BigNumber]>;
+
     depositTimeInterval(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     description(overrides?: CallOverrides): Promise<[string]>;
@@ -733,12 +748,6 @@ export interface CollectiveDefenseFund extends BaseContract {
     foodWithdrawQuota(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     getCouncilMembers(overrides?: CallOverrides): Promise<[BigNumber[]]>;
-
-    goldFee(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    goldToken(overrides?: CallOverrides): Promise<[string]>;
-
-    goldWithdrawQuota(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     init(
       _diamond: PromiseOrValue<string>,
@@ -795,18 +804,18 @@ export interface CollectiveDefenseFund extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    updateCrystalFee(
+      _newFee: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     updateFoodFee(
       _newFee: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    updateGoldFee(
-      _newFee: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
     withdraw(
-      _goldAmount: PromiseOrValue<BigNumberish>,
+      _crystalAmount: PromiseOrValue<BigNumberish>,
       _foodAmount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
@@ -970,6 +979,12 @@ export interface CollectiveDefenseFund extends BaseContract {
 
   council(overrides?: CallOverrides): Promise<string>;
 
+  crystalFee(overrides?: CallOverrides): Promise<BigNumber>;
+
+  crystalToken(overrides?: CallOverrides): Promise<string>;
+
+  crystalWithdrawQuota(overrides?: CallOverrides): Promise<BigNumber>;
+
   depositTimeInterval(overrides?: CallOverrides): Promise<BigNumber>;
 
   description(overrides?: CallOverrides): Promise<string>;
@@ -990,12 +1005,6 @@ export interface CollectiveDefenseFund extends BaseContract {
   foodWithdrawQuota(overrides?: CallOverrides): Promise<BigNumber>;
 
   getCouncilMembers(overrides?: CallOverrides): Promise<BigNumber[]>;
-
-  goldFee(overrides?: CallOverrides): Promise<BigNumber>;
-
-  goldToken(overrides?: CallOverrides): Promise<string>;
-
-  goldWithdrawQuota(overrides?: CallOverrides): Promise<BigNumber>;
 
   init(
     _diamond: PromiseOrValue<string>,
@@ -1052,18 +1061,18 @@ export interface CollectiveDefenseFund extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  updateCrystalFee(
+    _newFee: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   updateFoodFee(
     _newFee: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  updateGoldFee(
-    _newFee: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
   withdraw(
-    _goldAmount: PromiseOrValue<BigNumberish>,
+    _crystalAmount: PromiseOrValue<BigNumberish>,
     _foodAmount: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
@@ -1227,6 +1236,12 @@ export interface CollectiveDefenseFund extends BaseContract {
 
     council(overrides?: CallOverrides): Promise<string>;
 
+    crystalFee(overrides?: CallOverrides): Promise<BigNumber>;
+
+    crystalToken(overrides?: CallOverrides): Promise<string>;
+
+    crystalWithdrawQuota(overrides?: CallOverrides): Promise<BigNumber>;
+
     depositTimeInterval(overrides?: CallOverrides): Promise<BigNumber>;
 
     description(overrides?: CallOverrides): Promise<string>;
@@ -1247,12 +1262,6 @@ export interface CollectiveDefenseFund extends BaseContract {
     foodWithdrawQuota(overrides?: CallOverrides): Promise<BigNumber>;
 
     getCouncilMembers(overrides?: CallOverrides): Promise<BigNumber[]>;
-
-    goldFee(overrides?: CallOverrides): Promise<BigNumber>;
-
-    goldToken(overrides?: CallOverrides): Promise<string>;
-
-    goldWithdrawQuota(overrides?: CallOverrides): Promise<BigNumber>;
 
     init(
       _diamond: PromiseOrValue<string>,
@@ -1301,18 +1310,18 @@ export interface CollectiveDefenseFund extends BaseContract {
 
     treatyLeave(overrides?: CallOverrides): Promise<void>;
 
+    updateCrystalFee(
+      _newFee: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     updateFoodFee(
       _newFee: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    updateGoldFee(
-      _newFee: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     withdraw(
-      _goldAmount: PromiseOrValue<BigNumberish>,
+      _crystalAmount: PromiseOrValue<BigNumberish>,
       _foodAmount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
@@ -1479,6 +1488,12 @@ export interface CollectiveDefenseFund extends BaseContract {
 
     council(overrides?: CallOverrides): Promise<BigNumber>;
 
+    crystalFee(overrides?: CallOverrides): Promise<BigNumber>;
+
+    crystalToken(overrides?: CallOverrides): Promise<BigNumber>;
+
+    crystalWithdrawQuota(overrides?: CallOverrides): Promise<BigNumber>;
+
     depositTimeInterval(overrides?: CallOverrides): Promise<BigNumber>;
 
     description(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1499,12 +1514,6 @@ export interface CollectiveDefenseFund extends BaseContract {
     foodWithdrawQuota(overrides?: CallOverrides): Promise<BigNumber>;
 
     getCouncilMembers(overrides?: CallOverrides): Promise<BigNumber>;
-
-    goldFee(overrides?: CallOverrides): Promise<BigNumber>;
-
-    goldToken(overrides?: CallOverrides): Promise<BigNumber>;
-
-    goldWithdrawQuota(overrides?: CallOverrides): Promise<BigNumber>;
 
     init(
       _diamond: PromiseOrValue<string>,
@@ -1561,18 +1570,18 @@ export interface CollectiveDefenseFund extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    updateCrystalFee(
+      _newFee: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     updateFoodFee(
       _newFee: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    updateGoldFee(
-      _newFee: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
     withdraw(
-      _goldAmount: PromiseOrValue<BigNumberish>,
+      _crystalAmount: PromiseOrValue<BigNumberish>,
       _foodAmount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
@@ -1737,6 +1746,14 @@ export interface CollectiveDefenseFund extends BaseContract {
 
     council(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    crystalFee(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    crystalToken(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    crystalWithdrawQuota(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     depositTimeInterval(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
@@ -1759,12 +1776,6 @@ export interface CollectiveDefenseFund extends BaseContract {
     foodWithdrawQuota(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getCouncilMembers(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    goldFee(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    goldToken(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    goldWithdrawQuota(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     init(
       _diamond: PromiseOrValue<string>,
@@ -1821,18 +1832,18 @@ export interface CollectiveDefenseFund extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
+    updateCrystalFee(
+      _newFee: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
     updateFoodFee(
       _newFee: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    updateGoldFee(
-      _newFee: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
     withdraw(
-      _goldAmount: PromiseOrValue<BigNumberish>,
+      _crystalAmount: PromiseOrValue<BigNumberish>,
       _foodAmount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;

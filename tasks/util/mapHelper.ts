@@ -73,16 +73,16 @@ export const generateMap = (mapInput: MapInput): TileMap => {
   const innerDiameterByTileCount = innerRadiusByTileCount ? innerRadiusByTileCount * 2 + 1 : 0;
 
   // specify outer density
-  const level1GoldMineDensity = 0.15;
+  const level1CrystalMineDensity = 0.15;
   const level1BarbarianDensity = 0.02;
   const level2BarbarianDensity = 0.01;
 
   if (!innerRadiusByTileCount) {
-    // add gold mines and barbarians
+    // add crystal mines and barbarians
     const totalTileCount = mapInput.width * mapInput.height;
-    for (let i = 0; i < totalTileCount * level1GoldMineDensity; i++) {
+    for (let i = 0; i < totalTileCount * level1CrystalMineDensity; i++) {
       const pos = chooseRandomEmptyPosition(tileMap);
-      tileMap[pos.x][pos.y] = TILE_TYPE.GOLDMINE_LV1;
+      tileMap[pos.x][pos.y] = TILE_TYPE.CRYSTAL_MINE_LV1;
     }
     for (let i = 0; i < totalTileCount * level1BarbarianDensity; i++) {
       const pos = chooseRandomEmptyPosition(tileMap);
@@ -94,16 +94,16 @@ export const generateMap = (mapInput: MapInput): TileMap => {
     }
   } else {
     // specify inner density
-    const level1GoldMineDensityInner = 0.1;
+    const level1CrystalMineDensityInner = 0.1;
     const level1BarbarianDensityInner = 0;
     const level2BarbarianDensityInner = 0.03;
 
-    // add inner gold mines and barbarians
+    // add inner crystal mines and barbarians
     const totalTileCountInner = innerDiameterByTileCount * innerDiameterByTileCount;
     console.log(chalk.bgBlue(`total tile count inner: ${totalTileCountInner}`));
-    for (let i = 0; i < totalTileCountInner * level1GoldMineDensityInner; i++) {
+    for (let i = 0; i < totalTileCountInner * level1CrystalMineDensityInner; i++) {
       const pos = chooseRandomEmptyPosition(tileMap, true, innerRadiusByTileCount);
-      tileMap[pos.x][pos.y] = TILE_TYPE.GOLDMINE_LV1;
+      tileMap[pos.x][pos.y] = TILE_TYPE.CRYSTAL_MINE_LV1;
     }
     for (let i = 0; i < totalTileCountInner * level1BarbarianDensityInner; i++) {
       const pos = chooseRandomEmptyPosition(tileMap, true, innerRadiusByTileCount);
@@ -114,12 +114,12 @@ export const generateMap = (mapInput: MapInput): TileMap => {
       tileMap[pos.x][pos.y] = TILE_TYPE.BARBARIAN_LV2;
     }
 
-    // add outer gold mines and barbarians
+    // add outer crystal mines and barbarians
     const totalTileCountOuter = mapInput.height * mapInput.width - totalTileCountInner;
     console.log(chalk.bgBlue(`total tile count outer: ${totalTileCountOuter}`));
-    for (let i = 0; i < totalTileCountOuter * level1GoldMineDensity; i++) {
+    for (let i = 0; i < totalTileCountOuter * level1CrystalMineDensity; i++) {
       const pos = chooseRandomEmptyPosition(tileMap, false, innerRadiusByTileCount);
-      tileMap[pos.x][pos.y] = TILE_TYPE.GOLDMINE_LV1;
+      tileMap[pos.x][pos.y] = TILE_TYPE.CRYSTAL_MINE_LV1;
     }
     for (let i = 0; i < totalTileCountOuter * level1BarbarianDensity; i++) {
       const pos = chooseRandomEmptyPosition(tileMap, false, innerRadiusByTileCount);

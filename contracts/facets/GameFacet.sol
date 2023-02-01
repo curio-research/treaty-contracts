@@ -57,7 +57,7 @@ contract GameFacet is UseStorage {
         // Remove resource at destination if one exists
         uint256 resourceID = GameLib.getResourceAtTile(tilePosition);
         if (resourceID != NULL) {
-            require(ECSLib.getUint("Template", resourceID) != gs().templates["Gold"], "CURIO: Capital cannot be built on a goldmine");
+            require(ECSLib.getUint("Template", resourceID) != gs().templates["Crystal"], "CURIO: Capital cannot be built on a crystalmine");
             ECSLib.removeEntity(resourceID);
         }
 
@@ -88,7 +88,7 @@ contract GameFacet is UseStorage {
         }
 
         // Initialized with some resources
-        GameLib.getTokenContract("Gold").dripToken(capitalAddress, GameLib.getGameParameter("Capital", "Gold", "Amount", "JoinGame", 0));
+        GameLib.getTokenContract("Crystal").dripToken(capitalAddress, GameLib.getGameParameter("Capital", "Crystal", "Amount", "JoinGame", 0));
         GameLib.getTokenContract("Food").dripToken(capitalAddress, GameLib.getGameParameter("Capital", "Food", "Amount", "JoinGame", 0));
         GameLib.getTokenContract("Horseman").dripToken(capitalAddress, GameLib.getGameParameter("Capital", "Horseman", "Amount", "JoinGame", 0));
         GameLib.getTokenContract("Warrior").dripToken(capitalAddress, GameLib.getGameParameter("Capital", "Warrior", "Amount", "JoinGame", 0));
@@ -248,7 +248,7 @@ contract GameFacet is UseStorage {
         {
             uint256 resourceID = GameLib.getResourceAtTile(_newTilePosition);
             if (resourceID != NULL) {
-                require(ECSLib.getUint("Template", resourceID) != gs().templates["Gold"], "CURIO: Cannot settle on goldmine");
+                require(ECSLib.getUint("Template", resourceID) != gs().templates["Crystal"], "CURIO: Cannot settle on crystalmine");
                 ECSLib.removeEntity(resourceID);
             }
             uint256 tileID = GameLib.getTileAt(_newTilePosition);
@@ -854,7 +854,7 @@ contract GameFacet is UseStorage {
         Position memory startPosition = GameLib.getProperTilePosition(ECSLib.getPosition("Position", _armyID));
         require(GameLib.coincident(startPosition, ECSLib.getPosition("StartPosition", _resourceID)), "CURIO: Army must be on resource tile");
 
-        // Verify that the resource level is greater than zero, meaning that a gold mine has "been built".
+        // Verify that the resource level is greater than zero, meaning that a crystal mine has "been built".
         require(ECSLib.getUint("Level", _resourceID) == 0, "CURIO: Resource already upgraded");
 
         // Verify that resource is not in another nation's territory
@@ -955,7 +955,7 @@ contract GameFacet is UseStorage {
 
         // Verify upgrade not in process
         uint256 templateID = ECSLib.getUint("Template", _resourceID);
-        string memory buildingType = templateID == gs().templates["Gold"] ? "Goldmine" : "Farm";
+        string memory buildingType = templateID == gs().templates["Crystal"] ? "Crystalmine" : "Farm";
         require(block.timestamp >= ECSLib.getUint("LastUpgraded", _resourceID), "CURIO: Need to finish upgrading first");
 
         // Verify can harvest
@@ -1054,7 +1054,7 @@ contract GameFacet is UseStorage {
         require(ECSLib.getUint("Level", _resourceID) < ECSLib.getUint("Level", capitalID) * gs().worldConstants.capitalLevelToEntityLevelRatio, "CURIO: Need to upgrade nation first");
 
         // check if upgrade is in process
-        string memory subject = ECSLib.getUint("Template", _resourceID) == gs().templates["Gold"] ? "Goldmine" : "Farm";
+        string memory subject = ECSLib.getUint("Template", _resourceID) == gs().templates["Crystal"] ? "Crystalmine" : "Farm";
         require(block.timestamp >= ECSLib.getUint("LastUpgraded", _resourceID), "CURIO: Need to finish upgrading first");
 
         // Deduct costs from capital

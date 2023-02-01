@@ -2,7 +2,7 @@
     "componentName": "Cost",
     "functionName": "Upgrade",
     "level": 10,
-    "object": "Gold",
+    "object": "Crystal",
     "subject": "Tile",
     "value": 2852211
 }

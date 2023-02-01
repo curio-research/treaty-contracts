@@ -81,12 +81,12 @@ contract GameTest is Test, DiamondDeployTest {
     function testTiles() public {
         uint256 time = block.timestamp + 1000;
         vm.warp(time);
-        uint256 level1TileUpgradeGoldCost = getter.getGameParameter("Tile", "Gold", "Cost", "Upgrade", 1);
-        console.log("Level 1 tile upgrade gold cost is", level1TileUpgradeGoldCost);
+        uint256 level1TileUpgradeCrystalCost = getter.getGameParameter("Tile", "Crystal", "Cost", "Upgrade", 1);
+        console.log("Level 1 tile upgrade crystal cost is", level1TileUpgradeCrystalCost);
 
         // Deployer drip resources to Nation 1's capital
         vm.startPrank(deployer);
-        admin.dripToken(nation1CapitalAddr, "Gold", 100000000);
+        admin.dripToken(nation1CapitalAddr, "Crystal", 100000000);
         admin.dripToken(nation1CapitalAddr, "Food", 100000000);
         vm.stopPrank();
 
@@ -100,11 +100,11 @@ contract GameTest is Test, DiamondDeployTest {
         game.upgradeTile(nation1CapitalTileID);
         vm.stopPrank();
         assertEq(abi.decode(getter.getComponent("Level").getBytesValue(nation1CapitalTileID), (uint256)), 2);
-        assertEq(goldToken.balanceOf(nation1CapitalAddr), 100000000 - level1TileUpgradeGoldCost);
+        assertEq(crystalToken.balanceOf(nation1CapitalAddr), 100000000 - level1TileUpgradeCrystalCost);
     }
 
     function testGameParameter() public {
-        string memory identifier = "Goldmine-Gold-Yield--1";
+        string memory identifier = "Crystalmine-Crystal-Yield--1";
         uint256 newValue = 1000;
 
         // Verify original state
@@ -129,8 +129,8 @@ contract GameTest is Test, DiamondDeployTest {
         address barbarinaTileAddr = getter.getAddress(barbarinaTileID);
         assertEq(abi.decode(getter.getComponent("Terrain").getBytesValue(barbarinaTileID), (uint256)), 4);
         assertEq(abi.decode(getter.getComponent("Level").getBytesValue(barbarinaTileID), (uint256)), 8);
-        uint256 barbarianReward = getter.getGameParameter("Barbarian", "Gold", "Reward", "", 8);
-        console.log("Barbarian gold reward is", barbarianReward);
+        uint256 barbarianReward = getter.getGameParameter("Barbarian", "Crystal", "Reward", "", 8);
+        console.log("Barbarian crystal reward is", barbarianReward);
 
         // Drip resources and troops to Nation 2's capital
         vm.startPrank(deployer);
@@ -139,7 +139,7 @@ contract GameTest is Test, DiamondDeployTest {
 
         // Verify original state
         assertEq(horsemanToken.balanceOf(nation2CapitalAddr), 1000);
-        assertEq(goldToken.balanceOf(nation2CapitalAddr), 0);
+        assertEq(crystalToken.balanceOf(nation2CapitalAddr), 0);
         assertEq(foodToken.balanceOf(nation2CapitalAddr), 0);
 
         vm.startPrank(player2);
@@ -199,7 +199,7 @@ contract GameTest is Test, DiamondDeployTest {
         }
 
         // Verify that barbarian reward is received
-        assertEq(goldToken.balanceOf(nation2CapitalAddr), barbarianReward);
+        assertEq(crystalToken.balanceOf(nation2CapitalAddr), barbarianReward);
 
         vm.stopPrank();
     }
@@ -207,7 +207,7 @@ contract GameTest is Test, DiamondDeployTest {
     function testOrganizeDisbandMoveArmy() public {
         // bug: lastChaos time is 0. This is wrong.
         uint256 time = block.timestamp + 1000;
-        // Deployer transfer enough gold & food to nation 1
+        // Deployer transfer enough crystal & food to nation 1
         vm.startPrank(deployer);
         admin.dripToken(nation1CapitalAddr, "Warrior", 1000);
         admin.dripToken(nation1CapitalAddr, "Horseman", 1000);
@@ -265,7 +265,7 @@ contract GameTest is Test, DiamondDeployTest {
         uint256 time = block.timestamp + 1000;
         vm.warp(time);
 
-        // Deployer transfer enough gold & food to nation 1 & 2
+        // Deployer transfer enough crystal & food to nation 1 & 2
         vm.startPrank(deployer);
         admin.dripToken(nation1CapitalAddr, "Horseman", 1000);
         admin.dripToken(nation1CapitalAddr, "Warrior", 1000);
@@ -351,7 +351,7 @@ contract GameTest is Test, DiamondDeployTest {
 
         // give army 11 some resources to test if it goes to army 21
         vm.startPrank(deployer);
-        admin.dripToken(army11Addr, "Gold", 1000);
+        admin.dripToken(army11Addr, "Crystal", 1000);
         admin.dripToken(army11Addr, "Food", 1000);
 
         vm.stopPrank();
@@ -368,24 +368,24 @@ contract GameTest is Test, DiamondDeployTest {
         assertEq(warriorToken.balanceOf(army11Addr), 0);
         assertEq(horsemanToken.balanceOf(army11Addr), 0);
         assertEq(slingerToken.balanceOf(army11Addr), 0);
-        assertEq(goldToken.balanceOf(army11Addr), 0);
+        assertEq(crystalToken.balanceOf(army11Addr), 0);
         assertEq(foodToken.balanceOf(army11Addr), 0);
 
         // Note: resource successfully transferred to army 21
-        assertEq(goldToken.balanceOf(army21Addr), 1000);
+        assertEq(crystalToken.balanceOf(army21Addr), 1000);
         assertEq(foodToken.balanceOf(army21Addr), 1000);
     }
 
     function testUpgradeCapitalBattleClaimTileMoveCapital() public {
         uint256 time = block.timestamp + 1000;
 
-        // Deployer transfer enough gold & food to nation 1 & 2
+        // Deployer transfer enough crystal & food to nation 1 & 2
         vm.startPrank(deployer);
         admin.dripToken(nation1CapitalAddr, "Warrior", 1000);
         admin.dripToken(nation1CapitalAddr, "Horseman", 1000);
         admin.dripToken(nation1CapitalAddr, "Slinger", 1000);
         admin.dripToken(nation1CapitalAddr, "Food", 100000000);
-        admin.dripToken(nation1CapitalAddr, "Gold", 100000000);
+        admin.dripToken(nation1CapitalAddr, "Crystal", 100000000);
 
         admin.dripToken(nation2CapitalAddr, "Warrior", 1000);
         admin.dripToken(nation2CapitalAddr, "Horseman", 1000);
@@ -476,7 +476,7 @@ contract GameTest is Test, DiamondDeployTest {
         // Deployer gifts tile and resources to Nation 1, army to Nation 2
         vm.startPrank(deployer);
         admin.giftTileAndResourceAt(tilePos, nation1ID);
-        admin.dripToken(nation1CapitalAddr, "Gold", 100000000);
+        admin.dripToken(nation1CapitalAddr, "Crystal", 100000000);
         admin.dripToken(nation1CapitalAddr, "Food", 100000000);
         uint256 nation2ArmyID = admin.giftNewArmy(nation2ID, Position({x: 63, y: 23}));
         vm.stopPrank();
@@ -513,7 +513,7 @@ contract GameTest is Test, DiamondDeployTest {
         assertEq(getter.getNation(tileID), nation1ID);
         assertTrue(guardToken.balanceOf(getter.getAddress(tileID)) < level1TileGuardAmount);
         assertTrue(guardToken.balanceOf(getter.getAddress(tileID)) > 0);
-        assertEq(goldToken.balanceOf(nation1CapitalAddr), 100000000);
+        assertEq(crystalToken.balanceOf(nation1CapitalAddr), 100000000);
 
         // Nation 1 recovers tile
         vm.startPrank(player1);
@@ -525,7 +525,7 @@ contract GameTest is Test, DiamondDeployTest {
         // Verify that tile is recovered
         assertEq(getter.getNation(tileID), nation1ID);
         assertEq(guardToken.balanceOf(getter.getAddress(tileID)), level1TileGuardAmount);
-        assertTrue(goldToken.balanceOf(nation1CapitalAddr) < 100000000);
+        assertTrue(crystalToken.balanceOf(nation1CapitalAddr) < 100000000);
     }
 
     function testBattleCapitalChaos() public {
@@ -533,15 +533,15 @@ contract GameTest is Test, DiamondDeployTest {
         uint256 time = block.timestamp + 1000;
         vm.warp(time);
 
-        // Deployer transfers gold, food, and troops to Nation 1 and Nation 2
+        // Deployer transfers crystal, food, and troops to Nation 1 and Nation 2
         vm.startPrank(deployer);
-        admin.dripToken(nation1CapitalAddr, "Gold", 100000000);
+        admin.dripToken(nation1CapitalAddr, "Crystal", 100000000);
         admin.dripToken(nation1CapitalAddr, "Food", 100000000);
         admin.dripToken(nation1CapitalAddr, "Warrior", 1000);
         admin.dripToken(nation1CapitalAddr, "Horseman", 1000);
         admin.dripToken(nation1CapitalAddr, "Slinger", 1000);
 
-        admin.dripToken(nation2CapitalAddr, "Gold", 100000000);
+        admin.dripToken(nation2CapitalAddr, "Crystal", 100000000);
         admin.dripToken(nation2CapitalAddr, "Food", 100000000);
         admin.dripToken(nation2CapitalAddr, "Warrior", 1000);
         admin.dripToken(nation2CapitalAddr, "Horseman", 1000);
@@ -599,7 +599,7 @@ contract GameTest is Test, DiamondDeployTest {
         Position memory farmTilePos = Position({x: 60, y: 5});
         admin.giftTileAndResourceAt(Position({x: 60, y: 5}), nation1ID);
 
-        admin.dripToken(nation1CapitalAddr, "Gold", 1000000000);
+        admin.dripToken(nation1CapitalAddr, "Crystal", 1000000000);
         admin.dripToken(nation1CapitalAddr, "Food", 1000000000);
 
         vm.stopPrank();
@@ -609,16 +609,16 @@ contract GameTest is Test, DiamondDeployTest {
         vm.startPrank(player1);
         game.upgradeCapital(nation1CapitalID);
         uint256 nation1CapitalID = getter.getCapital(nation1ID);
-        uint256 capitalGoldBalance = goldToken.balanceOf(nation1CapitalAddr);
+        uint256 capitalCrystalBalance = crystalToken.balanceOf(nation1CapitalAddr);
         uint256 capitalFoodBalance = foodToken.balanceOf(nation1CapitalAddr);
 
         time += 3600;
         vm.warp(time);
         game.harvestResourcesFromCapital(nation1CapitalID);
 
-        uint256 goldBalance1 = goldToken.balanceOf(nation1CapitalAddr);
+        uint256 crystalBalance1 = crystalToken.balanceOf(nation1CapitalAddr);
         uint256 foodBalance1 = foodToken.balanceOf(nation1CapitalAddr);
-        assertTrue(goldBalance1 > capitalGoldBalance);
+        assertTrue(crystalBalance1 > capitalCrystalBalance);
         assertTrue(foodBalance1 > capitalFoodBalance);
 
         uint256 farmID = getter.getResourceAtTile(farmTilePos);
@@ -637,7 +637,7 @@ contract GameTest is Test, DiamondDeployTest {
         uint256 time = block.timestamp + 1000;
         vm.warp(time);
 
-        // Deployer transfer enough gold & food to nation 1 & 2
+        // Deployer transfer enough crystal & food to nation 1 & 2
         vm.startPrank(deployer);
         admin.dripToken(nation1CapitalAddr, "Warrior", 1000);
         admin.dripToken(nation1CapitalAddr, "Horseman", 1000);
@@ -702,9 +702,9 @@ contract GameTest is Test, DiamondDeployTest {
         uint256 time = block.timestamp + 1000;
         vm.warp(time);
 
-        // Deployer drips gold and food to Nation 1
+        // Deployer drips crystal and food to Nation 1
         vm.startPrank(deployer);
-        admin.dripToken(nation1CapitalAddr, "Gold", 100000000);
+        admin.dripToken(nation1CapitalAddr, "Crystal", 100000000);
         admin.dripToken(nation1CapitalAddr, "Food", 100000000);
         assertEq(horsemanToken.balanceOf(nation1CapitalAddr), 0);
         vm.stopPrank();
@@ -749,12 +749,12 @@ contract GameTest is Test, DiamondDeployTest {
     //     // Check transfer distance
     //     assertEq(foodToken.maxTransferDistance(), 20);
 
-    //     // Deployer drips gold, food, and troops to Nation 1 and 2
+    //     // Deployer drips crystal, food, and troops to Nation 1 and 2
     //     vm.startPrank(deployer);
-    //     admin.dripToken(nation1CapitalAddr, "Gold", 1000000);
+    //     admin.dripToken(nation1CapitalAddr, "Crystal", 1000000);
     //     admin.dripToken(nation1CapitalAddr, "Food", 1000000);
 
-    //     admin.dripToken(nation2CapitalAddr, "Gold", 1000000);
+    //     admin.dripToken(nation2CapitalAddr, "Crystal", 1000000);
     //     admin.dripToken(nation2CapitalAddr, "Food", 1000000);
     //     admin.dripToken(nation2CapitalAddr, "Warrior", 1000);
     //     admin.dripToken(nation2CapitalAddr, "Horseman", 1000);
@@ -809,9 +809,9 @@ contract GameTest is Test, DiamondDeployTest {
         uint256 time = block.timestamp + 1000;
         vm.warp(time);
 
-        // Deployer drips gold and food to Nation 1
+        // Deployer drips crystal and food to Nation 1
         vm.startPrank(deployer);
-        admin.dripToken(nation1CapitalAddr, "Gold", 100000000);
+        admin.dripToken(nation1CapitalAddr, "Crystal", 100000000);
         admin.dripToken(nation1CapitalAddr, "Food", 100000000);
         vm.stopPrank();
 
@@ -858,11 +858,11 @@ contract GameTest is Test, DiamondDeployTest {
         uint256 time = block.timestamp + 1000;
         vm.warp(time);
 
-        // Deployer drips gold and food to Nation 1 and 2
+        // Deployer drips crystal and food to Nation 1 and 2
         vm.startPrank(deployer);
-        admin.dripToken(nation1CapitalAddr, "Gold", 100000000);
+        admin.dripToken(nation1CapitalAddr, "Crystal", 100000000);
         admin.dripToken(nation1CapitalAddr, "Food", 100000000);
-        admin.dripToken(nation2CapitalAddr, "Gold", 100000000);
+        admin.dripToken(nation2CapitalAddr, "Crystal", 100000000);
         admin.dripToken(nation2CapitalAddr, "Food", 100000000);
         vm.stopPrank();
 
@@ -917,11 +917,11 @@ contract GameTest is Test, DiamondDeployTest {
         uint256 time = block.timestamp + 1000;
         vm.warp(time);
 
-        // Deployer drips gold and food to Nation 1 and 2
+        // Deployer drips crystal and food to Nation 1 and 2
         vm.startPrank(deployer);
-        admin.dripToken(nation1CapitalAddr, "Gold", 100000000);
+        admin.dripToken(nation1CapitalAddr, "Crystal", 100000000);
         admin.dripToken(nation1CapitalAddr, "Food", 100000000);
-        admin.dripToken(nation2CapitalAddr, "Gold", 100000000);
+        admin.dripToken(nation2CapitalAddr, "Crystal", 100000000);
         admin.dripToken(nation2CapitalAddr, "Food", 100000000);
         vm.stopPrank();
 
@@ -955,7 +955,7 @@ contract GameTest is Test, DiamondDeployTest {
 
     function testDiamondUpgrade() public {
         UpgradedFacet newFacet = new UpgradedFacet();
-        bytes4[] memory functionSelectors = new bytes4[](1); 
+        bytes4[] memory functionSelectors = new bytes4[](1);
         functionSelectors[0] = newFacet.SELECTOR();
 
         vm.startPrank(deployer);

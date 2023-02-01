@@ -2,7 +2,7 @@
     "componentName": "Cost",
     "functionName": "Move",
     "level": 0,
-    "object": "Gold",
+    "object": "Crystal",
     "subject": "Capital",
     "value": 3746000
 }

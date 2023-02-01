@@ -61,7 +61,7 @@ library Templates {
 
         ECSLib.setString("Tag", resourceID, "Resource");
         ECSLib.setUint("Template", resourceID, _templateID);
-        ECSLib.setUint("Level", resourceID, 0); // initialize at zero is equivalent to not having a gold mine "built"
+        ECSLib.setUint("Level", resourceID, 0); // initialize at zero is equivalent to not having a crystal mine "built"
         ECSLib.setPosition("StartPosition", resourceID, _startPosition);
         ECSLib.setUint("LastHarvested", resourceID, block.timestamp);
         ECSLib.setUint("LastUpgraded", resourceID, 0);

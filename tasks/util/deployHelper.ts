@@ -174,7 +174,7 @@ export const initializeGame = async (hre: HardhatRuntimeEnvironment, worldConsta
 
   // Deploy and authorize token contracts
   startTime = performance.now();
-  const tokenNames = ['Gold', 'Food', 'Horseman', 'Warrior', 'Slinger', 'Guard'];
+  const tokenNames = ['Crystal', 'Food', 'Horseman', 'Warrior', 'Slinger', 'Guard'];
   const tokenAddrs: string[] = [];
   for (const name of tokenNames) {
     const token = await deployProxy<CurioERC20>('CurioERC20', admin, hre, [name, name.toUpperCase(), 0, diamond.address]);

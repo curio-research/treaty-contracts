@@ -11,7 +11,7 @@
         "componentName": "Rate",
         "functionName": "gather",
         "level": 0,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Army",
         "value": 5313
     },
@@ -35,7 +35,7 @@
         "componentName": "Cost",
         "functionName": "",
         "level": 0,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Troop Production",
         "value": 1000
     },
@@ -131,7 +131,7 @@
         "componentName": "Amount",
         "functionName": "JoinGame",
         "level": 0,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Capital",
         "value": 18158181
     },
@@ -171,8 +171,8 @@
         "componentName": "Yield",
         "functionName": "",
         "level": 0,
-        "object": "Gold",
-        "subject": "Goldmine",
+        "object": "Crystal",
+        "subject": "Crystalmine",
         "value": 363
     },
     {
@@ -180,15 +180,15 @@
         "functionName": "",
         "level": 0,
         "object": "Food",
-        "subject": "Goldmine",
+        "subject": "Crystalmine",
         "value": 0
     },
     {
         "componentName": "Load",
         "functionName": "",
         "level": 0,
-        "object": "Gold",
-        "subject": "Goldmine",
+        "object": "Crystal",
+        "subject": "Crystalmine",
         "value": 2178333
     },
     {
@@ -196,15 +196,15 @@
         "functionName": "",
         "level": 0,
         "object": "Food",
-        "subject": "Goldmine",
+        "subject": "Crystalmine",
         "value": 0
     },
     {
         "componentName": "Cost",
         "functionName": "Upgrade",
         "level": 0,
-        "object": "Gold",
-        "subject": "Goldmine",
+        "object": "Crystal",
+        "subject": "Crystalmine",
         "value": 250352
     },
     {
@@ -212,7 +212,7 @@
         "functionName": "Upgrade",
         "level": 0,
         "object": "Food",
-        "subject": "Goldmine",
+        "subject": "Crystalmine",
         "value": 46941
     },
     {
@@ -220,15 +220,15 @@
         "functionName": "Upgrade",
         "level": 0,
         "object": "",
-        "subject": "Goldmine",
+        "subject": "Crystalmine",
         "value": 41
     },
     {
         "componentName": "Yield",
         "functionName": "",
         "level": 1,
-        "object": "Gold",
-        "subject": "Goldmine",
+        "object": "Crystal",
+        "subject": "Crystalmine",
         "value": 573
     },
     {
@@ -236,15 +236,15 @@
         "functionName": "",
         "level": 1,
         "object": "Food",
-        "subject": "Goldmine",
+        "subject": "Crystalmine",
         "value": 0
     },
     {
         "componentName": "Load",
         "functionName": "",
         "level": 1,
-        "object": "Gold",
-        "subject": "Goldmine",
+        "object": "Crystal",
+        "subject": "Crystalmine",
         "value": 3440000
     },
     {
@@ -252,15 +252,15 @@
         "functionName": "",
         "level": 1,
         "object": "Food",
-        "subject": "Goldmine",
+        "subject": "Crystalmine",
         "value": 0
     },
     {
         "componentName": "Cost",
         "functionName": "Upgrade",
         "level": 1,
-        "object": "Gold",
-        "subject": "Goldmine",
+        "object": "Crystal",
+        "subject": "Crystalmine",
         "value": 644970
     },
     {
@@ -268,7 +268,7 @@
         "functionName": "Upgrade",
         "level": 1,
         "object": "Food",
-        "subject": "Goldmine",
+        "subject": "Crystalmine",
         "value": 120932
     },
     {
@@ -276,15 +276,15 @@
         "functionName": "Upgrade",
         "level": 1,
         "object": "",
-        "subject": "Goldmine",
+        "subject": "Crystalmine",
         "value": 88
     },
     {
         "componentName": "Yield",
         "functionName": "",
         "level": 2,
-        "object": "Gold",
-        "subject": "Goldmine",
+        "object": "Crystal",
+        "subject": "Crystalmine",
         "value": 728
     },
     {
@@ -292,15 +292,15 @@
         "functionName": "",
         "level": 2,
         "object": "Food",
-        "subject": "Goldmine",
+        "subject": "Crystalmine",
         "value": 0
     },
     {
         "componentName": "Load",
         "functionName": "",
         "level": 2,
-        "object": "Gold",
-        "subject": "Goldmine",
+        "object": "Crystal",
+        "subject": "Crystalmine",
         "value": 4370000
     },
     {
@@ -308,15 +308,15 @@
         "functionName": "",
         "level": 2,
         "object": "Food",
-        "subject": "Goldmine",
+        "subject": "Crystalmine",
         "value": 0
     },
     {
         "componentName": "Cost",
         "functionName": "Upgrade",
         "level": 2,
-        "object": "Gold",
-        "subject": "Goldmine",
+        "object": "Crystal",
+        "subject": "Crystalmine",
         "value": 1156459
     },
     {
@@ -324,7 +324,7 @@
         "functionName": "Upgrade",
         "level": 2,
         "object": "Food",
-        "subject": "Goldmine",
+        "subject": "Crystalmine",
         "value": 216836
     },
     {
@@ -332,15 +332,15 @@
         "functionName": "Upgrade",
         "level": 2,
         "object": "",
-        "subject": "Goldmine",
+        "subject": "Crystalmine",
         "value": 140
     },
     {
         "componentName": "Yield",
         "functionName": "",
         "level": 3,
-        "object": "Gold",
-        "subject": "Goldmine",
+        "object": "Crystal",
+        "subject": "Crystalmine",
         "value": 850
     },
     {
@@ -348,15 +348,15 @@
         "functionName": "",
         "level": 3,
         "object": "Food",
-        "subject": "Goldmine",
+        "subject": "Crystalmine",
         "value": 0
     },
     {
         "componentName": "Load",
         "functionName": "",
         "level": 3,
-        "object": "Gold",
-        "subject": "Goldmine",
+        "object": "Crystal",
+        "subject": "Crystalmine",
         "value": 5103333
     },
     {
@@ -364,15 +364,15 @@
         "functionName": "",
         "level": 3,
         "object": "Food",
-        "subject": "Goldmine",
+        "subject": "Crystalmine",
         "value": 0
     },
     {
         "componentName": "Cost",
         "functionName": "Upgrade",
         "level": 3,
-        "object": "Gold",
-        "subject": "Goldmine",
+        "object": "Crystal",
+        "subject": "Crystalmine",
         "value": 1769076
     },
     {
@@ -380,7 +380,7 @@
         "functionName": "Upgrade",
         "level": 3,
         "object": "Food",
-        "subject": "Goldmine",
+        "subject": "Crystalmine",
         "value": 331701
     },
     {
@@ -388,15 +388,15 @@
         "functionName": "Upgrade",
         "level": 3,
         "object": "",
-        "subject": "Goldmine",
+        "subject": "Crystalmine",
         "value": 199
     },
     {
         "componentName": "Yield",
         "functionName": "",
         "level": 4,
-        "object": "Gold",
-        "subject": "Goldmine",
+        "object": "Crystal",
+        "subject": "Crystalmine",
         "value": 951
     },
     {
@@ -404,15 +404,15 @@
         "functionName": "",
         "level": 4,
         "object": "Food",
-        "subject": "Goldmine",
+        "subject": "Crystalmine",
         "value": 0
     },
     {
         "componentName": "Load",
         "functionName": "",
         "level": 4,
-        "object": "Gold",
-        "subject": "Goldmine",
+        "object": "Crystal",
+        "subject": "Crystalmine",
         "value": 5711666
     },
     {
@@ -420,15 +420,15 @@
         "functionName": "",
         "level": 4,
         "object": "Food",
-        "subject": "Goldmine",
+        "subject": "Crystalmine",
         "value": 0
     },
     {
         "componentName": "Cost",
         "functionName": "Upgrade",
         "level": 4,
-        "object": "Gold",
-        "subject": "Goldmine",
+        "object": "Crystal",
+        "subject": "Crystalmine",
         "value": 2477975
     },
     {
@@ -436,7 +436,7 @@
         "functionName": "Upgrade",
         "level": 4,
         "object": "Food",
-        "subject": "Goldmine",
+        "subject": "Crystalmine",
         "value": 464620
     },
     {
@@ -444,15 +444,15 @@
         "functionName": "Upgrade",
         "level": 4,
         "object": "",
-        "subject": "Goldmine",
+        "subject": "Crystalmine",
         "value": 263
     },
     {
         "componentName": "Yield",
         "functionName": "",
         "level": 5,
-        "object": "Gold",
-        "subject": "Goldmine",
+        "object": "Crystal",
+        "subject": "Crystalmine",
         "value": 1038
     },
     {
@@ -460,15 +460,15 @@
         "functionName": "",
         "level": 5,
         "object": "Food",
-        "subject": "Goldmine",
+        "subject": "Crystalmine",
         "value": 0
     },
     {
         "componentName": "Load",
         "functionName": "",
         "level": 5,
-        "object": "Gold",
-        "subject": "Goldmine",
+        "object": "Crystal",
+        "subject": "Crystalmine",
         "value": 6231666
     },
     {
@@ -476,15 +476,15 @@
         "functionName": "",
         "level": 5,
         "object": "Food",
-        "subject": "Goldmine",
+        "subject": "Crystalmine",
         "value": 0
     },
     {
         "componentName": "Cost",
         "functionName": "Upgrade",
         "level": 5,
-        "object": "Gold",
-        "subject": "Goldmine",
+        "object": "Crystal",
+        "subject": "Crystalmine",
         "value": 3281241
     },
     {
@@ -492,7 +492,7 @@
         "functionName": "Upgrade",
         "level": 5,
         "object": "Food",
-        "subject": "Goldmine",
+        "subject": "Crystalmine",
         "value": 615232
     },
     {
@@ -500,15 +500,15 @@
         "functionName": "Upgrade",
         "level": 5,
         "object": "",
-        "subject": "Goldmine",
+        "subject": "Crystalmine",
         "value": 335
     },
     {
         "componentName": "Yield",
         "functionName": "",
         "level": 6,
-        "object": "Gold",
-        "subject": "Goldmine",
+        "object": "Crystal",
+        "subject": "Crystalmine",
         "value": 1113
     },
     {
@@ -516,15 +516,15 @@
         "functionName": "",
         "level": 6,
         "object": "Food",
-        "subject": "Goldmine",
+        "subject": "Crystalmine",
         "value": 0
     },
     {
         "componentName": "Load",
         "functionName": "",
         "level": 6,
-        "object": "Gold",
-        "subject": "Goldmine",
+        "object": "Crystal",
+        "subject": "Crystalmine",
         "value": 6683333
     },
     {
@@ -532,15 +532,15 @@
         "functionName": "",
         "level": 6,
         "object": "Food",
-        "subject": "Goldmine",
+        "subject": "Crystalmine",
         "value": 0
     },
     {
         "componentName": "Cost",
         "functionName": "Upgrade",
         "level": 6,
-        "object": "Gold",
-        "subject": "Goldmine",
+        "object": "Crystal",
+        "subject": "Crystalmine",
         "value": 4177715
     },
     {
@@ -548,7 +548,7 @@
         "functionName": "Upgrade",
         "level": 6,
         "object": "Food",
-        "subject": "Goldmine",
+        "subject": "Crystalmine",
         "value": 783321
     },
     {
@@ -556,15 +556,15 @@
         "functionName": "Upgrade",
         "level": 6,
         "object": "",
-        "subject": "Goldmine",
+        "subject": "Crystalmine",
         "value": 416
     },
     {
         "componentName": "Yield",
         "functionName": "",
         "level": 7,
-        "object": "Gold",
-        "subject": "Goldmine",
+        "object": "Crystal",
+        "subject": "Crystalmine",
         "value": 1180
     },
     {
@@ -572,15 +572,15 @@
         "functionName": "",
         "level": 7,
         "object": "Food",
-        "subject": "Goldmine",
+        "subject": "Crystalmine",
         "value": 0
     },
     {
         "componentName": "Load",
         "functionName": "",
         "level": 7,
-        "object": "Gold",
-        "subject": "Goldmine",
+        "object": "Crystal",
+        "subject": "Crystalmine",
         "value": 7085000
     },
     {
@@ -588,15 +588,15 @@
         "functionName": "",
         "level": 7,
         "object": "Food",
-        "subject": "Goldmine",
+        "subject": "Crystalmine",
         "value": 0
     },
     {
         "componentName": "Cost",
         "functionName": "Upgrade",
         "level": 7,
-        "object": "Gold",
-        "subject": "Goldmine",
+        "object": "Crystal",
+        "subject": "Crystalmine",
         "value": 5171116
     },
     {
@@ -604,7 +604,7 @@
         "functionName": "Upgrade",
         "level": 7,
         "object": "Food",
-        "subject": "Goldmine",
+        "subject": "Crystalmine",
         "value": 969584
     },
     {
@@ -612,15 +612,15 @@
         "functionName": "Upgrade",
         "level": 7,
         "object": "",
-        "subject": "Goldmine",
+        "subject": "Crystalmine",
         "value": 505
     },
     {
         "componentName": "Yield",
         "functionName": "",
         "level": 8,
-        "object": "Gold",
-        "subject": "Goldmine",
+        "object": "Crystal",
+        "subject": "Crystalmine",
         "value": 1240
     },
     {
@@ -628,15 +628,15 @@
         "functionName": "",
         "level": 8,
         "object": "Food",
-        "subject": "Goldmine",
+        "subject": "Crystalmine",
         "value": 0
     },
     {
         "componentName": "Load",
         "functionName": "",
         "level": 8,
-        "object": "Gold",
-        "subject": "Goldmine",
+        "object": "Crystal",
+        "subject": "Crystalmine",
         "value": 7445000
     },
     {
@@ -644,15 +644,15 @@
         "functionName": "",
         "level": 8,
         "object": "Food",
-        "subject": "Goldmine",
+        "subject": "Crystalmine",
         "value": 0
     },
     {
         "componentName": "Cost",
         "functionName": "Upgrade",
         "level": 8,
-        "object": "Gold",
-        "subject": "Goldmine",
+        "object": "Crystal",
+        "subject": "Crystalmine",
         "value": 6263158
     },
     {
@@ -660,7 +660,7 @@
         "functionName": "Upgrade",
         "level": 8,
         "object": "Food",
-        "subject": "Goldmine",
+        "subject": "Crystalmine",
         "value": 1174342
     },
     {
@@ -668,15 +668,15 @@
         "functionName": "Upgrade",
         "level": 8,
         "object": "",
-        "subject": "Goldmine",
+        "subject": "Crystalmine",
         "value": 605
     },
     {
         "componentName": "Yield",
         "functionName": "",
         "level": 9,
-        "object": "Gold",
-        "subject": "Goldmine",
+        "object": "Crystal",
+        "subject": "Crystalmine",
         "value": 1295
     },
     {
@@ -684,15 +684,15 @@
         "functionName": "",
         "level": 9,
         "object": "Food",
-        "subject": "Goldmine",
+        "subject": "Crystalmine",
         "value": 0
     },
     {
         "componentName": "Load",
         "functionName": "",
         "level": 9,
-        "object": "Gold",
-        "subject": "Goldmine",
+        "object": "Crystal",
+        "subject": "Crystalmine",
         "value": 7771666
     },
     {
@@ -700,15 +700,15 @@
         "functionName": "",
         "level": 9,
         "object": "Food",
-        "subject": "Goldmine",
+        "subject": "Crystalmine",
         "value": 0
     },
     {
         "componentName": "Cost",
         "functionName": "Upgrade",
         "level": 9,
-        "object": "Gold",
-        "subject": "Goldmine",
+        "object": "Crystal",
+        "subject": "Crystalmine",
         "value": 7458303
     },
     {
@@ -716,7 +716,7 @@
         "functionName": "Upgrade",
         "level": 9,
         "object": "Food",
-        "subject": "Goldmine",
+        "subject": "Crystalmine",
         "value": 1398431
     },
     {
@@ -724,15 +724,15 @@
         "functionName": "Upgrade",
         "level": 9,
         "object": "",
-        "subject": "Goldmine",
+        "subject": "Crystalmine",
         "value": 715
     },
     {
         "componentName": "Yield",
         "functionName": "",
         "level": 10,
-        "object": "Gold",
-        "subject": "Goldmine",
+        "object": "Crystal",
+        "subject": "Crystalmine",
         "value": 1345
     },
     {
@@ -740,15 +740,15 @@
         "functionName": "",
         "level": 10,
         "object": "Food",
-        "subject": "Goldmine",
+        "subject": "Crystalmine",
         "value": 0
     },
     {
         "componentName": "Load",
         "functionName": "",
         "level": 10,
-        "object": "Gold",
-        "subject": "Goldmine",
+        "object": "Crystal",
+        "subject": "Crystalmine",
         "value": 8071666
     },
     {
@@ -756,15 +756,15 @@
         "functionName": "",
         "level": 10,
         "object": "Food",
-        "subject": "Goldmine",
+        "subject": "Crystalmine",
         "value": 0
     },
     {
         "componentName": "Cost",
         "functionName": "Upgrade",
         "level": 10,
-        "object": "Gold",
-        "subject": "Goldmine",
+        "object": "Crystal",
+        "subject": "Crystalmine",
         "value": 8762417
     },
     {
@@ -772,7 +772,7 @@
         "functionName": "Upgrade",
         "level": 10,
         "object": "Food",
-        "subject": "Goldmine",
+        "subject": "Crystalmine",
         "value": 1642953
     },
     {
@@ -780,15 +780,15 @@
         "functionName": "Upgrade",
         "level": 10,
         "object": "",
-        "subject": "Goldmine",
+        "subject": "Crystalmine",
         "value": 839
     },
     {
         "componentName": "Yield",
         "functionName": "",
         "level": 11,
-        "object": "Gold",
-        "subject": "Goldmine",
+        "object": "Crystal",
+        "subject": "Crystalmine",
         "value": 1391
     },
     {
@@ -796,15 +796,15 @@
         "functionName": "",
         "level": 11,
         "object": "Food",
-        "subject": "Goldmine",
+        "subject": "Crystalmine",
         "value": 0
     },
     {
         "componentName": "Load",
         "functionName": "",
         "level": 11,
-        "object": "Gold",
-        "subject": "Goldmine",
+        "object": "Crystal",
+        "subject": "Crystalmine",
         "value": 8346666
     },
     {
@@ -812,15 +812,15 @@
         "functionName": "",
         "level": 11,
         "object": "Food",
-        "subject": "Goldmine",
+        "subject": "Crystalmine",
         "value": 0
     },
     {
         "componentName": "Cost",
         "functionName": "Upgrade",
         "level": 11,
-        "object": "Gold",
-        "subject": "Goldmine",
+        "object": "Crystal",
+        "subject": "Crystalmine",
         "value": 10178130
     },
     {
@@ -828,7 +828,7 @@
         "functionName": "Upgrade",
         "level": 11,
         "object": "Food",
-        "subject": "Goldmine",
+        "subject": "Crystalmine",
         "value": 1908399
     },
     {
@@ -836,15 +836,15 @@
         "functionName": "Upgrade",
         "level": 11,
         "object": "",
-        "subject": "Goldmine",
+        "subject": "Crystalmine",
         "value": 976
     },
     {
         "componentName": "Yield",
         "functionName": "",
         "level": 12,
-        "object": "Gold",
-        "subject": "Goldmine",
+        "object": "Crystal",
+        "subject": "Crystalmine",
         "value": 1433
     },
     {
@@ -852,15 +852,15 @@
         "functionName": "",
         "level": 12,
         "object": "Food",
-        "subject": "Goldmine",
+        "subject": "Crystalmine",
         "value": 0
     },
     {
         "componentName": "Load",
         "functionName": "",
         "level": 12,
-        "object": "Gold",
-        "subject": "Goldmine",
+        "object": "Crystal",
+        "subject": "Crystalmine",
         "value": 8603333
     },
     {
@@ -868,15 +868,15 @@
         "functionName": "",
         "level": 12,
         "object": "Food",
-        "subject": "Goldmine",
+        "subject": "Crystalmine",
         "value": 0
     },
     {
         "componentName": "Cost",
         "functionName": "Upgrade",
         "level": 12,
-        "object": "Gold",
-        "subject": "Goldmine",
+        "object": "Crystal",
+        "subject": "Crystalmine",
         "value": 11715355
     },
     {
@@ -884,7 +884,7 @@
         "functionName": "Upgrade",
         "level": 12,
         "object": "Food",
-        "subject": "Goldmine",
+        "subject": "Crystalmine",
         "value": 2196629
     },
     {
@@ -892,15 +892,15 @@
         "functionName": "Upgrade",
         "level": 12,
         "object": "",
-        "subject": "Goldmine",
+        "subject": "Crystalmine",
         "value": 1128
     },
     {
         "componentName": "Yield",
         "functionName": "",
         "level": 13,
-        "object": "Gold",
-        "subject": "Goldmine",
+        "object": "Crystal",
+        "subject": "Crystalmine",
         "value": 1473
     },
     {
@@ -908,15 +908,15 @@
         "functionName": "",
         "level": 13,
         "object": "Food",
-        "subject": "Goldmine",
+        "subject": "Crystalmine",
         "value": 0
     },
     {
         "componentName": "Load",
         "functionName": "",
         "level": 13,
-        "object": "Gold",
-        "subject": "Goldmine",
+        "object": "Crystal",
+        "subject": "Crystalmine",
         "value": 8841666
     },
     {
@@ -924,15 +924,15 @@
         "functionName": "",
         "level": 13,
         "object": "Food",
-        "subject": "Goldmine",
+        "subject": "Crystalmine",
         "value": 0
     },
     {
         "componentName": "Cost",
         "functionName": "Upgrade",
         "level": 13,
-        "object": "Gold",
-        "subject": "Goldmine",
+        "object": "Crystal",
+        "subject": "Crystalmine",
         "value": 13377489
     },
     {
@@ -940,7 +940,7 @@
         "functionName": "Upgrade",
         "level": 13,
         "object": "Food",
-        "subject": "Goldmine",
+        "subject": "Crystalmine",
         "value": 2508279
     },
     {
@@ -948,15 +948,15 @@
         "functionName": "Upgrade",
         "level": 13,
         "object": "",
-        "subject": "Goldmine",
+        "subject": "Crystalmine",
         "value": 1298
     },
     {
         "componentName": "Yield",
         "functionName": "",
         "level": 14,
-        "object": "Gold",
-        "subject": "Goldmine",
+        "object": "Crystal",
+        "subject": "Crystalmine",
         "value": 1510
     },
     {
@@ -964,15 +964,15 @@
         "functionName": "",
         "level": 14,
         "object": "Food",
-        "subject": "Goldmine",
+        "subject": "Crystalmine",
         "value": 0
     },
     {
         "componentName": "Load",
         "functionName": "",
         "level": 14,
-        "object": "Gold",
-        "subject": "Goldmine",
+        "object": "Crystal",
+        "subject": "Crystalmine",
         "value": 9065000
     },
     {
@@ -980,15 +980,15 @@
         "functionName": "",
         "level": 14,
         "object": "Food",
-        "subject": "Goldmine",
+        "subject": "Crystalmine",
         "value": 0
     },
     {
         "componentName": "Cost",
         "functionName": "Upgrade",
         "level": 14,
-        "object": "Gold",
-        "subject": "Goldmine",
+        "object": "Crystal",
+        "subject": "Crystalmine",
         "value": 15173355
     },
     {
@@ -996,7 +996,7 @@
         "functionName": "Upgrade",
         "level": 14,
         "object": "Food",
-        "subject": "Goldmine",
+        "subject": "Crystalmine",
         "value": 2845004
     },
     {
@@ -1004,15 +1004,15 @@
         "functionName": "Upgrade",
         "level": 14,
         "object": "",
-        "subject": "Goldmine",
+        "subject": "Crystalmine",
         "value": 1488
     },
     {
         "componentName": "Yield",
         "functionName": "",
         "level": 15,
-        "object": "Gold",
-        "subject": "Goldmine",
+        "object": "Crystal",
+        "subject": "Crystalmine",
         "value": 1545
     },
     {
@@ -1020,15 +1020,15 @@
         "functionName": "",
         "level": 15,
         "object": "Food",
-        "subject": "Goldmine",
+        "subject": "Crystalmine",
         "value": 0
     },
     {
         "componentName": "Load",
         "functionName": "",
         "level": 15,
-        "object": "Gold",
-        "subject": "Goldmine",
+        "object": "Crystal",
+        "subject": "Crystalmine",
         "value": 9275000
     },
     {
@@ -1036,15 +1036,15 @@
         "functionName": "",
         "level": 15,
         "object": "Food",
-        "subject": "Goldmine",
+        "subject": "Crystalmine",
         "value": 0
     },
     {
         "componentName": "Cost",
         "functionName": "Upgrade",
         "level": 15,
-        "object": "Gold",
-        "subject": "Goldmine",
+        "object": "Crystal",
+        "subject": "Crystalmine",
         "value": 17110783
     },
     {
@@ -1052,7 +1052,7 @@
         "functionName": "Upgrade",
         "level": 15,
         "object": "Food",
-        "subject": "Goldmine",
+        "subject": "Crystalmine",
         "value": 3208271
     },
     {
@@ -1060,15 +1060,15 @@
         "functionName": "Upgrade",
         "level": 15,
         "object": "",
-        "subject": "Goldmine",
+        "subject": "Crystalmine",
         "value": 1698
     },
     {
         "componentName": "Yield",
         "functionName": "",
         "level": 16,
-        "object": "Gold",
-        "subject": "Goldmine",
+        "object": "Crystal",
+        "subject": "Crystalmine",
         "value": 1579
     },
     {
@@ -1076,15 +1076,15 @@
         "functionName": "",
         "level": 16,
         "object": "Food",
-        "subject": "Goldmine",
+        "subject": "Crystalmine",
         "value": 0
     },
     {
         "componentName": "Load",
         "functionName": "",
         "level": 16,
-        "object": "Gold",
-        "subject": "Goldmine",
+        "object": "Crystal",
+        "subject": "Crystalmine",
         "value": 9475000
     },
     {
@@ -1092,15 +1092,15 @@
         "functionName": "",
         "level": 16,
         "object": "Food",
-        "subject": "Goldmine",
+        "subject": "Crystalmine",
         "value": 0
     },
     {
         "componentName": "Cost",
         "functionName": "Upgrade",
         "level": 16,
-        "object": "Gold",
-        "subject": "Goldmine",
+        "object": "Crystal",
+        "subject": "Crystalmine",
         "value": 19202159
     },
     {
@@ -1108,7 +1108,7 @@
         "functionName": "Upgrade",
         "level": 16,
         "object": "Food",
-        "subject": "Goldmine",
+        "subject": "Crystalmine",
         "value": 3600404
     },
     {
@@ -1116,15 +1116,15 @@
         "functionName": "Upgrade",
         "level": 16,
         "object": "",
-        "subject": "Goldmine",
+        "subject": "Crystalmine",
         "value": 1932
     },
     {
         "componentName": "Yield",
         "functionName": "",
         "level": 17,
-        "object": "Gold",
-        "subject": "Goldmine",
+        "object": "Crystal",
+        "subject": "Crystalmine",
         "value": 1610
     },
     {
@@ -1132,15 +1132,15 @@
         "functionName": "",
         "level": 17,
         "object": "Food",
-        "subject": "Goldmine",
+        "subject": "Crystalmine",
         "value": 0
     },
     {
         "componentName": "Load",
         "functionName": "",
         "level": 17,
-        "object": "Gold",
-        "subject": "Goldmine",
+        "object": "Crystal",
+        "subject": "Crystalmine",
         "value": 9661666
     },
     {
@@ -1148,15 +1148,15 @@
         "functionName": "",
         "level": 17,
         "object": "Food",
-        "subject": "Goldmine",
+        "subject": "Crystalmine",
         "value": 0
     },
     {
         "componentName": "Cost",
         "functionName": "Upgrade",
         "level": 17,
-        "object": "Gold",
-        "subject": "Goldmine",
+        "object": "Crystal",
+        "subject": "Crystalmine",
         "value": 21447694
     },
     {
@@ -1164,7 +1164,7 @@
         "functionName": "Upgrade",
         "level": 17,
         "object": "Food",
-        "subject": "Goldmine",
+        "subject": "Crystalmine",
         "value": 4021442
     },
     {
@@ -1172,15 +1172,15 @@
         "functionName": "Upgrade",
         "level": 17,
         "object": "",
-        "subject": "Goldmine",
+        "subject": "Crystalmine",
         "value": 2193
     },
     {
         "componentName": "Yield",
         "functionName": "",
         "level": 18,
-        "object": "Gold",
-        "subject": "Goldmine",
+        "object": "Crystal",
+        "subject": "Crystalmine",
         "value": 1640
     },
     {
@@ -1188,15 +1188,15 @@
         "functionName": "",
         "level": 18,
         "object": "Food",
-        "subject": "Goldmine",
+        "subject": "Crystalmine",
         "value": 0
     },
     {
         "componentName": "Load",
         "functionName": "",
         "level": 18,
-        "object": "Gold",
-        "subject": "Goldmine",
+        "object": "Crystal",
+        "subject": "Crystalmine",
         "value": 9840000
     },
     {
@@ -1204,15 +1204,15 @@
         "functionName": "",
         "level": 18,
         "object": "Food",
-        "subject": "Goldmine",
+        "subject": "Crystalmine",
         "value": 0
     },
     {
         "componentName": "Cost",
         "functionName": "Upgrade",
         "level": 18,
-        "object": "Gold",
-        "subject": "Goldmine",
+        "object": "Crystal",
+        "subject": "Crystalmine",
         "value": 23865339
     },
     {
@@ -1220,7 +1220,7 @@
         "functionName": "Upgrade",
         "level": 18,
         "object": "Food",
-        "subject": "Goldmine",
+        "subject": "Crystalmine",
         "value": 4474751
     },
     {
@@ -1228,15 +1228,15 @@
         "functionName": "Upgrade",
         "level": 18,
         "object": "",
-        "subject": "Goldmine",
+        "subject": "Crystalmine",
         "value": 2484
     },
     {
         "componentName": "Yield",
         "functionName": "",
         "level": 19,
-        "object": "Gold",
-        "subject": "Goldmine",
+        "object": "Crystal",
+        "subject": "Crystalmine",
         "value": 1668
     },
     {
@@ -1244,15 +1244,15 @@
         "functionName": "",
         "level": 19,
         "object": "Food",
-        "subject": "Goldmine",
+        "subject": "Crystalmine",
         "value": 0
     },
     {
         "componentName": "Load",
         "functionName": "",
         "level": 19,
-        "object": "Gold",
-        "subject": "Goldmine",
+        "object": "Crystal",
+        "subject": "Crystalmine",
         "value": 10010000
     },
     {
@@ -1260,15 +1260,15 @@
         "functionName": "",
         "level": 19,
         "object": "Food",
-        "subject": "Goldmine",
+        "subject": "Crystalmine",
         "value": 0
     },
     {
         "componentName": "Cost",
         "functionName": "Upgrade",
         "level": 19,
-        "object": "Gold",
-        "subject": "Goldmine",
+        "object": "Crystal",
+        "subject": "Crystalmine",
         "value": 26464199
     },
     {
@@ -1276,7 +1276,7 @@
         "functionName": "Upgrade",
         "level": 19,
         "object": "Food",
-        "subject": "Goldmine",
+        "subject": "Crystalmine",
         "value": 4962037
     },
     {
@@ -1284,15 +1284,15 @@
         "functionName": "Upgrade",
         "level": 19,
         "object": "",
-        "subject": "Goldmine",
+        "subject": "Crystalmine",
         "value": 2807
     },
     {
         "componentName": "Yield",
         "functionName": "",
         "level": 20,
-        "object": "Gold",
-        "subject": "Goldmine",
+        "object": "Crystal",
+        "subject": "Crystalmine",
         "value": 1695
     },
     {
@@ -1300,15 +1300,15 @@
         "functionName": "",
         "level": 20,
         "object": "Food",
-        "subject": "Goldmine",
+        "subject": "Crystalmine",
         "value": 0
     },
     {
         "componentName": "Load",
         "functionName": "",
         "level": 20,
-        "object": "Gold",
-        "subject": "Goldmine",
+        "object": "Crystal",
+        "subject": "Crystalmine",
         "value": 10173333
     },
     {
@@ -1316,15 +1316,15 @@
         "functionName": "",
         "level": 20,
         "object": "Food",
-        "subject": "Goldmine",
+        "subject": "Crystalmine",
         "value": 0
     },
     {
         "componentName": "Cost",
         "functionName": "Upgrade",
         "level": 20,
-        "object": "Gold",
-        "subject": "Goldmine",
+        "object": "Crystal",
+        "subject": "Crystalmine",
         "value": 29258551
     },
     {
@@ -1332,7 +1332,7 @@
         "functionName": "Upgrade",
         "level": 20,
         "object": "Food",
-        "subject": "Goldmine",
+        "subject": "Crystalmine",
         "value": 5485978
     },
     {
@@ -1340,15 +1340,15 @@
         "functionName": "Upgrade",
         "level": 20,
         "object": "",
-        "subject": "Goldmine",
+        "subject": "Crystalmine",
         "value": 3167
     },
     {
         "componentName": "Yield",
         "functionName": "",
         "level": 21,
-        "object": "Gold",
-        "subject": "Goldmine",
+        "object": "Crystal",
+        "subject": "Crystalmine",
         "value": 1721
     },
     {
@@ -1356,15 +1356,15 @@
         "functionName": "",
         "level": 21,
         "object": "Food",
-        "subject": "Goldmine",
+        "subject": "Crystalmine",
         "value": 0
     },
     {
         "componentName": "Load",
         "functionName": "",
         "level": 21,
-        "object": "Gold",
-        "subject": "Goldmine",
+        "object": "Crystal",
+        "subject": "Crystalmine",
         "value": 10328333
     },
     {
@@ -1372,15 +1372,15 @@
         "functionName": "",
         "level": 21,
         "object": "Food",
-        "subject": "Goldmine",
+        "subject": "Crystalmine",
         "value": 0
     },
     {
         "componentName": "Cost",
         "functionName": "Upgrade",
         "level": 21,
-        "object": "Gold",
-        "subject": "Goldmine",
+        "object": "Crystal",
+        "subject": "Crystalmine",
         "value": 32254300
     },
     {
@@ -1388,7 +1388,7 @@
         "functionName": "Upgrade",
         "level": 21,
         "object": "Food",
-        "subject": "Goldmine",
+        "subject": "Crystalmine",
         "value": 6047681
     },
     {
@@ -1396,14 +1396,14 @@
         "functionName": "Upgrade",
         "level": 21,
         "object": "",
-        "subject": "Goldmine",
+        "subject": "Crystalmine",
         "value": 3567
     },
     {
         "componentName": "Yield",
         "functionName": "",
         "level": 0,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Farm",
         "value": 0
     },
@@ -1419,7 +1419,7 @@
         "componentName": "Load",
         "functionName": "",
         "level": 0,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Farm",
         "value": 0
     },
@@ -1435,7 +1435,7 @@
         "componentName": "Cost",
         "functionName": "Upgrade",
         "level": 0,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Farm",
         "value": 751057
     },
@@ -1459,7 +1459,7 @@
         "componentName": "Yield",
         "functionName": "",
         "level": 1,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Farm",
         "value": 0
     },
@@ -1475,7 +1475,7 @@
         "componentName": "Load",
         "functionName": "",
         "level": 1,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Farm",
         "value": 0
     },
@@ -1491,7 +1491,7 @@
         "componentName": "Cost",
         "functionName": "Upgrade",
         "level": 1,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Farm",
         "value": 1934912
     },
@@ -1515,7 +1515,7 @@
         "componentName": "Yield",
         "functionName": "",
         "level": 2,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Farm",
         "value": 0
     },
@@ -1531,7 +1531,7 @@
         "componentName": "Load",
         "functionName": "",
         "level": 2,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Farm",
         "value": 0
     },
@@ -1547,7 +1547,7 @@
         "componentName": "Cost",
         "functionName": "Upgrade",
         "level": 2,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Farm",
         "value": 3469377
     },
@@ -1571,7 +1571,7 @@
         "componentName": "Yield",
         "functionName": "",
         "level": 3,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Farm",
         "value": 0
     },
@@ -1587,7 +1587,7 @@
         "componentName": "Load",
         "functionName": "",
         "level": 3,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Farm",
         "value": 0
     },
@@ -1603,7 +1603,7 @@
         "componentName": "Cost",
         "functionName": "Upgrade",
         "level": 3,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Farm",
         "value": 5307229
     },
@@ -1627,7 +1627,7 @@
         "componentName": "Yield",
         "functionName": "",
         "level": 4,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Farm",
         "value": 0
     },
@@ -1643,7 +1643,7 @@
         "componentName": "Load",
         "functionName": "",
         "level": 4,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Farm",
         "value": 0
     },
@@ -1659,7 +1659,7 @@
         "componentName": "Cost",
         "functionName": "Upgrade",
         "level": 4,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Farm",
         "value": 7433927
     },
@@ -1683,7 +1683,7 @@
         "componentName": "Yield",
         "functionName": "",
         "level": 5,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Farm",
         "value": 0
     },
@@ -1699,7 +1699,7 @@
         "componentName": "Load",
         "functionName": "",
         "level": 5,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Farm",
         "value": 0
     },
@@ -1715,7 +1715,7 @@
         "componentName": "Cost",
         "functionName": "Upgrade",
         "level": 5,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Farm",
         "value": 9843725
     },
@@ -1739,7 +1739,7 @@
         "componentName": "Yield",
         "functionName": "",
         "level": 6,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Farm",
         "value": 0
     },
@@ -1755,7 +1755,7 @@
         "componentName": "Load",
         "functionName": "",
         "level": 6,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Farm",
         "value": 0
     },
@@ -1771,7 +1771,7 @@
         "componentName": "Cost",
         "functionName": "Upgrade",
         "level": 6,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Farm",
         "value": 12533146
     },
@@ -1795,7 +1795,7 @@
         "componentName": "Yield",
         "functionName": "",
         "level": 7,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Farm",
         "value": 0
     },
@@ -1811,7 +1811,7 @@
         "componentName": "Load",
         "functionName": "",
         "level": 7,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Farm",
         "value": 0
     },
@@ -1827,7 +1827,7 @@
         "componentName": "Cost",
         "functionName": "Upgrade",
         "level": 7,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Farm",
         "value": 15513349
     },
@@ -1851,7 +1851,7 @@
         "componentName": "Yield",
         "functionName": "",
         "level": 8,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Farm",
         "value": 0
     },
@@ -1867,7 +1867,7 @@
         "componentName": "Load",
         "functionName": "",
         "level": 8,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Farm",
         "value": 0
     },
@@ -1883,7 +1883,7 @@
         "componentName": "Cost",
         "functionName": "Upgrade",
         "level": 8,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Farm",
         "value": 18789476
     },
@@ -1907,7 +1907,7 @@
         "componentName": "Yield",
         "functionName": "",
         "level": 9,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Farm",
         "value": 0
     },
@@ -1923,7 +1923,7 @@
         "componentName": "Load",
         "functionName": "",
         "level": 9,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Farm",
         "value": 0
     },
@@ -1939,7 +1939,7 @@
         "componentName": "Cost",
         "functionName": "Upgrade",
         "level": 9,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Farm",
         "value": 22374909
     },
@@ -1963,7 +1963,7 @@
         "componentName": "Yield",
         "functionName": "",
         "level": 10,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Farm",
         "value": 0
     },
@@ -1979,7 +1979,7 @@
         "componentName": "Load",
         "functionName": "",
         "level": 10,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Farm",
         "value": 0
     },
@@ -1995,7 +1995,7 @@
         "componentName": "Cost",
         "functionName": "Upgrade",
         "level": 10,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Farm",
         "value": 26287252
     },
@@ -2019,7 +2019,7 @@
         "componentName": "Yield",
         "functionName": "",
         "level": 11,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Farm",
         "value": 0
     },
@@ -2035,7 +2035,7 @@
         "componentName": "Load",
         "functionName": "",
         "level": 11,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Farm",
         "value": 0
     },
@@ -2051,7 +2051,7 @@
         "componentName": "Cost",
         "functionName": "Upgrade",
         "level": 11,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Farm",
         "value": 30534392
     },
@@ -2075,7 +2075,7 @@
         "componentName": "Yield",
         "functionName": "",
         "level": 12,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Farm",
         "value": 0
     },
@@ -2091,7 +2091,7 @@
         "componentName": "Load",
         "functionName": "",
         "level": 12,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Farm",
         "value": 0
     },
@@ -2107,7 +2107,7 @@
         "componentName": "Cost",
         "functionName": "Upgrade",
         "level": 12,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Farm",
         "value": 35146066
     },
@@ -2131,7 +2131,7 @@
         "componentName": "Yield",
         "functionName": "",
         "level": 13,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Farm",
         "value": 0
     },
@@ -2147,7 +2147,7 @@
         "componentName": "Load",
         "functionName": "",
         "level": 13,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Farm",
         "value": 0
     },
@@ -2163,7 +2163,7 @@
         "componentName": "Cost",
         "functionName": "Upgrade",
         "level": 13,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Farm",
         "value": 40132468
     },
@@ -2187,7 +2187,7 @@
         "componentName": "Yield",
         "functionName": "",
         "level": 14,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Farm",
         "value": 0
     },
@@ -2203,7 +2203,7 @@
         "componentName": "Load",
         "functionName": "",
         "level": 14,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Farm",
         "value": 0
     },
@@ -2219,7 +2219,7 @@
         "componentName": "Cost",
         "functionName": "Upgrade",
         "level": 14,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Farm",
         "value": 45520067
     },
@@ -2243,7 +2243,7 @@
         "componentName": "Yield",
         "functionName": "",
         "level": 15,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Farm",
         "value": 0
     },
@@ -2259,7 +2259,7 @@
         "componentName": "Load",
         "functionName": "",
         "level": 15,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Farm",
         "value": 0
     },
@@ -2275,7 +2275,7 @@
         "componentName": "Cost",
         "functionName": "Upgrade",
         "level": 15,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Farm",
         "value": 51332351
     },
@@ -2299,7 +2299,7 @@
         "componentName": "Yield",
         "functionName": "",
         "level": 16,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Farm",
         "value": 0
     },
@@ -2315,7 +2315,7 @@
         "componentName": "Load",
         "functionName": "",
         "level": 16,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Farm",
         "value": 0
     },
@@ -2331,7 +2331,7 @@
         "componentName": "Cost",
         "functionName": "Upgrade",
         "level": 16,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Farm",
         "value": 57606477
     },
@@ -2355,7 +2355,7 @@
         "componentName": "Yield",
         "functionName": "",
         "level": 17,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Farm",
         "value": 0
     },
@@ -2371,7 +2371,7 @@
         "componentName": "Load",
         "functionName": "",
         "level": 17,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Farm",
         "value": 0
     },
@@ -2387,7 +2387,7 @@
         "componentName": "Cost",
         "functionName": "Upgrade",
         "level": 17,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Farm",
         "value": 64343083
     },
@@ -2411,7 +2411,7 @@
         "componentName": "Yield",
         "functionName": "",
         "level": 18,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Farm",
         "value": 0
     },
@@ -2427,7 +2427,7 @@
         "componentName": "Load",
         "functionName": "",
         "level": 18,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Farm",
         "value": 0
     },
@@ -2443,7 +2443,7 @@
         "componentName": "Cost",
         "functionName": "Upgrade",
         "level": 18,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Farm",
         "value": 71596019
     },
@@ -2467,7 +2467,7 @@
         "componentName": "Yield",
         "functionName": "",
         "level": 19,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Farm",
         "value": 0
     },
@@ -2483,7 +2483,7 @@
         "componentName": "Load",
         "functionName": "",
         "level": 19,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Farm",
         "value": 0
     },
@@ -2499,7 +2499,7 @@
         "componentName": "Cost",
         "functionName": "Upgrade",
         "level": 19,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Farm",
         "value": 79392597
     },
@@ -2523,7 +2523,7 @@
         "componentName": "Yield",
         "functionName": "",
         "level": 20,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Farm",
         "value": 0
     },
@@ -2539,7 +2539,7 @@
         "componentName": "Load",
         "functionName": "",
         "level": 20,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Farm",
         "value": 0
     },
@@ -2555,7 +2555,7 @@
         "componentName": "Cost",
         "functionName": "Upgrade",
         "level": 20,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Farm",
         "value": 87775654
     },
@@ -2579,7 +2579,7 @@
         "componentName": "Yield",
         "functionName": "",
         "level": 21,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Farm",
         "value": 0
     },
@@ -2595,7 +2595,7 @@
         "componentName": "Load",
         "functionName": "",
         "level": 21,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Farm",
         "value": 0
     },
@@ -2611,7 +2611,7 @@
         "componentName": "Cost",
         "functionName": "Upgrade",
         "level": 21,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Farm",
         "value": 96762902
     },
@@ -2635,7 +2635,7 @@
         "componentName": "Yield",
         "functionName": "",
         "level": 0,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Capital",
         "value": 363
     },
@@ -2651,7 +2651,7 @@
         "componentName": "Load",
         "functionName": "",
         "level": 0,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Capital",
         "value": 2178333
     },
@@ -2667,7 +2667,7 @@
         "componentName": "Cost",
         "functionName": "Upgrade",
         "level": 0,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Capital",
         "value": 18734351
     },
@@ -2707,7 +2707,7 @@
         "componentName": "Cost",
         "functionName": "Move",
         "level": 0,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Capital",
         "value": 3746000
     },
@@ -2731,7 +2731,7 @@
         "componentName": "Yield",
         "functionName": "",
         "level": 1,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Capital",
         "value": 573
     },
@@ -2747,7 +2747,7 @@
         "componentName": "Load",
         "functionName": "",
         "level": 1,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Capital",
         "value": 3440000
     },
@@ -2763,7 +2763,7 @@
         "componentName": "Cost",
         "functionName": "Upgrade",
         "level": 1,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Capital",
         "value": 36316363
     },
@@ -2803,7 +2803,7 @@
         "componentName": "Cost",
         "functionName": "Move",
         "level": 1,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Capital",
         "value": 7263000
     },
@@ -2827,7 +2827,7 @@
         "componentName": "Yield",
         "functionName": "",
         "level": 2,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Capital",
         "value": 728
     },
@@ -2843,7 +2843,7 @@
         "componentName": "Load",
         "functionName": "",
         "level": 2,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Capital",
         "value": 4370000
     },
@@ -2859,7 +2859,7 @@
         "componentName": "Cost",
         "functionName": "Upgrade",
         "level": 2,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Capital",
         "value": 54389436
     },
@@ -2899,7 +2899,7 @@
         "componentName": "Cost",
         "functionName": "Move",
         "level": 2,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Capital",
         "value": 10877000
     },
@@ -2923,7 +2923,7 @@
         "componentName": "Yield",
         "functionName": "",
         "level": 3,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Capital",
         "value": 850
     },
@@ -2939,7 +2939,7 @@
         "componentName": "Load",
         "functionName": "",
         "level": 3,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Capital",
         "value": 5103333
     },
@@ -2955,7 +2955,7 @@
         "componentName": "Cost",
         "functionName": "Upgrade",
         "level": 3,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Capital",
         "value": 73806195
     },
@@ -2995,7 +2995,7 @@
         "componentName": "Cost",
         "functionName": "Move",
         "level": 3,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Capital",
         "value": 14761000
     },
@@ -3019,7 +3019,7 @@
         "componentName": "Yield",
         "functionName": "",
         "level": 4,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Capital",
         "value": 951
     },
@@ -3035,7 +3035,7 @@
         "componentName": "Load",
         "functionName": "",
         "level": 4,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Capital",
         "value": 5711666
     },
@@ -3051,7 +3051,7 @@
         "componentName": "Cost",
         "functionName": "Upgrade",
         "level": 4,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Capital",
         "value": 94879516
     },
@@ -3091,7 +3091,7 @@
         "componentName": "Cost",
         "functionName": "Move",
         "level": 4,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Capital",
         "value": 18975000
     },
@@ -3115,7 +3115,7 @@
         "componentName": "Yield",
         "functionName": "",
         "level": 5,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Capital",
         "value": 1038
     },
@@ -3131,7 +3131,7 @@
         "componentName": "Load",
         "functionName": "",
         "level": 5,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Capital",
         "value": 6231666
     },
@@ -3147,7 +3147,7 @@
         "componentName": "Cost",
         "functionName": "Upgrade",
         "level": 5,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Capital",
         "value": 117785760
     },
@@ -3187,7 +3187,7 @@
         "componentName": "Cost",
         "functionName": "Move",
         "level": 5,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Capital",
         "value": 23557000
     },
@@ -3211,7 +3211,7 @@
         "componentName": "Yield",
         "functionName": "",
         "level": 6,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Capital",
         "value": 1113
     },
@@ -3227,7 +3227,7 @@
         "componentName": "Load",
         "functionName": "",
         "level": 6,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Capital",
         "value": 6683333
     },
@@ -3243,7 +3243,7 @@
         "componentName": "Cost",
         "functionName": "Upgrade",
         "level": 6,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Capital",
         "value": 142633505
     },
@@ -3283,7 +3283,7 @@
         "componentName": "Cost",
         "functionName": "Move",
         "level": 6,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Capital",
         "value": 28526000
     },
@@ -3307,7 +3307,7 @@
         "componentName": "Yield",
         "functionName": "",
         "level": 7,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Capital",
         "value": 1180
     },
@@ -3323,7 +3323,7 @@
         "componentName": "Load",
         "functionName": "",
         "level": 7,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Capital",
         "value": 7085000
     },
@@ -3339,7 +3339,7 @@
         "componentName": "Cost",
         "functionName": "Upgrade",
         "level": 7,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Capital",
         "value": 169547859
     },
@@ -3379,7 +3379,7 @@
         "componentName": "Cost",
         "functionName": "Move",
         "level": 7,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Capital",
         "value": 33909000
     },
@@ -3403,7 +3403,7 @@
         "componentName": "Reward",
         "functionName": "",
         "level": 1,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Barbarian",
         "value": 5147005
     },
@@ -3427,7 +3427,7 @@
         "componentName": "Reward",
         "functionName": "",
         "level": 2,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Barbarian",
         "value": 7264770
     },
@@ -3451,7 +3451,7 @@
         "componentName": "Reward",
         "functionName": "",
         "level": 3,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Barbarian",
         "value": 9516247
     },
@@ -3475,7 +3475,7 @@
         "componentName": "Reward",
         "functionName": "",
         "level": 4,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Barbarian",
         "value": 11909875
     },
@@ -3499,7 +3499,7 @@
         "componentName": "Reward",
         "functionName": "",
         "level": 5,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Barbarian",
         "value": 14454632
     },
@@ -3523,7 +3523,7 @@
         "componentName": "Reward",
         "functionName": "",
         "level": 6,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Barbarian",
         "value": 17160058
     },
@@ -3547,7 +3547,7 @@
         "componentName": "Reward",
         "functionName": "",
         "level": 7,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Barbarian",
         "value": 20036299
     },
@@ -3571,7 +3571,7 @@
         "componentName": "Reward",
         "functionName": "",
         "level": 8,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Barbarian",
         "value": 23094138
     },
@@ -3595,7 +3595,7 @@
         "componentName": "Reward",
         "functionName": "",
         "level": 9,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Barbarian",
         "value": 26345041
     },
@@ -3619,7 +3619,7 @@
         "componentName": "Reward",
         "functionName": "",
         "level": 10,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Barbarian",
         "value": 29801199
     },
@@ -3643,7 +3643,7 @@
         "componentName": "Reward",
         "functionName": "",
         "level": 11,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Barbarian",
         "value": 33475570
     },
@@ -3667,7 +3667,7 @@
         "componentName": "Reward",
         "functionName": "",
         "level": 12,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Barbarian",
         "value": 37381932
     },
@@ -3691,7 +3691,7 @@
         "componentName": "Reward",
         "functionName": "",
         "level": 13,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Barbarian",
         "value": 41534931
     },
@@ -3715,7 +3715,7 @@
         "componentName": "Reward",
         "functionName": "",
         "level": 14,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Barbarian",
         "value": 45950142
     },
@@ -3739,7 +3739,7 @@
         "componentName": "Reward",
         "functionName": "",
         "level": 15,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Barbarian",
         "value": 50644117
     },
@@ -3763,7 +3763,7 @@
         "componentName": "Reward",
         "functionName": "",
         "level": 16,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Barbarian",
         "value": 55634459
     },
@@ -3787,7 +3787,7 @@
         "componentName": "Reward",
         "functionName": "",
         "level": 17,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Barbarian",
         "value": 60939879
     },
@@ -3811,7 +3811,7 @@
         "componentName": "Reward",
         "functionName": "",
         "level": 18,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Barbarian",
         "value": 66580270
     },
@@ -3835,7 +3835,7 @@
         "componentName": "Reward",
         "functionName": "",
         "level": 19,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Barbarian",
         "value": 72576781
     },
@@ -3859,7 +3859,7 @@
         "componentName": "Reward",
         "functionName": "",
         "level": 20,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Barbarian",
         "value": 78951898
     },
@@ -3883,7 +3883,7 @@
         "componentName": "Reward",
         "functionName": "",
         "level": 21,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Barbarian",
         "value": 85729523
     },
@@ -3931,7 +3931,7 @@
         "componentName": "Cost",
         "functionName": "Upgrade",
         "level": 1,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Tile",
         "value": 1643904
     },
@@ -3971,7 +3971,7 @@
         "componentName": "Cost",
         "functionName": "Upgrade",
         "level": 2,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Tile",
         "value": 1747696
     },
@@ -4011,7 +4011,7 @@
         "componentName": "Cost",
         "functionName": "Upgrade",
         "level": 3,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Tile",
         "value": 1858041
     },
@@ -4051,7 +4051,7 @@
         "componentName": "Cost",
         "functionName": "Upgrade",
         "level": 4,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Tile",
         "value": 1975354
     },
@@ -4091,7 +4091,7 @@
         "componentName": "Cost",
         "functionName": "Upgrade",
         "level": 5,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Tile",
         "value": 2100073
     },
@@ -4131,7 +4131,7 @@
         "componentName": "Cost",
         "functionName": "Upgrade",
         "level": 6,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Tile",
         "value": 2232666
     },
@@ -4171,7 +4171,7 @@
         "componentName": "Cost",
         "functionName": "Upgrade",
         "level": 7,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Tile",
         "value": 2373631
     },
@@ -4211,7 +4211,7 @@
         "componentName": "Cost",
         "functionName": "Upgrade",
         "level": 8,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Tile",
         "value": 2523497
     },
@@ -4251,7 +4251,7 @@
         "componentName": "Cost",
         "functionName": "Upgrade",
         "level": 9,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Tile",
         "value": 2682824
     },
@@ -4291,7 +4291,7 @@
         "componentName": "Cost",
         "functionName": "Upgrade",
         "level": 10,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Tile",
         "value": 2852211
     },
@@ -4331,7 +4331,7 @@
         "componentName": "Cost",
         "functionName": "Upgrade",
         "level": 11,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Tile",
         "value": 3032293
     },
@@ -4371,7 +4371,7 @@
         "componentName": "Cost",
         "functionName": "Upgrade",
         "level": 12,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Tile",
         "value": 3223744
     },
@@ -4411,7 +4411,7 @@
         "componentName": "Cost",
         "functionName": "Upgrade",
         "level": 13,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Tile",
         "value": 3427283
     },
@@ -4451,7 +4451,7 @@
         "componentName": "Cost",
         "functionName": "Upgrade",
         "level": 14,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Tile",
         "value": 3643674
     },
@@ -4491,7 +4491,7 @@
         "componentName": "Cost",
         "functionName": "Upgrade",
         "level": 15,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Tile",
         "value": 3873726
     },
@@ -4531,7 +4531,7 @@
         "componentName": "Cost",
         "functionName": "Upgrade",
         "level": 16,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Tile",
         "value": 4118304
     },
@@ -4571,7 +4571,7 @@
         "componentName": "Cost",
         "functionName": "Upgrade",
         "level": 17,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Tile",
         "value": 4378324
     },
@@ -4611,7 +4611,7 @@
         "componentName": "Cost",
         "functionName": "Upgrade",
         "level": 18,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Tile",
         "value": 4654760
     },
@@ -4651,7 +4651,7 @@
         "componentName": "Cost",
         "functionName": "Upgrade",
         "level": 19,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Tile",
         "value": 4948651
     },
@@ -4691,7 +4691,7 @@
         "componentName": "Cost",
         "functionName": "Upgrade",
         "level": 20,
-        "object": "Gold",
+        "object": "Crystal",
         "subject": "Tile",
         "value": 5261096
     },

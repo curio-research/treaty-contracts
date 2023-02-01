@@ -9,7 +9,7 @@ import {Position} from "contracts/libraries/Types.sol";
 import {Set} from "contracts/Set.sol";
 
 contract MercenaryLeague is CurioTreaty {
-    CurioERC20 public goldToken;
+    CurioERC20 public crystalToken;
     Set public warCouncil;
     mapping(uint256 => uint256) public memberToConscriptionFee;
     mapping(uint256 => uint256) public memberConscriptionStartTime;
@@ -18,7 +18,7 @@ contract MercenaryLeague is CurioTreaty {
     function init(address _diamond) public override {
         super.init(_diamond);
         GetterFacet getter = GetterFacet(diamond);
-        goldToken = getter.getTokenContract("Gold");
+        crystalToken = getter.getTokenContract("Crystal");
         warCouncil = new Set();
         conscriptionDuration = 3600;
     }
@@ -72,7 +72,7 @@ contract MercenaryLeague is CurioTreaty {
         // Conscripter gains control of all target nation's armies at the cost of the conscription fee
         address conscripterCapitalAddr = getter.getAddress(getter.getCapital(getter.getEntityByAddress(msg.sender)));
         address targetCapitalAddr = getter.getAddress(getter.getCapital(_nationID));
-        goldToken.transferFrom(conscripterCapitalAddr, targetCapitalAddr, memberToConscriptionFee[_nationID]);
+        crystalToken.transferFrom(conscripterCapitalAddr, targetCapitalAddr, memberToConscriptionFee[_nationID]);
         AdminFacet admin = AdminFacet(diamond);
         admin.adminDelegateGameFunction(_nationID, "Battle", getter.getEntityByAddress(msg.sender), 0, true);
         admin.adminDelegateGameFunction(_nationID, "Move", getter.getEntityByAddress(msg.sender), 0, true);

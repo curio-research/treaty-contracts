@@ -86,13 +86,13 @@ contract DiamondDeployTest is Test {
 
     // Tokens
     uint256 public foodTemplateID;
-    uint256 public goldTemplateID;
+    uint256 public crystalTemplateID;
     uint256 public horsemanTemplateID;
     uint256 public warriorTemplateID;
     uint256 public slingerTemplateID;
     uint256 public guardTemplateID;
     CurioERC20 public foodToken;
-    CurioERC20 public goldToken;
+    CurioERC20 public crystalToken;
     CurioERC20 public horsemanToken;
     CurioERC20 public warriorToken;
     CurioERC20 public slingerToken;
@@ -163,13 +163,13 @@ contract DiamondDeployTest is Test {
         console.log(">>> Game parameters registered");
 
         // Deploy and authorize token contracts
-        goldToken = new CurioERC20("Gold", "GOLD", 0, address(diamond));
+        crystalToken = new CurioERC20("Crystal", "CRYSTAL", 0, address(diamond));
         foodToken = new CurioERC20("Food", "FOOD", 0, address(diamond));
         horsemanToken = new CurioERC20("Horseman", "HORSEMAN", 0, address(diamond));
         warriorToken = new CurioERC20("Warrior", "WARRIOR", 0, address(diamond));
         slingerToken = new CurioERC20("Slinger", "SLINGER", 0, address(diamond));
         guardToken = new CurioERC20("Guard", "GUARD", 0, address(diamond));
-        admin.addAuthorized(address(goldToken));
+        admin.addAuthorized(address(crystalToken));
         admin.addAuthorized(address(foodToken));
         admin.addAuthorized(address(horsemanToken));
         admin.addAuthorized(address(warriorToken));
@@ -401,13 +401,13 @@ contract DiamondDeployTest is Test {
         index++;
         guardTemplateID = templateID;
 
-        // Gold
-        templateName = "Gold";
-        templateID = admin.addResourceTemplate(address(goldToken));
+        // Crystal
+        templateName = "Crystal";
+        templateID = admin.addResourceTemplate(address(crystalToken));
         templateNames[index] = templateName;
         templateIDs[index] = templateID;
         index++;
-        goldTemplateID = templateID;
+        crystalTemplateID = templateID;
 
         // Food
         templateName = "Food";

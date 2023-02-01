@@ -2,7 +2,7 @@
     "componentName": "Cost",
     "functionName": "Upgrade",
     "level": 17,
-    "object": "Gold",
+    "object": "Crystal",
     "subject": "Farm",
     "value": 64343083
 }

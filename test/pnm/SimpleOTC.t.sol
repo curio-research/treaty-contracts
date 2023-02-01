@@ -30,32 +30,32 @@ contract SimpleOTCTest is DiamondDeployTest, PTest {
         agentCapitalAddr = getter.getAddress(agentCapitalID);
 
         vm.startPrank(deployer);
-        admin.dripToken(nation1CapitalAddr, "Gold", 1000);
+        admin.dripToken(nation1CapitalAddr, "Crystal", 1000);
         admin.dripToken(nation1CapitalAddr, "Food", 1000);
 
-        admin.dripToken(agentCapitalAddr, "Gold", 1000);
+        admin.dripToken(agentCapitalAddr, "Crystal", 1000);
         admin.dripToken(agentCapitalAddr, "Food", 1000);
         vm.stopPrank();
 
         // Player1 approves tokens
         vm.startPrank(nation1CapitalAddr);
-        goldToken.approve(address(otc), 1000);
+        crystalToken.approve(address(otc), 1000);
         foodToken.approve(address(otc), 1000);
         vm.stopPrank();
 
         // Agent approves tokens
         vm.startPrank(agentCapitalAddr);
-        goldToken.approve(address(otc), 1000);
+        crystalToken.approve(address(otc), 1000);
         foodToken.approve(address(otc), 1000);
         vm.stopPrank();
 
         // When order is created, no tokens are transferred
         vm.startPrank(player1);
-        otc.createOrder("Gold", 2, "Food", 200);
+        otc.createOrder("Crystal", 2, "Food", 200);
         vm.stopPrank();
     }
 
     function invariantOverSell() public view {
-        require(goldToken.balanceOf(nation1CapitalAddr) >= 998, "player 1 sell more than 2 gold");
+        require(crystalToken.balanceOf(nation1CapitalAddr) >= 998, "player 1 sell more than 2 crystal");
     }
 }

@@ -30,36 +30,36 @@ contract LoanAgreementTest is DiamondDeployTest, PTest {
         agentCapitalAddr = getter.getAddress(agentCapitalID);
 
         vm.startPrank(deployer);
-        admin.dripToken(nation1CapitalAddr, "Gold", 1000);
+        admin.dripToken(nation1CapitalAddr, "Crystal", 1000);
         admin.dripToken(nation1CapitalAddr, "Food", 1000);
 
-        admin.dripToken(agentCapitalAddr, "Gold", 1000);
+        admin.dripToken(agentCapitalAddr, "Crystal", 1000);
         admin.dripToken(agentCapitalAddr, "Food", 1000);
         vm.stopPrank();
 
         // Player1 approves tokens
         vm.startPrank(nation1CapitalAddr);
-        goldToken.approve(address(loanAgreement), 1000);
+        crystalToken.approve(address(loanAgreement), 1000);
         foodToken.approve(address(loanAgreement), 1000);
         vm.stopPrank();
 
         // Agent approves tokens
         vm.startPrank(agentCapitalAddr);
-        goldToken.approve(address(loanAgreement), 1000);
+        crystalToken.approve(address(loanAgreement), 1000);
         foodToken.approve(address(loanAgreement), 1000);
         vm.stopPrank();
 
         // When order is created, no tokens are transferred
         vm.startPrank(player1);
-        loanAgreement.createLoan("Gold", 500, "Food", 100, 50, 100);
+        loanAgreement.createLoan("Crystal", 500, "Food", 100, 50, 100);
         vm.stopPrank();
     }
 
     function invariantOverSell() public view {
-        require(goldToken.balanceOf(nation1CapitalAddr) >= 1000, "player 1 should not lose gold");
-        require(goldToken.balanceOf(nation1CapitalAddr) <= 1500, "player 1 should not lose gold");
+        require(crystalToken.balanceOf(nation1CapitalAddr) >= 1000, "player 1 should not lose crystal");
+        require(crystalToken.balanceOf(nation1CapitalAddr) <= 1500, "player 1 should not lose crystal");
         require(foodToken.balanceOf(nation1CapitalAddr) >= 900, "player 1 should not give more than 100 food");
         require(foodToken.balanceOf(nation1CapitalAddr) <= 1050, "player 1 should not get more than 50 food");
-        require(goldToken.balanceOf(agentCapitalAddr) >= 500, "agent should not lose than 500 gold");
+        require(crystalToken.balanceOf(agentCapitalAddr) >= 500, "agent should not lose than 500 crystal");
     }
 }

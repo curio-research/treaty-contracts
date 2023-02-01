@@ -10,15 +10,15 @@ import {Set} from "contracts/Set.sol";
 
 contract CollectiveDefenseFund is CurioTreaty {
     // Game cache
-    CurioERC20 public goldToken;
+    CurioERC20 public crystalToken;
     CurioERC20 public foodToken;
 
     // Treaty-specific data
-    uint256 public goldFee;
+    uint256 public crystalFee;
     uint256 public foodFee;
     uint256 public withdrawTimeInterval;
     uint256 public depositTimeInterval;
-    uint256 public goldWithdrawQuota;
+    uint256 public crystalWithdrawQuota;
     uint256 public foodWithdrawQuota;
     mapping(uint256 => uint256) public lastPaid; // nationID => timestamp
     mapping(uint256 => uint256) public lastWithdrawn; // nationID => timestamp
@@ -34,16 +34,16 @@ contract CollectiveDefenseFund is CurioTreaty {
     function init(address _diamond) public override {
         super.init(_diamond);
 
-        goldFee = 10000;
+        crystalFee = 10000;
         foodFee = 10000;
         withdrawTimeInterval = 86400;
         depositTimeInterval = 86400;
-        goldWithdrawQuota = 5000;
+        crystalWithdrawQuota = 5000;
         foodWithdrawQuota = 5000;
 
         // Initialize treaty
         GetterFacet getter = GetterFacet(diamond);
-        goldToken = getter.getTokenContract("Gold");
+        crystalToken = getter.getTokenContract("Crystal");
         foodToken = getter.getTokenContract("Food");
 
         // Create new council
@@ -94,8 +94,8 @@ contract CollectiveDefenseFund is CurioTreaty {
         foodFee = _newFee;
     }
 
-    function updateGoldFee(uint256 _newFee) external onlyCouncilOrPact {
-        goldFee = _newFee;
+    function updateCrystalFee(uint256 _newFee) external onlyCouncilOrPact {
+        crystalFee = _newFee;
     }
 
     function removeMember(uint256 _nationID) public onlyCouncilOrPact {
@@ -115,15 +115,15 @@ contract CollectiveDefenseFund is CurioTreaty {
         admin.removeSigner(_nationID);
     }
 
-    function withdraw(uint256 _goldAmount, uint256 _foodAmount) external onlyCouncilOrPact {
+    function withdraw(uint256 _crystalAmount, uint256 _foodAmount) external onlyCouncilOrPact {
         GetterFacet getter = GetterFacet(diamond);
 
         // Check that withdrawal amount is within quota
-        require(_goldAmount <= goldWithdrawQuota, "CDFund: Amount exceeds quota");
+        require(_crystalAmount <= crystalWithdrawQuota, "CDFund: Amount exceeds quota");
         require(_foodAmount <= foodWithdrawQuota, "CDFund: Amount exceeds quota");
 
         // Check balance sufficience
-        require(goldToken.balanceOf(address(this)) >= _goldAmount, "CDFund: Insufficient balance");
+        require(crystalToken.balanceOf(address(this)) >= _crystalAmount, "CDFund: Insufficient balance");
         require(foodToken.balanceOf(address(this)) >= _foodAmount, "CDFund: Insufficient balance");
 
         // Check and update last withdrawn time
@@ -133,7 +133,7 @@ contract CollectiveDefenseFund is CurioTreaty {
 
         // Withdraw
         address recipientAddress = getter.getAddress(getter.getCapital(getter.getEntityByAddress(msg.sender)));
-        goldToken.transfer(recipientAddress, _goldAmount);
+        crystalToken.transfer(recipientAddress, _crystalAmount);
         foodToken.transfer(recipientAddress, _foodAmount);
     }
 
@@ -158,8 +158,8 @@ contract CollectiveDefenseFund is CurioTreaty {
         GetterFacet getter = GetterFacet(diamond);
 
         // Check that withdrawal amount is within quota
-        if (_strEq(_resourceType, "Gold")) {
-            require(_amount <= goldWithdrawQuota, "CDFund: Amount exceeds quota");
+        if (_strEq(_resourceType, "Crystal")) {
+            require(_amount <= crystalWithdrawQuota, "CDFund: Amount exceeds quota");
         } else if (_strEq(_resourceType, "Food")) {
             require(_amount <= foodWithdrawQuota, "CDFund: Amount exceeds quota");
         } else {
@@ -230,11 +230,11 @@ contract CollectiveDefenseFund is CurioTreaty {
         address senderCapitalAddr = getter.getAddress(getter.getCapital(_nationID));
 
         // Check balance sufficience
-        require(goldToken.balanceOf(senderCapitalAddr) >= goldFee, "CDFund: Insufficient gold balance");
+        require(crystalToken.balanceOf(senderCapitalAddr) >= crystalFee, "CDFund: Insufficient crystal balance");
         require(foodToken.balanceOf(senderCapitalAddr) >= foodFee, "CDFund: Insufficient food balance");
 
         // Pay fee
-        goldToken.transferFrom(senderCapitalAddr, address(this), goldFee);
+        crystalToken.transferFrom(senderCapitalAddr, address(this), crystalFee);
         foodToken.transferFrom(senderCapitalAddr, address(this), foodFee);
 
         // Update last paid time

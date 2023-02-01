@@ -35,9 +35,9 @@ contract TreatyTest is Test, DiamondDeployTest {
         uint256 time = block.timestamp + 1000;
         vm.warp(time);
 
-        // Deployer transfers gold, food, and troops to Nation 2
+        // Deployer transfers crystal, food, and troops to Nation 2
         vm.startPrank(deployer);
-        admin.dripToken(nation2CapitalAddr, "Gold", 100000000);
+        admin.dripToken(nation2CapitalAddr, "Crystal", 100000000);
         admin.dripToken(nation2CapitalAddr, "Food", 100000000);
         admin.dripToken(nation2CapitalAddr, "Horseman", 1000);
         admin.dripToken(nation2CapitalAddr, "Warrior", 1000);
@@ -157,9 +157,9 @@ contract TreatyTest is Test, DiamondDeployTest {
         uint256 testTreatyID = getter.getEntityByAddress(address(testTreaty));
         vm.stopPrank();
 
-        // Deployer registers TestTreaty treaty and drips gold and food to Nation 2
+        // Deployer registers TestTreaty treaty and drips crystal and food to Nation 2
         vm.startPrank(deployer);
-        admin.dripToken(nation2CapitalAddr, "Gold", 1000000000);
+        admin.dripToken(nation2CapitalAddr, "Crystal", 1000000000);
         admin.dripToken(nation2CapitalAddr, "Food", 1000000000);
         vm.stopPrank();
 
@@ -204,21 +204,21 @@ contract TreatyTest is Test, DiamondDeployTest {
         uint256 time = block.timestamp + 1000;
         vm.warp(time);
 
-        // Deployer transfers gold, food, and troops to Nation 1, 2, and 3
+        // Deployer transfers crystal, food, and troops to Nation 1, 2, and 3
         vm.startPrank(deployer);
-        admin.dripToken(nation1CapitalAddr, "Gold", 1000000);
+        admin.dripToken(nation1CapitalAddr, "Crystal", 1000000);
         admin.dripToken(nation1CapitalAddr, "Food", 1000000);
         admin.dripToken(nation1CapitalAddr, "Horseman", 1000);
         admin.dripToken(nation1CapitalAddr, "Warrior", 1000);
         admin.dripToken(nation1CapitalAddr, "Slinger", 1000);
 
-        admin.dripToken(nation2CapitalAddr, "Gold", 1000000);
+        admin.dripToken(nation2CapitalAddr, "Crystal", 1000000);
         admin.dripToken(nation2CapitalAddr, "Food", 1000000);
         admin.dripToken(nation2CapitalAddr, "Horseman", 1000);
         admin.dripToken(nation2CapitalAddr, "Warrior", 1000);
         admin.dripToken(nation2CapitalAddr, "Slinger", 1000);
 
-        admin.dripToken(nation3CapitalAddr, "Gold", 1000000);
+        admin.dripToken(nation3CapitalAddr, "Crystal", 1000000);
         admin.dripToken(nation3CapitalAddr, "Food", 1000000);
         admin.dripToken(nation3CapitalAddr, "Horseman", 1000);
         admin.dripToken(nation3CapitalAddr, "Warrior", 1000);
@@ -245,7 +245,7 @@ contract TreatyTest is Test, DiamondDeployTest {
         uint256 allianceID = getter.getEntityByAddress(address(alliance));
 
         // Nation 1 joins alliance after token approval
-        CurioWallet(nation1CapitalAddr).executeTx(address(goldToken), abi.encodeWithSignature("approve(address,uint256)", address(alliance), 1000));
+        CurioWallet(nation1CapitalAddr).executeTx(address(crystalToken), abi.encodeWithSignature("approve(address,uint256)", address(alliance), 1000));
         alliance.treatyJoin();
         assertTrue(getter.getNationTreatySignature(nation1ID, allianceID) > 0);
 
@@ -260,14 +260,14 @@ contract TreatyTest is Test, DiamondDeployTest {
         // Nation 2 fails to join alliance before token approval
         vm.expectRevert();
         alliance.treatyJoin();
-        assertEq(goldToken.balanceOf(nation2CapitalAddr), 1000000);
+        assertEq(crystalToken.balanceOf(nation2CapitalAddr), 1000000);
 
         // Nation 2 joins alliance after token approval
         vm.startPrank(player2);
-        CurioWallet(nation2CapitalAddr).executeTx(address(goldToken), abi.encodeWithSignature("approve(address,uint256)", address(alliance), 1000));
+        CurioWallet(nation2CapitalAddr).executeTx(address(crystalToken), abi.encodeWithSignature("approve(address,uint256)", address(alliance), 1000));
         alliance.treatyJoin();
         assertTrue(getter.getNationTreatySignature(nation2ID, allianceID) > 0);
-        assertEq(goldToken.balanceOf(nation2CapitalAddr), 1000000 - 1000);
+        assertEq(crystalToken.balanceOf(nation2CapitalAddr), 1000000 - 1000);
         vm.stopPrank();
 
         // Nation 1 fails to attack Nation 2's capital
@@ -290,7 +290,7 @@ contract TreatyTest is Test, DiamondDeployTest {
         time += 10;
         vm.warp(time);
         alliance.treatyLeave();
-        assertEq(goldToken.balanceOf(nation2CapitalAddr), 1000000);
+        assertEq(crystalToken.balanceOf(nation2CapitalAddr), 1000000);
         vm.stopPrank();
 
         // Nation 1 attacks Nation 2's capital
@@ -311,7 +311,7 @@ contract TreatyTest is Test, DiamondDeployTest {
 
         // Nation 3 joins alliance after token approval
         vm.startPrank(player3);
-        CurioWallet(nation3CapitalAddr).executeTx(address(goldToken), abi.encodeWithSignature("approve(address,uint256)", address(alliance), 1000));
+        CurioWallet(nation3CapitalAddr).executeTx(address(crystalToken), abi.encodeWithSignature("approve(address,uint256)", address(alliance), 1000));
         alliance.treatyJoin();
         assertTrue(getter.getNationTreatySignature(nation3ID, allianceID) > 0);
 
@@ -384,21 +384,21 @@ contract TreatyTest is Test, DiamondDeployTest {
         uint256 time = block.timestamp + 1000;
         vm.warp(time);
 
-        // Deployer transfers gold, food, and troops to Nation 1, 2, and 3
+        // Deployer transfers crystal, food, and troops to Nation 1, 2, and 3
         vm.startPrank(deployer);
-        admin.dripToken(nation1CapitalAddr, "Gold", 1000000);
+        admin.dripToken(nation1CapitalAddr, "Crystal", 1000000);
         admin.dripToken(nation1CapitalAddr, "Food", 1000000);
         admin.dripToken(nation1CapitalAddr, "Horseman", 1000);
         admin.dripToken(nation1CapitalAddr, "Warrior", 1000);
         admin.dripToken(nation1CapitalAddr, "Slinger", 1000);
 
-        admin.dripToken(nation2CapitalAddr, "Gold", 1000000);
+        admin.dripToken(nation2CapitalAddr, "Crystal", 1000000);
         admin.dripToken(nation2CapitalAddr, "Food", 1000000);
         admin.dripToken(nation2CapitalAddr, "Horseman", 1000);
         admin.dripToken(nation2CapitalAddr, "Warrior", 1000);
         admin.dripToken(nation2CapitalAddr, "Slinger", 1000);
 
-        admin.dripToken(nation3CapitalAddr, "Gold", 1000000);
+        admin.dripToken(nation3CapitalAddr, "Crystal", 1000000);
         admin.dripToken(nation3CapitalAddr, "Food", 1000000);
         admin.dripToken(nation3CapitalAddr, "Horseman", 1000);
         admin.dripToken(nation3CapitalAddr, "Warrior", 1000);
@@ -424,7 +424,7 @@ contract TreatyTest is Test, DiamondDeployTest {
 
         // Nation 2 deploys Alliance treaty
         MercenaryLeague ml = MercenaryLeague(game.deployTreaty(nation2ID, mercenaryLeagueTemplate.name()));
-        CurioWallet(nation2CapitalAddr).executeTx(address(goldToken), abi.encodeWithSignature("approve(address,uint256)", address(ml), 1000));
+        CurioWallet(nation2CapitalAddr).executeTx(address(crystalToken), abi.encodeWithSignature("approve(address,uint256)", address(ml), 1000));
         vm.stopPrank();
 
         // Nation 1 joins alliance after token approval
@@ -519,7 +519,7 @@ contract TreatyTest is Test, DiamondDeployTest {
         - Player1 deploys sanctionLeague Treaty and whitelists player2
         - Player1 sanctions himself (for simplicity reason; same as sanctioning p3)
         - Player2 joins
-        - Player2 transfers gold from its army to player3's capital but reverted
+        - Player2 transfers crystal from its army to player3's capital but reverted
         **/
         // Start time
         uint256 time = block.timestamp + 1000;
@@ -532,7 +532,7 @@ contract TreatyTest is Test, DiamondDeployTest {
 
         // Deployer registers embargo treaty & gives troops to p2 and resources to p1
         vm.startPrank(deployer);
-        admin.dripToken(nation1CapitalAddr, "Gold", 1000);
+        admin.dripToken(nation1CapitalAddr, "Crystal", 1000);
         admin.dripToken(nation1CapitalAddr, "Food", 1000);
 
         admin.dripToken(nation2CapitalAddr, "Horseman", 1000);
@@ -561,9 +561,9 @@ contract TreatyTest is Test, DiamondDeployTest {
         address army21Addr = getter.getAddress(army21ID);
         vm.stopPrank();
 
-        // Deployer drips some gold to army21
+        // Deployer drips some crystal to army21
         vm.startPrank(deployer);
-        admin.dripToken(army21Addr, "Gold", 1000);
+        admin.dripToken(army21Addr, "Crystal", 1000);
         vm.stopPrank();
 
         // Player2 moves army from (62, 32) to (62, 14)
@@ -576,7 +576,7 @@ contract TreatyTest is Test, DiamondDeployTest {
 
         // Player2 Army's transfer to p1 capital reverts
         vm.expectRevert();
-        CurioWallet(army21Addr).executeTx(address(goldToken), abi.encodeWithSignature("transfer(address,uint256)", nation1CapitalAddr, 10));
+        CurioWallet(army21Addr).executeTx(address(crystalToken), abi.encodeWithSignature("transfer(address,uint256)", nation1CapitalAddr, 10));
         vm.stopPrank();
 
         // Player 2's capital fails to transfer food to player1's capital
@@ -591,7 +591,7 @@ contract TreatyTest is Test, DiamondDeployTest {
         vm.stopPrank();
 
         vm.startPrank(player2);
-        CurioWallet(army21Addr).executeTx(address(goldToken), abi.encodeWithSignature("transfer(address,uint256)", nation1CapitalAddr, 10));
+        CurioWallet(army21Addr).executeTx(address(crystalToken), abi.encodeWithSignature("transfer(address,uint256)", nation1CapitalAddr, 10));
         vm.stopPrank();
 
         // Player 1's capital transfers food to player 2's capital
@@ -634,19 +634,19 @@ contract TreatyTest is Test, DiamondDeployTest {
         // Deployer registers NAPact treaty & assigns tokens to p1 and p2
         vm.startPrank(deployer);
         // admin.registerTreatyTemplate(address(collectiveDefenseFund), "placeholder ABI");
-        admin.dripToken(nation1CapitalAddr, "Gold", 100000);
+        admin.dripToken(nation1CapitalAddr, "Crystal", 100000);
         admin.dripToken(nation1CapitalAddr, "Food", 100000);
         admin.dripToken(nation2CapitalAddr, "Horseman", 1000);
         admin.dripToken(nation2CapitalAddr, "Warrior", 1000);
         admin.dripToken(nation2CapitalAddr, "Slinger", 1000);
-        admin.dripToken(nation2CapitalAddr, "Gold", 100000);
+        admin.dripToken(nation2CapitalAddr, "Crystal", 100000);
         admin.dripToken(nation2CapitalAddr, "Food", 100000);
 
         vm.stopPrank();
 
         // Player1 joins CDFund and whitelists player2.
         vm.startPrank(player1);
-        CurioWallet(nation1CapitalAddr).executeTx(address(goldToken), abi.encodeWithSignature("approve(address,uint256)", address(collectiveDefenseFund), 100000));
+        CurioWallet(nation1CapitalAddr).executeTx(address(crystalToken), abi.encodeWithSignature("approve(address,uint256)", address(collectiveDefenseFund), 100000));
         CurioWallet(nation1CapitalAddr).executeTx(address(foodToken), abi.encodeWithSignature("approve(address,uint256)", address(collectiveDefenseFund), 100000));
         collectiveDefenseFund.treatyJoin();
         collectiveDefenseFund.addToWhitelist(nation2ID);
@@ -654,7 +654,7 @@ contract TreatyTest is Test, DiamondDeployTest {
 
         // Player2 joins CDFund and attempts to attack Player1
         vm.startPrank(player2);
-        CurioWallet(nation2CapitalAddr).executeTx(address(goldToken), abi.encodeWithSignature("approve(address,uint256)", address(collectiveDefenseFund), 100000));
+        CurioWallet(nation2CapitalAddr).executeTx(address(crystalToken), abi.encodeWithSignature("approve(address,uint256)", address(collectiveDefenseFund), 100000));
         CurioWallet(nation2CapitalAddr).executeTx(address(foodToken), abi.encodeWithSignature("approve(address,uint256)", address(collectiveDefenseFund), 100000));
         collectiveDefenseFund.treatyJoin();
         uint256[] memory armyTemplateAmounts = new uint256[](3);
@@ -689,10 +689,10 @@ contract TreatyTest is Test, DiamondDeployTest {
         collectiveDefenseFund.removeAllOverdueMembers();
 
         // p1 tries to withdraw money
-        uint256 p1PrevGoldBalance = goldToken.balanceOf(nation1CapitalAddr);
-        uint256 p1PrevFoodBalance = goldToken.balanceOf(nation1CapitalAddr);
+        uint256 p1PrevCrystalBalance = crystalToken.balanceOf(nation1CapitalAddr);
+        uint256 p1PrevFoodBalance = crystalToken.balanceOf(nation1CapitalAddr);
         collectiveDefenseFund.withdraw(10, 10);
-        assertTrue(goldToken.balanceOf(nation1CapitalAddr) == p1PrevGoldBalance + 10 && foodToken.balanceOf(nation1CapitalAddr) == p1PrevFoodBalance + 10);
+        assertTrue(crystalToken.balanceOf(nation1CapitalAddr) == p1PrevCrystalBalance + 10 && foodToken.balanceOf(nation1CapitalAddr) == p1PrevFoodBalance + 10);
         vm.stopPrank();
 
         // now that p2 is not in the league, he can battle p1
@@ -701,38 +701,38 @@ contract TreatyTest is Test, DiamondDeployTest {
         vm.stopPrank();
 
         // Check conditions
-        assertEq(goldToken.balanceOf(nation2CapitalAddr), 90000);
+        assertEq(crystalToken.balanceOf(nation2CapitalAddr), 90000);
         assertEq(foodToken.balanceOf(nation2CapitalAddr), 90000);
-        assertEq(goldToken.balanceOf(address(collectiveDefenseFund)), 10000 * 3 - 10);
+        assertEq(crystalToken.balanceOf(address(collectiveDefenseFund)), 10000 * 3 - 10);
         assertEq(foodToken.balanceOf(address(collectiveDefenseFund)), 29990);
 
-        // p1 distributes 10 gold and 10 food to p2
+        // p1 distributes 10 crystal and 10 food to p2
         vm.startPrank(player1);
-        collectiveDefenseFund.distributeFund(nation2CapitalID, "Gold", 10);
+        collectiveDefenseFund.distributeFund(nation2CapitalID, "Crystal", 10);
         collectiveDefenseFund.distributeFund(nation2CapitalID, "Food", 10);
-        assertEq(goldToken.balanceOf(nation2CapitalAddr), 90010);
+        assertEq(crystalToken.balanceOf(nation2CapitalAddr), 90010);
         assertEq(foodToken.balanceOf(nation2CapitalAddr), 90010);
-        assertEq(goldToken.balanceOf(address(collectiveDefenseFund)), 29990 - 10);
+        assertEq(crystalToken.balanceOf(address(collectiveDefenseFund)), 29990 - 10);
         assertEq(foodToken.balanceOf(address(collectiveDefenseFund)), 29980);
         vm.stopPrank();
 
-        // p2 fails to distribute 10 gold to p2
+        // p2 fails to distribute 10 crystal to p2
         vm.startPrank(player2);
         vm.expectRevert("CDFund: Only council or pact can call");
-        collectiveDefenseFund.distributeFund(nation2CapitalID, "Gold", 10);
+        collectiveDefenseFund.distributeFund(nation2CapitalID, "Crystal", 10);
         vm.stopPrank();
     }
 
     // From PNM
     function testSimpleOTC(
-        uint256 goldAmount,
+        uint256 crystalAmount,
         uint256 foodAmount,
         uint256 sellAmount,
         uint256 buyAmount
     ) public {
         /**
         Outline
-        - p1 deploys contracts and puts on an order to sell 100 gold for 200 food
+        - p1 deploys contracts and puts on an order to sell 100 crystal for 200 food
         - p2 talks to p1 and decides to purchase from p1
          */
         uint256 time = block.timestamp + 500;
@@ -745,45 +745,45 @@ contract TreatyTest is Test, DiamondDeployTest {
 
         // Deployer registers Simple OTC treaty & assigns tokens to p1 and p2
         vm.startPrank(deployer);
-        admin.dripToken(nation1CapitalAddr, "Gold", goldAmount);
+        admin.dripToken(nation1CapitalAddr, "Crystal", crystalAmount);
         admin.dripToken(nation1CapitalAddr, "Food", foodAmount);
 
-        admin.dripToken(nation2CapitalAddr, "Gold", goldAmount);
+        admin.dripToken(nation2CapitalAddr, "Crystal", crystalAmount);
         admin.dripToken(nation2CapitalAddr, "Food", foodAmount);
         vm.stopPrank();
 
         // Player1 approves tokens
         vm.startPrank(player1);
-        CurioWallet(nation1CapitalAddr).executeTx(address(goldToken), abi.encodeWithSignature("approve(address,uint256)", address(otcContract), 1000));
+        CurioWallet(nation1CapitalAddr).executeTx(address(crystalToken), abi.encodeWithSignature("approve(address,uint256)", address(otcContract), 1000));
         CurioWallet(nation1CapitalAddr).executeTx(address(foodToken), abi.encodeWithSignature("approve(address,uint256)", address(otcContract), 1000));
         vm.stopPrank();
 
         // Player 2 approves tokens
         vm.startPrank(player2);
-        CurioWallet(nation2CapitalAddr).executeTx(address(goldToken), abi.encodeWithSignature("approve(address,uint256)", address(otcContract), 1000));
+        CurioWallet(nation2CapitalAddr).executeTx(address(crystalToken), abi.encodeWithSignature("approve(address,uint256)", address(otcContract), 1000));
         CurioWallet(nation2CapitalAddr).executeTx(address(foodToken), abi.encodeWithSignature("approve(address,uint256)", address(otcContract), 1000));
         vm.stopPrank();
 
         // When order is created, no tokens are transferred
         vm.startPrank(player1);
-        otcContract.createOrder("Gold", sellAmount, "Food", buyAmount);
-        assertEq(goldToken.balanceOf(nation1CapitalAddr), goldAmount);
+        otcContract.createOrder("Crystal", sellAmount, "Food", buyAmount);
+        assertEq(crystalToken.balanceOf(nation1CapitalAddr), crystalAmount);
         assertEq(foodToken.balanceOf(nation1CapitalAddr), foodAmount);
         vm.stopPrank();
 
         // Player 2 takes order
         vm.startPrank(player2);
         otcContract.takeOrder(player1);
-        assertEq(goldToken.balanceOf(nation1CapitalAddr), goldAmount - sellAmount);
+        assertEq(crystalToken.balanceOf(nation1CapitalAddr), crystalAmount - sellAmount);
         assertEq(foodToken.balanceOf(nation1CapitalAddr), foodAmount + buyAmount);
-        assertEq(goldToken.balanceOf(nation2CapitalAddr), goldAmount + sellAmount);
+        assertEq(crystalToken.balanceOf(nation2CapitalAddr), crystalAmount + sellAmount);
         assertEq(foodToken.balanceOf(nation2CapitalAddr), foodAmount - buyAmount);
     }
 
     function testSimpleOTC() public {
         /**
         Outline
-        - p1 deploys contracts and puts on an order to sell 100 gold for 200 food
+        - p1 deploys contracts and puts on an order to sell 100 crystal for 200 food
         - p2 talks to p1 and decides to purchase from p1
          */
         uint256 time = block.timestamp + 1000;
@@ -796,38 +796,38 @@ contract TreatyTest is Test, DiamondDeployTest {
 
         // Deployer registers Simple OTC treaty & assigns tokens to p1 and p2
         vm.startPrank(deployer);
-        admin.dripToken(nation1CapitalAddr, "Gold", 1000);
+        admin.dripToken(nation1CapitalAddr, "Crystal", 1000);
         admin.dripToken(nation1CapitalAddr, "Food", 1000);
 
-        admin.dripToken(nation2CapitalAddr, "Gold", 1000);
+        admin.dripToken(nation2CapitalAddr, "Crystal", 1000);
         admin.dripToken(nation2CapitalAddr, "Food", 1000);
         vm.stopPrank();
 
         // Player1 approves tokens
         vm.startPrank(player1);
-        CurioWallet(nation1CapitalAddr).executeTx(address(goldToken), abi.encodeWithSignature("approve(address,uint256)", address(otcContract), 1000));
+        CurioWallet(nation1CapitalAddr).executeTx(address(crystalToken), abi.encodeWithSignature("approve(address,uint256)", address(otcContract), 1000));
         CurioWallet(nation1CapitalAddr).executeTx(address(foodToken), abi.encodeWithSignature("approve(address,uint256)", address(otcContract), 1000));
         vm.stopPrank();
 
         // Player 2 approves tokens
         vm.startPrank(player2);
-        CurioWallet(nation2CapitalAddr).executeTx(address(goldToken), abi.encodeWithSignature("approve(address,uint256)", address(otcContract), 1000));
+        CurioWallet(nation2CapitalAddr).executeTx(address(crystalToken), abi.encodeWithSignature("approve(address,uint256)", address(otcContract), 1000));
         CurioWallet(nation2CapitalAddr).executeTx(address(foodToken), abi.encodeWithSignature("approve(address,uint256)", address(otcContract), 1000));
         vm.stopPrank();
 
         // When order is created, no tokens are transferred
         vm.startPrank(player1);
-        otcContract.createOrder("Gold", 2, "Food", 200);
-        assertEq(goldToken.balanceOf(nation1CapitalAddr), 1000);
+        otcContract.createOrder("Crystal", 2, "Food", 200);
+        assertEq(crystalToken.balanceOf(nation1CapitalAddr), 1000);
         assertEq(foodToken.balanceOf(nation1CapitalAddr), 1000);
         vm.stopPrank();
 
         // Player 2 takes order
         vm.startPrank(player2);
         otcContract.takeOrder(player1);
-        assertEq(goldToken.balanceOf(nation1CapitalAddr), 998);
+        assertEq(crystalToken.balanceOf(nation1CapitalAddr), 998);
         assertEq(foodToken.balanceOf(nation1CapitalAddr), 1200);
-        assertEq(goldToken.balanceOf(nation2CapitalAddr), 1002);
+        assertEq(crystalToken.balanceOf(nation2CapitalAddr), 1002);
         assertEq(foodToken.balanceOf(nation2CapitalAddr), 800);
     }
 
@@ -851,10 +851,10 @@ contract TreatyTest is Test, DiamondDeployTest {
 
         // assigns tokens to p1 and p2
         vm.startPrank(deployer);
-        admin.dripToken(nation1CapitalAddr, "Gold", 10000000);
+        admin.dripToken(nation1CapitalAddr, "Crystal", 10000000);
         admin.dripToken(nation1CapitalAddr, "Food", 10000000);
 
-        admin.dripToken(nation2CapitalAddr, "Gold", 10000000);
+        admin.dripToken(nation2CapitalAddr, "Crystal", 10000000);
         admin.dripToken(nation2CapitalAddr, "Food", 10000000);
         vm.stopPrank();
 
@@ -891,10 +891,10 @@ contract TreatyTest is Test, DiamondDeployTest {
 
         // assigns tokens to p1 and p2
         vm.startPrank(deployer);
-        admin.dripToken(nation1CapitalAddr, "Gold", 10000000);
+        admin.dripToken(nation1CapitalAddr, "Crystal", 10000000);
         admin.dripToken(nation1CapitalAddr, "Food", 10000000);
 
-        admin.dripToken(nation2CapitalAddr, "Gold", 10000000);
+        admin.dripToken(nation2CapitalAddr, "Crystal", 10000000);
         admin.dripToken(nation2CapitalAddr, "Food", 10000000);
         vm.stopPrank();
 
@@ -917,17 +917,17 @@ contract TreatyTest is Test, DiamondDeployTest {
 
         // Deployer drips tokens to player 1 and player 2
         vm.startPrank(deployer);
-        admin.dripToken(nation1CapitalAddr, "Gold", 1000);
+        admin.dripToken(nation1CapitalAddr, "Crystal", 1000);
         admin.dripToken(nation1CapitalAddr, "Food", 1000);
-        admin.dripToken(nation2CapitalAddr, "Gold", 1000);
+        admin.dripToken(nation2CapitalAddr, "Crystal", 1000);
         admin.dripToken(nation2CapitalAddr, "Food", 1000);
         vm.stopPrank();
-        uint256 nationInitialGold = goldToken.balanceOf(nation1CapitalAddr);
+        uint256 nationInitialCrystal = crystalToken.balanceOf(nation1CapitalAddr);
         uint256 nationInitialFood = foodToken.balanceOf(nation1CapitalAddr);
 
         // When loan is created, no tokens are transferred
         vm.startPrank(player1);
-        uint256 loanID = loanAgreement.createLoan("Gold", 500, "Food", 100, 50, 100);
+        uint256 loanID = loanAgreement.createLoan("Crystal", 500, "Food", 100, 50, 100);
         vm.stopPrank();
 
         // Player 2 takes loan
@@ -936,11 +936,11 @@ contract TreatyTest is Test, DiamondDeployTest {
         vm.startPrank(player2);
         loanAgreement.takeLoan(loanID);
         vm.stopPrank();
-        assertEq(goldToken.balanceOf(nation1CapitalAddr), nationInitialGold);
+        assertEq(crystalToken.balanceOf(nation1CapitalAddr), nationInitialCrystal);
         assertEq(foodToken.balanceOf(nation1CapitalAddr), nationInitialFood - 100);
-        assertEq(goldToken.balanceOf(nation2CapitalAddr), nationInitialGold - 500);
+        assertEq(crystalToken.balanceOf(nation2CapitalAddr), nationInitialCrystal - 500);
         assertEq(foodToken.balanceOf(nation2CapitalAddr), nationInitialFood + 100);
-        assertEq(goldToken.balanceOf(address(loanAgreement)), 500);
+        assertEq(crystalToken.balanceOf(address(loanAgreement)), 500);
         assertEq(foodToken.balanceOf(address(loanAgreement)), 0);
 
         // Player 1 attempts to liquidate collateral
@@ -969,11 +969,11 @@ contract TreatyTest is Test, DiamondDeployTest {
         vm.startPrank(player2);
         loanAgreement.payOffLoan(loanID);
         vm.stopPrank();
-        assertEq(goldToken.balanceOf(nation1CapitalAddr), nationInitialGold);
+        assertEq(crystalToken.balanceOf(nation1CapitalAddr), nationInitialCrystal);
         assertEq(foodToken.balanceOf(nation1CapitalAddr), nationInitialFood + 50);
-        assertEq(goldToken.balanceOf(nation2CapitalAddr), nationInitialGold);
+        assertEq(crystalToken.balanceOf(nation2CapitalAddr), nationInitialCrystal);
         assertEq(foodToken.balanceOf(nation2CapitalAddr), nationInitialFood - 50);
-        assertEq(goldToken.balanceOf(address(loanAgreement)), 0);
+        assertEq(crystalToken.balanceOf(address(loanAgreement)), 0);
         assertEq(foodToken.balanceOf(address(loanAgreement)), 0);
 
         // Player 1 attempts to liquidate collateral

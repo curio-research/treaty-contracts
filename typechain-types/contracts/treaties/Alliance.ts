@@ -49,9 +49,9 @@ export interface AllianceInterface extends utils.Interface {
     "approveUpgradeCapital(uint256,bytes)": FunctionFragment;
     "approveUpgradeResource(uint256,bytes)": FunctionFragment;
     "approveUpgradeTile(uint256,bytes)": FunctionFragment;
+    "crystalToken()": FunctionFragment;
     "description()": FunctionFragment;
     "diamond()": FunctionFragment;
-    "goldToken()": FunctionFragment;
     "init(address)": FunctionFragment;
     "name()": FunctionFragment;
     "treatyBesiege(uint256)": FunctionFragment;
@@ -86,9 +86,9 @@ export interface AllianceInterface extends utils.Interface {
       | "approveUpgradeCapital"
       | "approveUpgradeResource"
       | "approveUpgradeTile"
+      | "crystalToken"
       | "description"
       | "diamond"
-      | "goldToken"
       | "init"
       | "name"
       | "treatyBesiege"
@@ -194,11 +194,14 @@ export interface AllianceInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
+    functionFragment: "crystalToken",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "description",
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "diamond", values?: undefined): string;
-  encodeFunctionData(functionFragment: "goldToken", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "init",
     values: [PromiseOrValue<string>]
@@ -322,11 +325,14 @@ export interface AllianceInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "crystalToken",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "description",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "diamond", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "goldToken", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "init", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
   decodeFunctionResult(
@@ -517,11 +523,11 @@ export interface Alliance extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
+    crystalToken(overrides?: CallOverrides): Promise<[string]>;
+
     description(overrides?: CallOverrides): Promise<[string]>;
 
     diamond(overrides?: CallOverrides): Promise<[string]>;
-
-    goldToken(overrides?: CallOverrides): Promise<[string]>;
 
     init(
       _diamond: PromiseOrValue<string>,
@@ -695,11 +701,11 @@ export interface Alliance extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
+  crystalToken(overrides?: CallOverrides): Promise<string>;
+
   description(overrides?: CallOverrides): Promise<string>;
 
   diamond(overrides?: CallOverrides): Promise<string>;
-
-  goldToken(overrides?: CallOverrides): Promise<string>;
 
   init(
     _diamond: PromiseOrValue<string>,
@@ -873,11 +879,11 @@ export interface Alliance extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
+    crystalToken(overrides?: CallOverrides): Promise<string>;
+
     description(overrides?: CallOverrides): Promise<string>;
 
     diamond(overrides?: CallOverrides): Promise<string>;
-
-    goldToken(overrides?: CallOverrides): Promise<string>;
 
     init(
       _diamond: PromiseOrValue<string>,
@@ -1050,11 +1056,11 @@ export interface Alliance extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    crystalToken(overrides?: CallOverrides): Promise<BigNumber>;
+
     description(overrides?: CallOverrides): Promise<BigNumber>;
 
     diamond(overrides?: CallOverrides): Promise<BigNumber>;
-
-    goldToken(overrides?: CallOverrides): Promise<BigNumber>;
 
     init(
       _diamond: PromiseOrValue<string>,
@@ -1229,11 +1235,11 @@ export interface Alliance extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    crystalToken(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     description(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     diamond(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    goldToken(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     init(
       _diamond: PromiseOrValue<string>,

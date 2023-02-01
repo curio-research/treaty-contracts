@@ -162,9 +162,9 @@ library GameLib {
             // Mountain tile, do nothing
         }
 
-        // Initialize gold mine
+        // Initialize crystal mine
         if (terrain == 1 && getResourceAtTile(_startPosition) == 0) {
-            Templates.addResource(gs().templates["Gold"], _startPosition, 0);
+            Templates.addResource(gs().templates["Crystal"], _startPosition, 0);
         }
 
         // All empty tiles are farms
@@ -516,7 +516,7 @@ library GameLib {
             uint256 capitalID = getCapital(ECSLib.getUint("Nation", entityID));
             if (templateID == gs().templates["Horseman"] || templateID == gs().templates["Warrior"] || templateID == gs().templates["Slinger"]) {
                 load = getGameParameter(ECSLib.getString("Tag", entityID), "Troop", "Amount", "", ECSLib.getUint("Level", capitalID));
-            } else if (templateID == gs().templates["Food"] || templateID == gs().templates["Gold"]) {
+            } else if (templateID == gs().templates["Food"] || templateID == gs().templates["Crystal"]) {
                 load = ECSLib.getUint("Load", entityID);
             } else if (templateID == gs().templates["Guard"]) {
                 load = 0;

@@ -8,12 +8,12 @@ import {GetterFacet} from "contracts/facets/GetterFacet.sol";
 import {Position} from "contracts/libraries/Types.sol";
 
 contract Alliance is CurioTreaty {
-    CurioERC20 public goldToken;
+    CurioERC20 public crystalToken;
 
     function init(address _diamond) public override {
         super.init(_diamond);
         GetterFacet getter = GetterFacet(diamond);
-        goldToken = getter.getTokenContract("Gold");
+        crystalToken = getter.getTokenContract("Crystal");
     }
 
     function name() external pure override returns (string memory) {
@@ -31,9 +31,9 @@ contract Alliance is CurioTreaty {
     function treatyJoin() public override {
         GetterFacet getter = GetterFacet(diamond);
 
-        // Transfer 1000 gold from nation to treaty
+        // Transfer 1000 crystal from nation to treaty
         address nationCapitalAddress = getter.getAddress(getter.getCapital(getter.getEntityByAddress(msg.sender)));
-        goldToken.transferFrom(nationCapitalAddress, address(this), 1000);
+        crystalToken.transferFrom(nationCapitalAddress, address(this), 1000);
 
         // Delegate Battle function for all armies
         treatyDelegateGameFunction("Battle", 0, true);
@@ -43,11 +43,11 @@ contract Alliance is CurioTreaty {
 
     function treatyLeave() public override minimumStay(10) {
         GetterFacet getter = GetterFacet(diamond);
-      
-        // Transfer 1000 gold from treaty back to nation
+
+        // Transfer 1000 crystal from treaty back to nation
         uint256 nationID = getter.getEntityByAddress(msg.sender);
         address nationCapitalAddress = getter.getAddress(getter.getCapital(nationID));
-        goldToken.transfer(nationCapitalAddress, 1000);
+        crystalToken.transfer(nationCapitalAddress, 1000);
 
         // Undelegate Battle function for all armies
         treatyDelegateGameFunction("Battle", 0, false);
@@ -61,7 +61,7 @@ contract Alliance is CurioTreaty {
      */
     function treatyBesiege(uint256 _targetArmyID) public onlySigner {
         GetterFacet getter = GetterFacet(diamond);
-     
+
         // Check if target army is in a non-ally nation
         uint256 targetNationID = getter.getNation(_targetArmyID);
         uint256 treatyID = getter.getEntityByAddress(address(this));
