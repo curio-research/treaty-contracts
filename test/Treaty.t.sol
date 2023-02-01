@@ -16,6 +16,7 @@ import {CustomTreaty} from "test/CustomTreaty.sol";
 import {CurioWallet} from "contracts/standards/CurioWallet.sol";
 import {Position} from "contracts/libraries/Types.sol";
 import {LoanAgreement} from "contracts/treaties/LoanAgreement.sol";
+import {ColonialPact} from "contracts/treaties/ColonialPact.sol";
 import {console} from "forge-std/console.sol";
 
 contract TreatyTest is Test, DiamondDeployTest {
@@ -980,6 +981,125 @@ contract TreatyTest is Test, DiamondDeployTest {
         vm.startPrank(player1);
         vm.expectRevert("Loan: Loan does not exist");
         loanAgreement.liquidateCollateral(loanID);
+        vm.stopPrank();
+    }
+
+    function testColonialPact() public {
+        uint256 time = block.timestamp + 1000;
+        vm.warp(time);
+
+        // Get IDs of relevant tiles and resources
+        Position memory tile1Pos = Position({x: 65, y: 30});
+        Position memory tile2Pos = Position({x: 65, y: 25});
+        uint256 tile1ID = getter.getTileAt(tile1Pos);
+        uint256 tile2ID = getter.getTileAt(tile2Pos);
+        uint256 resource1ID = getter.getResourceAtTile(tile1Pos);
+        uint256 resource2ID = getter.getResourceAtTile(tile2Pos);
+        assertEq(getter.getNation(tile1ID), 0);
+        assertEq(getter.getNation(tile2ID), 0);
+        assertEq(getter.getNation(resource1ID), 0);
+        assertEq(getter.getNation(resource2ID), 0);
+        uint256 effectiveDuration = 100;
+
+        // Deployer gifts tiles and resources to nation 2
+        vm.startPrank(deployer);
+        admin.giftTileAndResourceAt(tile1Pos, nation2ID);
+        admin.giftTileAndResourceAt(tile2Pos, nation2ID);
+        admin.dripToken(nation2CapitalAddr, "Crystal", 1000000000000);
+        admin.dripToken(nation2CapitalAddr, "Food", 1000000000000);
+        vm.stopPrank();
+        assertEq(getter.getNation(tile1ID), nation2ID);
+        assertEq(getter.getNation(tile2ID), nation2ID);
+        assertEq(getter.getNation(resource1ID), nation2ID);
+        assertEq(getter.getNation(resource2ID), nation2ID);
+
+        // Nation 2 upgrades both resources so they can be harvested
+        vm.startPrank(player2);
+        game.upgradeResource(resource1ID);
+        game.upgradeResource(resource2ID);
+        vm.stopPrank();
+        assertEq(abi.decode(getter.getComponent("Level").getBytesValue(resource1ID), (uint256)), 1);
+        assertEq(abi.decode(getter.getComponent("Level").getBytesValue(resource2ID), (uint256)), 1);
+
+        // Nation 1 deploys an instance of Colonial Pact and whitelists nation 2 to be colonial subject
+        vm.startPrank(player1);
+        ColonialPact pact = ColonialPact(game.deployTreaty(nation1ID, colonialPactTemplate.name()));
+        pact.addToWhitelist(nation2ID);
+        vm.stopPrank();
+
+        // Nation 2 attempts to join nation 1's pact
+        vm.startPrank(player2);
+        vm.expectRevert("ColonialPact: Colonizer needs to set tiles first");
+        pact.treatyJoin();
+        vm.stopPrank();
+
+        // Nation 1 sets effective duration and tiles
+        vm.startPrank(player1);
+        pact.setEffectiveDuration(effectiveDuration);
+        Position[] memory tilePositions = new Position[](2);
+        tilePositions[0] = tile1Pos;
+        tilePositions[1] = tile2Pos;
+        pact.setColonialTiles(tilePositions);
+        vm.stopPrank();
+
+        // Nation 2 joins nation 1's pact
+        vm.startPrank(player2);
+        pact.treatyJoin();
+        vm.stopPrank();
+
+        // Nation 2 attempts to harvest resources from their gifted tiles
+        time += 2;
+        vm.warp(time);
+        vm.startPrank(player2);
+        vm.expectRevert("CURIO: Not delegated to call HarvestResource");
+        game.harvestResource(resource1ID);
+        vm.stopPrank();
+        uint256 nation2CapitalCrystalAmount = crystalToken.balanceOf(nation2CapitalAddr);
+        uint256 nation2CapitalFoodAmount = foodToken.balanceOf(nation2CapitalAddr);
+        assertEq(crystalToken.balanceOf(nation1CapitalAddr), 0);
+        assertEq(foodToken.balanceOf(nation1CapitalAddr), 0);
+
+        // Nation 1 harvests colonial resources via pact
+        time += 5;
+        vm.warp(time);
+        vm.startPrank(player1);
+        pact.harvestColonialResources();
+        vm.stopPrank();
+        assertEq(crystalToken.balanceOf(nation2CapitalAddr), nation2CapitalCrystalAmount);
+        assertEq(foodToken.balanceOf(nation2CapitalAddr), nation2CapitalFoodAmount);
+        assertTrue(crystalToken.balanceOf(nation1CapitalAddr) > 0);
+        assertTrue(foodToken.balanceOf(nation1CapitalAddr) > 0);
+        assertEq(abi.decode(getter.getComponent("LastHarvested").getBytesValue(resource1ID), (uint256)), time);
+
+        // Nation 2 attempts to leave treaty
+        time += 3;
+        vm.warp(time);
+        vm.startPrank(player2);
+        vm.expectRevert("ColonialPact: Cannot leave when treaty is in effect");
+        pact.treatyLeave();
+        vm.stopPrank();
+
+        // After effective duration has passed, Nation 2 leaves treaty
+        time += effectiveDuration;
+        vm.warp(time);
+        vm.startPrank(player2);
+        pact.treatyLeave();
+        vm.stopPrank();
+
+        // Nation 2 harvests resources from their gifted tiles
+        vm.startPrank(player2);
+        game.harvestResource(resource1ID);
+        game.harvestResource(resource2ID);
+        assertTrue(crystalToken.balanceOf(nation2CapitalAddr) > nation2CapitalCrystalAmount);
+        assertTrue(foodToken.balanceOf(nation2CapitalAddr) > nation2CapitalFoodAmount);
+        vm.stopPrank();
+
+        // Nation 1 attempts to harvest nation 2's resources via pact
+        time += 10;
+        vm.warp(time);
+        vm.startPrank(player1);
+        vm.expectRevert("ColonialPact: Treaty has expired");
+        pact.harvestColonialResources();
         vm.stopPrank();
     }
 }

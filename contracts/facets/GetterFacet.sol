@@ -115,6 +115,10 @@ contract GetterFacet is UseStorage {
         return GameLib.getArmiesFromNation(_nationID);
     }
 
+    function getNationResources(uint256 _nationID) external view returns (uint256[] memory) {
+        return GameLib.getNationResources(_nationID);
+    }
+
     function treatyApprovalCheck(
         string memory _functionName,
         uint256 _nationID,
@@ -163,8 +167,8 @@ contract GetterFacet is UseStorage {
         return GameLib.getCapital(_nationID);
     }
 
-    function getTileAt(Position memory _position) external view returns (uint256) {
-        return GameLib.getTileAt(_position);
+    function getTileAt(Position memory _startPosition) external view returns (uint256) {
+        return GameLib.getTileAt(_startPosition);
     }
 
     function getInventory(address _inventoryAddress, string memory _templateName) external view returns (uint256) {

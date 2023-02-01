@@ -71,15 +71,26 @@ contract NonAggressionPact is CurioTreaty {
     function approveBattle(uint256 _nationID, bytes memory _encodedParams) public view virtual override returns (bool) {
         GetterFacet getter = GetterFacet(diamond);
         uint256 treatyID = getter.getEntityByAddress(address(this));
-        uint256 initTimestamp = abi.decode(getter.getComponent("InitTimestamp").getBytesValue(treatyID), (uint256));
 
         // Disapprove if target nation is part of pact and pact is still effective
-        if (effectiveDuration == 0 || block.timestamp <= initTimestamp + effectiveDuration) {
+        if (!hasTreatyExpired()) {
             (, , uint256 battleTargetID) = abi.decode(_encodedParams, (uint256, uint256, uint256));
             uint256 targetNationID = getter.getNation(battleTargetID);
             if (getter.getNationTreatySignature(targetNationID, treatyID) != 0) return false;
         }
 
         return super.approveBattle(_nationID, _encodedParams);
+    }
+
+    // ----------------------------------------------------------
+    // Helper Functions
+    // ----------------------------------------------------------
+
+    function hasTreatyExpired() public view virtual returns (bool) {
+        GetterFacet getter = GetterFacet(diamond);
+        uint256 treatyID = getter.getEntityByAddress(address(this));
+        uint256 initTimestamp = abi.decode(getter.getComponent("InitTimestamp").getBytesValue(treatyID), (uint256));
+
+        return effectiveDuration > 0 && block.timestamp > initTimestamp + effectiveDuration;
     }
 }
