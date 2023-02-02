@@ -37,19 +37,16 @@ contract SimpleOTCTest is DiamondDeployTest, PTest {
         admin.dripToken(agentCapitalAddr, "Food", 1000);
         vm.stopPrank();
 
-        // Player1 approves tokens
         vm.startPrank(nation1CapitalAddr);
         goldToken.approve(address(otc), 1000);
         foodToken.approve(address(otc), 1000);
         vm.stopPrank();
 
-        // Agent approves tokens
         vm.startPrank(agentCapitalAddr);
         goldToken.approve(address(otc), 1000);
         foodToken.approve(address(otc), 1000);
         vm.stopPrank();
 
-        // When order is created, no tokens are transferred
         vm.startPrank(player1);
         otc.createOrder("Gold", 2, "Food", 200);
         vm.stopPrank();
