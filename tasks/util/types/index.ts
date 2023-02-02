@@ -56,3 +56,7 @@ export interface AddTreatyTemplateArgs extends HardhatArguments {
   diamond: string;
   name: string;
 }
+
+export interface UpgradeFacetArgs extends HardhatArguments {
+  diamond: string;
+}
