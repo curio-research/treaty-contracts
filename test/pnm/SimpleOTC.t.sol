@@ -56,6 +56,6 @@ contract SimpleOTCTest is DiamondDeployTest, PTest {
     }
 
     function invariantOverSell() public view {
-        require(goldToken.balanceOf(nation1CapitalAddr) >= 998, "player 1 sell more than 2 gold");
+        require(goldToken.balanceOf(nation1CapitalAddr) >= 1000 - 2, "player 1 sell more than 2 gold");
     }
 }
