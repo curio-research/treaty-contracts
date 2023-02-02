@@ -114,15 +114,20 @@ contract ColonialPact is NonAggressionPact {
         uint256 treatyID = getter.getEntityByAddress(address(this));
         require(getter.getTreatySigners(treatyID).length == 0, "ColonialPact: There is already a colonized nation");
 
-        // Transfer right to harvest colonial resources from nation to treaty
         uint256 nationID = getter.getEntityByAddress(msg.sender);
+        uint256[] memory nationResourceIDs = getter.getNationResources(nationID);
+        Set colonialResourceIDSet = new Set();
+        colonialResourceIDSet.addArray(colonialResourceIDs);
+
+        // Transfer right to harvest colonial resources from nation to treaty
         AdminFacet admin = AdminFacet(diamond);
         admin.adminDelegateGameFunction(nationID, "HarvestResource", nationID, 0, false);
-        // Set colonialResources = new Set();
-        // colonialResources.addAr
-        uint256[] nationResourceIDs = getter.getNationResources(nationID);
         for (uint256 i = 0; i < nationResourceIDs.length; i++) {
-            admin.adminDelegateGameFunction(nationID, "HarvestResource", treatyID, colonialResourceIDs[i], true);
+            if (colonialResourceIDSet.includes(nationResourceIDs[i])) {
+                admin.adminDelegateGameFunction(nationID, "HarvestResource", treatyID, nationResourceIDs[i], true);
+            } else {
+                admin.adminDelegateGameFunction(nationID, "HarvestResource", nationID, nationResourceIDs[i], true);
+            }
         }
 
         super.treatyJoin();
@@ -140,8 +145,8 @@ contract ColonialPact is NonAggressionPact {
         AdminFacet admin = AdminFacet(diamond);
         for (uint256 i = 0; i < colonialResourceIDs.length; i++) {
             admin.adminDelegateGameFunction(nationID, "HarvestResource", treatyID, colonialResourceIDs[i], false);
-            admin.adminDelegateGameFunction(nationID, "HarvestResource", nationID, colonialResourceIDs[i], true);
         }
+        admin.adminDelegateGameFunction(nationID, "HarvestResource", nationID, 0, true);
 
         super.treatyLeave();
     }

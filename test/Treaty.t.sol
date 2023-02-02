@@ -1022,6 +1022,8 @@ contract TreatyTest is Test, DiamondDeployTest {
         assertEq(abi.decode(getter.getComponent("Level").getBytesValue(resource2ID), (uint256)), 1);
 
         // Nation 1 deploys an instance of Colonial Pact and whitelists nation 2 to be colonial subject
+        time += 10000;
+        vm.warp(time);
         vm.startPrank(player1);
         ColonialPact pact = ColonialPact(game.deployTreaty(nation1ID, colonialPactTemplate.name()));
         pact.addToWhitelist(nation2ID);
@@ -1054,10 +1056,10 @@ contract TreatyTest is Test, DiamondDeployTest {
         vm.expectRevert("CURIO: Not delegated to call HarvestResource");
         game.harvestResource(resource1ID);
         vm.stopPrank();
+        uint256 nation1CapitalCrystalAmount = crystalToken.balanceOf(nation1CapitalAddr);
+        uint256 nation1CapitalFoodAmount = foodToken.balanceOf(nation1CapitalAddr);
         uint256 nation2CapitalCrystalAmount = crystalToken.balanceOf(nation2CapitalAddr);
         uint256 nation2CapitalFoodAmount = foodToken.balanceOf(nation2CapitalAddr);
-        assertEq(crystalToken.balanceOf(nation1CapitalAddr), 0);
-        assertEq(foodToken.balanceOf(nation1CapitalAddr), 0);
 
         // Nation 1 harvests colonial resources via pact
         time += 5;
@@ -1067,8 +1069,8 @@ contract TreatyTest is Test, DiamondDeployTest {
         vm.stopPrank();
         assertEq(crystalToken.balanceOf(nation2CapitalAddr), nation2CapitalCrystalAmount);
         assertEq(foodToken.balanceOf(nation2CapitalAddr), nation2CapitalFoodAmount);
-        assertTrue(crystalToken.balanceOf(nation1CapitalAddr) > 0);
-        assertTrue(foodToken.balanceOf(nation1CapitalAddr) > 0);
+        assertTrue(crystalToken.balanceOf(nation1CapitalAddr) > nation1CapitalCrystalAmount);
+        assertTrue(foodToken.balanceOf(nation1CapitalAddr) > nation1CapitalFoodAmount);
         assertEq(abi.decode(getter.getComponent("LastHarvested").getBytesValue(resource1ID), (uint256)), time);
 
         // Nation 2 attempts to leave treaty
@@ -1087,6 +1089,8 @@ contract TreatyTest is Test, DiamondDeployTest {
         vm.stopPrank();
 
         // Nation 2 harvests resources from their gifted tiles
+        time += 100;
+        vm.warp(time);
         vm.startPrank(player2);
         game.harvestResource(resource1ID);
         game.harvestResource(resource2ID);

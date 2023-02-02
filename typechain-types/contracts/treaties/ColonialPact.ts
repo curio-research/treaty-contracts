@@ -23,7 +23,17 @@ import type {
   PromiseOrValue,
 } from "../../common";
 
-export interface NonAggressionPactInterface extends utils.Interface {
+export type PositionStruct = {
+  x: PromiseOrValue<BigNumberish>;
+  y: PromiseOrValue<BigNumberish>;
+};
+
+export type PositionStructOutput = [BigNumber, BigNumber] & {
+  x: BigNumber;
+  y: BigNumber;
+};
+
+export interface ColonialPactInterface extends utils.Interface {
   functions: {
     "addToWhitelist(uint256)": FunctionFragment;
     "approveBattle(uint256,bytes)": FunctionFragment;
@@ -50,14 +60,17 @@ export interface NonAggressionPactInterface extends utils.Interface {
     "approveUpgradeCapital(uint256,bytes)": FunctionFragment;
     "approveUpgradeResource(uint256,bytes)": FunctionFragment;
     "approveUpgradeTile(uint256,bytes)": FunctionFragment;
+    "colonialResourceIDs(uint256)": FunctionFragment;
     "description()": FunctionFragment;
     "diamond()": FunctionFragment;
     "effectiveDuration()": FunctionFragment;
+    "harvestColonialResources()": FunctionFragment;
     "hasTreatyExpired()": FunctionFragment;
     "init(address)": FunctionFragment;
     "name()": FunctionFragment;
     "removeFromWhitelist(uint256)": FunctionFragment;
     "removeMember(uint256)": FunctionFragment;
+    "setColonialTiles((uint256,uint256)[])": FunctionFragment;
     "setEffectiveDuration(uint256)": FunctionFragment;
     "treatyDelegateGameFunction(string,uint256,bool)": FunctionFragment;
     "treatyJoin()": FunctionFragment;
@@ -91,14 +104,17 @@ export interface NonAggressionPactInterface extends utils.Interface {
       | "approveUpgradeCapital"
       | "approveUpgradeResource"
       | "approveUpgradeTile"
+      | "colonialResourceIDs"
       | "description"
       | "diamond"
       | "effectiveDuration"
+      | "harvestColonialResources"
       | "hasTreatyExpired"
       | "init"
       | "name"
       | "removeFromWhitelist"
       | "removeMember"
+      | "setColonialTiles"
       | "setEffectiveDuration"
       | "treatyDelegateGameFunction"
       | "treatyJoin"
@@ -206,12 +222,20 @@ export interface NonAggressionPactInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
+    functionFragment: "colonialResourceIDs",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "description",
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "diamond", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "effectiveDuration",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "harvestColonialResources",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -230,6 +254,10 @@ export interface NonAggressionPactInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "removeMember",
     values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setColonialTiles",
+    values: [PositionStruct[]]
   ): string;
   encodeFunctionData(
     functionFragment: "setEffectiveDuration",
@@ -353,12 +381,20 @@ export interface NonAggressionPactInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "colonialResourceIDs",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "description",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "diamond", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "effectiveDuration",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "harvestColonialResources",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -373,6 +409,10 @@ export interface NonAggressionPactInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "removeMember",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setColonialTiles",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -392,12 +432,12 @@ export interface NonAggressionPactInterface extends utils.Interface {
   events: {};
 }
 
-export interface NonAggressionPact extends BaseContract {
+export interface ColonialPact extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: NonAggressionPactInterface;
+  interface: ColonialPactInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
@@ -568,11 +608,20 @@ export interface NonAggressionPact extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
+    colonialResourceIDs(
+      arg0: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
     description(overrides?: CallOverrides): Promise<[string]>;
 
     diamond(overrides?: CallOverrides): Promise<[string]>;
 
     effectiveDuration(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    harvestColonialResources(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
 
     hasTreatyExpired(overrides?: CallOverrides): Promise<[boolean]>;
 
@@ -590,6 +639,11 @@ export interface NonAggressionPact extends BaseContract {
 
     removeMember(
       _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    setColonialTiles(
+      _tilePositions: PositionStruct[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -763,11 +817,20 @@ export interface NonAggressionPact extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
+  colonialResourceIDs(
+    arg0: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
   description(overrides?: CallOverrides): Promise<string>;
 
   diamond(overrides?: CallOverrides): Promise<string>;
 
   effectiveDuration(overrides?: CallOverrides): Promise<BigNumber>;
+
+  harvestColonialResources(
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
 
   hasTreatyExpired(overrides?: CallOverrides): Promise<boolean>;
 
@@ -785,6 +848,11 @@ export interface NonAggressionPact extends BaseContract {
 
   removeMember(
     _nationID: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  setColonialTiles(
+    _tilePositions: PositionStruct[],
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -958,11 +1026,18 @@ export interface NonAggressionPact extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
+    colonialResourceIDs(
+      arg0: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     description(overrides?: CallOverrides): Promise<string>;
 
     diamond(overrides?: CallOverrides): Promise<string>;
 
     effectiveDuration(overrides?: CallOverrides): Promise<BigNumber>;
+
+    harvestColonialResources(overrides?: CallOverrides): Promise<void>;
 
     hasTreatyExpired(overrides?: CallOverrides): Promise<boolean>;
 
@@ -980,6 +1055,11 @@ export interface NonAggressionPact extends BaseContract {
 
     removeMember(
       _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setColonialTiles(
+      _tilePositions: PositionStruct[],
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1152,11 +1232,20 @@ export interface NonAggressionPact extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    colonialResourceIDs(
+      arg0: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     description(overrides?: CallOverrides): Promise<BigNumber>;
 
     diamond(overrides?: CallOverrides): Promise<BigNumber>;
 
     effectiveDuration(overrides?: CallOverrides): Promise<BigNumber>;
+
+    harvestColonialResources(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
 
     hasTreatyExpired(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1174,6 +1263,11 @@ export interface NonAggressionPact extends BaseContract {
 
     removeMember(
       _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    setColonialTiles(
+      _tilePositions: PositionStruct[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -1348,11 +1442,20 @@ export interface NonAggressionPact extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    colonialResourceIDs(
+      arg0: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     description(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     diamond(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     effectiveDuration(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    harvestColonialResources(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
 
     hasTreatyExpired(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
@@ -1370,6 +1473,11 @@ export interface NonAggressionPact extends BaseContract {
 
     removeMember(
       _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setColonialTiles(
+      _tilePositions: PositionStruct[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

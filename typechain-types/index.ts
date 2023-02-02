@@ -56,6 +56,8 @@ export type { Bounty } from "./contracts/treaties/Bounty";
 export { Bounty__factory } from "./factories/contracts/treaties/Bounty__factory";
 export type { CollectiveDefenseFund } from "./contracts/treaties/CollectiveDefenseFund";
 export { CollectiveDefenseFund__factory } from "./factories/contracts/treaties/CollectiveDefenseFund__factory";
+export type { ColonialPact } from "./contracts/treaties/ColonialPact";
+export { ColonialPact__factory } from "./factories/contracts/treaties/ColonialPact__factory";
 export type { Embargo } from "./contracts/treaties/Embargo";
 export { Embargo__factory } from "./factories/contracts/treaties/Embargo__factory";
 export type { HandshakeDeal } from "./contracts/treaties/HandshakeDeal";

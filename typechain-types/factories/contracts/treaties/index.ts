@@ -4,6 +4,7 @@
 export { Alliance__factory } from "./Alliance__factory";
 export { Bounty__factory } from "./Bounty__factory";
 export { CollectiveDefenseFund__factory } from "./CollectiveDefenseFund__factory";
+export { ColonialPact__factory } from "./ColonialPact__factory";
 export { Embargo__factory } from "./Embargo__factory";
 export { HandshakeDeal__factory } from "./HandshakeDeal__factory";
 export { LoanAgreement__factory } from "./LoanAgreement__factory";

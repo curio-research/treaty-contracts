@@ -1985,6 +1985,25 @@ const _abi = [
         name: "_nationID",
         type: "uint256",
       },
+    ],
+    name: "getNationResources",
+    outputs: [
+      {
+        internalType: "uint256[]",
+        name: "",
+        type: "uint256[]",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "_nationID",
+        type: "uint256",
+      },
       {
         internalType: "uint256",
         name: "_treatyID",
@@ -2136,7 +2155,7 @@ const _abi = [
           },
         ],
         internalType: "struct Position",
-        name: "_position",
+        name: "_startPosition",
         type: "tuple",
       },
     ],
