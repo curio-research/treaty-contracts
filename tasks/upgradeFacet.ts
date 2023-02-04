@@ -43,6 +43,14 @@ task('upgradeFacet', 'upgrade diamond facet')
       const templates = await deployProxy<any>('Templates', admin, hre, [], { ECSLib: ecsLib.address });
       const gameLib = await deployProxy<GameLib>('GameLib', admin, hre, [], { ECSLib: ecsLib.address, Templates: templates.address });
 
+      // Get diamond facets
+      const diamondLoupeFacet = await hre.ethers.getContractAt('DiamondLoupeFacet', diamond);
+      const existingFacetAddrs: any[] = [];
+      for (const address of await diamondLoupeFacet.facetAddresses()) {
+        existingFacetAddrs.push(address);
+      }
+      console.log(`✦ Diamond has ${existingFacetAddrs.length} facets`);
+
       // Deploy new facets and populate cut
       const facets = [
         { name: 'GameFacet', libraries: { ECSLib: ecsLib.address, Templates: templates.address } },
@@ -54,11 +62,14 @@ task('upgradeFacet', 'upgrade diamond facet')
         const facetName: string = facets[i].name;
         const facet = await deployProxy<any>(facetName, admin, hre, [], facets[i].libraries as any);
         cut.push({
-          facetAddress: facet.address,
+          facetAddress: existingFacetAddrs[0],
           action: FacetCutAction.Replace,
           functionSelectors: getSelectors(facet).get(['harvestResourcesFromCapital(uint256)']),
         });
       }
+
+      // TODO: left here
+      // is selector correct? is it the same as the one in the diamond? if not how do I get the info of newe facet?
 
       // Upgrade diamond with facets
       const receipt = await confirmTx(await game.diamondCut(cut, hre.ethers.constants.AddressZero, '0x', { gasLimit }), hre);
