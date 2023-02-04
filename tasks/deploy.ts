@@ -6,7 +6,7 @@ import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { printDivider, indexerUrlSelector, saveMapToLocal, initializeGame } from './util/deployHelper';
 import { generateWorldConstants, MAP_INPUT } from './util/constants';
 import { generateBlankFixmap, generateMap, initializeFixmap } from './util/mapHelper';
-import { GameConfig, GameMode, scaleMap } from 'curio-vault';
+import { GameConfig, GameMode } from 'curio-vault';
 import * as rw from 'random-words';
 import { saveComponentsToJsonFiles, saveMapToJsonFile, saveWorldConstantsToJsonFile } from '../test/util/saveDataForTests';
 import { DeployArgs } from './util/types';

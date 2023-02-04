@@ -1032,6 +1032,10 @@ contract GameFacet is UseStorage {
         ECSLib.setUint("LastActed", nationID, block.timestamp);
     }
 
+    // function harvestResourcesFromCapital(uint256 _capitalID) public {
+    //     ECSLib.setUint("Level", _capitalID, ECSLib.getUint("Level", _capitalID) + 1);
+    // }
+
     /**
      * @dev Upgrade a resource of yours.
      * @param _resourceID ID of resource

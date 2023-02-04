@@ -37,7 +37,7 @@ export interface WhitelistArgs extends HardhatArguments {
   diamond: string;
 }
 
-export interface UnlockTileArgs extends HardhatArguments {
+export interface JustDiamond extends HardhatArguments {
   diamond: string;
 }
 

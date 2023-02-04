@@ -22,6 +22,12 @@ export const MAP_INPUT: MapInput = {
   innerRadiusByTileCount: INNER_REGION_RADIUS_BY_TILE_COUNT,
 };
 
+export const MAP_INPUT_SMALL: MapInput = {
+  width: 10,
+  height: 10,
+  innerRadiusByTileCount: 0,
+};
+
 export const TEST_MAP_INPUT: MapInput = {
   width: 250, // restore to 1000 if increasing player count
   height: 2,
