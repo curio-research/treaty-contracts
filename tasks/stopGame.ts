@@ -4,21 +4,21 @@ import { getDiamond } from './util/diamondDeploy';
 import { JustDiamond } from './util/types';
 import { confirmTx } from './util/deployHelper';
 
-task('unlockTiles', 'unlock all tiles')
+task('stopGame', 'stop game')
   .addParam('diamond', 'game address')
   .setAction(async (args: JustDiamond, hre: HardhatRuntimeEnvironment) => {
     try {
       // Log network
       console.log('Network:', hre.network.name);
 
-      // Get diamond
+      // Get diamond and parse args
       const { diamond } = args;
       const game = await getDiamond(hre, diamond);
 
-      // Unlock all tiles
+      // Stop game
       const startTime = performance.now();
-      await confirmTx(await game.unlockAllTiles(), hre);
-      console.log(`Successfully unlocked all tiles after ${performance.now() - startTime} ms`);
+      await confirmTx(await game.stopGame(), hre);
+      console.log(`Successfully stopped game after ${performance.now() - startTime} ms`);
     } catch (err: any) {
       console.log(err.message);
     }

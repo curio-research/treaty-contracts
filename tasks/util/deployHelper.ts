@@ -80,14 +80,14 @@ export const uploadABI = async (hre: HardhatRuntimeEnvironment, contractName: st
 export const deployTreatyTemplate = async (name: string, admin: Signer, hre: HardhatRuntimeEnvironment, diamond: Curio, gasLimit: number) => {
   // Deploy treaty template
   const treaty = await deployProxy<any>(name, admin, hre, []);
-  await (await treaty.init(diamond.address)).wait();
+  await confirmTx(await treaty.init(diamond.address), hre);
 
   // Upload contract ABI and metadata (contract descriptions)
   const abiHash = await uploadABI(hre, name);
   const metadataUrl = await putObject(JSON.stringify(treatyDescriptions[name] || {}));
 
   // Register treaty template
-  await (await diamond.connect(admin).registerTreatyTemplate(treaty.address, abiHash, metadataUrl, { gasLimit })).wait();
+  await confirmTx(await diamond.connect(admin).registerTreatyTemplate(treaty.address, abiHash, metadataUrl, { gasLimit }), hre);
 
   console.log(chalk.dim(`✦ Treaty ${name} deployed and ABI uploaded to IPFS at hash=${abiHash}`));
 };
@@ -203,7 +203,7 @@ export const initializeGame = async (hre: HardhatRuntimeEnvironment, worldConsta
     })
   );
   startTime = performance.now();
-  const bulkTileUploadSize = 20; // Note: if part or all of the map is not initialized, make this smaller
+  const bulkTileUploadSize = 100; // Note: if part or all of the map is not initialized, make this smaller
   for (let i = 0 * bulkTileUploadSize; i < allTilePositions.length; i += bulkTileUploadSize) {
     console.log(chalk.dim(`✦ Initializing tiles ${i} to ${i + bulkTileUploadSize}`));
     await confirmTx(await diamond.bulkInitializeTiles(allTilePositions.slice(i, i + bulkTileUploadSize), { gasLimit }), hre);
