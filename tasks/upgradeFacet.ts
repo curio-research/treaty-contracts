@@ -9,21 +9,8 @@ import { getDiamond } from './util/diamondDeploy';
 import { chainInfo } from 'curio-vault';
 
 /**
- * Specs:
- * 1. Get diamond
- * 2. Deploy new facet
- * 3. Upgrade diamond with the new facet:
-        UpgradedFacet newFacet = new UpgradedFacet();
-        bytes4[] memory functionSelectors = new bytes4[](1); 
-        functionSelectors[0] = newFacet.SELECTOR();
-
-        vm.startPrank(deployer);
-        IDiamondCut.FacetCut[] memory cuts = new IDiamondCut.FacetCut[](1);
-        cuts[0] = IDiamondCut.FacetCut({facetAddress: address(newFacet), action: IDiamondCut.FacetCutAction.Add, functionSelectors: functionSelectors});
-        IDiamondCut(diamond).diamondCut(cuts, address(0), "");
-        assertEq(UpgradedFacet(diamond).upgradedFacetFunction(5), 7);
+ * @notice This task is currently only used for testing
  */
-
 task('upgradeFacet', 'upgrade diamond facet')
   .addParam('diamond', 'game address')
   .setAction(async (args: UpgradeFacetArgs, hre: HardhatRuntimeEnvironment) => {
@@ -67,9 +54,6 @@ task('upgradeFacet', 'upgrade diamond facet')
           functionSelectors: getSelectors(facet).get(['harvestResourcesFromCapital(uint256)']),
         });
       }
-
-      // TODO: left here
-      // is selector correct? is it the same as the one in the diamond? if not how do I get the info of newe facet?
 
       // Upgrade diamond with facets
       const receipt = await confirmTx(await game.diamondCut(cut, hre.ethers.constants.AddressZero, '0x', { gasLimit }), hre);
