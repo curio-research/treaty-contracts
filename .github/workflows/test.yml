@@ -1,0 +1,28 @@
+name: Test Hook
+on:
+  push:
+    branches: [develop]
+  pull_request:
+    branches: [develop]
+
+jobs:
+  check:
+    name: Game Logic Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Install Foundry
+        uses: foundry-rs/foundry-toolchain@v1
+        with:
+          version: nightly
+
+      - name: Yarn install
+        run: yarn install --frozen-lockfile
+
+      - name: Install deps
+        run: forge install
+
+      - name: Run tests
+        run: ${{ github.action_path }} forge test --ffi -vv
