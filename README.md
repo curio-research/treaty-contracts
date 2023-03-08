@@ -34,7 +34,7 @@ To use, first follow the following steps:
 
 Then, to deploy the contracts locally:
 
-1. Adjust parameters in `tasks/constants.ts`.
+1. Adjust parameters in `tasks/util/constants.ts`.
 
 2. Spin up a local network using `npx hardhat node`.
 
