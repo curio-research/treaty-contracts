@@ -107,11 +107,7 @@ contract GameFacet is UseStorage {
      * @notice Both admin and players can call this function.
      *         There is currently no notion of "creator" for treaty templates.
      */
-    function registerTreatyTemplate(
-        address _address,
-        string memory _abiHash,
-        string memory _metadataLink
-    ) external returns (uint256 treatyTemplateID) {
+    function registerTreatyTemplate(address _address, string memory _abiHash, string memory _metadataLink) external returns (uint256 treatyTemplateID) {
         // Basic checks
         GameLib.ongoingGameCheck();
 
@@ -508,11 +504,7 @@ contract GameFacet is UseStorage {
      * @param _templateID ID of the troop template to produce
      * @param _amount Amount of troops to produce
      */
-    function startTroopProduction(
-        uint256 _capitalID,
-        uint256 _templateID,
-        uint256 _amount
-    ) external returns (uint256 productionID) {
+    function startTroopProduction(uint256 _capitalID, uint256 _templateID, uint256 _amount) external returns (uint256 productionID) {
         // Basic checks
         GameLib.ongoingGameCheck();
         GameLib.validEntityCheck(_capitalID);
@@ -687,11 +679,7 @@ contract GameFacet is UseStorage {
      * @param _templateIDs IDs of the troop templates to organize in the army
      * @param _amounts amounts of each troop template
      */
-    function organizeArmy(
-        uint256 _capitalID,
-        uint256[] memory _templateIDs,
-        uint256[] memory _amounts
-    ) external returns (uint256 armyID) {
+    function organizeArmy(uint256 _capitalID, uint256[] memory _templateIDs, uint256[] memory _amounts) external returns (uint256 armyID) {
         // Basic checks
         GameLib.validEntityCheck(_capitalID);
         GameLib.ongoingGameCheck();
@@ -1102,13 +1090,7 @@ contract GameFacet is UseStorage {
      * @param _subjectID ID of specific entity to delegate (0 means all)
      * @param _canCall whether to delegate or undelegate
      */
-    function delegateGameFunction(
-        uint256 _nationID,
-        string memory _functionName,
-        uint256 _delegateID,
-        uint256 _subjectID,
-        bool _canCall
-    ) external {
+    function delegateGameFunction(uint256 _nationID, string memory _functionName, uint256 _delegateID, uint256 _subjectID, bool _canCall) external {
         // Basic checks
         GameLib.ongoingGameCheck();
         GameLib.validEntityCheck(_nationID);
@@ -1174,11 +1156,7 @@ contract GameFacet is UseStorage {
      * @param _delegateID ID of delegated nation
      * @param _canCall whether to delegate or undelegate
      */
-    function delegateAllGameFunctions(
-        uint256 _nationID,
-        uint256 _delegateID,
-        bool _canCall
-    ) external {
+    function delegateAllGameFunctions(uint256 _nationID, uint256 _delegateID, bool _canCall) external {
         // Basic checks
         GameLib.ongoingGameCheck();
         GameLib.validEntityCheck(_nationID);

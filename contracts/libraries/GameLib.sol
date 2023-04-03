@@ -116,8 +116,8 @@ library GameLib {
         // Decode tile terrain
         uint256 tileX = _startPosition.x / gs().worldConstants.tileWidth;
         uint256 tileY = _startPosition.y / gs().worldConstants.tileWidth;
-        uint256 encodedCol = gs().encodedColumnBatches[tileX][tileY / batchSize] % (numInitTerrainTypes**((tileY % batchSize) + 1));
-        uint256 divFactor = numInitTerrainTypes**(tileY % batchSize);
+        uint256 encodedCol = gs().encodedColumnBatches[tileX][tileY / batchSize] % (numInitTerrainTypes ** ((tileY % batchSize) + 1));
+        uint256 divFactor = numInitTerrainTypes ** (tileY % batchSize);
         uint256 terrain = encodedCol / divFactor;
 
         // Initialize tile
@@ -292,12 +292,7 @@ library GameLib {
         }
     }
 
-    function attack(
-        uint256 _offenderID,
-        uint256 _defenderID,
-        bool _transferResourcesUponVictory,
-        bool _removeUponVictory
-    ) internal returns (bool victory) {
+    function attack(uint256 _offenderID, uint256 _defenderID, bool _transferResourcesUponVictory, bool _removeUponVictory) internal returns (bool victory) {
         uint256[] memory troopTemplateIDs = ECSLib.getStringComponent("Tag").getEntitiesWithValue(string("TroopTemplate"));
         victory = true;
 
@@ -344,12 +339,7 @@ library GameLib {
         }
     }
 
-    function battleOnce(
-        uint256 _keeperIdA,
-        uint256 _keeperIdB,
-        bool _transferResourcesUponVictory,
-        bool _removeUponVictory
-    ) internal returns (bool victory) {
+    function battleOnce(uint256 _keeperIdA, uint256 _keeperIdB, bool _transferResourcesUponVictory, bool _removeUponVictory) internal returns (bool victory) {
         victory = attack(_keeperIdA, _keeperIdB, _transferResourcesUponVictory, _removeUponVictory);
         if (!victory) attack(_keeperIdB, _keeperIdA, _transferResourcesUponVictory, _removeUponVictory);
     }
@@ -384,13 +374,7 @@ library GameLib {
         }
     }
 
-    function delegateGameFunction(
-        uint256 _nationID,
-        string memory _functionName,
-        uint256 _delegateID,
-        uint256 _subjectID,
-        bool _canCall
-    ) internal {
+    function delegateGameFunction(uint256 _nationID, string memory _functionName, uint256 _delegateID, uint256 _subjectID, bool _canCall) internal {
         // Get current delegation
         uint256[] memory delegationIDs = getDelegations(_functionName, _nationID, _delegateID);
 
@@ -496,14 +480,7 @@ library GameLib {
         return res.length == 1 ? res[0] : 0;
     }
 
-    function getInventoryIDLoadAndBalance(address _entityAddress, string memory _resourceType)
-        internal
-        returns (
-            uint256,
-            uint256,
-            uint256
-        )
-    {
+    function getInventoryIDLoadAndBalance(address _entityAddress, string memory _resourceType) internal returns (uint256, uint256, uint256) {
         uint256[] memory res = ECSLib.getAddressComponent("Address").getEntitiesWithValue(_entityAddress);
         require(res.length == 1, "CURIO: Entity duplicated or not found");
         uint256 entityID = res[0];
@@ -525,11 +502,11 @@ library GameLib {
             }
         } else if (strEq(entityTag, "Building") && strEq(ECSLib.getString("BuildingType", entityID), "Capital")) {
             // Set to max uint256
-            load = 2**256 - 1;
+            load = 2 ** 256 - 1;
         } else if (strEq(entityTag, "Tile")) {
             load = getGameParameter("Tile", "Guard", "Amount", "", ECSLib.getUint("Level", entityID));
         } else if (strEq(entityTag, "Treaty")) {
-            load = 2**256 - 1;
+            load = 2 ** 256 - 1;
         } else {
             revert(string.concat("CURIO: Unsupported keeper '", entityTag, "'"));
         }
@@ -544,11 +521,7 @@ library GameLib {
         return (inventoryID, load, balance);
     }
 
-    function getAllowance(
-        uint256 _templateID,
-        uint256 _ownerID,
-        uint256 _spenderID
-    ) internal view returns (uint256) {
+    function getAllowance(uint256 _templateID, uint256 _ownerID, uint256 _spenderID) internal view returns (uint256) {
         QueryCondition[] memory query = new QueryCondition[](4);
         query[0] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Tag"]), abi.encode("Allowance"));
         query[1] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Template"]), abi.encode(_templateID));
@@ -656,13 +629,7 @@ library GameLib {
         return count;
     }
 
-    function getGameParameter(
-        string memory _subject,
-        string memory _object,
-        string memory _componentName,
-        string memory _functionName,
-        uint256 _level
-    ) internal view returns (uint256) {
+    function getGameParameter(string memory _subject, string memory _object, string memory _componentName, string memory _functionName, uint256 _level) internal view returns (uint256) {
         string memory identifier = string(abi.encodePacked(_subject, "-", _object, "-", _componentName, "-", _functionName, "-", Strings.toString(_level)));
         uint256[] memory res = ECSLib.getStringComponent("Tag").getEntitiesWithValue(identifier);
         // require(res.length <= 1, string(abi.encodePacked("CURIO: Constant with Tag=", identifier, " duplicated")));
@@ -788,11 +755,7 @@ library GameLib {
         return res.length == 1 ? res[0] : 0;
     }
 
-    function getDelegations(
-        string memory _functionName,
-        uint256 _ownerID,
-        uint256 _callerID
-    ) internal view returns (uint256[] memory) {
+    function getDelegations(string memory _functionName, uint256 _ownerID, uint256 _callerID) internal view returns (uint256[] memory) {
         QueryCondition[] memory query = new QueryCondition[](4);
         query[0] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Tag"]), abi.encode("Delegation"));
         query[1] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["FunctionName"]), abi.encode(_functionName));
@@ -943,12 +906,7 @@ library GameLib {
         require(gs().isGameFunction[_functionName], "CURIO: Game function does not exist");
     }
 
-    function nationDelegationCheck(
-        string memory _functionName,
-        uint256 _ownerID,
-        uint256 _callerID,
-        uint256 _subjectID
-    ) internal view {
+    function nationDelegationCheck(string memory _functionName, uint256 _ownerID, uint256 _callerID, uint256 _subjectID) internal view {
         uint256[] memory delegationIDs = getDelegations(_functionName, _ownerID, _callerID);
         for (uint256 i = 0; i < delegationIDs.length; i++) {
             uint256 subjectID = ECSLib.getUint("Subject", delegationIDs[i]);
@@ -957,11 +915,7 @@ library GameLib {
         revert(string.concat("CURIO: Not delegated to call ", _functionName));
     }
 
-    function treatyApprovalCheck(
-        string memory _functionName,
-        uint256 _nationID,
-        bytes memory _encodedParams
-    ) internal {
+    function treatyApprovalCheck(string memory _functionName, uint256 _nationID, bytes memory _encodedParams) internal {
         address[] memory treatyAddresses = getSignedTreatyAddresses(_nationID);
         for (uint256 i; i < treatyAddresses.length; i++) {
             (bool success, bytes memory data) = treatyAddresses[i].call(abi.encodeWithSignature(string.concat("approve", _functionName, "(uint256,bytes)"), _nationID, _encodedParams));
@@ -974,7 +928,6 @@ library GameLib {
     // ----------------------------------------------------------
     // UTILITY FUNCTIONS
     // ----------------------------------------------------------
-
     function inBound(Position memory _p) internal view returns (bool) {
         return _p.x >= 0 && _p.x < gs().worldConstants.worldWidth && _p.y >= 0 && _p.y < gs().worldConstants.worldHeight;
     }
@@ -1038,11 +991,7 @@ library GameLib {
 
     // Note: The current version treats a diagonal movement as two movements.
     // For treating as one, use `xDist <= _dist && yDist <= _dist` as return condition.
-    function withinDistance(
-        Position memory _p1,
-        Position memory _p2,
-        uint256 _dist
-    ) internal pure returns (bool) {
+    function withinDistance(Position memory _p1, Position memory _p2, uint256 _dist) internal pure returns (bool) {
         uint256 xDist = _p1.x >= _p2.x ? _p1.x - _p2.x : _p2.x - _p1.x;
         uint256 yDist = _p1.y >= _p2.y ? _p1.y - _p2.y : _p2.y - _p1.y;
         return (xDist + yDist) <= _dist;
@@ -1071,7 +1020,7 @@ library GameLib {
         uint256 a = _p2.x >= _p1.x ? _p2.x - _p1.x : _p1.x - _p2.x;
         uint256 b = _p2.y >= _p1.y ? _p2.y - _p1.y : _p1.y - _p2.y;
 
-        return sqrt(a**2 + b**2);
+        return sqrt(a ** 2 + b ** 2);
     }
 
     function sum(uint256[] memory _arr) internal pure returns (uint256) {
