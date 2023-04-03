@@ -9,16 +9,7 @@ import 'hardhat-preprocessor';
 require('dotenv').config();
 
 // tasks
-import './tasks/port';
-import './tasks/deploy';
-import './tasks/loadTest';
-import './tasks/unlockTiles';
-import './tasks/whitelistPlayer';
-import './tasks/setGameParameter';
-import './tasks/removeIdlePlayers';
-import './tasks/addTreatyTemplate';
-import './tasks/stopGame';
-import './tasks/upgradeFacet';
+import './tasks/deploy_legacy';
 
 // to get the file size of each smart contract, run:
 // yarn run hardhat size-contracts

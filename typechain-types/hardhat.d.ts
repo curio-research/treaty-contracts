@@ -17,6 +17,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Component__factory>;
     getContractFactory(
+      name: "Game",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.Game__factory>;
+    getContractFactory(
       name: "Diamond",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Diamond__factory>;
@@ -76,6 +80,10 @@ declare module "hardhat/types/runtime" {
       name: "LibDiamond",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.LibDiamond__factory>;
+    getContractFactory(
+      name: "GameItem",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.GameItem__factory>;
     getContractFactory(
       name: "Set",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -177,6 +185,34 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ERC721__factory>;
     getContractFactory(
+      name: "IERC721Metadata",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IERC721Metadata__factory>;
+    getContractFactory(
+      name: "IERC721",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IERC721__factory>;
+    getContractFactory(
+      name: "IERC721Receiver",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IERC721Receiver__factory>;
+    getContractFactory(
+      name: "ERC165",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ERC165__factory>;
+    getContractFactory(
+      name: "IERC165",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IERC165__factory>;
+    getContractFactory(
+      name: "ERC20",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ERC20__factory>;
+    getContractFactory(
+      name: "ERC721",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ERC721__factory>;
+    getContractFactory(
       name: "ERC721TokenReceiver",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ERC721TokenReceiver__factory>;
@@ -186,6 +222,11 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.Component>;
+    getContractAt(
+      name: "Game",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.Game>;
     getContractAt(
       name: "Diamond",
       address: string,
@@ -261,6 +302,11 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.LibDiamond>;
+    getContractAt(
+      name: "GameItem",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.GameItem>;
     getContractAt(
       name: "Set",
       address: string,
@@ -381,6 +427,41 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.Curio>;
+    getContractAt(
+      name: "ERC721",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ERC721>;
+    getContractAt(
+      name: "IERC721Metadata",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IERC721Metadata>;
+    getContractAt(
+      name: "IERC721",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IERC721>;
+    getContractAt(
+      name: "IERC721Receiver",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IERC721Receiver>;
+    getContractAt(
+      name: "ERC165",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ERC165>;
+    getContractAt(
+      name: "IERC165",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IERC165>;
+    getContractAt(
+      name: "ERC20",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ERC20>;
     getContractAt(
       name: "ERC721",
       address: string,

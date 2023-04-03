@@ -3100,7 +3100,7 @@ const _abi = [
     stateMutability: "pure",
     type: "function",
   },
-] as const;
+];
 
 export class Curio__factory {
   static readonly abi = _abi;

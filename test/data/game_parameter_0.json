@@ -1,8 +1,0 @@
-{
-    "componentName": "Size",
-    "functionName": "initializeTile",
-    "level": 0,
-    "object": "Tile",
-    "subject": "InnerLayer",
-    "value": 1920
-}
