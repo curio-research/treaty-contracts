@@ -17,9 +17,24 @@ task('deploy', 'deploy contracts')
     try {
       await hre.run('compile');
 
-      const [signer1] = await hre.ethers.getSigners();
+      const [signer1, signer2] = await hre.ethers.getSigners();
 
       const gameItemNFT = await deployProxy<GameItem>('GameItem', signer1, hre, []);
+
+      const tokenId = 1;
+
+      // mint NFT #1 to signer 1
+      await gameItemNFT.mint(tokenId);
+
+      // transfer ownership from signer 1 to signer 2
+      await gameItemNFT.transferFrom(signer1.address, signer2.address, tokenId);
+
+      //   localhost: {
+      //     rpcUrl: 'http://127.0.0.1:8545/',
+      //     wsRpcUrl: 'ws://localhost:8545',
+      //     id: 31337,
+      //     gasLimit: 3_000_000_000,
+      //   },
 
       console.log('NFT address: ', gameItemNFT.address);
     } catch (err) {
