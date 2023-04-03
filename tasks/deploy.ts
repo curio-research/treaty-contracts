@@ -1,8 +1,7 @@
-import chalk from 'chalk';
+import { GameItem } from './../typechain-types/contracts/NFT.sol/GameItem';
 import { task } from 'hardhat/config';
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
-// import { printDivider } from './util/deployHelper';
-// import { DeployArgs } from './util/types';
+import { deployProxy } from '../util/deployHelper';
 
 /**
  * Deploy script for publishing games
@@ -18,7 +17,11 @@ task('deploy', 'deploy contracts')
     try {
       await hre.run('compile');
 
-      //   printDivider();
+      const [signer1] = await hre.ethers.getSigners();
+
+      const gameItemNFT = await deployProxy<GameItem>('GameItem', signer1, hre, []);
+
+      console.log('NFT address: ', gameItemNFT.address);
     } catch (err) {
       console.log(err);
     }

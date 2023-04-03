@@ -9,7 +9,7 @@ import 'hardhat-preprocessor';
 require('dotenv').config();
 
 // tasks
-import './tasks/deploy_legacy';
+import './tasks/deploy';
 
 // to get the file size of each smart contract, run:
 // yarn run hardhat size-contracts
