@@ -1,3 +1,5 @@
+import { GameItem__factory } from './../typechain-types/factories/contracts/NFT.sol/GameItem__factory';
+import { Contract } from 'ethers';
 import { GameItem } from './../typechain-types/contracts/NFT.sol/GameItem';
 import { task } from 'hardhat/config';
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
@@ -19,25 +21,27 @@ task('deploy', 'deploy contracts')
 
       const [signer1, signer2] = await hre.ethers.getSigners();
 
+      // deploy NFT on L1
       const gameItemNFT = await deployProxy<GameItem>('GameItem', signer1, hre, []);
-
-      const tokenId = 1;
-
-      // mint NFT #1 to signer 1
-      await gameItemNFT.mint(tokenId);
-
-      // transfer ownership from signer 1 to signer 2
-      await gameItemNFT.transferFrom(signer1.address, signer2.address, tokenId);
-
-      //   localhost: {
-      //     rpcUrl: 'http://127.0.0.1:8545/',
-      //     wsRpcUrl: 'ws://localhost:8545',
-      //     id: 31337,
-      //     gasLimit: 3_000_000_000,
-      //   },
 
       console.log('NFT address: ', gameItemNFT.address);
     } catch (err) {
       console.log(err);
     }
   });
+
+task('simulate', 'simulate-nft').setAction(async (args: any, hre: HardhatRuntimeEnvironment) => {
+  const [signer1, signer2] = await hre.ethers.getSigners();
+
+  const nftAddress = '0x5FbDB2315678afecb367f032d93F642f64180aa3';
+
+  const gameItemNFT = GameItem__factory.connect(nftAddress, signer1);
+
+  const tokenId = 1;
+  // mint NFT
+
+  await gameItemNFT.mint(tokenId);
+
+  // transfer ownership from signer 1 to signer 2
+  await gameItemNFT.transferFrom(signer1.address, signer2.address, tokenId);
+});

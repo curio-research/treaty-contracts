@@ -64,6 +64,12 @@ export default {
       //   interval: 200,
       // },
     },
+    anvil2: {
+      url: 'http://localhost:8546',
+      chainId: 31337,
+      allowUnlimitedContractSize: true,
+      blockGasLimit: 300_000_000_000_000,
+    },
   },
 
   paths: {
