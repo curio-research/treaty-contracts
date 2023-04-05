@@ -24,7 +24,8 @@ contract NftTest is Test {
         vm.prank(admin1);
         nft.mint(user1, 1);
 
-        // check for balankce
+        // check for balance and ownership
+        assertEq(nft.ownerOf(0), user1);
         assertEq(nft.balanceOf(user1), 1);
 
         // owner1 shouldn't be able to call mint
@@ -38,8 +39,11 @@ contract NftTest is Test {
         assertEq(nft.isAdmin(admin2), true);
 
         // give user 2 some NFTs
+        uint256 mintAmount = 10;
         vm.prank(admin2);
-        nft.mint(user2, 10);
-        assertEq(nft.balanceOf(user2), 10);
+        nft.mint(user2, mintAmount);
+        assertEq(nft.balanceOf(user2), mintAmount);
+        assertEq(nft.ownerOf(1), user2);
+        assertEq(nft.ownerOf(mintAmount), user2);
     }
 }

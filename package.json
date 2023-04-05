@@ -5,9 +5,6 @@
   "scripts": {
     "prepare": "bash ./scripts/pnm-test-setup.sh",
     "contract-size": "yarn run hardhat size-contracts",
-    "getInitParams": "npx ts-node test/util/foundry/getInitParams.ts",
-    "getFuncSelectors": "npx ts-node test/util/foundry/getFuncSelectors.ts",
-    "forge-test": "forge test --ffi -vv",
     "ft": "forge test --ffi -vv",
     "deploy": "npx hardhat deploy --network localhost",
     "port": "npx hardhat port",

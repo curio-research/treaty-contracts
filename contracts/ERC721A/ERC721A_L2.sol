@@ -111,10 +111,10 @@ contract ERC721AL2 is IERC721A {
     // =============================================================
 
     // The next token ID to be minted.
-    uint256 private _currentIndex;
+    uint256 public _currentIndex;
 
     // The number of tokens burned.
-    uint256 private _burnCounter;
+    uint256 public _burnCounter;
 
     // Token name
     string private _name;
@@ -745,6 +745,7 @@ contract ERC721AL2 is IERC721A {
      */
     function _mint(address to, uint256 quantity) internal virtual {
         uint256 startTokenId = _currentIndex;
+
         if (quantity == 0) revert MintZeroQuantity();
 
         _beforeTokenTransfers(address(0), to, startTokenId, quantity);

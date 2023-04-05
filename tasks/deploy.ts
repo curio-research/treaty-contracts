@@ -40,26 +40,9 @@ task('simulate', 'simulate-nft').setAction(async (args: any, hre: HardhatRuntime
   // deploy NFT on L2
   const gameItemNFT = L2NFT__factory.connect(nftAddress, signer1);
 
-  const tokenId = 1;
-
-  await gameItemNFT.mint(tokenId);
+  // mint to a user
+  await gameItemNFT.mint(signer1.address, 1);
 
   // transfer ownership from signer 1 to signer 2
-  await gameItemNFT.transferFrom(signer1.address, signer2.address, tokenId);
-});
-
-task('L1 ownership', '').setAction(async (args: any, hre: HardhatRuntimeEnvironment) => {
-  try {
-    //
-
-    // initialize L2 NFT
-    await hre.run('compile');
-
-    const [signer1, signer2] = await hre.ethers.getSigners();
-
-    // create L2 NFT contract. This one doesn't have any permission checks
-    const L2NFT = await deployProxy<L2NFT>('L2NFT', signer1, hre, []);
-  } catch (err) {
-    console.log(err);
-  }
+  await gameItemNFT.transferFrom(signer1.address, signer2.address, 1);
 });
