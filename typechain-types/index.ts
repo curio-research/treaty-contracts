@@ -3,11 +3,23 @@
 /* eslint-disable */
 import type * as contracts from "./contracts";
 export type { contracts };
+import type * as erc721A from "./erc721a";
+export type { erc721A };
 import type * as lib from "./lib";
 export type { lib };
 export * as factories from "./factories";
-export type { GameItem } from "./contracts/NFT.sol/GameItem";
-export { GameItem__factory } from "./factories/contracts/NFT.sol/GameItem__factory";
+export type { ERC721A__IERC721Receiver } from "./contracts/ERC721A/ERC721A_L2.sol/ERC721A__IERC721Receiver";
+export { ERC721A__IERC721Receiver__factory } from "./factories/contracts/ERC721A/ERC721A_L2.sol/ERC721A__IERC721Receiver__factory";
+export type { ERC721AL2 } from "./contracts/ERC721A/ERC721A_L2.sol/ERC721AL2";
+export { ERC721AL2__factory } from "./factories/contracts/ERC721A/ERC721A_L2.sol/ERC721AL2__factory";
+export type { ERC721A } from "./contracts/ERC721A/ERC721A.sol/ERC721A";
+export { ERC721A__factory } from "./factories/contracts/ERC721A/ERC721A.sol/ERC721A__factory";
+export type { IERC721A } from "./contracts/ERC721A/IERC721A";
+export { IERC721A__factory } from "./factories/contracts/ERC721A/IERC721A__factory";
+export type { L1NFT } from "./contracts/L1NFT";
+export { L1NFT__factory } from "./factories/contracts/L1NFT__factory";
+export type { L2NFT } from "./contracts/L2NFT";
+export { L2NFT__factory } from "./factories/contracts/L2NFT__factory";
 export type { ERC721 } from "./lib/openzeppelin-contracts/contracts/token/ERC721/ERC721";
 export { ERC721__factory } from "./factories/lib/openzeppelin-contracts/contracts/token/ERC721/ERC721__factory";
 export type { IERC721Metadata } from "./lib/openzeppelin-contracts/contracts/token/ERC721/extensions/IERC721Metadata";

@@ -1,9 +1,11 @@
+import { L2NFT__factory } from './../typechain-types/factories/contracts/L2NFT__factory';
+import { L1NFT } from './../typechain-types/contracts/L1NFT';
 import { GameItem__factory } from './../typechain-types/factories/contracts/NFT.sol/GameItem__factory';
-import { Contract } from 'ethers';
 import { GameItem } from './../typechain-types/contracts/NFT.sol/GameItem';
 import { task } from 'hardhat/config';
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { deployProxy } from '../util/deployHelper';
+import { L2NFT } from '../typechain-types/contracts/L2NFT';
 
 /**
  * Deploy script for publishing games
@@ -22,9 +24,9 @@ task('deploy', 'deploy contracts')
       const [signer1, signer2] = await hre.ethers.getSigners();
 
       // deploy NFT on L1
-      const gameItemNFT = await deployProxy<GameItem>('GameItem', signer1, hre, []);
+      const L1NFT = await deployProxy<L1NFT>('L1NFT', signer1, hre, []);
 
-      console.log('NFT address: ', gameItemNFT.address);
+      console.log('NFT address: ', L1NFT.address);
     } catch (err) {
       console.log(err);
     }
@@ -35,13 +37,29 @@ task('simulate', 'simulate-nft').setAction(async (args: any, hre: HardhatRuntime
 
   const nftAddress = '0x5FbDB2315678afecb367f032d93F642f64180aa3';
 
-  const gameItemNFT = GameItem__factory.connect(nftAddress, signer1);
+  // deploy NFT on L2
+  const gameItemNFT = L2NFT__factory.connect(nftAddress, signer1);
 
   const tokenId = 1;
-  // mint NFT
 
   await gameItemNFT.mint(tokenId);
 
   // transfer ownership from signer 1 to signer 2
   await gameItemNFT.transferFrom(signer1.address, signer2.address, tokenId);
+});
+
+task('L1 ownership', '').setAction(async (args: any, hre: HardhatRuntimeEnvironment) => {
+  try {
+    //
+
+    // initialize L2 NFT
+    await hre.run('compile');
+
+    const [signer1, signer2] = await hre.ethers.getSigners();
+
+    // create L2 NFT contract. This one doesn't have any permission checks
+    const L2NFT = await deployProxy<L2NFT>('L2NFT', signer1, hre, []);
+  } catch (err) {
+    console.log(err);
+  }
 });
