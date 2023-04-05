@@ -9,8 +9,16 @@ contract L2NFT is ERC721AL2 {
         // the deployer of the contract is set to automatically be an admin
     }
 
+    // key events to disable ownership checks for:
+    // safeTransferFrom (done)
+    // transferFrom (done)
+    // mint (done)
+    // burn (?)
+
     // this can only be called using an admin
-    function mint(uint256 _tokenId, address _owner) public {
-        _safeMint(_owner, _tokenId);
+    function mint(address _owner, uint256 _quantity) public {
+        _safeMint(_owner, _quantity);
     }
+
+    // trnasfer
 }
