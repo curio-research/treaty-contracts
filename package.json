@@ -40,7 +40,7 @@
     "dotenv": "^16.0.0",
     "erc721a": "^4.2.3",
     "eth-heap": "^2.2.0",
-    "ethers": "^5.7.1",
+    "ethers": "5.7.1",
     "fs-extra": "^10.1.0",
     "hardhat": "^2.11.2",
     "hardhat-diamond-abi": "^2.0.0",

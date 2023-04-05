@@ -38,7 +38,7 @@ contract NftTest is Test {
         nft.setAdminPermission(admin2);
         assertEq(nft.isAdmin(admin2), true);
 
-        // give user 2 some NFTs
+        // give user 2 NFTs
         uint256 mintAmount = 10;
         vm.prank(admin2);
         nft.mint(user2, mintAmount);

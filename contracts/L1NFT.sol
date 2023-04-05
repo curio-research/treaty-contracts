@@ -7,7 +7,7 @@ import "./ERC721A/ERC721A.sol";
 contract L1NFT is ERC721A {
     constructor() ERC721A("L1Treaty", "TREATY") {}
 
-    function mint() external payable {
-        _mint(msg.sender, 1);
+    function mint(uint256 _quantity) public {
+        _safeMint(msg.sender, _quantity);
     }
 }
