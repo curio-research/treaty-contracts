@@ -1,47 +1,69 @@
-import { GameItem__factory } from './../typechain-types/factories/contracts/NFT.sol/GameItem__factory';
-import { Contract } from 'ethers';
-import { GameItem } from './../typechain-types/contracts/NFT.sol/GameItem';
+import { L1NFT__factory } from './../typechain-types/factories/L1NFT__factory';
+import { L2NFT } from './../typechain-types/L2NFT';
+import { L1NFT } from './../typechain-types/L1NFT';
 import { task } from 'hardhat/config';
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { deployProxy } from '../util/deployHelper';
+import fs from 'fs';
+import chalk from 'chalk';
 
-/**
- * Deploy script for publishing games
- *
- * Examples:
- * `yarn deploy:anvil`: starts Anvil instance + deploys a single game
- * `npx hardhat deploy`: deploys game on localhost
- * `npx hardhat deploy --network <network-name>`: deploy game on a specific non-localhost network
- */
+interface NFTPair {
+  L1NFT: string;
+  L2NFT: string;
+}
+
+const L1RPC = 'http://localhost:8545';
+const L2RPC = 'http://localhost:8546';
+
 task('deploy', 'deploy contracts')
   .addOptionalParam('port', 'Port contract abis and game info to Vault') // default is to call port
+  .addOptionalParam('l1', 'L1 network name') // default is to call port
+  .addOptionalParam('l2', 'l2 network name') // default is to call port
   .setAction(async (args: any, hre: HardhatRuntimeEnvironment) => {
     try {
       await hre.run('compile');
 
-      const [signer1, signer2] = await hre.ethers.getSigners();
+      // TODO: make sure those 2 network RPCs are live
+      const L1Provider = new hre.ethers.providers.JsonRpcProvider(L1RPC);
+      const L2Provider = new hre.ethers.providers.JsonRpcProvider(L2RPC);
+
+      // use same admin private key for both chains
+      const L1DeployerSigner = new hre.ethers.Wallet(process.env.ADMIN_PK || '', L1Provider);
+      const L2DeployerSigner = new hre.ethers.Wallet(process.env.ADMIN_PK || '', L2Provider);
 
       // deploy NFT on L1
-      const gameItemNFT = await deployProxy<GameItem>('GameItem', signer1, hre, []);
+      const L1NFT = await deployProxy<L1NFT>('L1NFT', L1DeployerSigner, hre, []);
 
-      console.log('NFT address: ', gameItemNFT.address);
+      // deploy NFT on L2
+      const L2NFT = await deployProxy<L2NFT>('L2NFT', L2DeployerSigner, hre, []);
+
+      const nfts: NFTPair = {
+        L1NFT: L1NFT.address,
+        L2NFT: L2NFT.address,
+      };
+
+      // write the latest deployed NFT addresses into a file
+      // when running simulate, it will use the latest deployed addresses from this file
+      fs.writeFileSync('./RecentNFTPair.json', JSON.stringify(nfts));
     } catch (err) {
       console.log(err);
     }
   });
 
-task('simulate', 'simulate-nft').setAction(async (args: any, hre: HardhatRuntimeEnvironment) => {
+// simulate from L1
+task('simulate', 'simulate nft minting').setAction(async (args: any, hre: HardhatRuntimeEnvironment) => {
   const [signer1, signer2] = await hre.ethers.getSigners();
 
-  const nftAddress = '0x5FbDB2315678afecb367f032d93F642f64180aa3';
+  const myStructFromFile: NFTPair = JSON.parse(fs.readFileSync('./RecentNFTPair.json', 'utf-8'));
 
-  const gameItemNFT = GameItem__factory.connect(nftAddress, signer1);
+  const L1NFT = L1NFT__factory.connect(myStructFromFile.L1NFT, signer1);
 
-  const tokenId = 1;
-  // mint NFT
-
-  await gameItemNFT.mint(tokenId);
+  // mint NFT to a user
+  await L1NFT.mint(1);
 
   // transfer ownership from signer 1 to signer 2
-  await gameItemNFT.transferFrom(signer1.address, signer2.address, tokenId);
+  const tokenId = (await L1NFT._currentIndex()).toNumber();
+  await L1NFT.transferFrom(signer1.address, signer2.address, tokenId - 1);
+
+  console.log(chalk.dim('Simulation complete'));
 });

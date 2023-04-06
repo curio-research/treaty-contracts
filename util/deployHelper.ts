@@ -5,12 +5,14 @@ import { FactoryOptions, HardhatRuntimeEnvironment } from 'hardhat/types';
 
 export const deployProxy = async <C extends Contract>(contractName: string, signer: Signer, hre: HardhatRuntimeEnvironment, contractArgs: unknown[], libs?: FactoryOptions['libraries']): Promise<C> => {
   const factory = await hre.ethers.getContractFactory(contractName, libs ? { libraries: libs } : signer);
+
+  // TODO: add back gas limits for each blockchain
   //   const gasLimit = chainInfo[hre.network.name].gasLimit;
   const contract = await factory.deploy(...contractArgs);
 
-  await confirmTx(contract.deployTransaction, hre);
+  await confirmTx(contract.deploymentTransaction, hre);
 
-  console.log(chalk.dim(`✦ ${contractName}: `, contract.address));
+  console.log(chalk.bgGreen(`-> ${contractName}:`), contract.address);
 
   return contract as C;
 };
