@@ -10,6 +10,8 @@
     "port": "npx hardhat port",
     "kill": "lsof -ti:8545 | xargs kill",
     "setup": "yarn link curio-vault",
+    "anvil1": "anvil",
+    "anvil2": "anvil -p 8546",
     "deploy:anvil": "bash ./scripts/deploy.sh",
     "deploy:nft": "bash ./scripts/nft.sh",
     "compile": "npx hardhat compile",

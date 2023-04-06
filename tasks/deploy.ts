@@ -5,6 +5,7 @@ import { task } from 'hardhat/config';
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { deployProxy } from '../util/deployHelper';
 import fs from 'fs';
+import chalk from 'chalk';
 
 interface NFTPair {
   L1NFT: string;
@@ -44,9 +45,9 @@ task('deploy', 'deploy contracts')
         L2NFT: L2NFT.address,
       };
 
+      // write the latest deployed NFT addresses into a file
+      // when running simulate, it will use the latest deployed addresses from this file
       fs.writeFileSync('./RecentNFTPair.json', JSON.stringify(nfts));
-
-      // write the latest deployed NFT addresses into a file so the other task can use it
     } catch (err) {
       console.log(err);
     }
@@ -60,9 +61,12 @@ task('simulate', 'simulate nft minting').setAction(async (args: any, hre: Hardha
 
   const L1NFT = L1NFT__factory.connect(myStructFromFile.L1NFT, signer1);
 
-  // mint to a user
+  // mint NFT to a user
   await L1NFT.mint(1);
 
   // transfer ownership from signer 1 to signer 2
-  await L1NFT.transferFrom(signer1.address, signer2.address, 1);
+  const tokenId = (await L1NFT._currentIndex()).toNumber();
+  await L1NFT.transferFrom(signer1.address, signer2.address, tokenId - 1);
+
+  console.log(chalk.dim('Simulation complete'));
 });

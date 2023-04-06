@@ -10,7 +10,12 @@ import "./IERC721A.sol";
  * @dev Interface of ERC721 token receiver.
  */
 interface ERC721A__IERC721Receiver {
-    function onERC721Received(address operator, address from, uint256 tokenId, bytes calldata data) external returns (bytes4);
+    function onERC721Received(
+        address operator,
+        address from,
+        uint256 tokenId,
+        bytes calldata data
+    ) external returns (bytes4);
 }
 
 /**
@@ -89,10 +94,10 @@ contract ERC721A is IERC721A {
     // =============================================================
 
     // The next token ID to be minted.
-    uint256 private _currentIndex;
+    uint256 public _currentIndex;
 
     // The number of tokens burned.
-    uint256 private _burnCounter;
+    uint256 public _burnCounter;
 
     // Token name
     string private _name;
@@ -483,7 +488,11 @@ contract ERC721A is IERC721A {
     /**
      * @dev Returns whether `msgSender` is equal to `approvedAddress` or `owner`.
      */
-    function _isSenderApprovedOrOwner(address approvedAddress, address owner, address msgSender) private pure returns (bool result) {
+    function _isSenderApprovedOrOwner(
+        address approvedAddress,
+        address owner,
+        address msgSender
+    ) private pure returns (bool result) {
         assembly {
             // Mask `owner` to the lower 160 bits, in case the upper bits somehow aren't clean.
             owner := and(owner, _BITMASK_ADDRESS)
@@ -523,7 +532,11 @@ contract ERC721A is IERC721A {
      *
      * Emits a {Transfer} event.
      */
-    function transferFrom(address from, address to, uint256 tokenId) public payable virtual override {
+    function transferFrom(
+        address from,
+        address to,
+        uint256 tokenId
+    ) public payable virtual override {
         uint256 prevOwnershipPacked = _packedOwnershipOf(tokenId);
 
         if (address(uint160(prevOwnershipPacked)) != from) revert TransferFromIncorrectOwner();
@@ -582,7 +595,11 @@ contract ERC721A is IERC721A {
     /**
      * @dev Equivalent to `safeTransferFrom(from, to, tokenId, '')`.
      */
-    function safeTransferFrom(address from, address to, uint256 tokenId) public payable virtual override {
+    function safeTransferFrom(
+        address from,
+        address to,
+        uint256 tokenId
+    ) public payable virtual override {
         safeTransferFrom(from, to, tokenId, "");
     }
 
@@ -601,7 +618,12 @@ contract ERC721A is IERC721A {
      *
      * Emits a {Transfer} event.
      */
-    function safeTransferFrom(address from, address to, uint256 tokenId, bytes memory _data) public payable virtual override {
+    function safeTransferFrom(
+        address from,
+        address to,
+        uint256 tokenId,
+        bytes memory _data
+    ) public payable virtual override {
         transferFrom(from, to, tokenId);
         if (to.code.length != 0)
             if (!_checkContractOnERC721Received(from, to, tokenId, _data)) {
@@ -625,7 +647,12 @@ contract ERC721A is IERC721A {
      * - When `to` is zero, `tokenId` will be burned by `from`.
      * - `from` and `to` are never both zero.
      */
-    function _beforeTokenTransfers(address from, address to, uint256 startTokenId, uint256 quantity) internal virtual {}
+    function _beforeTokenTransfers(
+        address from,
+        address to,
+        uint256 startTokenId,
+        uint256 quantity
+    ) internal virtual {}
 
     /**
      * @dev Hook that is called after a set of serially-ordered token IDs
@@ -643,7 +670,12 @@ contract ERC721A is IERC721A {
      * - When `to` is zero, `tokenId` has been burned by `from`.
      * - `from` and `to` are never both zero.
      */
-    function _afterTokenTransfers(address from, address to, uint256 startTokenId, uint256 quantity) internal virtual {}
+    function _afterTokenTransfers(
+        address from,
+        address to,
+        uint256 startTokenId,
+        uint256 quantity
+    ) internal virtual {}
 
     /**
      * @dev Private function to invoke {IERC721Receiver-onERC721Received} on a target contract.
@@ -655,7 +687,12 @@ contract ERC721A is IERC721A {
      *
      * Returns whether the call correctly returned the expected magic value.
      */
-    function _checkContractOnERC721Received(address from, address to, uint256 tokenId, bytes memory _data) private returns (bool) {
+    function _checkContractOnERC721Received(
+        address from,
+        address to,
+        uint256 tokenId,
+        bytes memory _data
+    ) private returns (bool) {
         try ERC721A__IERC721Receiver(to).onERC721Received(_msgSenderERC721A(), from, tokenId, _data) returns (bytes4 retval) {
             return retval == ERC721A__IERC721Receiver(to).onERC721Received.selector;
         } catch (bytes memory reason) {
@@ -811,7 +848,11 @@ contract ERC721A is IERC721A {
      *
      * Emits a {Transfer} event for each mint.
      */
-    function _safeMint(address to, uint256 quantity, bytes memory _data) internal virtual {
+    function _safeMint(
+        address to,
+        uint256 quantity,
+        bytes memory _data
+    ) internal virtual {
         _mint(to, quantity);
 
         unchecked {
@@ -955,13 +996,21 @@ contract ERC721A is IERC721A {
      * - When `to` is zero, `tokenId` will be burned by `from`.
      * - `from` and `to` are never both zero.
      */
-    function _extraData(address from, address to, uint24 previousExtraData) internal view virtual returns (uint24) {}
+    function _extraData(
+        address from,
+        address to,
+        uint24 previousExtraData
+    ) internal view virtual returns (uint24) {}
 
     /**
      * @dev Returns the next extra data for the packed ownership data.
      * The returned result is shifted into position.
      */
-    function _nextExtraData(address from, address to, uint256 prevOwnershipPacked) private view returns (uint256) {
+    function _nextExtraData(
+        address from,
+        address to,
+        uint256 prevOwnershipPacked
+    ) private view returns (uint256) {
         uint24 extraData = uint24(prevOwnershipPacked >> _BITPOS_EXTRA_DATA);
         return uint256(_extraData(from, to, extraData)) << _BITPOS_EXTRA_DATA;
     }

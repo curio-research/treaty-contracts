@@ -30,6 +30,8 @@ import type {
 
 export interface ERC721AInterface extends utils.Interface {
   functions: {
+    "_burnCounter()": FunctionFragment;
+    "_currentIndex()": FunctionFragment;
     "approve(address,uint256)": FunctionFragment;
     "balanceOf(address)": FunctionFragment;
     "getApproved(uint256)": FunctionFragment;
@@ -48,6 +50,8 @@ export interface ERC721AInterface extends utils.Interface {
 
   getFunction(
     nameOrSignatureOrTopic:
+      | "_burnCounter"
+      | "_currentIndex"
       | "approve"
       | "balanceOf"
       | "getApproved"
@@ -64,6 +68,14 @@ export interface ERC721AInterface extends utils.Interface {
       | "transferFrom"
   ): FunctionFragment;
 
+  encodeFunctionData(
+    functionFragment: "_burnCounter",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "_currentIndex",
+    values?: undefined
+  ): string;
   encodeFunctionData(
     functionFragment: "approve",
     values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
@@ -128,6 +140,14 @@ export interface ERC721AInterface extends utils.Interface {
     ]
   ): string;
 
+  decodeFunctionResult(
+    functionFragment: "_burnCounter",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "_currentIndex",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "approve", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
   decodeFunctionResult(
@@ -257,6 +277,10 @@ export interface ERC721A extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    _burnCounter(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    _currentIndex(overrides?: CallOverrides): Promise<[BigNumber]>;
+
     approve(
       to: PromiseOrValue<string>,
       tokenId: PromiseOrValue<BigNumberish>,
@@ -328,6 +352,10 @@ export interface ERC721A extends BaseContract {
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
   };
+
+  _burnCounter(overrides?: CallOverrides): Promise<BigNumber>;
+
+  _currentIndex(overrides?: CallOverrides): Promise<BigNumber>;
 
   approve(
     to: PromiseOrValue<string>,
@@ -401,6 +429,10 @@ export interface ERC721A extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
+    _burnCounter(overrides?: CallOverrides): Promise<BigNumber>;
+
+    _currentIndex(overrides?: CallOverrides): Promise<BigNumber>;
+
     approve(
       to: PromiseOrValue<string>,
       tokenId: PromiseOrValue<BigNumberish>,
@@ -522,6 +554,10 @@ export interface ERC721A extends BaseContract {
   };
 
   estimateGas: {
+    _burnCounter(overrides?: CallOverrides): Promise<BigNumber>;
+
+    _currentIndex(overrides?: CallOverrides): Promise<BigNumber>;
+
     approve(
       to: PromiseOrValue<string>,
       tokenId: PromiseOrValue<BigNumberish>,
@@ -595,6 +631,10 @@ export interface ERC721A extends BaseContract {
   };
 
   populateTransaction: {
+    _burnCounter(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    _currentIndex(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     approve(
       to: PromiseOrValue<string>,
       tokenId: PromiseOrValue<BigNumberish>,
