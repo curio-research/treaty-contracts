@@ -23,10 +23,7 @@ task('deploy', 'deploy contracts')
     try {
       await hre.run('compile');
 
-      const [signer1, signer2] = await hre.ethers.getSigners();
-
       // TODO: make sure those 2 network RPCs are live
-
       const L1Provider = new hre.ethers.providers.JsonRpcProvider(L1RPC);
       const L2Provider = new hre.ethers.providers.JsonRpcProvider(L2RPC);
 
