@@ -74,6 +74,32 @@ describe('Mint', () => {
     expect(tokenOwnerAddress).to.equal(Account2);
   });
 
+  it('Should change ownership from Null to Account 3', async function () {
+    const myStructFromFile: NFTPair = JSON.parse(fs.readFileSync('./RecentNFTPair.json', 'utf-8'));
+
+    const L1Provider = new providers.JsonRpcProvider(L1RPC);
+    const L2Provider = new providers.JsonRpcProvider(L2RPC);
+
+    const L1DeployerSigner = new Wallet(process.env.ADMIN_PK || '', L1Provider);
+    const L2DeployerSigner = new Wallet(process.env.ADMIN_PK || '', L2Provider);
+
+    const L1NFT = new Contract(myStructFromFile.L1NFT, L1NFT_ABI, L1DeployerSigner) as L1NFT;
+    const L2NFT = new Contract(myStructFromFile.L2NFT, L2NFT_ABI, L2DeployerSigner) as L2NFT;
+
+    // mint to account 1
+    await L1NFT.mint(1);
+    const tokenId = (await L1NFT._currentIndex()).toNumber() - 1;
+
+    // transfer from account 1 to account 3
+    await L1NFT.transferFrom(Account1, Account3, tokenId);
+
+    await sleep();
+
+    const tokenOwnerAddress = await L2NFT.ownerOf(tokenId);
+
+    expect(tokenOwnerAddress).to.equal(Account3);
+  });
+
   it('Every token ownership should be equal from L1 to L2', async function () {
     const myStructFromFile: NFTPair = JSON.parse(fs.readFileSync('./RecentNFTPair.json', 'utf-8'));
 
