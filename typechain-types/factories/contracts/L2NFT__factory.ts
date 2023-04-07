@@ -3,8 +3,8 @@
 /* eslint-disable */
 import { Signer, utils, Contract, ContractFactory, Overrides } from "ethers";
 import type { Provider, TransactionRequest } from "@ethersproject/providers";
-import type { PromiseOrValue } from "../common";
-import type { L2NFT, L2NFTInterface } from "../L2NFT";
+import type { PromiseOrValue } from "../../common";
+import type { L2NFT, L2NFTInterface } from "../../contracts/L2NFT";
 
 const _abi = [
   {
@@ -558,8 +558,6 @@ type L2NFTConstructorParams =
 const isSuperArgs = (
   xs: L2NFTConstructorParams
 ): xs is ConstructorParameters<typeof ContractFactory> => xs.length > 1;
-
-export const L2NFT_ABI = _abi
 
 export class L2NFT__factory extends ContractFactory {
   constructor(...args: L2NFTConstructorParams) {
