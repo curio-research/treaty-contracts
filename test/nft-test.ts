@@ -41,6 +41,8 @@ describe('Mint', () => {
     await L1NFT.mint(1);
 
     const tokenId = (await L1NFT._currentIndex()).toNumber() - 1;
+
+    await sleep();
     const tokenOwnerAddress = await L2NFT.ownerOf(tokenId);
 
     expect(tokenOwnerAddress).to.equal(Account1);
