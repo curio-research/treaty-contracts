@@ -6,10 +6,13 @@ import fs from 'fs';
 import { task } from 'hardhat/config';
 import 'hardhat-contract-sizer';
 import 'hardhat-preprocessor';
-require('dotenv').config();
+import dotenv from 'dotenv';
 
 // tasks
 import './tasks/deploy';
+
+// configure dotenv so it can read .env file
+dotenv.config();
 
 // to get the file size of each smart contract, run:
 // yarn run hardhat size-contracts

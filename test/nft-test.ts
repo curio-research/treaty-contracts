@@ -21,6 +21,7 @@ const config = {
   apiKey: 'D3yJ1cYWPCJX4WE2vATcUcyBTaAgEy-A',
   network: Network.ETH_MAINNET,
 };
+
 const alchemy = new Alchemy(config);
 
 const sleep = (t: number = 1000): Promise<void> => {
