@@ -182,13 +182,15 @@ describe('Remote L1 to L2', () => {
 
         console.log('-> batch events', localEvents.length);
 
-        events.concat(localEvents);
+        events = events.concat(localEvents);
       } catch (err) {
         // retry
         console.log('-> fetch error, retry', err);
         i--;
       }
     }
+
+    console.log('-> events', events);
 
     const mintEvents = events.filter((event) => {
       return event.args[0] === '0x0000000000000000000000000000000000000000';
