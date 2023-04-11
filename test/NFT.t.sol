@@ -2,8 +2,8 @@
 
 pragma solidity ^0.8.13;
 
-import {Test} from "forge-std/Test.sol";
-import {console} from "forge-std/console.sol";
+import {Test} from "forge/Test.sol";
+import {console} from "forge/console.sol";
 import "../contracts/L2NFT.sol";
 
 contract NftTest is Test {

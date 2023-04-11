@@ -503,8 +503,6 @@ const isSuperArgs = (
   xs: L1NFTConstructorParams
 ): xs is ConstructorParameters<typeof ContractFactory> => xs.length > 1;
 
-export const L1NFT_ABI = _abi
-
 export class L1NFT__factory extends ContractFactory {
   constructor(...args: L1NFTConstructorParams) {
     if (isSuperArgs(args)) {

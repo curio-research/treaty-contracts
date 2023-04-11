@@ -5,3 +5,4 @@ forge-std/=lib/pnm-contracts/lib/forge-std/src/
 solmate/=lib/solmate/src/
 openzeppelin-contracts/=lib/openzeppelin-contracts/
 contracts/=contracts/
+forge/=lib/forge-std/src

@@ -143,6 +143,7 @@ const sleep = (t: number = 1000): Promise<void> => {
 //   });
 // });
 
+// L1 test
 describe('Remote L1 to L2', () => {
   it('Every token ownership should be equal from L1 to L2', async function () {
     const myStructFromFile: NFTPair = JSON.parse(fs.readFileSync('./RecentNFTPair.json', 'utf-8'));
@@ -156,7 +157,8 @@ describe('Remote L1 to L2', () => {
     const L1DeployerSigner = new Wallet(process.env.ADMIN_PK || '', L1Provider);
     const L2DeployerSigner = new Wallet(process.env.ADMIN_PK || '', L2Provider);
 
-    const L1NFT = new Contract(myStructFromFile.L1NFT, L1NFT_ABI.abi, L1DeployerSigner) as L1NFT;
+    const L1NFTAddress = '0x7c9f47c616f9630b63eecedf4ddae6964a405e47';
+    const L1NFT = new Contract(L1NFTAddress, L1NFT_ABI.abi, L1DeployerSigner) as L1NFT;
     const L2NFT = new Contract(myStructFromFile.L2NFT, L2NFT_ABI.abi, L2DeployerSigner) as L2NFT;
 
     const BlockBatchSize = 500;
@@ -191,14 +193,13 @@ describe('Remote L1 to L2', () => {
       }
     }
 
-    console.log('-> events', events);
-
     const mintEvents = events.filter((event) => {
       return event.args[0] === '0x0000000000000000000000000000000000000000';
     });
 
     const tokenCount = mintEvents.length;
 
+    console.log(`-> token events number: ${events.length}`);
     console.log(`-> token num: ${tokenCount}`);
 
     for (let i = 1; i <= tokenCount; i++) {
