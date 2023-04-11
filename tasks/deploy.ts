@@ -38,7 +38,37 @@ task('deploy', 'deploy contracts')
       const L2NFT = await deployProxy<L2NFT>('L2NFT', L2DeployerSigner, hre, []);
 
       const nfts: NFTPair = {
-        L1NFT: L1NFT.address,
+        // L1NFT: L1NFT.address,
+        L1NFT: '0x7c9f47c616f9630b63eecedf4ddae6964a405e47',
+        L2NFT: L2NFT.address,
+      };
+
+      // write the latest deployed NFT addresses into a file
+      // when running simulate, it will use the latest deployed addresses from this file
+      fs.writeFileSync('./RecentNFTPair.json', JSON.stringify(nfts));
+    } catch (err) {
+      console.log(err);
+    }
+  });
+
+task('deployL2', 'deploy contracts')
+  .addOptionalParam('port', 'Port contract abis and game info to Vault') // default is to call port
+  .addOptionalParam('l1', 'L1 network name') // default is to call port
+  .addOptionalParam('l2', 'l2 network name') // default is to call port
+  .setAction(async (args: any, hre: HardhatRuntimeEnvironment) => {
+    try {
+      await hre.run('compile');
+
+      const myStructFromFile: NFTPair = JSON.parse(fs.readFileSync('./RecentNFTPair.json', 'utf-8'));
+
+      const L2Provider = new hre.ethers.providers.JsonRpcProvider(L2RPC);
+      const L2DeployerSigner = new hre.ethers.Wallet(process.env.ADMIN_PK || '', L2Provider);
+
+      // deploy NFT on L2
+      const L2NFT = await deployProxy<L2NFT>('L2NFT', L2DeployerSigner, hre, []);
+
+      const nfts: NFTPair = {
+        L1NFT: myStructFromFile.L1NFT,
         L2NFT: L2NFT.address,
       };
 
