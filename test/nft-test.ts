@@ -178,14 +178,14 @@ describe('Remote L1 to L2', () => {
 
       try {
         const transferFilter = L1NFT.filters.Transfer(null, null, null);
-        const localEvents = await L1NFT.queryFilter(transferFilter, 17020519);
+        const localEvents = await L1NFT.queryFilter(transferFilter, batchStart, batchEnd);
 
         console.log('-> batch events', localEvents.length);
 
         events.concat(localEvents);
       } catch (err) {
         // retry
-        console.log('-> fetch error, retry');
+        console.log('-> fetch error, retry', err);
         i--;
       }
     }
