@@ -63,8 +63,6 @@ describe('Remote L1 to L2', () => {
       }
     }
 
-    console.log('-> events', events);
-
     const mintEvents = events.filter((event) => {
       return event.args[0] === '0x0000000000000000000000000000000000000000';
     });
