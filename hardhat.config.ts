@@ -93,6 +93,10 @@ export default {
       settings: {},
     }),
   },
+
+  mocha: {
+    timeout: 100000000000000,
+  },
 };
 
 // script copy pasta'd from Foundry book

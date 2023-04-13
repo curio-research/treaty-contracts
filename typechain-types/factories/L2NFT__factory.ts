@@ -559,6 +559,8 @@ const isSuperArgs = (
   xs: L2NFTConstructorParams
 ): xs is ConstructorParameters<typeof ContractFactory> => xs.length > 1;
 
+export const L2NFT_ABI = _abi
+
 export class L2NFT__factory extends ContractFactory {
   constructor(...args: L2NFTConstructorParams) {
     if (isSuperArgs(args)) {
