@@ -13,7 +13,7 @@ interface NFTPair {
 }
 
 const L1RPC = 'http://localhost:8545';
-const L2RPC = 'http://localhost:8546';
+const L2RPC = 'https://curiov3.constellationchain.xyz/http';
 
 task('deploy', 'deploy contracts')
   .addOptionalParam('port', 'Port contract abis and game info to Vault') // default is to call port
