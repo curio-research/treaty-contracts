@@ -1,0 +1,48 @@
+//SPDX-License-Identifier: MIT
+
+pragma solidity ^0.8.13;
+
+import {Test} from "forge/Test.sol";
+import {console} from "forge/console.sol";
+
+contract TreatyTest is Test {
+    address admin1 = address(0x1);
+    address admin2 = address(0x2);
+
+    address user1 = address(0x3);
+    address user2 = address(0x4);
+    address user3 = address(0x4);
+    address user4 = address(0x4);
+
+    function testTreaty() public {}
+    //     // initialize nft contract
+    //     vm.prank(admin1);
+    //     L2NFT nft = new L2NFT();
+
+    //     // give nft to user1
+    //     vm.prank(admin1);
+    //     nft.mint(user1, 1);
+
+    //     // check for balance and ownership
+    //     assertEq(nft.ownerOf(0), user1);
+    //     assertEq(nft.balanceOf(user1), 1);
+
+    //     // owner1 shouldn't be able to call mint
+    //     vm.prank(admin2);
+    //     vm.expectRevert();
+    //     nft.transferFrom(user1, user2, 1);
+
+    //     // add another admin
+    //     vm.prank(admin1);
+    //     nft.setAdminPermission(admin2);
+    //     assertEq(nft.isAdmin(admin2), true);
+
+    //     // give user 2 NFTs
+    //     uint256 mintAmount = 10;
+    //     vm.prank(admin2);
+    //     nft.mint(user2, mintAmount);
+    //     assertEq(nft.balanceOf(user2), mintAmount);
+    //     assertEq(nft.ownerOf(1), user2);
+    //     assertEq(nft.ownerOf(mintAmount), user2);
+    // }
+}
