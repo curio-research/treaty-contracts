@@ -5,44 +5,32 @@ pragma solidity ^0.8.13;
 import {Test} from "forge/Test.sol";
 import {console} from "forge/console.sol";
 
+import "contracts/Game.sol";
+import "contracts/Treaty.sol";
+
 contract TreatyTest is Test {
-    address admin1 = address(0x1);
-    address admin2 = address(0x2);
+    address player1 = address(0x1);
+    address player2 = address(0x2);
 
-    address user1 = address(0x3);
-    address user2 = address(0x4);
-    address user3 = address(0x4);
-    address user4 = address(0x4);
+    function testTreaty() public {
+        // spawn game
+        Game game = new Game();
 
-    function testTreaty() public {}
-    //     // initialize nft contract
-    //     vm.prank(admin1);
-    //     L2NFT nft = new L2NFT();
+        // create treaty contract
+        Treaty treaty = new Treaty(address(game));
 
-    //     // give nft to user1
-    //     vm.prank(admin1);
-    //     nft.mint(user1, 1);
+        // set the treaty
+        game.setTreaty(address(treaty));
 
-    //     // check for balance and ownership
-    //     assertEq(nft.ownerOf(0), user1);
-    //     assertEq(nft.balanceOf(user1), 1);
+        // have two players join
+        vm.prank(player1);
+        game.join();
 
-    //     // owner1 shouldn't be able to call mint
-    //     vm.prank(admin2);
-    //     vm.expectRevert();
-    //     nft.transferFrom(user1, user2, 1);
+        vm.prank(player2);
+        game.join();
 
-    //     // add another admin
-    //     vm.prank(admin1);
-    //     nft.setAdminPermission(admin2);
-    //     assertEq(nft.isAdmin(admin2), true);
-
-    //     // give user 2 NFTs
-    //     uint256 mintAmount = 10;
-    //     vm.prank(admin2);
-    //     nft.mint(user2, mintAmount);
-    //     assertEq(nft.balanceOf(user2), mintAmount);
-    //     assertEq(nft.ownerOf(1), user2);
-    //     assertEq(nft.ownerOf(mintAmount), user2);
-    // }
+        // have player1 attack player2
+        vm.prank(player1);
+        game.attack(2);
+    }
 }
