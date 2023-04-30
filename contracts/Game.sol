@@ -58,8 +58,8 @@ contract Game {
     }
 
     //  --------------- Getter functions ---------------
-    // treaties should use these
-    // keeping those extremely extremely simple now
+    // LLM should access these and treaties should use these
+    // we are keeping those extremely extremely simple now
 
     // get the health of a player from an ID
     function getHealth(uint256 playerID) public view returns (uint256) {
@@ -72,6 +72,7 @@ contract Game {
     }
 
     // --------------- admin functions ---------------
+    // LLM should NOT access
 
     function setTreaty(address _treaty) public {
         treaty = _treaty;
