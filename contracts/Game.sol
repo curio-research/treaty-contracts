@@ -3,6 +3,10 @@ pragma solidity ^0.8.13;
 
 import "./Treaty.sol";
 
+// Battle Game is a simple Solidity smart contract-based PvP game. 
+// Players can join with 10 health points, and they are able to attack another player to reduce their health by 1. 
+// In the attack function there is a "approveBattle" that allows customized "treaty" smart contract to modify the attack logic.
+
 // the struct that represents the information of a player
 struct Player {
     uint256 playerID;
@@ -10,9 +14,9 @@ struct Player {
     uint256 joinTime;
 }
 
-// Main game file
+// Main game smart contract 
 contract Game {
-    // playerID is a universal counter that strictly increases. Each player has a unique ID
+    // playerNonce is a universal counter that strictly increases. Each player has a unique ID
     uint256 public playerNonce;
 
     // a mapping between the playerID to the player struct which holds player information
@@ -24,24 +28,25 @@ contract Game {
     // for the purpose of demo, set a universal treaty that's run by everyone
     address public treaty;
 
-    // player joins game
+    // a new player joins game
     function join() public {
         playerNonce++;
 
-        // create a new player
+        // create a new player and record it in the players mapping 
         addressToPlayerIDs[msg.sender] = playerNonce;
         Player memory newPlayer = Player(playerNonce, 10, block.timestamp);
         players[playerNonce] = newPlayer;
     }
 
+    // This function allows a player to leave the game by removing their information from the players mapping and setting their health to 0. It also updates the addressToPlayerIDs mapping by setting the player's ID to 0.
     function attack(uint256 playerID) public {
         // get the information of the attacker
         Player storage player = players[addressToPlayerIDs[msg.sender]];
 
-        // check if the player is dead
+        // check if the attacker is dead
         require(player.health > 0, "Player is dead");
 
-        // check if the player is attacking himself
+        // check if the attacker is attacking himself
         require(player.playerID != playerID, "Player cannot attack himself");
 
         // get the target player
@@ -58,7 +63,7 @@ contract Game {
     }
 
     //  --------------- Getter functions ---------------
-    // LLM should access these and treaties should use these
+    // the following functions are used to 
     // we are keeping those extremely extremely simple now
 
     // get the health of a player from an ID

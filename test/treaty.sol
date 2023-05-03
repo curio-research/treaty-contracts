@@ -23,9 +23,11 @@ contract TreatyTest is Test {
         game.setTreaty(address(treaty));
 
         // have two players join
+        vm.warp(1);
         vm.prank(player1);
         game.join();
 
+        vm.warp(2);
         vm.prank(player2);
         game.join();
 
